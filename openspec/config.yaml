@@ -1,0 +1,35 @@
+schema: spec-driven
+
+# Контекст проекта для артефактов OpenSpec (без ключей telemetry — они machine-global).
+context: |
+  Проект: Pharma Project Control — система управления фармацевтическими проектами.
+  Язык артефактов OpenSpec и связанной документации: русский; EN tech terms сохранять как есть.
+  SDD-инструмент: только OpenSpec (не Spec Kit / BMAD и т.п.). ADR — формат MADR в docs/06-architecture/decisions/.
+  Living specs (SoT): openspec/specs/. Черновики изменений: openspec/changes/ — на портал НЕ публикуются.
+  Портал docs: Docusaurus multi-instance читает docs/ и openspec/specs/ (не changes/).
+  Demo v1 (следующий этап кода, не docs-этап): Next.js + NestJS; mock data только в NestJS;
+  frontend получает данные только через HTTP API; PostgreSQL в Demo v1 нет.
+  Запрещено выдумывать FR / GMP / pharma-требования без источника в docs или согласованных specs.
+  status (frontmatter) ≠ certainty (блоки в теле). AI не авто-approve и не повышает hypothesis→fact.
+  Documentation First: изучить → обновить docs/OpenSpec → согласовать ADR → реализовать → проверить → синхронизировать docs.
+  На задачах docs-engineering / инфраструктуры документации — не реализовывать apps (Next/Nest).
+
+rules:
+  proposal:
+    - Писать по-русски; EN tech terms без перевода.
+    - Явно указывать out of scope и границы Demo v1 vs целевой продукт.
+    - Не изобретать FR/GMP/доменные REQ без ссылки на docs или утверждённые specs.
+  tasks:
+    - Разбивать на проверяемые шаги; для дефектов — Test First (red→green).
+    - Не включать реализацию apps в задачи docs-engineering.
+  apply:
+    - Не менять openspec/specs/ вне workflow apply/archive.
+    - Не публиковать contents of changes/ в website/.
+
+operations:
+  apply:
+    guidance:
+      - Сверять delta с ADR и docs/03-product; при отклонениях — draft docs/ADR, не «тихо» править код.
+  archive:
+    guidance:
+      - После archive убедиться, что living specs актуальны; changes/ по-прежнему не в portal build.

@@ -1,0 +1,62 @@
+networks:
+  ppc-net:
+    driver: bridge
+
+services:
+  proxy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - docs
+    networks:
+      - ppc-net
+
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Internal only — reached via Caddy on docs.localhost
+    expose:
+      - "80"
+    networks:
+      - ppc-net
+
+  # App stack — only with: docker compose --profile app up
+  web:
+    profiles: ["app"]
+    # Placeholder until the app image exists.
+    # build: ./apps/web
+    image: nginx:alpine
+    expose:
+      - "3000"
+    networks:
+      - ppc-net
+
+  api:
+    profiles: ["app"]
+    # Placeholder until the API image exists.
+    # build: ./apps/api
+    image: nginx:alpine
+    expose:
+      - "3000"
+    networks:
+      - ppc-net
+
+  # Optional DB — later: docker compose --profile db up
+  # db:
+  #   profiles: ["db"]
+  #   image: postgres:16-alpine
+  #   environment:
+  #     POSTGRES_USER: ppc
+  #     POSTGRES_PASSWORD: ppc
+  #     POSTGRES_DB: ppc
+  #   volumes:
+  #     - ppc-pgdata:/var/lib/postgresql/data
+  #   networks:
+  #     - ppc-net
+
+# volumes:
+#   ppc-pgdata:

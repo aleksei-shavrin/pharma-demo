@@ -1,0 +1,30 @@
+{
+  "config": {
+    "default": true,
+    // Frontmatter / long RU prose / tables
+    "MD013": false,
+    // Duplicate headings across sections are common in indexes
+    "MD024": false,
+    // Inline HTML occasionally used in portal notes
+    "MD033": false,
+    // First line may be frontmatter, not a heading
+    "MD041": false,
+    // Emphasis-as-heading used in templates/examples
+    "MD036": false,
+    // Ordered list prefix style varies in RU docs
+    "MD029": false,
+    // Bare URLs in examples
+    "MD034": false,
+    // Multiple top-level headings in some indexes/templates
+    "MD025": false,
+    // Code fence language optional in short examples
+    "MD040": false,
+    // Certainty blockquotes use a blank `>` line between marker and body
+    "MD028": false
+  },
+  "ignores": [
+    "**/node_modules/**",
+    "website/build/**",
+    "website/.docusaurus/**"
+  ]
+}

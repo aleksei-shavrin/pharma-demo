@@ -1,0 +1,13 @@
+---
+description: Политика хранения Cursor plans в репозитории
+globs:
+  - .cursor/plans/**/*
+alwaysApply: false
+---
+
+# .cursor/plans/**
+
+- Класть сюда только **существенные согласованные** планы работ.
+- Не дублировать ADR / OpenSpec / roadmap — **ссылаться**.
+- Save to Workspace в Cursor (или ручное копирование на WSL/remote) — ок; **не** менять global Cursor settings; нет «auto default» для всех черновиков.
+- Без секретов. Политика: `docs/11-ai-engineering/cursor-plans-in-git.md`.

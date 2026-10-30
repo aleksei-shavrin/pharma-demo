@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Builds / generated
+website/build/
+website/.docusaurus/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor
+*.swp
+*.swo
+*~
+
+# OpenSpec local noise (keep specs/changes tracked intentionally)
+openspec/.openspec-cache/
+openspec/**/.tmp/
+
+# Do NOT ignore .cursor/plans/

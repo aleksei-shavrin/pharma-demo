@@ -1,0 +1,31 @@
+/**
+ * Global Infima overrides. System font stack only — no Google Fonts CDN.
+ */
+
+:root {
+  --ifm-font-family-base: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu,
+    Cantarell, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+  --ifm-font-family-monospace: ui-monospace, SFMono-Regular, 'SF Mono', Menlo,
+    Consolas, 'Liberation Mono', monospace;
+  --ifm-color-primary: #1f6b4a;
+  --ifm-color-primary-dark: #1b6043;
+  --ifm-color-primary-darker: #195b3f;
+  --ifm-color-primary-darkest: #154b34;
+  --ifm-color-primary-light: #237651;
+  --ifm-color-primary-lighter: #257b55;
+  --ifm-color-primary-lightest: #2c8b61;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #3dba84;
+  --ifm-color-primary-dark: #34a975;
+  --ifm-color-primary-darker: #31a06f;
+  --ifm-color-primary-darkest: #28845b;
+  --ifm-color-primary-light: #50c291;
+  --ifm-color-primary-lighter: #5bc698;
+  --ifm-color-primary-lightest: #79d1ab;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}

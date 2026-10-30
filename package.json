@@ -1,0 +1,22 @@
+{
+  "name": "pharma-project-control",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "docs:dev": "npm --prefix website start",
+    "docs:build": "npm --prefix website run build",
+    "docs:serve": "npm --prefix website run serve",
+    "lint:docs": "markdownlint-cli2 \"docs/**/*.md\" \"openspec/specs/**/*.md\" \"AGENTS.md\" \"CONTRIBUTING.md\" \"README.md\"",
+    "lint:links": "node scripts/check-links.mjs",
+    "check:frontmatter": "node scripts/check-doc-frontmatter.mjs",
+    "check:ids": "node scripts/check-doc-ids.mjs",
+    "check:certainty": "node scripts/check-certainty-markers.mjs",
+    "check:portal-excludes": "node scripts/check-portal-excludes.mjs",
+    "test:docs": "npm run check:frontmatter && npm run check:ids && npm run check:certainty && npm run check:portal-excludes && npm run lint:docs && npm run docs:build && npm run check:portal-excludes"
+  },
+  "devDependencies": {
+    "glob": "^14.0.3",
+    "gray-matter": "^4.0.3",
+    "markdownlint-cli2": "^0.18.1"
+  }
+}

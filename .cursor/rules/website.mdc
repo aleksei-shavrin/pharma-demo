@@ -1,0 +1,14 @@
+---
+description: Портал Docusaurus — без дублирования контента
+globs:
+  - website/**/*
+alwaysApply: false
+---
+
+# website/**
+
+- `website/` — оболочка портала (Docusaurus), не Source of Truth контента.
+- **Не** копировать содержимое `docs/` или `openspec/specs/` внутрь `website/` как дубликаты MD.
+- Instances читают `../docs` и `../openspec/specs` (только specs; **не** `openspec/changes`).
+- Не добавлять Ask AI / внешний SaaS search без ADR.
+- При правках sidebars/navbar — не раздувать контент; править SoT в docs/openspec.

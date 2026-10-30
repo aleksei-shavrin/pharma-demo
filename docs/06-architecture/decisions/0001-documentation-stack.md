@@ -1,0 +1,53 @@
+---
+id: DOC-ADR-0001
+title: "ADR-0001: Documentation stack"
+type: adr
+status: draft
+version: "0.1.0"
+created: 2026-10-30
+updated: 2026-10-30
+owner: "docs-engineering"
+related:
+  - DOC-PORTAL-003
+  - DOC-ADR-0002
+---
+
+# ADR-0001: Documentation stack
+
+- **Статус решения:** accepted (направление)
+- **Дата:** 2026-10-30
+
+## Контекст
+
+Нужен единый контур документации и change-спецификаций без размножения несовместимых инструментов.
+
+## Решение
+
+> **certainty:** hypothesis
+>
+> Принять связку:
+>
+> 1. **Docusaurus** — генерация сайта из Markdown в `docs/**` (подключение сайта — отдельная волна).
+> 2. **OpenSpec** — спецификации изменений рядом с разработкой.
+> 3. **Локальный поиск** на docs-сайте (без обязательного внешнего search SaaS на старте).
+
+## Последствия
+
+### Положительные
+
+- Один привычный MD-workflow.
+- Разделение «знание продукта» (docs) и «change specs» (OpenSpec) без второго конкурента.
+
+### Отрицательные / компромиссы
+
+- Нужна дисциплина не дублировать ADR ↔ OpenSpec ↔ roadmap.
+- Настройка Docusaurus отложена относительно фундамента `docs/**`.
+
+## Альтернативы
+
+- **Zensical** как основной портал — отклонён для текущего плана.
+- **Spec Kit** параллельно OpenSpec — отклонён из-за dual-source риска.
+
+## Ссылки
+
+- [research-and-decisions](../../00-portal/research-and-decisions.md)

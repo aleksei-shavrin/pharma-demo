@@ -1,0 +1,16 @@
+---
+description: Workflow OpenSpec для openspec/**
+globs:
+  - openspec/**/*
+alwaysApply: false
+---
+
+# openspec/**
+
+- Единственный SDD-инструмент проекта — **OpenSpec**.
+- Workflow: **propose → human review → apply → archive**.
+- Living SoT: `openspec/specs/` (публикуется на портале).
+- `openspec/changes/` и archive — **не** публикуются; не копировать в `website/`.
+- Контекст проекта: `openspec/config.yaml` (без telemetry keys).
+- Telemetry — только CLI/env (см. CONTRIBUTING.md), не project YAML.
+- Не invent FR/GMP в specs без источника. См. AGENTS.md.

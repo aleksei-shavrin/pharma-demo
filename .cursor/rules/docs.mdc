@@ -1,0 +1,15 @@
+---
+description: Правила для Markdown в docs/**
+globs:
+  - docs/**/*.md
+alwaysApply: false
+---
+
+# docs/**
+
+- Соблюдай frontmatter и правила из `docs/standards/documentation-standard.md`.
+- **status** (frontmatter) ≠ **certainty** (блоки в теле: fact / assumption / hypothesis / open_question).
+- AI **не** ставит `status: approved` и **не** повышает certainty до `fact` без человека.
+- Не класть секреты. Язык: русский + EN tech terms.
+- Не дублировать ADR / OpenSpec / roadmap — ссылаться.
+- Шаблоны: `docs/_templates/`. Конституция: `docs/11-ai-engineering/engineering-constitution.md`.

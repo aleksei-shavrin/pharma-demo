@@ -1,0 +1,16 @@
+---
+description: Ядро норм Pharma Project Control для всех задач
+alwaysApply: true
+---
+
+# Core (always)
+
+Следуй корневому **AGENTS.md**. Кратко:
+
+1. **Documentation First** — изучить → обновить docs/OpenSpec → ADR → реализовать → проверить → синхронизировать docs. Детали: `docs/11-ai-engineering/documentation-first.md`.
+2. **Не выдумывать FR/GMP** / доменные REQ без источника в docs или `openspec/specs/`.
+3. **Demo v1:** Next.js + NestJS; mock **только** в NestJS; FE только через API; без PostgreSQL. На docs-engineering задачах **не** реализовывать apps.
+4. **status ≠ certainty**; AI не auto-approve и не повышает hypothesis→fact.
+5. **OpenSpec** — единственный SDD; ADR — MADR.
+6. **Cursor plans:** существенные согласованные планы → `.cursor/plans/`; не дублировать ADR/OpenSpec/roadmap — ссылаться. Политика: `docs/11-ai-engineering/cursor-plans-in-git.md`.
+7. Конституция: `docs/11-ai-engineering/engineering-constitution.md`.

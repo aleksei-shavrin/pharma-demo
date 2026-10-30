@@ -1,0 +1,9 @@
+.git
+**/node_modules
+**/build
+**/.docusaurus
+**/dist
+**/.cache
+*.log
+.env
+.env.*
