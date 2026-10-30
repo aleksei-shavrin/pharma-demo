@@ -3,7 +3,7 @@ id: DOC-DISC-020
 title: "Demo v1 scope candidates (preliminary MoSCoW)"
 type: discovery
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -12,6 +12,7 @@ related:
   - DOC-DISC-019
   - DOC-PROD-003
   - DOC-DISC-011
+  - DOC-DISC-021
 ---
 
 # Demo v1 scope candidates (preliminary MoSCoW)
@@ -39,9 +40,9 @@ Tech constraints: [demo-v1-architecture](../03-product/demo-v1-architecture.md).
 >
 > **Связка SCN-001 → SCN-007** (задержка long-lead equipment → угроза даты production start): сильный impact для директора (H-002), единый контур для PM (H-003), опирается на PROC-001/007/010/011 и P-001/P-002, хорошо ложится на mock данные (пакеты оборудования, вехи, риски).
 
-> **certainty:** open_question
+> **certainty:** fact
 >
-> Product owner подтверждает HIP-006 / выбирает альтернативу (напр. SCN-006 readiness conflict или SCN-005 docs).
+> Product Owner утвердил primary narrative **SCN-001 → SCN-007** (HIP-006). SCN-006 — необязательная доп. сцена; **не** расширять Demo v1 только ради неё. См. [human-input-pack](./human-input-pack.md).
 
 ## Матрица сценарий × кандидат возможности
 
@@ -92,7 +93,7 @@ Tech constraints: [demo-v1-architecture](../03-product/demo-v1-architecture.md).
 
 | ID | Решение | Адресат | Статус |
 |----|---------|---------|--------|
-| HIP-006 | Выбрать primary demo narrative из SCN-* | product owner | open |
-| HIP-001 / HIP-008 | Audience / leading value hypothesis | product owner | open |
+| HIP-006 | Primary narrative SCN-001→SCN-007; SCN-006 optional | product owner | answered |
+| HIP-001 / HIP-008 | Primary audience директор; H-002 leading / H-003 supporting | product owner | answered |
 
-Пока HIP-006 open: Discovery D5 → статус **paused** для критерия `done`, артефакты кандидатов считаются готовыми к review.
+Discovery Phase — **completed**. MoSCoW ниже остаётся предварительной приоритизацией (**не** FR) для BA.

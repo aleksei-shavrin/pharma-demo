@@ -3,13 +3,14 @@ id: DOC-DISC-011
 title: "Human Input Pack (HIP)"
 type: discovery
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
 related:
   - DOC-DISC-010
   - DOC-DISC-015
+  - DOC-DISC-021
   - DOC-PHASE-DISC-001
 ---
 
@@ -30,18 +31,48 @@ related:
 
 | ID | Вопрос | Адресат | Зачем | Блокирует | Статус | Ответ / ссылка | Certainty после ответа |
 |----|--------|---------|-------|-----------|--------|----------------|------------------------|
-| HIP-001 | Primary audience демо: директор предприятия / руководитель проекта / оба? | product owner | Фокус ценности и сценариев | D5 `done` (narrative) | open | | |
+| HIP-001 | Primary audience демо: директор предприятия / руководитель проекта / оба? | product owner | Фокус ценности и сценариев | D5 `done` (narrative) | answered | Primary = директор; secondary = PM / Project Controls. UX-приоритет — управленческий вид для директора; PM — операционный пользователь контура. Детали § «Решения PO». | `fact` = решение PO о демо; применимость к предприятию ≠ `fact` |
 | HIP-002 | Есть ли доступ к отраслевому эксперту в горизонте фазы Discovery? | product owner | План validation | applicability → fact | open | | |
 | HIP-003 | Упоминать GMP/CSV в демо как контекст или избегать регуляторной лексики? | product owner (+ expert при необходимости) | Messaging границ | demo messaging | open | | |
 | HIP-004 | Горизонт демо: один завод / один проект / multi-project? | product owner | Scope candidates | D4 boundaries | open | | |
 | HIP-005 | Какие процессы и роли реально критичны у заказчика? | expert/customer | Enterprise applicability | enterprise-fact | open | | |
-| HIP-006 | Какой приоритетный демонстрационный narrative выбрать из каталога сценариев? Рекомендация Discovery: SCN-001→SCN-007 (см. DOC-DISC-020). | product owner | Закрытие Discovery | D5 `done` vs `paused` | open | | |
+| HIP-006 | Какой приоритетный демонстрационный narrative выбрать из каталога сценариев? | product owner | Закрытие Discovery | D5 `done` vs `paused` | answered | Primary flow **SCN-001 → SCN-007** как единая история. SCN-006 — необязательная доп. сцена; не расширять Demo v1 ради неё. Детали § «Решения PO». | `fact` = решение PO о демо-narrative; не = подтверждение процессов предприятия |
 | HIP-007 | Primary framing демо: showcase low-code / platform или standalone product MVP project control? | product owner | Контекст ценности и messaging (DOC-DISC-012) | demo framing / P-004 | open | | |
-| HIP-008 | Какая гипотеза ценности ведёт первый narrative: директор / PM / functional leads? | product owner | Приоритет сценариев D3–D5 | H-002…H-004; D5 narrative | open | | |
+| HIP-008 | Какая гипотеза ценности ведёт первый narrative: директор / PM / functional leads? | product owner | Приоритет сценариев D3–D5 | H-002…H-004; D5 narrative | answered | **H-002** ведущая; **H-003** supporting. H-002/H-003 остаются `hypothesis` о ценности, не enterprise-`fact`. Детали § «Решения PO». | `fact` = выбор PO ведущей гипотезы для демо; H-002/H-003 content = `hypothesis` |
 | HIP-009 | Подтвердить кандидатный набор ролей SH-001…SH-011 (DOC-DISC-015): какие роли реальны у заказчика и какие нужны как demo personas (минимум vs расширенный cast)? | expert/customer (+ product owner для demo cast) | Stakeholder applicability; OQ-010/OQ-011 | enterprise-fact + D3 personas | open | | |
+
+## Решения Product Owner (2026-10-30)
+
+> **certainty:** fact
+>
+> Ниже — зафиксированные решения владельца продукта о **направлении демо и приоритетах продукта**. Это **не** подтверждение реальных процессов / org chart конкретного предприятия.
+
+### HIP-001 — Основная аудитория демонстрации
+
+- **Primary audience:** директор фармацевтического предприятия.
+- **Secondary audience:** руководитель проекта / Project Controls.
+- **Приоритет UX:** управленческое представление для директора.
+- **Роль PM:** операционный пользователь, поддерживающий актуальность проектной информации, статусов, рисков и отклонений.
+
+**Последствия:** Demo v1 и BA ориентируют primary screens / exception views на директора; PM-контур — обеспечение данных и операционной работы (согласуется с H-002 ведущей / H-003 supporting).
+
+### HIP-008 — Ведущая ценность
+
+- **H-002 — ведущая:** директор получает целостное и компактное представление о готовности проекта, состоянии контрольных точек и угрозах дате запуска производства.
+- **H-003 — supporting:** PM получает единое информационное пространство управления проектом вместо ручной консолидации разрозненных статусов.
+- Достоверность H-002/H-003 относительно реальных предприятий **не** повышается до `fact`.
+
+**Последствия:** приоритизация narrative и Demo v1 capabilities — от ценности директора; PM-возможности — чтобы эта картина была актуальной.
+
+### HIP-006 — Основной демонстрационный сценарий
+
+- **Обязательный primary flow:** **SCN-001 → SCN-007** как **единая связная** демонстрационная история (задержка critical / long-lead equipment → совокупное влияние на прогноз даты запуска и управленческое решение).
+- **SCN-006:** необязательная дополнительная сцена; **не** входит в обязательный основной сценарий; **не** расширять границы Demo v1 только ради неё.
+
+**Последствия:** BA / Product Definition опираются на SCN-001→SCN-007; кандидаты Must C-01…C-05 в [demo-v1-scope-candidates](./demo-v1-scope-candidates.md) остаются предварительными (**не** FR). Выбор narrative ≠ подтверждение процессов заказчика.
 
 ## Статусы
 
 - `open` — ответа нет
-- `answered` — ответ зафиксирован в колонке «Ответ / ссылка»
+- `answered` — ответ зафиксирован в колонке «Ответ / ссылка» и/или в § «Решения Product Owner»
 - `deferred` — сознательно отложено (указать причину в ответе)

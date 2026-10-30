@@ -3,7 +3,7 @@ id: DOC-PROD-001
 title: "Vision и scope"
 type: product
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -14,11 +14,12 @@ related:
   - DOC-DISC-012
   - DOC-DISC-019
   - DOC-DISC-021
+  - DOC-DISC-011
 ---
 
 # Vision и scope
 
-Актуализировано ссылками на Discovery (D5). Certainty утверждений **не** повышалась без человека.
+Актуализировано по итогам закрытия Discovery (решения Product Owner). Certainty утверждений о предприятии **не** повышалась до `fact` без эксперта/заказчика.
 
 ## Контекст названия
 
@@ -30,7 +31,18 @@ related:
 
 > **certainty:** hypothesis
 >
-> Единый контур статуса проектных активностей, вех, готовности и связанных артефактов для директора предприятия, PM и functional leads (web UI + API), с убедительным Demo v1. Детализация ценности по ролям: [product-context](../01-discovery/product-context.md). Сценарии: [management-scenarios](../01-discovery/management-scenarios.md).
+> Единый контур статуса проектных активностей, вех, готовности и связанных артефактов (web UI + API), с убедительным Demo v1. **Ведущая** гипотеза ценности — для директора (H-002); **supporting** — для PM (H-003). Детали и фиксация выбора PO: [discovery-summary](../01-discovery/discovery-summary.md), [human-input-pack](../01-discovery/human-input-pack.md), [product-context](../01-discovery/product-context.md).
+
+## Аудитория и demo narrative (решение PO)
+
+> **certainty:** fact
+>
+> Product Owner зафиксировал направление демо (не enterprise-process confirmation):
+>
+> - Primary audience — директор фармацевтического предприятия; secondary — PM / Project Controls; UX-приоритет — управленческий вид директора.
+> - Primary demo story — **SCN-001 → SCN-007**; SCN-006 — необязательная доп. сцена без расширения Demo v1 ради неё.
+>
+> Источник формулировок: [human-input-pack](../01-discovery/human-input-pack.md). Каталог сценариев: [management-scenarios](../01-discovery/management-scenarios.md).
 
 ## Scope in (на уровне направления)
 
@@ -52,11 +64,11 @@ related:
 
 > **certainty:** open_question
 >
-> Primary audience и demo narrative (HIP-001, HIP-006, HIP-008); применимость процессов к заказчику (HIP-005); messaging GMP/CSV (HIP-003). Сводка: [discovery-summary](../01-discovery/discovery-summary.md), [human-input-pack](../01-discovery/human-input-pack.md).
+> Messaging GMP/CSV (HIP-003); горизонт один проект vs multi (HIP-004); framing platform vs MVP (HIP-007); применимость процессов к заказчику (HIP-005 и связанные OQ). Сводка: [discovery-summary](../01-discovery/discovery-summary.md), [registers](../01-discovery/registers.md), [human-input-pack](../01-discovery/human-input-pack.md).
 
 ## Связанные документы
 
-- Discovery: [discovery-summary](../01-discovery/discovery-summary.md), [product-boundaries](../01-discovery/product-boundaries.md)
+- Discovery: [discovery-summary](../01-discovery/discovery-summary.md), [product-boundaries](../01-discovery/product-boundaries.md), [human-input-pack](../01-discovery/human-input-pack.md)
 - [target-technology-stack](./target-technology-stack.md)
 - [demo-v1-architecture](./demo-v1-architecture.md)
 - [ADR-0002](../06-architecture/decisions/0002-target-technology-stack-direction.md)

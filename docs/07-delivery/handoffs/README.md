@@ -3,12 +3,13 @@ id: DOC-HANDOFF-README-001
 title: "Handoffs"
 type: index
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
 related:
   - DOC-TPL-HANDOFF-001
+  - DOC-HANDOFF-DISC-001
 ---
 
 # Handoffs
@@ -21,4 +22,4 @@ related:
 |------|------|
 | [2026-10-30-w1-docs.md](./2026-10-30-w1-docs.md) | W1-Docs: фундамент документации |
 | [2026-10-30-w3-integrate.md](./2026-10-30-w3-integrate.md) | W3: интеграция портала |
-| [2026-10-30-discovery.md](./2026-10-30-discovery.md) | Discovery D0–D5 (paused: HIP-006) |
+| [2026-10-30-discovery.md](./2026-10-30-discovery.md) | Discovery D0–D5 — **completed** → BA & Product Definition |

@@ -3,7 +3,7 @@ id: DOC-DISC-README-001
 title: "Discovery"
 type: index
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -11,6 +11,7 @@ related:
   - DOC-TPL-DISC-001
   - DOC-PHASE-DISC-001
   - DOC-DISC-021
+  - DOC-HANDOFF-DISC-001
 ---
 
 # 01-discovery
@@ -30,7 +31,7 @@ related:
 
 > **certainty:** fact
 >
-> Артефакты D0–D5 созданы. Фаза **paused** до HIP-006 (product owner), см. [discovery-summary](./discovery-summary.md).
+> Discovery Phase L2 — **completed**. Решения PO (HIP-001, HIP-006, HIP-008) зафиксированы; см. [discovery-summary](./discovery-summary.md), [human-input-pack](./human-input-pack.md). Следующая фаза — Business Analysis & Product Definition (отдельное планирование).
 
 ## Карта артефактов
 
