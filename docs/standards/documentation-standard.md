@@ -33,7 +33,7 @@ owner: "docs-engineering"
 related: []
 ```
 
-Допустимые `type` (неполный список): `portal`, `standard`, `template`, `product`, `architecture`, `adr`, `quality`, `delivery`, `handoff`, `guide`, `index`, `ai-policy`.
+Допустимые `type` (неполный список): `portal`, `standard`, `template`, `product`, `architecture`, `adr`, `quality`, `delivery`, `handoff`, `guide`, `index`, `ai-policy`, `discovery`.
 
 ## 2. Именование файлов и ID
 

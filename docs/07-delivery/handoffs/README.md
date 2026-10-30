@@ -20,3 +20,5 @@ related:
 | Файл | Тема |
 |------|------|
 | [2026-10-30-w1-docs.md](./2026-10-30-w1-docs.md) | W1-Docs: фундамент документации |
+| [2026-10-30-w3-integrate.md](./2026-10-30-w3-integrate.md) | W3: интеграция портала |
+| [2026-10-30-discovery.md](./2026-10-30-discovery.md) | Discovery D0–D5 (paused: HIP-006) |
