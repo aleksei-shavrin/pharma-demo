@@ -3,36 +3,51 @@ id: DOC-BA-016
 title: "Traceability matrix (BA/PD Demo v1)"
 type: business
 status: draft
-version: "0.1.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
 related:
   - DOC-BA-017
   - DOC-PROD-010
+  - DOC-PROD-012
+  - DOC-BA-014
+  - DOC-BA-015
 ---
 
 # Traceability matrix (BA/PD Demo v1)
 
-Цепочка: Problem → Process → BR → Capability → REQ → AC/Walkthrough → Mock.
+Цепочка: Problem → Process → BR/NC → Capability → REQ → Walkthrough → Mock.
 
-| Problem | Process | BR | Capability | REQ | Walkthrough / Mock |
-|---------|---------|-----|------------|-----|--------------------|
-| P-001, P-002 | PROC-007 | BR-001, BR-004 | C-03 | REQ-EQPT-001 | Steps 1–2; EQ-HVAC-01 |
-| P-001, P-002 | PROC-005, PROC-004 | BR-001, BR-002 | C-04 | REQ-RISK-001 | Steps 2–3; ISS-001, RISK-001 |
-| P-001, H-002 | PROC-010 | BR-003, BR-004 | C-02 | REQ-MILE-001 | Steps 1, 4; MS-PS |
-| P-001, H-002 | PROC-001 | BR-004 | C-01 / C-03 | REQ-PROJ-001, REQ-EQPT-001 | Forecast dates |
-| P-002, H-002 | PROC-011 | BR-005, BR-006, BR-007 | C-05 | REQ-IMPCT-001, REQ-IMPCT-002 | Steps 4–5; DEC-001 |
-| — | — | — | architecture | REQ-NFR-001, REQ-NFR-002 | Demo constraints |
+| Problem | Process | BR / NC | Capability | REQ | Walkthrough / Mock |
+|---------|---------|---------|------------|-----|--------------------|
+| P-001, P-002 | PROC-007 | BR-004 | C-03 | REQ-EQPT-001 | Steps 1–2; EQ-HVAC-01 |
+| P-001, P-002 | PROC-005 | BR-001, NC-001 | **C-04** | REQ-RISK-001 (AC-I) | Steps 3, 7; ISS-001 |
+| P-001, P-002 | PROC-004 | BR-002 | C-04 | REQ-RISK-001 (AC-R) | Steps 4, 8; RISK fixture |
+| P-001, H-002 | PROC-010 | BR-003, BR-004 | C-02 | REQ-MILE-001 | Steps 1, 5, 8; MS-PS |
+| P-001, H-002 | PROC-001 | BR-004 | C-01 | REQ-PROJ-001 | Steps 1, 5, 8 |
+| P-002, H-002 | PROC-011 | BR-005 | C-05 | REQ-IMPCT-001 | Step 6 |
+| P-002 | PROC-011 | BR-006 | C-05 | REQ-IMPCT-002 | Steps 7–8; DEC |
+| integrity | — | BR-007 | — | REQ-IMPCT-001 + mock matrix | Step 8 |
+| architecture | — | DOC-PROD-003/004 | — | REQ-NFR-001/002 | architecture gate |
+
+**Убрано:** BR-001 ↔ C-03 / REQ-EQPT (искусственная связь).
+
+## Decision variants
+
+| Variant | Defined Must behavior | Open |
+|---------|----------------------|------|
+| PrioritizeRecovery | Decision + Issue Mitigating + Risk/MS Red (BR-002/003) + forecast unchanged | — |
+| AcceptDateSlip | Decision + forecast unchanged | BA-OQ-004/005 Issue/Risk/MS rag |
 
 ## Explicit non-edges
 
 | Candidate | Status |
 |-----------|--------|
-| PROC-002/003/006/008/009 | out — no REQ |
-| C-06/C-07 | out of Must |
-| SCN-006 | optional only |
+| PROC-002/003/006/008/009 | out |
+| C-06/C-07; SCN-006 Must | out |
+| Amber Must-scale; auto-reforecast; auto-Closed on AcceptDateSlip | out / OQ |
 
 > **certainty:** hypothesis
 >
-> Связи обоснованы BA2–PD3; не enterprise process confirmation.
+> Spec-level only; runtime не заявляется.

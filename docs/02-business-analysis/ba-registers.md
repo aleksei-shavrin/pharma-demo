@@ -25,7 +25,9 @@ Certainty: demo direction ≠ enterprise-`fact`.
 |----|-------------|-----------|------------|
 | BA-A-001 | Demo v1 = один facility-проект (один Project) до ответа HIP-004 | assumption | Boundaries Discovery |
 | BA-A-002 | Messaging: избегать GMP/CSV как compliance theater до HIP-003 | assumption | OQ-003 |
-| BA-A-003 | Сдвиг forecast production start в демо = сдвиг critical equipment delivery (детерминированное demo-правило) | assumption | BR forecast; не отраслевая формула |
+| BA-A-003 | Сдвиг forecast production start в демо = сдвиг единственного critical equipment delivery (BR-004); без CPM/float/параллельного recovery calendar | assumption | demo only; см. DOC-BA-014 |
+| BA-A-005 | Календарь mock narrative — 2027; scenarioAsOfDate на snapshot; prep docs 2026-10-30 | assumption | DOC-PROD-012 |
+| BA-A-006 | PrioritizeRecovery не пересчитывает forecast автоматически (BR-006) | assumption | DOC-BA-014 |
 | BA-A-004 | SCN-006 не входит в обязательный Demo v1 scope | fact | HIP-006 PO |
 
 ## Hypotheses (BA)
@@ -42,6 +44,8 @@ Certainty: demo direction ≠ enterprise-`fact`.
 | BA-OQ-001 | Freeze Demo v1 functional scope (PD2) | product owner | open |
 | BA-OQ-002 | HIP-003 / HIP-004 / HIP-007 (messaging, горизонт, framing) | product owner | open (Discovery HIP) |
 | BA-OQ-003 | Нужен ли отдельный Issue vs Risk в UI-данных или достаточно linked records | BA/PD | open — решается в domain/BR |
+| BA-OQ-004 | Issue.status после AcceptDateSlip (AcceptedSlip vs иное; не авто-Closed) | product owner | open |
+| BA-OQ-005 | Risk.rag / Milestone.rag после AcceptDateSlip, если Issue уже не Open/Mitigating | product owner | open |
 
 ## Included processes (Demo v1 narrative)
 

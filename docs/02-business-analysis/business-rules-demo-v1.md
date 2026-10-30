@@ -3,7 +3,7 @@ id: DOC-BA-014
 title: "Business rules (Demo v1)"
 type: business
 status: draft
-version: "0.1.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -12,6 +12,7 @@ related:
   - DOC-BA-015
   - DOC-DISC-018
   - DOC-BA-010
+  - DOC-PROD-012
 ---
 
 # Business rules (Demo v1)
@@ -20,35 +21,55 @@ related:
 
 > **certainty:** assumption
 >
-> Правила ниже — **demo assumptions / hypotheses**, не отраслевые стандарты и не GMP.
+> Правила ниже — **demo assumptions / hypotheses**, не отраслевые стандарты и не GMP. ID **BR-001…BR-007 сохранены**; v0.3.0 — Decision flow и RAG fixture vs expectation. Narrative ISS-001 — **NC-001** в mock, не отдельный BR.
 
 ---
 
-## BR-001 — Critical equipment delay creates Issue
+## BR-001 — Issue registration capability (functional)
 
 | Поле | Значение |
 |------|----------|
 | **ID** | BR-001 |
-| **Описание** | Если прогноз delivery/FAT critical equipment сдвигается относительно baseline на величину, значимую для демо (любой положительный сдвиг дней), система должна позволять (и в narrative — содержит) связанный Issue. |
+| **Описание** | Система поддерживает регистрацию Issue и связывание его с Equipment и Milestone (production start), когда critical equipment имеет forecast delivery позже baseline. |
 | **Источник / обоснование** | SCN-001; PROC-007 + PROC-005; P-001/P-002 |
 | **Certainty** | hypothesis |
-| **Условия** | Equipment.isCritical = true; forecastDate > baselineDate |
-| **Ожидаемый результат** | Существует Issue, linked to Equipment и к Milestone production-start |
-| **Пример** | EQ-HVAC-01 baseline 2026-06-01 → forecast 2026-06-22 ⇒ Issue ISS-001 «HVAC long-lead slip» Open |
+| **Условия** | Equipment.isCritical = true; возможность зафиксировать slip (forecastDelivery > baselineDelivery) |
+| **Ожидаемый результат** | Можно создать Issue с links на Equipment и Milestone; поведение доступно через API-контур |
+| **Проверяемый пример** | После slip EQ-HVAC-01 оператор/PM может зарегистрировать Issue, linked to EQ-HVAC-01 и MS-PS |
+
+**Не смешивать с narrative:** наличие конкретного ISS-001 в Snapshot B задаётся условием **NC-001** ([mock narrative](../03-product/demo-v1-mock-narrative-data.md)), а не этим BR.
 
 ---
 
-## BR-002 — Equipment delay elevates linked Risk RAG
+## BR-002 — Risk RAG for open critical-delay Issue (deterministic demo)
 
 | Поле | Значение |
 |------|----------|
 | **ID** | BR-002 |
-| **Описание** | При Open Issue из BR-001 связанный Risk, влияющий на production-start milestone, имеет RAG не Green. |
-| **Источник** | SCN-001; PROC-004; H-002 |
+| **Описание** | Для Demo v1 narrative SCN-001→007: если Issue, связанный с critical equipment delay и MS-PS, имеет status ∈ {Open, Mitigating}, то linked Risk.rag **обязан быть Red**. Уровень Amber **не используется** в обязательном Demo v1 path (нет отдельной шкалы). |
+| **Источник** | SCN-001; PROC-004; H-002; минимальная детерминированность без enterprise risk methodology |
 | **Certainty** | assumption (demo RAG mapping) |
-| **Условия** | Linked Issue.status ∈ {Open, Mitigating}; Risk linked to same Milestone |
-| **Ожидаемый результат** | Risk.rag ∈ {Amber, Red} |
-| **Пример** | ISS-001 Open ⇒ RISK-001 rag = Red (threat to production start) |
+| **Условия** | Issue linked to critical EQ + MS-PS; Issue.status ∈ {Open, Mitigating}; Risk linked to same Issue/Milestone |
+| **Ожидаемый результат** | Risk.rag = Red |
+| **Проверяемый пример** | ISS-001 Open ⇒ RISK-001.rag = Red |
+
+**Значения Issue.status (Demo v1):**
+
+| Status | Смысл | Certainty |
+|--------|--------|-----------|
+| Open | Задержка зафиксирована; решение директора ещё не записано (или не PrioritizeRecovery) | hypothesis |
+| Mitigating | **Однозначно:** зафиксирован Decision type = PrioritizeRecovery; execution recovery **не** моделируется; forecast **не** авто-пересчитывается (BR-006) | assumption |
+| AcceptedSlip | Зарезервированный ярлык; **обязан ли** Issue переходить в AcceptedSlip при AcceptDateSlip — **open_question** (BA-OQ-004) | open_question |
+| Closed | Закрытие Issue; **не** следует автоматически из AcceptDateSlip без явного правила | open_question |
+
+### RAG: правило vs fixture vs integrity (BR-002)
+
+| Слой | Роль |
+|------|------|
+| **BR-002** | Задаёт **ожидаемое** Risk.rag = Red, когда Issue.status ∈ {Open, Mitigating} |
+| **Mock fixture** | Snapshot хранит поле Risk.rag (например Red в B/C) |
+| **Integrity check** | Сравнивает fixture с ожиданием BR-002 (spec-level; runtime compute **не** заявлен) |
+| **Snapshot A Green** | Исходный baseline fixture **до** open delay Issue; **не** следствие BR-002 |
 
 ---
 
@@ -57,26 +78,37 @@ related:
 | Поле | Значение |
 |------|----------|
 | **ID** | BR-003 |
-| **Описание** | Если у Milestone «production start» есть linked Risk с rag = Red, то Milestone.rag ≠ Green. |
+| **Описание** | Если у Milestone MS-PS есть linked Risk с rag = Red, то **ожидаемое** Milestone.rag = Red (Amber вне Must). |
 | **Источник** | SCN-001/007; PROC-010 |
 | **Certainty** | assumption (demo aggregation) |
 | **Условия** | Milestone.id = MS-PS; exists Risk with rag Red linked to MS-PS |
-| **Ожидаемый результат** | MS-PS.rag ∈ {Amber, Red} |
-| **Пример** | RISK-001 Red ⇒ MS-PS rag = Red |
+| **Ожидаемый результат** | MS-PS.rag = Red |
+| **Проверяемый пример** | RISK-001 Red ⇒ expected MS-PS.rag = Red |
+
+### RAG: правило vs fixture (BR-003)
+
+| Слой | Роль |
+|------|------|
+| **BR-003** | Ожидание MS-PS.rag при Red Risk |
+| **Mock fixture** | Хранит MS-PS.rag |
+| **Integrity** | Fixture == ожидание BR-003 |
+| **Snapshot A Green** | Baseline fixture без Red Risk; не вывод BR-003 |
 
 ---
 
-## BR-004 — Forecast production start tracks critical delivery slip (demo)
+## BR-004 — Forecast production start tracks single critical delivery slip (demo)
 
 | Поле | Значение |
 |------|----------|
 | **ID** | BR-004 |
-| **Описание** | В Demo v1 прогноз даты production start сдвигается на ту же величину дней, что и сдвиг critical equipment forecast delivery (простое детерминированное правило). |
-| **Источник** | BA-A-003; SCN-007; не отраслевая формула CPM |
-| **Certainty** | **assumption** (явно demo; не выдавать за стандарт) |
-| **Условия** | Single critical driver EQ package; no other Must drivers in Demo v1 dataset |
-| **Ожидаемый результат** | forecastProductionStart = baselineProductionStart + (equipmentForecast − equipmentBaseline) in days |
-| **Пример** | EQ slip +21d; MS-PS baseline 2026-09-01 ⇒ forecast 2026-09-22 |
+| **Описание** | В Demo v1 при **одном** critical equipment driver прогноз production start сдвигается на ту же величину календарных дней, что и (equipment.forecastDelivery − equipment.baselineDelivery). |
+| **Источник** | BA-A-003; SCN-007 |
+| **Certainty** | **assumption** (явно demo; **не** отраслевая методика / CPM) |
+| **Условия** | Ровно один critical driver в dataset; нет моделирования float, параллельного recovery calendar, компенсации задержки, multi-path CPM |
+| **Ожидаемый результат** | `forecastProductionStart = baselineProductionStart + Δ`, где `Δ = forecastDelivery − baselineDelivery` (дней); то же Δ для MS-PS.forecastDate |
+| **Проверяемый пример** | baselineDelivery 2027-05-15 → forecastDelivery 2027-06-05 (Δ=+21); baseline PS 2027-09-15 → forecast PS 2027-10-06 |
+
+**Ограничение применимости:** только текущий демонстрационный набор ([mock narrative](../03-product/demo-v1-mock-narrative-data.md)). Не претендует на достоверный прогноз реального строительства.
 
 ---
 
@@ -85,44 +117,62 @@ related:
 | Поле | Значение |
 |------|----------|
 | **ID** | BR-005 |
-| **Описание** | Агрегированное представление для директора включает: milestone RAG, forecast vs baseline date, идентификатор contributing equipment driver, top risk/issue. |
+| **Описание** | Агрегированные данные для директора включают: milestone RAG, forecast vs baseline production start, id contributing equipment driver, ссылки на top risk и issue — согласованные с исходными объектами. |
 | **Источник** | HIP-001/008; PROC-011; SCN-007; H-002 |
 | **Certainty** | hypothesis |
-| **Условия** | Narrative state after delay recorded |
-| **Ожидаемый результат** | Director view data contains driver EQ id + MS-PS forecast/RAG + RISK/ISSUE refs |
-| **Пример** | View shows EQ-HVAC-01, MS-PS Red, forecast 2026-09-22, RISK-001 |
+| **Условия** | Narrative state after delay recorded (Snapshot B/C) |
+| **Ожидаемый результат** | Aggregate согласован с EQ, Issue, Risk, Milestone, Project (те же id/даты/rag) |
+| **Проверяемый пример** | Aggregate: EQ-HVAC-01, MS-PS Red, forecast 2027-10-06, RISK-001, ISS-001 |
 
 ---
 
-## BR-006 — Decision outcomes are recordable
+## BR-006 — Decision outcomes are recordable (no auto re-forecast)
 
 | Поле | Значение |
 |------|----------|
 | **ID** | BR-006 |
-| **Описание** | Система поддерживает фиксацию одного из исходов: AcceptDateSlip или PrioritizeRecovery (с owner). |
-| **Источник** | SCN-007 decision; P-002 |
+| **Описание** | Система поддерживает фиксацию решения директора: **AcceptDateSlip** (принять прогнозную дату) или **PrioritizeRecovery** (инициировать recovery с опциональными owner/due). Demo v1 **фиксирует решение**, но **не** моделирует исполнение recovery actions и **не** пересчитывает автоматически forecast при PrioritizeRecovery. |
+| **Источник** | SCN-007; P-002; scope C-05 |
 | **Certainty** | hypothesis |
-| **Условия** | Director decision step in narrative |
-| **Ожидаемый результат** | Decision record exists with type and optional owner/due for recovery |
-| **Пример** | Decision = PrioritizeRecovery; owner = SH-006; due = 2026-05-15 |
+| **Условия** | После Snapshot B; decision step SCN-007 |
+| **Ожидаемый результат** | Decision record с type; для PrioritizeRecovery — опционально ownerRole/dueDate; Project/Milestone forecast **остаются как в Snapshot B**, пока не задан отдельный будущий scope re-forecast |
+| **Проверяемый пример** | DEC-001 PrioritizeRecovery; owner SH-006; due 2027-03-20; PRJ forecast остаётся 2027-10-06 |
+
+### Ожидаемые состояния после Decision (Demo v1)
+
+| Поле | PrioritizeRecovery (Snapshot C primary) | AcceptDateSlip |
+|------|------------------------------------------|----------------|
+| Decision | type=PrioritizeRecovery; owner/due опционально | type=AcceptDateSlip; due не обязателен |
+| Issue.status | **Mitigating** (определено) | **open_question** (BA-OQ-004): не авто-Closed; AcceptedSlip не обязателен |
+| Risk.rag | **Red** (BR-002: Mitigating) | **open_question** (BA-OQ-005), если Issue уже не Open/Mitigating |
+| Milestone.rag | **Red** (BR-003, пока Risk Red) | **open_question** (BA-OQ-005), следует из Risk |
+| Project/MS forecast | **Без изменения** vs Snapshot B | **Без изменения** vs Snapshot B (принят текущий forecast) |
+| Recovery execution | **Не моделируется** | n/a |
+
+> **certainty:** open_question
+>
+> **BA-OQ-004 / BA-OQ-005:** полное post-state Issue/Risk/MS после AcceptDateSlip не утверждено PO. Primary mock Snapshot C = PrioritizeRecovery. AcceptDateSlip остаётся **записываемым** типом Decision (BR-006) без выдуманной полной state-машины.
 
 ---
 
-## BR-007 — Consistent causal chain (integrity)
+## BR-007 — Causal and temporal integrity (invariant)
 
 | Поле | Значение |
 |------|----------|
 | **ID** | BR-007 |
-| **Описание** | В одном согласованном состоянии Demo v1 не допускается Green milestone RAG при Red risk от critical equipment delay (противоречие BR-002/003). |
-| **Источник** | Gate BA-Mock-Integrity; P-001 |
+| **Описание** | В каждом опубликованном snapshot: (1) нет Green MS-PS при Red Risk от critical delay; (2) цепочка equipment→issue→risk→milestone→project forecast согласована с BR-002…004; (3) после Decision (Snapshot C) forecast не меняется «сам» от PrioritizeRecovery; (4) даты хронологически согласованы с scenarioAsOfDate snapshot. |
+| **Источник** | Gate BA-Mock-Integrity |
 | **Certainty** | assumption |
-| **Условия** | Published mock narrative snapshot |
-| **Ожидаемый результат** | Integrity matrix без противоречий equipment→issue→risk→milestone→forecast |
-| **Пример** | См. demo-v1-mock-narrative-data (PD2) |
+| **Условия** | Любой Snapshot A/B/C |
+| **Ожидаемый результат** | Integrity matrix Pass на уровне спецификации |
+| **Проверяемый пример** | См. [demo-v1-mock-narrative-data](../03-product/demo-v1-mock-narrative-data.md) |
+
+**Классификация:** integrity invariant (не отдельная user-facing capability).
 
 ---
 
 ## Не-правила (явно out)
 
-- Нет BR на budget variance, contractor scorecards, TOP/inspection-ready, multi-area readiness conflict.
+- Нет BR на budget, contractor scorecards, TOP/inspection-ready, multi-area readiness, Amber-шкалу Must.
 - Нет BR «GMP change control».
+- Нет BR автоматического пересчёта прогноза после PrioritizeRecovery.

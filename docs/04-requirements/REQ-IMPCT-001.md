@@ -3,7 +3,7 @@ id: REQ-IMPCT-001
 title: "REQ-IMPCT-001: Director impact aggregate"
 type: requirement
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -16,7 +16,7 @@ related:
 
 ## Формулировка
 
-Система shall предоставлять агрегированные данные для директора: forecast vs baseline production start, milestone rag, идентификатор contributing equipment driver, ссылки на top risk/issue — в согласованном состоянии narrative.
+Система shall предоставлять агрегированные данные для директора: forecast vs baseline production start, milestone rag, contributing equipment id, ссылки на top risk и issue — **согласованные** с исходными объектами Equipment, Issue, Risk, Milestone и Project.
 
 ## Обоснование
 
@@ -26,12 +26,13 @@ related:
 
 ## Acceptance criteria
 
-- [ ] Snapshot B aggregate содержит EQ-HVAC-01, MS-PS rag Red, forecast 2026-09-22, RISK-001/ISS-001.
-- [ ] Нет состояния, где milestone Green при Red risk от того же delay (BR-007).
-- [ ] AC не предписывает layout UI (поведение данных).
+- [ ] Snapshot B/C aggregate содержит: driver EQ-HVAC-01, MS-PS rag Red, forecastProductionStart 2027-10-06, refs RISK-001 и ISS-001.
+- [ ] Значения aggregate **совпадают** с полями исходных объектов (не только «наличие id»): те же rag/даты, что у MS-PS, PRJ-01, EQ-HVAC-01.
+- [ ] Нет состояния Green MS-PS при Red RISK-001 от того же delay (BR-007).
+- [ ] AC не предписывает UI layout.
 
 ## Трассировка
 
 - Capability: C-05
 - BR: BR-005, BR-007
-- Walkthrough: steps 4–5
+- Walkthrough: steps 6, 8

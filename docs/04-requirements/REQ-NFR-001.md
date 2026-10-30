@@ -3,7 +3,7 @@ id: REQ-NFR-001
 title: "REQ-NFR-001: FE consumes data only via HTTP API"
 type: nfr
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -26,6 +26,10 @@ Frontend Demo v1 shall получать бизнес-данные narrative ис
 | Метрика | Порог | Метод |
 |---------|-------|-------|
 | FE data access path | Only API client | Architecture review / future architecture tests |
+
+## Вне scope этого NFR
+
+Не требует: PostgreSQL, authentication, multi-tenancy, production-grade security.
 
 ## Certainty
 

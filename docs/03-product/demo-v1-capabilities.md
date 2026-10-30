@@ -3,7 +3,7 @@ id: DOC-PROD-010
 title: "Demo v1 capabilities"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -49,7 +49,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **Intent** | Статус critical / long-lead equipment и прогноз поставки |
 | **SCN** | SCN-001 → SCN-007 |
 | **PROC** | PROC-007, PROC-001 |
-| **BR** | BR-001, BR-004 |
+| **BR** | BR-004 (Δ delivery → dates) |
 | **Entities** | Equipment, Activity |
 
 ## C-04 — Risk & issue register linked to milestone
@@ -59,7 +59,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **Intent** | Issue и Risk, связанные с equipment delay и вехой |
 | **SCN** | SCN-001, SCN-007 |
 | **PROC** | PROC-005, PROC-004 |
-| **BR** | BR-001, BR-002 |
+| **BR** | **BR-001** (Issue registration), NC-001 (fixture ISS-001), BR-002 |
 | **Entities** | Risk, Issue |
 
 ## C-05 — Impact view: delay → production start
@@ -69,7 +69,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **Intent** | Согласованный director-facing impact: driver, RAG, forecast, decision support |
 | **SCN** | SCN-007 (и исход SCN-001) |
 | **PROC** | PROC-011 |
-| **BR** | BR-004, BR-005, BR-006, BR-007 |
+| **BR** | BR-004, BR-005, BR-006 (no auto-reforecast), BR-007 |
 | **Entities** | Project forecast, Decision, aggregates |
 
 ## Out of mandatory Demo v1

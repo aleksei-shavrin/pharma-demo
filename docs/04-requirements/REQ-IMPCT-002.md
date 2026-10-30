@@ -3,7 +3,7 @@ id: REQ-IMPCT-002
 title: "REQ-IMPCT-002: Record director decision outcome"
 type: requirement
 status: draft
-version: "0.1.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -16,7 +16,7 @@ related:
 
 ## Формулировка
 
-Система shall позволять зафиксировать исход управленческого решения по угрозе дате запуска: AcceptDateSlip или PrioritizeRecovery (с опциональным owner/due).
+Система shall позволять зафиксировать управленческое решение: AcceptDateSlip или PrioritizeRecovery (с опциональными ownerRole/dueDate). Demo v1 фиксирует выбор относительно текущего Project/Milestone; **не** моделирует исполнение recovery и **не** требует авто-пересчёта forecast.
 
 ## Обоснование
 
@@ -26,12 +26,13 @@ related:
 
 ## Acceptance criteria
 
-- [ ] Snapshot C: Decision DEC-001 существует с type ∈ {AcceptDateSlip, PrioritizeRecovery}.
-- [ ] При PrioritizeRecovery могут быть заданы ownerRole и dueDate.
-- [ ] Решение связано с Project/Milestone narrative, не требует GMP change workflow.
+- [ ] Можно записать Decision с type ∈ {AcceptDateSlip, PrioritizeRecovery}.
+- [ ] **PrioritizeRecovery (primary Snapshot C):** DEC-001 с type PrioritizeRecovery; опционально ownerRole/dueDate (due после scenarioAsOfDate C); forecast PRJ/MS = Snapshot B (2027-10-06); Issue → Mitigating (REQ-RISK-001).
+- [ ] **AcceptDateSlip:** DEC-001 с type AcceptDateSlip; forecast PRJ/MS без изменения vs B; post-state Issue/Risk/MS RAG — **не** требуется этим REQ (**BA-OQ-004/005**).
+- [ ] Решение не требует GMP change workflow.
 
 ## Трассировка
 
 - Capability: C-05
 - BR: BR-006
-- Walkthrough: step 5
+- Walkthrough: steps 7–8

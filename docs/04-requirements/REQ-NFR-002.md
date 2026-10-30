@@ -28,6 +28,10 @@ Backend Demo v1 shall хранить narrative-данные через persisten
 |---------|-------|-------|
 | Domain/API independence from storage | Mock adapter behind port | Design review vs persistence-transition |
 
+## Вне scope этого NFR
+
+Не требует: PostgreSQL в Demo v1, authentication, multi-tenancy, production-grade security.
+
 ## Certainty
 
 > **certainty:** fact

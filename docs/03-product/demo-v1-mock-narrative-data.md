@@ -3,7 +3,7 @@ id: DOC-PROD-012
 title: "Demo v1 mock narrative data"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -18,50 +18,90 @@ related:
 
 Согласованный dataset для SCN-001→SCN-007. Certainty: **assumption** (демо-данные, не данные заказчика).
 
-## Snapshot A — Baseline (до задержки)
+## Временная рамка
 
-| Object | Key fields |
-|--------|------------|
-| Project PRJ-01 | name «Facility Expansion Alpha»; baselineProductionStart 2026-09-01; forecastProductionStart 2026-09-01 |
-| Milestone MS-PS | «Ready for production»; baseline 2026-09-01; forecast 2026-09-01; rag Green |
-| Equipment EQ-HVAC-01 | critical true; baselineDelivery 2026-06-01; forecastDelivery 2026-06-01; status OnTrack |
-| Activity ACT-EQ-01 | linked EQ-HVAC-01; forecastFinish 2026-06-15 |
-| Risk RISK-001 | rag Green; milestone MS-PS; equipment EQ-HVAC-01 |
-| Issue | none open for EQ-HVAC-01 |
-| Decision | none |
-
-## Snapshot B — After delay (SCN-001 recorded)
-
-| Object | Key fields |
-|--------|------------|
-| EQ-HVAC-01 | forecastDelivery 2026-06-22 (+21d); status Delayed |
-| ACT-EQ-01 | forecastFinish 2026-07-06 |
-| Issue ISS-001 | «HVAC long-lead delivery slip»; status Open; owner SH-002; links EQ-HVAC-01, MS-PS |
-| RISK-001 | rag Red; links ISS-001, MS-PS, EQ-HVAC-01 |
-| MS-PS | forecast 2026-09-22; rag Red |
-| PRJ-01 | forecastProductionStart 2026-09-22 |
-| Decision | pending |
-
-## Snapshot C — Director decision (SCN-007)
-
-| Object | Key fields |
-|--------|------------|
-| Same as B for EQ/ISSUE/RISK/MS/PRJ | causal chain unchanged until decision |
-| Decision DEC-001 | type PrioritizeRecovery; ownerRole SH-006; dueDate 2026-05-15; note «Expedite vendor / alternate lane» |
-
-Alternative C': DEC-001 type AcceptDateSlip (rebaseline communicated).
-
-## Causal integrity matrix (BA-Mock-Integrity)
-
-| Check | Snapshot B expected | Pass? |
-|-------|---------------------|-------|
-| Equipment delayed ⇒ Issue exists (BR-001) | ISS-001 Open | yes |
-| Open Issue ⇒ Risk not Green (BR-002) | RISK-001 Red | yes |
-| Red Risk ⇒ Milestone not Green (BR-003) | MS-PS Red | yes |
-| EQ slip days = MS/Project forecast slip (BR-004) | +21d | yes |
-| Director aggregate has driver + RAG + forecast (BR-005) | EQ-HVAC-01, Red, 2026-09-22 | yes |
-| No contradictory Green MS with Red risk (BR-007) | consistent | yes |
+| Параметр | Значение |
+|----------|----------|
+| Дата подготовки пакета (документация) | 2026-10-30 |
+| Календарь narrative | **2027** (будущее относительно подготовки) |
+| Задержка critical equipment | **+21 календарный день** (Δ) |
 
 > **certainty:** assumption
 >
-> Pass выше — логическая проверка спецификации данных; runtime mock появится в apps позже.
+> История не описывает «уже прошедшие» относительно подготовки события сентября 2026; `scenarioAsOfDate` задаёт «сейчас» внутри демо-мира для каждого snapshot.
+
+## Narrative condition (не BR)
+
+| ID | Условие |
+|----|---------|
+| **NC-001** | В Snapshot B (и C) существует Issue **ISS-001**, status Open (B) / Mitigating (C при PrioritizeRecovery), linked to EQ-HVAC-01 и MS-PS. Это fixture narrative, опирающийся на capability **BR-001**, но не тождественный ему. |
+
+## Snapshot A — Baseline (до задержки)
+
+**scenarioAsOfDate:** 2027-02-15
+
+| Object | Key fields | Rule source |
+|--------|------------|-------------|
+| Project PRJ-01 | name «Facility Expansion Alpha»; baselineProductionStart **2027-09-15**; forecastProductionStart **2027-09-15** | stored |
+| Milestone MS-PS | «Ready for production»; baseline/forecast **2027-09-15**; rag **Green** (baseline fixture; **не** вывод BR-003) | stored baseline |
+| Equipment EQ-HVAC-01 | critical true; baselineDelivery **2027-05-15**; forecastDelivery **2027-05-15**; status OnTrack | stored |
+| Activity ACT-EQ-01 | linked EQ-HVAC-01; forecastFinish **2027-05-29** | stored |
+| Risk RISK-001 | rag **Green** (baseline fixture; **не** вывод BR-002); milestone MS-PS; equipment EQ-HVAC-01; no open delay issue | stored baseline |
+| Issue | none open for EQ-HVAC-01 | — |
+| Decision | none | — |
+
+## Snapshot B — After delay (SCN-001 recorded)
+
+**scenarioAsOfDate:** 2027-03-01
+
+| Object | Key fields | Rule source |
+|--------|------------|-------------|
+| EQ-HVAC-01 | forecastDelivery **2027-06-05** (Δ=+21); status Delayed | stored |
+| ACT-EQ-01 | forecastFinish **2027-06-19** (+21 vs A) | stored |
+| Issue ISS-001 | «HVAC long-lead delivery slip»; status **Open**; owner SH-002; links EQ-HVAC-01, MS-PS | **NC-001** + BR-001 capability |
+| RISK-001 | rag **Red** (fixture); links ISS-001, MS-PS, EQ-HVAC-01 | fixture; integrity vs **expected** BR-002 |
+| MS-PS | forecast **2027-10-06**; rag **Red** (fixture) | fixture; integrity vs BR-003 + BR-004 |
+| PRJ-01 | forecastProductionStart **2027-10-06** | **must satisfy BR-004** |
+| Decision | pending | — |
+
+Проверка BR-004: baseline PS 2027-09-15 + 21d = 2027-10-06; EQ 2027-05-15 + 21d = 2027-06-05.
+
+## Snapshot C — Director decision (SCN-007)
+
+**scenarioAsOfDate:** 2027-03-02
+
+| Object | Key fields | Rule source |
+|--------|------------|-------------|
+| EQ / ISSUE / RISK / MS / PRJ | **как в Snapshot B** (включая forecast 2027-10-06) | BR-006: no auto re-forecast |
+| Issue ISS-001 | status **Mitigating** (recovery initiated) | consistent with PrioritizeRecovery |
+| Decision DEC-001 | type **PrioritizeRecovery**; ownerRole SH-006; dueDate **2027-03-20**; note «Expedite vendor / alternate lane» | BR-006 |
+
+**Alternative C' (AcceptDateSlip) — только подтверждённое:**
+
+| Object | Confirmed | Open |
+|--------|-----------|------|
+| Decision DEC-001 | type **AcceptDateSlip**; forecast PRJ/MS **без изменения** (2027-10-06) | — |
+| Issue.status | — | **BA-OQ-004** (не авто-Closed; AcceptedSlip не обязателен) |
+| Risk.rag / MS.rag | — | **BA-OQ-005** (если Issue не Open/Mitigating, BR-002/003 не задают Red) |
+
+Отдельный полный mock snapshot для AcceptDateSlip **не** добавляется (не Must).
+
+## Causal / temporal integrity matrix (BA-Mock-Integrity)
+
+| Check | Snapshot | Expected | Spec Pass |
+|-------|----------|----------|-----------|
+| scenarioAsOfDate ≥ prep date context; narrative in 2027 | A/B/C | future vs 2026-10-30 | yes |
+| Chronology A asOf < B asOf ≤ C asOf | — | 2027-02-15 < 2027-03-01 < 2027-03-02 | yes |
+| DEC due after C asOf (PrioritizeRecovery) | C | 2027-03-20 > 2027-03-02 | yes |
+| NC-001 ISS-001 present | B, C | linked EQ+MS-PS | yes |
+| BR-002 Risk Red when Issue Open/Mitigating | B, C | RISK-001 Red | yes |
+| BR-003 MS-PS Red | B, C | Red | yes |
+| BR-004 Δ=+21 on EQ, MS, Project | B, C | 2027-10-06 | yes |
+| BR-005 aggregate consistency | B, C | same ids/dates/rag | yes |
+| BR-006 no forecast change solely from PrioritizeRecovery | C vs B | forecast unchanged | yes |
+| BR-007 no Green MS with Red risk | B, C | consistent | yes |
+| Equipment → issue → risk → milestone → project | B, C | one causal chain | yes |
+
+> **certainty:** assumption
+>
+> Pass — логическая проверка **спецификации** mock data; runtime — later apps.
