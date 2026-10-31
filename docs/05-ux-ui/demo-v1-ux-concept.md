@@ -3,7 +3,7 @@ id: DOC-UX-001
 title: "Demo v1 UX concept"
 type: product
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -111,7 +111,7 @@ Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 | [data-viz-and-components](./demo-v1-data-viz-and-components.md) | Tables/charts stack |
 | [mock-ux-requirements](./demo-v1-mock-ux-requirements.md) | Volume hypothesis + integrity |
 | [ux-traceability](./demo-v1-ux-traceability.md) | Trace matrix |
-| [visual-direction](./demo-v1-visual-direction.md) | VD-A primary (`proposal`) |
-| [design-tokens](./demo-v1-design-tokens.md) | Token roles (`proposal`) |
-| [screen-compositions](./demo-v1-screen-compositions.md) | Screen visual layouts (`proposal`) |
+| [visual-direction](./demo-v1-visual-direction.md) | VD-A `approved Visual Direction baseline` |
+| [design-tokens](./demo-v1-design-tokens.md) | Token roles/principles under VD-A; HEX → UI Design |
+| [screen-compositions](./demo-v1-screen-compositions.md) | Screen layouts under VD-A baseline |
 | [visual-references](./demo-v1-visual-references.md) | Reference honesty log |

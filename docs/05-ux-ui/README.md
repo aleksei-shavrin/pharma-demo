@@ -3,7 +3,7 @@ id: DOC-UX-README-001
 title: "UX / UI"
 type: index
 status: draft
-version: "0.4.0"
+version: "0.4.1"
 created: 2026-10-30
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -17,14 +17,14 @@ related:
 
 UX + Visual Direction documentation для **Demo v1**. Frontmatter документов — `status: draft` (lifecycle docs ≠ decision status).
 
-**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. Visual Direction (VD-A primary) — `proposal` до отдельного human review. BA-OQ/HIP и mock volume остаются open / hypothesis.
+**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. **VD-A Industrial Control Lattice** — `approved Visual Direction baseline` для Demo v1. HEX/exact tokens и a11y measurements — UI Design. BA-OQ/HIP и mock volume остаются open / hypothesis.
 
 ## Правила
 
 - Не подменять продуктовые REQ / BR / living OpenSpec.
 - Не править DOC-PROD-012 в этом пакете; mock volume = `hypothesis`.
 - AI не ставит `status: approved` на UX/VD docs (frontmatter).
-- Различать: `approved UX decision` · `deferred decision` · `open_question` · `hypothesis` · `proposal` · `assumption`.
+- Различать: `approved UX decision` · `approved Visual Direction baseline` · `deferred decision` · `open_question` · `hypothesis` · `proposal` · `assumption`.
 - Макеты (Figma и т.п.) — по ссылке; в git — описания и решения.
 
 ## Demo v1 UX decisions
@@ -41,14 +41,14 @@ UX + Visual Direction documentation для **Demo v1**. Frontmatter докуме
 | [demo-v1-mock-ux-requirements.md](./demo-v1-mock-ux-requirements.md) | DOC-UX-008 | Volume hypothesis + integrity + status allowlist |
 | [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md) | DOC-UX-009 | UX Decision → Screen → sources → Status |
 
-## Demo v1 Visual Direction (`proposal`)
+## Demo v1 Visual Direction (`approved Visual Direction baseline` = VD-A)
 
 | Файл | ID | Назначение |
 |------|-----|------------|
-| [demo-v1-visual-direction.md](./demo-v1-visual-direction.md) | DOC-UX-010 | VD-A primary; VD-B/C compare; principles |
-| [demo-v1-design-tokens.md](./demo-v1-design-tokens.md) | DOC-UX-011 | Roles / Light-Dark / semantic status / type / depth |
-| [demo-v1-screen-compositions.md](./demo-v1-screen-compositions.md) | DOC-UX-012 | Shell + key screens visual composition |
-| [demo-v1-visual-references.md](./demo-v1-visual-references.md) | DOC-UX-013 | Reference honesty log (no external product audit this wave) |
+| [demo-v1-visual-direction.md](./demo-v1-visual-direction.md) | DOC-UX-010 | VD-A baseline; VD-B/C not selected; principles |
+| [demo-v1-design-tokens.md](./demo-v1-design-tokens.md) | DOC-UX-011 | Roles / principles under VD-A; HEX illustrative → UI Design |
+| [demo-v1-screen-compositions.md](./demo-v1-screen-compositions.md) | DOC-UX-012 | Shell + key screens composition under VD-A |
+| [demo-v1-visual-references.md](./demo-v1-visual-references.md) | DOC-UX-013 | Reference honesty log |
 
 ## Связанное
 

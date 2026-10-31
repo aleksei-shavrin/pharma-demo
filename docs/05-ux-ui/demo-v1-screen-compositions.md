@@ -3,7 +3,7 @@ id: DOC-UX-012
 title: "Demo v1 screen compositions (Visual Direction)"
 type: product
 status: draft
-version: "0.1.1"
+version: "0.2.0"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -19,7 +19,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Визуальная композиция ключевых экранов под **VD-A** (`proposal`). IA/blocks — из approved UX docs; здесь — иерархия, зоны, плотность, состояния. Не дублировать REQ поля. BA-OQ-006 / D12 не закрывать.
+> Визуальная композиция ключевых экранов под **VD-A** (`approved Visual Direction baseline`). IA/blocks — из approved UX docs; иерархия/зоны/плотность утверждены в рамках VD-A. Не дублировать REQ поля. BA-OQ-006 / D12 не закрывать. HEX/pixel polish — UI Design.
 
 ## 0. Shared shell
 
@@ -38,13 +38,13 @@ related:
 | Page Surface | Primary work area | Separated from canvas (§ tokens depth) |
 | Content | Hierarchy per screen | |
 
-**Responsive (`proposal`, desktop-first):** ≥1280px full shell; 1024–1279 collapse sidebar to icons/drawer; tables keep horizontal scroll rather than crushing columns; Snapshot stays reachable. Mobile — best-effort; не жертвовать table readability.
+**Responsive (VD-A baseline, desktop-first):** ≥1280px full shell; 1024–1279 collapse sidebar to icons/drawer; tables keep horizontal scroll rather than crushing columns; Snapshot stays reachable. Mobile — best-effort; не жертвовать table readability.
 
 ---
 
 ## 1. Dashboard (Director-first) — narrative
 
-Источник блоков: [demo-v1-dashboard.md](./demo-v1-dashboard.md). Visual priority (`proposal`):
+Источник блоков: [demo-v1-dashboard.md](./demo-v1-dashboard.md). Visual priority (VD-A baseline):
 
 ```text
 ┌ Page Surface ─────────────────────────────────────────────┐
@@ -113,7 +113,7 @@ Toolbar + TanStack: id, name, status, critical, baseline/forecast delivery, Δ. 
 >
 > **BA-OQ-006** — layout Issue vs Risk на реестре **open**. Visual Direction предлагает варианты **без** выбора/закрытия OQ.
 
-| Variant (`proposal` options) | Idea |
+| Variant (options; BA-OQ-006 still open) | Idea |
 |------------------------------|------|
 | V1 | Single table + Type column (Issue or Risk) |
 | V2 | Segmented control / tabs: Issue, Risk, All |
@@ -147,7 +147,7 @@ Tabs: Overview | Links | Impact
 
 ## 7. Record PrioritizeRecovery (M-DEC)
 
-Modal/dialog (`proposal` visual):
+Modal/dialog (VD-A baseline visual intent):
 
 - Title: record management Decision (not «start recovery»).
 - Fields: type PrioritizeRecovery; optional owner/due/note per REQ.
@@ -157,7 +157,7 @@ Modal/dialog (`proposal` visual):
 
 ---
 
-## 8. Cross-cutting states (`proposal`)
+## 8. Cross-cutting states (VD-A baseline)
 
 | State | Treatment |
 |-------|-----------|

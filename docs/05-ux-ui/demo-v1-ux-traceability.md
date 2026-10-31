@@ -3,7 +3,7 @@ id: DOC-UX-009
 title: "Demo v1 UX traceability"
 type: product
 status: draft
-version: "0.2.2"
+version: "0.2.3"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -23,6 +23,7 @@ related:
 | Value | Meaning |
 |-------|---------|
 | `approved UX decision` | Принятое UX-решение для Demo v1 (зафиксировано в этом pack) |
+| `approved Visual Direction baseline` | Утверждённое Visual Direction для Demo v1 (VD-A) |
 | `deferred decision` | Решение отложено (напр. D12 lib) |
 | `approved requirement` | Ссылка на действующий BR / REQ / living OpenSpec / BA freeze |
 | `proposal` | Ещё не принятое UX-предложение (остаточные элементы) |
@@ -63,10 +64,10 @@ related:
 | Status allowlist Open/Mitigating; OnTrack/Delayed; Green/Red | Registers / KPI | Domain; BR-002/003; mock | Same | `approved requirement` (values) |
 | Closed / Amber in ambient | — | BA-OQ / BR Amber out | — | `open_question` |
 | AcceptDateSlip Must UI | — | REQ-IMPCT-002; BA-OQ-004/005 | — | `open_question` (not Must journey) |
-| VD-A Industrial Control Lattice primary | Theme / all screens | DOC-UX-010 | — | `proposal` |
-| VD-B / VD-C alternatives | Comparison only | DOC-UX-010 | — | `proposal` (not primary) |
-| Design token roles + surface depth | Shell / components | DOC-UX-011 | Theme CSS vars (future) | `proposal` |
-| Multi-channel status encoding | Badges / tables | DOC-UX-011; allowlist | Allowlisted statuses only | `proposal` (encoding) + `approved requirement` (values) |
-| Dashboard narrative-first composition | P1 | DOC-UX-012; DOC-UX-004 | Same as D8 data | `proposal` (visual) on top of `approved UX decision` (blocks) |
-| Schedule table-primary visual mass | P2 | DOC-UX-012; DOC-UX-005 | MS + EQ rows | `proposal` (visual) + D10/D11 approved |
-| Issues & Risks register layout variants | P4 | DOC-UX-012 | ISS/RISK | `open_question` (BA-OQ-006); variants = `proposal` only |
+| VD-A Industrial Control Lattice | Theme / all screens | DOC-UX-010 | — | `approved Visual Direction baseline` |
+| VD-B / VD-C | Comparison only | DOC-UX-010 | — | considered; **not selected** |
+| Design token roles + surface depth (principles) | Shell / components | DOC-UX-011 | Theme CSS vars (UI Design) | `approved Visual Direction baseline` (principles); exact HEX → UI Design |
+| Multi-channel status encoding | Badges / tables | DOC-UX-011; allowlist | Allowlisted statuses only | `approved Visual Direction baseline` (encoding) + `approved requirement` (values) |
+| Dashboard narrative-first composition | P1 | DOC-UX-012; DOC-UX-004 | Same as D8 data | `approved Visual Direction baseline` on `approved UX decision` (blocks) |
+| Schedule table-primary visual mass | P2 | DOC-UX-012; DOC-UX-005 | MS + EQ rows | `approved Visual Direction baseline` + D10/D11 approved |
+| Issues & Risks register layout variants | P4 | DOC-UX-012 | ISS/RISK | `open_question` (BA-OQ-006); variants not closed |

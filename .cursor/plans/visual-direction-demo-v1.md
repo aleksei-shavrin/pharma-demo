@@ -1,6 +1,6 @@
 ---
 name: Visual Direction Demo v1
-overview: "COMPLETED docs-волна Visual Direction: primary VD-A; pack DOC-UX-010…013 + handoff; corrective pass (Snapshot A causal, Gantt-only, status-open, a11y principle); VD remains proposal до human baseline APPROVE; apps не автостарт."
+overview: "COMPLETED: Visual Direction docs + VD-A Industrial Control Lattice APPROVED as Demo v1 Visual Direction baseline; VD-B/C not selected; HEX/a11y → UI Design; D12/BA-OQ open; no apps auto-start."
 todos:
   - id: await-vd-approve
     content: "APPROVE плана + primary VD-A + отдельный handoff — confirmed"
@@ -24,24 +24,24 @@ isProject: false
 
 ## Статус этого плана
 
-**Docs-волна Visual Direction — COMPLETED** (2026-10-31).
+**Visual Direction — COMPLETED**; **VD-A APPROVED** as Demo v1 Visual Direction baseline (2026-10-31).
 
 | Решение | Статус |
 |---------|--------|
-| APPROVE плана на запись VD docs | done |
-| Primary **VD-A Industrial Control Lattice** | confirmed |
-| VD-B / VD-C | сравнение only |
+| Docs-волна (pack + handoff + gates + corrective) | done |
+| **VD-A Industrial Control Lattice** | **`approved Visual Direction baseline`** |
+| VD-B / VD-C | рассмотрены; **не** выбраны |
 | Отдельный handoff | `docs/07-delivery/handoffs/2026-10-31-visual-direction.md` |
-| Pack DOC-UX-010…013 + indexes | written |
-| Corrective pass (Snapshot A causal; Gantt secondary read-only; `status-open`; a11y principle ≠ verified WCAG) | done |
-| Quality gates `test:docs` + `openspec validate --specs --strict` | PASS |
-| Apps / install / Gantt spike / ADR / Domain / BR / REQ / OpenSpec / DOC-PROD-012 | **не** менялись (constraint upheld) |
+| Principles + compositions under VD-A | approved within baseline |
+| Exact HEX / final token values / measured a11y | **UI Design** (not done in this wave) |
+| D12 / BA-OQ / HIP / mock volume | open / deferred / hypothesis as before |
+| Apps / install / Gantt spike / ADR / Domain / BR / REQ / OpenSpec / DOC-PROD-012 | **не** менялись (`vd-no-impl`) |
 
-**VD-A** (и весь Visual Direction pack) остаётся **`proposal`**: требуется отдельный человеческий **APPROVE** Visual Direction as design baseline **до** старта UI Design. D1–D11 = `approved UX decision`. D12 = `deferred decision`. BA-OQ-006 и прочие OQ **не** закрыты.
+Отдельный APPROVE VD-A **больше не требуется**. D1–D11 = `approved UX decision` (не пересматривались).
 
-**Standing constraint (`vd-no-impl`):** создание приложений, установка npm-пакетов, Gantt spike, ADR и переход к реализации **не входят** в выполненную docs-волну и **не** стартуют из её закрытия.
+**Standing constraint (`vd-no-impl`):** apps, npm install, Gantt spike, ADR и реализация **не** входят в выполненную волну.
 
-**Следующее (вне этой волны):** human review DOC-UX-010…013 → human APPROVE VD baseline → только затем UI Design / apps (отдельное разрешение).
+**Следующее (вне этой задачи):** **UI Design / Design Specification** — только по явному разрешению; затем отдельно apps.
 
 Workspace: [`.cursor/plans/visual-direction-demo-v1.md`](.cursor/plans/visual-direction-demo-v1.md).
 
@@ -59,17 +59,17 @@ Workspace: [`.cursor/plans/visual-direction-demo-v1.md`](.cursor/plans/visual-di
 
 ---
 
-## 2. Три существенно разных направления (`proposal`)
+## 2. Направления — выбор зафиксирован
 
-Референсы — только для приёмов; **не** копировать бренд/layout чужого продукта. Правила учёта референсов — §2.6 и `demo-v1-visual-references.md`.
+Референсы — только для приёмов; **не** копировать бренд. См. `demo-v1-visual-references.md`.
 
-| ID | Название | Характер | Отличие от «типового admin» |
-|----|----------|----------|------------------------------|
-| **VD-A** | Industrial Control Lattice | Современный enterprise project controls: плотность + иерархия + выразительная композиция; slate/steel нейтрали; Page Surface с умеренной глубиной; tabular figures для дат/Δ; RAG без neon/glow | Не Excel-сетка, не SCADA, не mono-таблицы, не карточечный admin dashboard |
-| **VD-B** | Precision Workbench | Светлые поверхности + сдержанный синий accent (не purple); shadcn-совместимый token map; умеренные elevation; спокойный enterprise SaaS | Ближе к зрелому B2B tool; зазор от purple-gradient admin template |
-| **VD-C** | Narrative Ops Desk | Более выраженная типографическая иерархия на Dashboard; shell спокойный; Page Surface «editorial plate»; таблицы dense | Dashboard как briefing, реестры как ops tools; избегать broadsheet/cream-terracotta клише |
+| ID | Название | Итог для Demo v1 |
+|----|----------|------------------|
+| **VD-A** | Industrial Control Lattice | **`approved Visual Direction baseline`** |
+| **VD-B** | Precision Workbench | Рассмотрена; **не** выбрана |
+| **VD-C** | Narrative Ops Desk | Рассмотрена; **не** выбрана |
 
-**Primary (confirmed для docs-волны):** **VD-A Industrial Control Lattice**. Tokens и screen compositions записаны под VD-A. VD-B / VD-C — краткое сравнение в visual-direction (+ references stub). VD-A по-прежнему `proposal` до human APPROVE baseline.
+Tokens и compositions — под VD-A. Принципы VD-A утверждены; illustrative HEX — UI Design.
 
 Избегать в recommendations: purple-on-white / purple-indigo gradients; warm cream + terracotta + serif cliché; dense broadsheet newspaper look; glow, emoji, multi-layer shadow stacks.
 
@@ -77,7 +77,7 @@ Workspace: [`.cursor/plans/visual-direction-demo-v1.md`](.cursor/plans/visual-di
 
 Целевой характер — **современный enterprise project controls product**, не «холодный Excel», не SCADA-панель, не монотонные таблицы/прямоугольники, не типовой admin с одинаковыми KPI-карточками.
 
-Сочетать (`proposal`):
+Сочетать (утверждено в VD-A):
 
 - высокую информационную плотность;
 - строгую типографическую иерархию;
@@ -90,7 +90,7 @@ Workspace: [`.cursor/plans/visual-direction-demo-v1.md`](.cursor/plans/visual-di
 
 Не сводить систему только к hairline borders и абсолютно плоским поверхностям.
 
-Осмысленное разделение уровней (`proposal`): application background → Page Surface → рабочие панели → KPI/metric tiles → таблицы → вложенные info areas.
+Осмысленное разделение уровней (VD-A): application background → Page Surface → рабочие панели → KPI/metric tiles → таблицы → вложенные info areas.
 
 Умеренная elevation; **ограниченное** число уровней глубины (ориентир elevation 0–2 в tokens).
 
@@ -107,11 +107,11 @@ Workspace: [`.cursor/plans/visual-direction-demo-v1.md`](.cursor/plans/visual-di
 - semantic status roles (только allowlisted статусы);
 - правила контраста и читаемости.
 
-**Не** фиксировать окончательную палитру преждевременно одним списком HEX. Конкретные значения — обоснованный `proposal` до human review. Status allowlist **не** расширять.
+Окончательные HEX — **UI Design**. Status allowlist **не** расширять.
 
 ### 2.4. Статусы (визуальная передача)
 
-Статус **не** передаётся только цветом. Сочетать (`proposal`): текстовая метка + цвет + форма/маркер + положение в иерархии.
+Статус **не** передаётся только цветом. Сочетать (VD-A): текстовая метка + цвет + форма/маркер + положение в иерархии.
 
 Не вводить новые бизнес-статусы; не менять интерпретацию существующих (Domain / BR / mock allowlist).
 
@@ -146,12 +146,10 @@ Dashboard в первую очередь рассказывает **управл
 
 Shell (Sidebar + App Bar + breadcrumbs + Page Surface); D1–D11; Light/Dark toggle; Snapshot A/B/C; shadcn / TanStack / Recharts; KPI ≥4 or omit; Links vs Impact; Schedule = MS + EQ delivery only; BR-006 honesty; один shell Director+PM.
 
-### Записано как `proposal` (docs-волна)
+### Утверждено как Visual Direction baseline
 
-- Primary visual direction **VD-A** (для pack; baseline APPROVE — отдельно).
-- Базовая token system: роли/принципы first; illustrative HEX; semantic status только allowlisted; multi-channel status; surface depth.
-- Screen compositions (8 поверхностей); Dashboard narrative-first; Schedule Table/Split/Gantt secondary read-only.
-- Desktop-first responsive rules.
+- **VD-A** — единственное выбранное направление.
+- Роли/принципы токенов, multi-channel status, surface depth, screen compositions, desktop-first responsive — в рамках VD-A.
 
 ### Требуют отдельной оценки / остаются open
 
@@ -162,9 +160,8 @@ Shell (Sidebar + App Bar + breadcrumbs + Page Surface); D1–D11; Light/Dark tog
 | Closed / Amber ambient | `open_question` |
 | Mock volume | `hypothesis` |
 | Filter persistence / Phase grouping | `assumption` / `open_question` |
-| Figma / component library / apps implementation | **out of scope этой волны** (`vd-no-impl`) |
-| Human APPROVE Visual Direction как design baseline | **обязателен до UI Design**; AI не ставит frontmatter `approved` |
-| Финальная HEX-палитра | `proposal` до human review |
+| Figma / apps / implementation | **out of scope** (`vd-no-impl`); UI Design — следующий этап по явному старту |
+| Финальная HEX-палитра / measured a11y | UI Design / implementation |
 
 ---
 
@@ -179,7 +176,7 @@ Shell (Sidebar + App Bar + breadcrumbs + Page Surface); D1–D11; Light/Dark tog
 
 **Также обновлены:** [`docs/05-ux-ui/README.md`](docs/05-ux-ui/README.md); [`demo-v1-ux-concept.md`](docs/05-ux-ui/demo-v1-ux-concept.md); [`demo-v1-ux-traceability.md`](docs/05-ux-ui/demo-v1-ux-traceability.md); handoff [`2026-10-31-visual-direction.md`](docs/07-delivery/handoffs/2026-10-31-visual-direction.md) + индекс handoffs.
 
-Frontmatter docs: `status: draft`; VD Decision Status в тексте: `proposal`. React/CSS/Figma binary в волне **не** создавались.
+Frontmatter docs: `status: draft` (lifecycle). VD-A в тексте: `approved Visual Direction baseline`. React/CSS/Figma binary **не** создавались.
 
 ---
 
@@ -193,7 +190,7 @@ Frontmatter docs: `status: draft`; VD Decision Status в тексте: `proposal
 6. ~~README + concept + traceability + handoff~~ done  
 7. ~~Gates~~ PASS  
 8. ~~Corrective pass~~ done (Snapshot A / Gantt-only / `status-open` / a11y wording)  
-9. **Docs-wave closed** — UI Design / apps **не** входят в волну и не стартуют без human APPROVE VD baseline + отдельного разрешения на реализацию.
+9. **Visual Direction closed** — VD-A baseline approved; UI Design / apps **не** стартуют без явного разрешения на следующий этап.
 
 ```mermaid
 flowchart LR
@@ -215,12 +212,12 @@ flowchart LR
 
 ---
 
-## 7. Решения (confirmed) — docs-волна закрыта
+## 7. Решения (confirmed) — Visual Direction закрыт
 
-1. APPROVE плана на **запись** Visual Direction docs — **да**; docs-волна — **выполнена и CLOSED**.  
-2. Primary для pack — **VD-A**; VD-B/C — сравнение.  
-3. Отдельный handoff — **да**.  
-4. **VD-A / Visual Direction pack = `proposal`** до отдельного человеческого **APPROVE** design baseline; **без этого APPROVE UI Design не начинать**.  
-5. **No-implementation (постоянное ограничение волны):** apps, npm install, Gantt spike, ADR, изменение Domain/BR/REQ/OpenSpec/mock — **не** часть выполненной волны.  
+1. Docs-волна Visual Direction — **выполнена и CLOSED**.
+2. **VD-A** = **`approved Visual Direction baseline`** для Demo v1; VD-B/C не выбраны. Отдельный APPROVE VD-A **не** требуется.
+3. Отдельный handoff — **да**.
+4. Следующий допустимый этап — **UI Design / Design Specification** (явный старт); не начинать в рамках закрытой VD-волны.
+5. **No-implementation (`vd-no-impl`):** apps, npm install, Gantt spike, ADR, Domain/BR/REQ/OpenSpec/mock — **не** часть этой волны.
 
-Остаётся вне закрытой docs-волны: финальные HEX; Figma; D12; BA-OQ-006; UI Design / apps (только после human APPROVE VD baseline + отдельного старта реализации).
+Остаётся: финальные HEX; measured a11y; D12; BA-OQ/HIP; mock volume hypothesis; apps после отдельного старта.

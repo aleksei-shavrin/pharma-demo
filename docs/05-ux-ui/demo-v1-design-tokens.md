@@ -3,7 +3,7 @@ id: DOC-UX-011
 title: "Demo v1 design tokens (Visual Direction)"
 type: product
 status: draft
-version: "0.1.1"
+version: "0.2.0"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -17,9 +17,9 @@ related:
 
 > **certainty:** hypothesis
 >
-> Базовая token system под **VD-A** (`proposal`). Роли и принципы важнее HEX. Примерные значения — иллюстрация, не финальная палитра. Не расширяет status allowlist. Не install / не CSS в apps.
+> Token system под **VD-A** (`approved Visual Direction baseline`). **Роли и принципы** утверждены в рамках VD-A. **Конкретные HEX и окончательные значения токенов** — предмет UI Design (illustrative examples ниже не финальны). Не расширяет status allowlist. Не install / не CSS в apps.
 
-## 1. Color roles (`proposal`)
+## 1. Color roles (VD-A baseline principles)
 
 | Role | Purpose |
 |------|---------|
@@ -35,7 +35,7 @@ related:
 | `chart-*` | Recharts series aligned to neutrals + status where meaningful |
 | `focus-ring` | Keyboard focus |
 
-## 2. Light / Dark principles (`proposal`)
+## 2. Light / Dark principles (VD-A baseline)
 
 - Один набор **ролей**; меняются значения, не структура UI.
 - Dark: сохранять контраст текста и status markers; не полагаться на glow.
@@ -44,9 +44,9 @@ related:
 
 Нейтральная основа VD-A: **cool slate / steel** (серо-синие нейтрали), не cream paper и не purple brand wash.
 
-Accent: сдержанный **teal-steel или cool blue-gray** (не indigo-purple gradient). Конкретный hue — `proposal` до review.
+Accent: сдержанный **teal-steel или cool blue-gray** (не indigo-purple gradient). Конкретный hue / HEX — UI Design.
 
-## 3. Surface depth (`proposal`)
+## 3. Surface depth (VD-A baseline)
 
 | Level | Token intent | Use |
 |-------|--------------|-----|
@@ -57,7 +57,7 @@ Accent: сдержанный **teal-steel или cool blue-gray** (не indigo-p
 
 Elevation: **0–2** only; soft single shadow or tonal separation — не multi-layer stacks. Borders: prefer one clear edge per region; не обводить каждый cell-like card.
 
-## 4. Semantic status (`proposal` encoding; values = approved allowlist)
+## 4. Semantic status (VD-A encoding; values = approved allowlist)
 
 Допустимые значения: Equipment OnTrack / Delayed; Issue Open / Mitigating; Risk/MS rag Green / Red. **Не** вводить Amber / Closed в Must palette без отдельного решения.
 
@@ -76,7 +76,7 @@ Elevation: **0–2** only; soft single shadow or tonal separation — не multi
 
 Статус **никогда** не только цветом: всегда видимая текстовая метка (+ marker).
 
-## 5. Typography (`proposal`)
+## 5. Typography (VD-A baseline principles)
 
 | Step | Use | Notes |
 |------|-----|-------|
@@ -89,13 +89,13 @@ Elevation: **0–2** only; soft single shadow or tonal separation — не multi
 
 Scale compact (enterprise density): roughly 12 / 13 / 14 / 16 / 20 / 24 px equivalents — exact rem mapping at impl.
 
-## 6. Spacing, radius, motion (`proposal`)
+## 6. Spacing, radius, motion (VD-A baseline principles)
 
 - Spacing base **4**: 4 / 8 / 12 / 16 / 24 / 32.
 - Radii: shell chrome small (4–6); Page Surface medium (8–12); badges pill-avoid — prefer soft rectangle (4–6).
 - Motion: short (150–200ms) for theme/snapshot; no gratuitous parallax.
 
-## 7. Borders, focus, selection (`proposal`)
+## 7. Borders, focus, selection (VD-A baseline principles)
 
 - Hover: tonal wash (`accent-muted`), not heavy border flash.
 - Selected row: left accent rail + wash.
@@ -117,11 +117,11 @@ Scale compact (enterprise density): roughly 12 / 13 / 14 / 16 / 20 / 24 px equiv
 
 Не заявлять WCAG compliance без таких проверок.
 
-## 9. Illustrative values (`proposal` only — not final)
+## 9. Illustrative values (UI Design input — not final)
 
 > **certainty:** hypothesis
 >
-> Примеры для обсуждения Light theme; Dark — инверсия ролей с проверкой контраста. Human review может заменить HEX целиком.
+> Примеры Light theme для UI Design. **Не** утверждённая палитра. Окончательные HEX и измеренная контрастность — в UI Design / implementation.
 
 | Role | Example Light (illustrative) |
 |------|------------------------------|
@@ -135,7 +135,7 @@ Scale compact (enterprise density): roughly 12 / 13 / 14 / 16 / 20 / 24 px equiv
 | status-open / Open | `#5C6B7A` (neutral-steel outline fill; **not** Amber) |
 | status-info / Mitigating | `#3A5F8A` |
 
-## 10. shadcn mapping intent (`proposal`)
+## 10. shadcn mapping intent (VD-A → UI Design)
 
 Map roles → CSS variables (`--background`, `--card`, `--primary`, `--destructive`, `--muted`, `--border`, `--ring`, etc.). Prefer theme extension over forking components. Charts: Recharts stroke/fill from `chart-*` / status roles.
 

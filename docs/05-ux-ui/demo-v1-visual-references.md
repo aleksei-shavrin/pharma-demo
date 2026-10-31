@@ -3,7 +3,7 @@ id: DOC-UX-013
 title: "Demo v1 visual references"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -34,7 +34,7 @@ related:
 
 ## 3. Own recommendations
 
-См. [demo-v1-visual-direction.md](./demo-v1-visual-direction.md), [demo-v1-design-tokens.md](./demo-v1-design-tokens.md), [demo-v1-screen-compositions.md](./demo-v1-screen-compositions.md) — все как `proposal`.
+См. [demo-v1-visual-direction.md](./demo-v1-visual-direction.md) (VD-A = `approved Visual Direction baseline`), [demo-v1-design-tokens.md](./demo-v1-design-tokens.md), [demo-v1-screen-compositions.md](./demo-v1-screen-compositions.md). Illustrative HEX остаются входом в UI Design.
 
 ## 4. Not studied (do not claim otherwise)
 
