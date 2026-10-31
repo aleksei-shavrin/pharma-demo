@@ -3,7 +3,7 @@ id: DOC-PROD-010
 title: "Demo v1 capabilities"
 type: product
 status: draft
-version: "0.5.0"
+version: "0.5.1"
 created: 2026-10-30
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -37,7 +37,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **PROC** | контекст всех in-процессов |
 | **BR** | BR-004, BR-006 (поля Project forecast/baseline; правила сдвига и no auto-reforecast согласованы с C-02/C-03/C-05; текст BR не менялся) |
 | **Entities** | Project, Phase |
-| **OpenSpec** | `project-status-overview` (change `define-demo-v1-project-control`) |
+| **OpenSpec** | `openspec/specs/project-status-overview/spec.md` |
 
 ## C-02 — Milestones / gates + RAG
 
@@ -48,6 +48,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **PROC** | PROC-010 |
 | **BR** | BR-003, BR-004 |
 | **Entities** | Milestone |
+| **OpenSpec** | `openspec/specs/milestone-readiness/spec.md` |
 
 ## C-03 — Equipment / delivery status
 
@@ -58,6 +59,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **PROC** | PROC-007, PROC-001 |
 | **BR** | BR-004 (Δ delivery → dates) |
 | **Entities** | Equipment |
+| **OpenSpec** | `openspec/specs/equipment-delivery-status/spec.md` |
 
 ## C-04 — Risk & issue register linked to milestone
 
@@ -68,6 +70,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **PROC** | PROC-005, PROC-004 |
 | **BR** | **BR-001** (Issue registration), NC-001 (fixture ISS-001), BR-002 |
 | **Entities** | Risk, Issue |
+| **OpenSpec** | `openspec/specs/risk-issue-impact/spec.md` |
 
 ## C-05 — Impact view: delay → production start
 
@@ -78,6 +81,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **PROC** | PROC-011 |
 | **BR** | BR-004, BR-005, BR-006 (no auto-reforecast), BR-007 |
 | **Entities** | Project forecast, Decision, aggregates |
+| **OpenSpec** | `openspec/specs/management-exception-report/spec.md` |
 
 ## Out of mandatory Demo v1
 
@@ -88,15 +92,17 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | C-08…C-09 | Could / out |
 | C-10…C-12 | Won’t |
 
-## OpenSpec (Stage 1 change)
+## OpenSpec (living + archive)
 
 > **certainty:** fact
 >
-> Delta change `openspec/changes/define-demo-v1-project-control/` (не публикуется на портале): `project-status-overview`, `milestone-readiness`, `equipment-delivery-status`, `risk-issue-impact`, `management-exception-report`, плюс `demo-v1-architecture-constraints` (**ограничения** Demo v1, не product feature). Living `openspec/specs/` — после human review / apply.
+> Living SoT (на портале `/openspec`): `openspec/specs/project-status-overview/spec.md`, `openspec/specs/milestone-readiness/spec.md`, `openspec/specs/equipment-delivery-status/spec.md`, `openspec/specs/risk-issue-impact/spec.md`, `openspec/specs/management-exception-report/spec.md`, плюс `openspec/specs/demo-v1-architecture-constraints/spec.md` (**ограничения** Demo v1, не product feature). История change (не на портале): `openspec/changes/archive/2026-10-31-define-demo-v1-project-control/` (human APPROVE → sync → archive, 2026-10-31).
 
-| C | OpenSpec capability |
-|---|---------------------|
-| C-02 | `milestone-readiness` |
-| C-03 | `equipment-delivery-status` |
-| C-04 | `risk-issue-impact` |
-| C-05 | `management-exception-report` |
+| C | OpenSpec living |
+|---|-----------------|
+| C-01 | `openspec/specs/project-status-overview/spec.md` |
+| C-02 | `openspec/specs/milestone-readiness/spec.md` |
+| C-03 | `openspec/specs/equipment-delivery-status/spec.md` |
+| C-04 | `openspec/specs/risk-issue-impact/spec.md` |
+| C-05 | `openspec/specs/management-exception-report/spec.md` |
+| NFR | `openspec/specs/demo-v1-architecture-constraints/spec.md` |

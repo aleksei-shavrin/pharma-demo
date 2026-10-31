@@ -3,7 +3,7 @@ id: DOC-BA-016
 title: "Traceability matrix (BA/PD Demo v1)"
 type: business
 status: draft
-version: "0.5.0"
+version: "0.5.1"
 created: 2026-10-30
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -20,19 +20,19 @@ related:
 
 Цепочка: Problem → Process → BR/NC → Capability → REQ → **OpenSpec** → Walkthrough → Mock.
 
-| Problem | Process | BR / NC | Capability | REQ | OpenSpec (change delta) | Walkthrough / Mock |
-|---------|---------|---------|------------|-----|-------------------------|--------------------|
-| P-001, P-002 | PROC-007 | BR-004 | C-03 | REQ-EQPT-001 | `equipment-delivery-status` | Steps 1–2; EQ-HVAC-01 |
-| P-001, P-002 | PROC-005 | BR-001, NC-001 | **C-04** | REQ-RISK-001 (AC-I) | `risk-issue-impact` | Steps 3, 7; ISS-001 |
-| P-001, P-002 | PROC-004 | BR-002 | C-04 | REQ-RISK-001 (AC-R) | `risk-issue-impact` | Steps 4, 8; RISK fixture |
-| P-001, H-002 | PROC-010 | BR-003, BR-004 | C-02 | REQ-MILE-001 | `milestone-readiness` | Steps 1, 5, 8; MS-PS |
-| P-001, H-002 | PROC-001 (dates only; no Activity entity) | BR-004 | C-01 / C-03 | REQ-PROJ-001, REQ-EQPT-001 | `project-status-overview`, `equipment-delivery-status` | Steps 1, 5, 8 |
-| P-002, H-002 | PROC-011 | BR-005 | C-05 | REQ-IMPCT-001 | `management-exception-report` | Step 6 |
-| P-002 | PROC-011 | BR-006 | C-05 | REQ-IMPCT-002 | `management-exception-report` | Steps 7–8; DEC |
-| integrity | — | BR-007 (A baseline; B/C causal) | — | REQ-IMPCT-001 + mock matrix | `management-exception-report` | Steps 1, 8 |
-| architecture | — | DOC-PROD-003/004 | — | REQ-NFR-001/002 | `demo-v1-architecture-constraints` (**constraints**, не product feature) | architecture gate |
+| Problem | Process | BR / NC | Capability | REQ | OpenSpec (living) | Walkthrough / Mock |
+|---------|---------|---------|------------|-----|-------------------|--------------------|
+| P-001, P-002 | PROC-007 | BR-004 | C-03 | REQ-EQPT-001 | `openspec/specs/equipment-delivery-status/spec.md` | Steps 1–2; EQ-HVAC-01 |
+| P-001, P-002 | PROC-005 | BR-001, NC-001 | **C-04** | REQ-RISK-001 (AC-I) | `openspec/specs/risk-issue-impact/spec.md` | Steps 3, 7; ISS-001 |
+| P-001, P-002 | PROC-004 | BR-002 | C-04 | REQ-RISK-001 (AC-R) | `openspec/specs/risk-issue-impact/spec.md` | Steps 4, 8; RISK fixture |
+| P-001, H-002 | PROC-010 | BR-003, BR-004 | C-02 | REQ-MILE-001 | `openspec/specs/milestone-readiness/spec.md` | Steps 1, 5, 8; MS-PS |
+| P-001, H-002 | PROC-001 (dates only; no Activity entity) | BR-004 | C-01 / C-03 | REQ-PROJ-001, REQ-EQPT-001 | `openspec/specs/project-status-overview/spec.md`, `openspec/specs/equipment-delivery-status/spec.md` | Steps 1, 5, 8 |
+| P-002, H-002 | PROC-011 | BR-005 | C-05 | REQ-IMPCT-001 | `openspec/specs/management-exception-report/spec.md` | Step 6 |
+| P-002 | PROC-011 | BR-006 | C-05 | REQ-IMPCT-002 | `openspec/specs/management-exception-report/spec.md` | Steps 7–8; DEC |
+| integrity | — | BR-007 (A baseline; B/C causal) | — | REQ-IMPCT-001 + mock matrix | `openspec/specs/management-exception-report/spec.md` | Steps 1, 8 |
+| architecture | — | DOC-PROD-003/004 | — | REQ-NFR-001/002 | `openspec/specs/demo-v1-architecture-constraints/spec.md` (**constraints**, не product feature) | architecture gate |
 
-Change: `openspec/changes/define-demo-v1-project-control/` (не living until apply).
+Living SoT: `openspec/specs/<capability>/spec.md`. История change (не на портале): `openspec/changes/archive/2026-10-31-define-demo-v1-project-control/`.
 
 **Убрано:** BR-001 ↔ C-03 / REQ-EQPT (искусственная связь).
 
@@ -54,4 +54,4 @@ Change: `openspec/changes/define-demo-v1-project-control/` (не living until ap
 
 > **certainty:** hypothesis
 >
-> Spec-level only; runtime не заявляется. OpenSpec delta — draft change до human review / apply.
+> Spec-level only; runtime не заявляется. OpenSpec Must C-01…C-05 (+ architecture constraints) зафиксированы в living specs после human APPROVE → sync → archive (2026-10-31).

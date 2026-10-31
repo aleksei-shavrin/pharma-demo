@@ -3,7 +3,7 @@ id: DOC-HANDOFF-REQOS-001
 title: "Handoff: Requirements Specification & OpenSpec Stage 1"
 type: handoff
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -18,30 +18,34 @@ related:
 
 ## Мета
 
-- **От:** Requirements Specification & OpenSpec Stage 1 (formalization)
-- **Кому:** Human review OpenSpec change; затем apply/archive; позже apps implementation
+- **От:** Requirements Specification & OpenSpec Stage 1 (formalization → archive)
+- **Кому:** Следующая волна (docs sync после archive / затем apps implementation по явному старту)
 - **Дата:** 2026-10-31
-- **Статус передачи:** OpenSpec change **`define-demo-v1-project-control`** — planning artifacts complete; validate PASS; **не** applied в living specs; apps **не** создавались
+- **Статус передачи:** Stage 1 **завершён**. OpenSpec change **`define-demo-v1-project-control`**: human APPROVE → sync в living `openspec/specs/` → archive; validate / `test:docs` PASS; apps **не** создавались
 
 ## Сделано
 
 - Stage 0 readiness audit (DOC-RPT-REQOS-001)
 - OpenSpec change: proposal, design, tasks, delta specs (C-01…C-05 + architecture **constraints**)
-- Docs sync: traceability OpenSpec column; C-01 BR mapping; requirements README; Stage 1 report
-- `openspec validate define-demo-v1-project-control` (+ `--strict`) PASS
+- Docs sync (propose): traceability OpenSpec column; C-01 BR mapping; requirements README; Stage 1 report
+- `openspec validate define-demo-v1-project-control` (+ `--strict`) PASS (на active change до archive)
+- Human APPROVE Must C-01…C-05 + six specs + A→B→C + BR-004/006 + PrioritizeRecovery
+- Sync deltas → living specs; archive → `openspec/changes/archive/2026-10-31-define-demo-v1-project-control/`
+- Commit living+archive: `7dd319c` (docs path sync после archive — отдельный шаг)
 
 ## Не сделано / блокеры
 
-- Human review / apply / archive OpenSpec
 - BA-OQ-004/005/006; BA-OQ-002 / HIP-003/004/007; HIP-005 — **остаются open**
 - EQ snapshot switch mechanism — deferred impl
 - Apps scaffold / API / UI
+- Полная актуализация всех docs-ссылок на archive (эта волна — ограниченный набор файлов)
 
 ## Ключевые входы
 
 | Артефакт | Путь |
 |----------|------|
-| OpenSpec change | `openspec/changes/define-demo-v1-project-control/` |
+| Living OpenSpec specs | `openspec/specs/<capability>/spec.md` (C-01…C-05 + constraints) |
+| Archived change | `openspec/changes/archive/2026-10-31-define-demo-v1-project-control/` |
 | Stage 0 audit | `docs/07-delivery/reports/2026-10-31-req-openspec-readiness-audit.md` |
 | Stage 1 report | `docs/07-delivery/reports/2026-10-31-req-openspec-stage1.md` |
 | Traceability | `docs/02-business-analysis/traceability-matrix.md` |
@@ -49,16 +53,16 @@ related:
 
 ## Рекомендации
 
-1. Review OpenSpec change; не auto-approve.
-2. Apply в living specs только после review.
-3. Не начинать Nest/Next до apply (или явного исключения).
-4. Не закрывать BA-OQ/HIP «заодно» с apply.
+1. Опираться на living specs как SoT поведения Must; archive — история propose/review.
+2. Не начинать Nest/Next без явного старта implementation phase.
+3. Не закрывать BA-OQ/HIP «заодно» с docs sync или apps scaffold.
+4. AcceptDateSlip / UI layout / messaging — вне Must до отдельных решений.
 
 ## Certainty
 
 > **certainty:** fact
 >
-> Formalization Stage 1 выполнена как docs/OpenSpec propose; demo decisions ≠ enterprise-fact.
+> Formalization Stage 1 + sync/archive living specs выполнены; demo decisions ≠ enterprise-fact.
 
 > **certainty:** open_question
 >
