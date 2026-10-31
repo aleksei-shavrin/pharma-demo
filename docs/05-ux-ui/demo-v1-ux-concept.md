@@ -3,7 +3,7 @@ id: DOC-UX-001
 title: "Demo v1 UX concept"
 type: product
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -13,6 +13,7 @@ related:
   - DOC-BA-012
   - DOC-BA-010
   - DOC-UX-009
+  - DOC-UX-010
 ---
 
 # Demo v1 UX concept
@@ -98,7 +99,7 @@ Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 - Phase grouping; глубина persistence фильтров списка при Back (`assumption` / `open_question`)
 - Mock volume scale — `hypothesis` (DOC-PROD-012 не менять этим пакетом)
 
-## 8. Связанные UX docs
+## 8. Связанные UX / Visual Direction docs
 
 | Документ | Роль |
 |----------|------|
@@ -110,3 +111,7 @@ Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 | [data-viz-and-components](./demo-v1-data-viz-and-components.md) | Tables/charts stack |
 | [mock-ux-requirements](./demo-v1-mock-ux-requirements.md) | Volume hypothesis + integrity |
 | [ux-traceability](./demo-v1-ux-traceability.md) | Trace matrix |
+| [visual-direction](./demo-v1-visual-direction.md) | VD-A primary (`proposal`) |
+| [design-tokens](./demo-v1-design-tokens.md) | Token roles (`proposal`) |
+| [screen-compositions](./demo-v1-screen-compositions.md) | Screen visual layouts (`proposal`) |
+| [visual-references](./demo-v1-visual-references.md) | Reference honesty log |
