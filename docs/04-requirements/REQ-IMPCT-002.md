@@ -3,13 +3,14 @@ id: REQ-IMPCT-002
 title: "REQ-IMPCT-002: Record director decision outcome"
 type: requirement
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-PROD-010
   - DOC-BA-014
+  - DOC-PROD-012
 ---
 
 # REQ-IMPCT-002: Record director decision outcome
@@ -27,7 +28,7 @@ related:
 ## Acceptance criteria
 
 - [ ] Можно записать Decision с type ∈ {AcceptDateSlip, PrioritizeRecovery}.
-- [ ] **PrioritizeRecovery (primary Snapshot C):** DEC-001 с type PrioritizeRecovery; опционально ownerRole/dueDate (due после scenarioAsOfDate C); forecast PRJ/MS = Snapshot B (2027-10-06); Issue → Mitigating (REQ-RISK-001).
+- [ ] **PrioritizeRecovery (primary Snapshot C):** DEC-001 с type PrioritizeRecovery; опционально ownerRole/dueDate (due после scenarioAsOfDate C); forecast PRJ/MS = Snapshot B (2027-10-06); Issue → **Mitigating** (REQ-RISK-001). Переход в Mitigating отражает **запись управленческого Decision** и **не** подтверждает исполнение recovery.
 - [ ] **AcceptDateSlip:** DEC-001 с type AcceptDateSlip; forecast PRJ/MS без изменения vs B; post-state Issue/Risk/MS RAG — **не** требуется этим REQ (**BA-OQ-004/005**).
 - [ ] Решение не требует GMP change workflow.
 

@@ -3,13 +3,14 @@ id: REQ-MILE-001
 title: "REQ-MILE-001: Milestone RAG and dates"
 type: requirement
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-PROD-010
   - DOC-BA-014
+  - DOC-PROD-012
 ---
 
 # REQ-MILE-001: Milestone RAG and dates
@@ -29,7 +30,9 @@ related:
 - [ ] MS-PS имеет baselineDate и forecastDate.
 - [ ] Snapshot A: rag = Green; forecastDate = baselineDate = 2027-09-15.
 - [ ] Snapshot B: rag = Red; forecastDate = 2027-10-06 (= baseline + 21d; согласовано с EQ slip BR-004).
+- [ ] Snapshot B/C: MS-PS связан с RISK-001 (linked Risk для BR-003 path).
 - [ ] Snapshot C: rag и forecastDate те же, что в B (нет авто-смены от Decision alone).
+- [ ] AC не добавляет runtime-правил пересчёта RAG сверх BR-003 expectation vs fixture.
 - [ ] Полный каталог gates заказчика не требуется (OQ-006 open).
 
 ## Трассировка

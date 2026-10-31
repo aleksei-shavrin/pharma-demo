@@ -3,9 +3,9 @@ id: DOC-PROD-012
 title: "Demo v1 mock narrative data"
 type: product
 status: draft
-version: "0.4.0"
+version: "0.5.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-PROD-011
@@ -71,7 +71,7 @@ related:
 | Object | Key fields | Rule source |
 |--------|------------|-------------|
 | EQ / ISSUE / RISK / MS / PRJ | **как в Snapshot B** (включая forecast 2027-10-06) | BR-006: no auto re-forecast |
-| Issue ISS-001 | status **Mitigating** (recovery initiated) | consistent with PrioritizeRecovery |
+| Issue ISS-001 | status **Mitigating** (Decision PrioritizeRecovery recorded; recovery execution is not modeled) | consistent with PrioritizeRecovery / BR-006 |
 | Decision DEC-001 | type **PrioritizeRecovery**; ownerRole SH-006; dueDate **2027-03-20**; note «Expedite vendor / alternate lane» | BR-006 |
 
 **Alternative C' (AcceptDateSlip) — только подтверждённое:**
