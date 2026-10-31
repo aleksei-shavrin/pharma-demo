@@ -4,6 +4,16 @@
 
 См. `proposal.md` — Why. Living specs пусты; поведение берётся из согласованных docs (BA-OQ-001 freeze, REQ-*, BR-001…007, DOC-PROD-012 snapshots, DOC-BA-015 domain, DOC-PROD-003/004). Этот change — **спецификация**, не реализация apps.
 
+### Mock snapshot identity (DOC-PROD-012)
+
+| Snapshot | scenarioAsOfDate | Роль |
+|----------|------------------|------|
+| A | 2027-02-15 | метаданные / temporal identity mock snapshot; integrity chronology A asOf before B, B before or equal C |
+| B | 2027-03-01 | то же |
+| C | 2027-03-02 | то же; dueDate Decision сверяется относительно asOf C в REQ-IMPCT-002 |
+
+Эти даты — **утверждённые mock metadata** из DOC-PROD-012, не поля доменных сущностей Project/Milestone/Equipment. Не оформляются как отдельные capability Requirements «expose scenarioAsOfDate»; значения не менять.
+
 ## Goals / Non-Goals
 
 **Goals:**
@@ -18,6 +28,7 @@
 - Выбор ORM, auth, monorepo layout, конкретной БД (требуют ADR).
 - AcceptDateSlip state machine; UI layout Issue/Risk; GMP/CSV claims.
 - Выбор механизма переключения Snapshot A/B/C.
+- Условия и переходы Issue.status → **Closed** (не согласованы в источниках; Closed certainty = open_question в BR status table). Must path использует Open и Mitigating.
 
 ## Decisions
 
@@ -57,9 +68,15 @@
 
 ### D6 — Fixture RAG + integrity, не runtime engine
 
-**Выбор:** Risk/Milestone rag в mock — fixture; integrity vs BR-002/003 на уровне спецификации.
+**Выбор:** Risk/Milestone rag в mock — fixture; integrity vs BR-002/003 на уровне спецификации. BR-002 expectation Red при Issue.status ∈ {Open, **Mitigating**} (DOC-BA-014) — Snapshot C Red при Mitigating согласован с источником.
 
 **Почему:** BR и REQ явно запрещают универсальный risk/RAG engine в Must.
+
+### D8 — Issue Closed вне Must ADDED Requirements
+
+**Выбор:** не держать отдельный ADDED Requirement «Closed transitions not specified»; граница — Non-Goals / Purpose `risk-issue-impact`.
+
+**Почему:** отсутствие правила не должно оформляться как отдельное функциональное SHALL NOT; условия Closed не согласованы (не выдумывать).
 
 ### D7 — Logical runtime shape (reference only)
 

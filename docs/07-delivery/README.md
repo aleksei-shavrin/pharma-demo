@@ -25,3 +25,4 @@ related:
 - [reports/2026-10-31-ba-pd-final-consistency-pass.md](./reports/2026-10-31-ba-pd-final-consistency-pass.md)
 - [reports/2026-10-31-req-openspec-readiness-audit.md](./reports/2026-10-31-req-openspec-readiness-audit.md)
 - [reports/2026-10-31-req-openspec-stage1.md](./reports/2026-10-31-req-openspec-stage1.md)
+- [reports/2026-10-31-req-openspec-stage1-corrective-review.md](./reports/2026-10-31-req-openspec-stage1-corrective-review.md)

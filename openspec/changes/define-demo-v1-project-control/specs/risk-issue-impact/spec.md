@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Поддерживает отдельные связанные сущности Issue и Risk для critical equipment delay и вехи MS-PS: capability регистрации Issue, narrative fixture NC-001 и Risk rag как fixture с integrity vs BR-002 — без универсального risk engine и без UI layout.
+Поддерживает отдельные связанные сущности Issue и Risk для critical equipment delay и вехи MS-PS: capability регистрации Issue, narrative fixture NC-001 и Risk rag как fixture с integrity vs BR-002 — без универсального risk engine и без UI layout. Переходы Issue в Closed не входят в Demo v1 Must (условия не согласованы в источниках).
 
 ## ADDED Requirements
 
@@ -60,10 +60,3 @@
 #### Scenario: No AcceptDateSlip post-state requirements
 - **WHEN** рассматривается ветка AcceptDateSlip
 - **THEN** post-state Issue/Risk/Milestone RAG не задаётся этими requirements
-
-### Requirement: Issue Closed transitions not specified
-Спецификация SHALL NOT определять переходы Issue в Closed, пока условия закрытия не согласованы в источниках (BR-001 status table; Stage 0 audit).
-
-#### Scenario: Closed not required by Must path
-- **WHEN** выполняется primary path A→B→C PrioritizeRecovery
-- **THEN** переход в Closed не требуется
