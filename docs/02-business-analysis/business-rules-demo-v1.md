@@ -3,7 +3,7 @@ id: DOC-BA-014
 title: "Business rules (Demo v1)"
 type: business
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -57,10 +57,11 @@ related:
 
 | Status | Смысл | Certainty |
 |--------|--------|-----------|
-| Open | Задержка зафиксирована; решение директора ещё не записано (или не PrioritizeRecovery) | hypothesis |
-| Mitigating | **Однозначно:** зафиксирован Decision type = PrioritizeRecovery; execution recovery **не** моделируется; forecast **не** авто-пересчитывается (BR-006) | assumption |
-| AcceptedSlip | Зарезервированный ярлык; **обязан ли** Issue переходить в AcceptedSlip при AcceptDateSlip — **open_question** (BA-OQ-004) | open_question |
-| Closed | Закрытие Issue; **не** следует автоматически из AcceptDateSlip без явного правила | open_question |
+| Open | Зарегистрированное отклонение; Decision PrioritizeRecovery ещё не записан | hypothesis |
+| Mitigating | После Decision **PrioritizeRecovery**; execution recovery **не** моделируется; forecast **не** авто-пересчитывается (BR-006) | assumption |
+| Closed | Явное закрытие Issue; **не** следует автоматически из AcceptDateSlip | open_question |
+
+**AcceptDateSlip** — тип **Decision**, не Issue.status. Post-state Issue после AcceptDateSlip — **BA-OQ-004**.
 
 ### RAG: правило vs fixture vs integrity (BR-002)
 
@@ -143,7 +144,7 @@ related:
 | Поле | PrioritizeRecovery (Snapshot C primary) | AcceptDateSlip |
 |------|------------------------------------------|----------------|
 | Decision | type=PrioritizeRecovery; owner/due опционально | type=AcceptDateSlip; due не обязателен |
-| Issue.status | **Mitigating** (определено) | **open_question** (BA-OQ-004): не авто-Closed; AcceptedSlip не обязателен |
+| Issue.status | **Mitigating** (определено) | **open_question** (BA-OQ-004): не авто-Closed; не путать с типом Decision |
 | Risk.rag | **Red** (BR-002: Mitigating) | **open_question** (BA-OQ-005), если Issue уже не Open/Mitigating |
 | Milestone.rag | **Red** (BR-003, пока Risk Red) | **open_question** (BA-OQ-005), следует из Risk |
 | Project/MS forecast | **Без изменения** vs Snapshot B | **Без изменения** vs Snapshot B (принят текущий forecast) |
@@ -160,14 +161,31 @@ related:
 | Поле | Значение |
 |------|----------|
 | **ID** | BR-007 |
-| **Описание** | В каждом опубликованном snapshot: (1) нет Green MS-PS при Red Risk от critical delay; (2) цепочка equipment→issue→risk→milestone→project forecast согласована с BR-002…004; (3) после Decision (Snapshot C) forecast не меняется «сам» от PrioritizeRecovery; (4) даты хронологически согласованы с scenarioAsOfDate snapshot. |
+| **Описание** | Integrity invariant с **разной применимостью** к Snapshot A vs B/C (см. ниже). Не требует полной цепочки Issue→Risk в Snapshot A. |
 | **Источник** | Gate BA-Mock-Integrity |
 | **Certainty** | assumption |
-| **Условия** | Любой Snapshot A/B/C |
-| **Ожидаемый результат** | Integrity matrix Pass на уровне спецификации |
+| **Условия** | Опубликованный snapshot A, B или C |
+| **Ожидаемый результат** | Соответствующие проверки Pass на уровне спецификации |
 | **Проверяемый пример** | См. [demo-v1-mock-narrative-data](../03-product/demo-v1-mock-narrative-data.md) |
 
-**Классификация:** integrity invariant (не отдельная user-facing capability).
+### Применимость по snapshot
+
+**Snapshot A — baseline integrity**
+
+- Нет Open Issue по critical EQ delay fixture.
+- baseline/forecast согласованы (forecast = baseline для EQ delivery и production start).
+- Green Risk/Milestone — **исходные fixture values**, не результат BR-002/003.
+
+**Snapshot B/C — causal-chain integrity**
+
+- Связаны Equipment, Issue, Risk, Milestone, Project.
+- Fixture Risk/MS rag соответствует ожиданиям BR-002/003.
+- Forecast dates согласованы с BR-004 (Δ delivery).
+- После PrioritizeRecovery (C): forecast не меняется от Decision alone (BR-006).
+- Нет Green MS-PS при Red Risk от того же delay.
+- Даты согласованы с scenarioAsOfDate.
+
+**Классификация:** integrity invariant (не user-facing capability). Runtime compute не заявлен.
 
 ---
 

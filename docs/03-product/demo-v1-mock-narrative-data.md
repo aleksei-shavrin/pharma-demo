@@ -3,7 +3,7 @@ id: DOC-PROD-012
 title: "Demo v1 mock narrative data"
 type: product
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -44,8 +44,7 @@ related:
 |--------|------------|-------------|
 | Project PRJ-01 | name «Facility Expansion Alpha»; baselineProductionStart **2027-09-15**; forecastProductionStart **2027-09-15** | stored |
 | Milestone MS-PS | «Ready for production»; baseline/forecast **2027-09-15**; rag **Green** (baseline fixture; **не** вывод BR-003) | stored baseline |
-| Equipment EQ-HVAC-01 | critical true; baselineDelivery **2027-05-15**; forecastDelivery **2027-05-15**; status OnTrack | stored |
-| Activity ACT-EQ-01 | linked EQ-HVAC-01; forecastFinish **2027-05-29** | stored |
+| Equipment EQ-HVAC-01 | critical true; projectId PRJ-01; baselineDelivery **2027-05-15**; forecastDelivery **2027-05-15**; status OnTrack | stored |
 | Risk RISK-001 | rag **Green** (baseline fixture; **не** вывод BR-002); milestone MS-PS; equipment EQ-HVAC-01; no open delay issue | stored baseline |
 | Issue | none open for EQ-HVAC-01 | — |
 | Decision | none | — |
@@ -57,7 +56,6 @@ related:
 | Object | Key fields | Rule source |
 |--------|------------|-------------|
 | EQ-HVAC-01 | forecastDelivery **2027-06-05** (Δ=+21); status Delayed | stored |
-| ACT-EQ-01 | forecastFinish **2027-06-19** (+21 vs A) | stored |
 | Issue ISS-001 | «HVAC long-lead delivery slip»; status **Open**; owner SH-002; links EQ-HVAC-01, MS-PS | **NC-001** + BR-001 capability |
 | RISK-001 | rag **Red** (fixture); links ISS-001, MS-PS, EQ-HVAC-01 | fixture; integrity vs **expected** BR-002 |
 | MS-PS | forecast **2027-10-06**; rag **Red** (fixture) | fixture; integrity vs BR-003 + BR-004 |
@@ -81,8 +79,8 @@ related:
 | Object | Confirmed | Open |
 |--------|-----------|------|
 | Decision DEC-001 | type **AcceptDateSlip**; forecast PRJ/MS **без изменения** (2027-10-06) | — |
-| Issue.status | — | **BA-OQ-004** (не авто-Closed; AcceptedSlip не обязателен) |
-| Risk.rag / MS.rag | — | **BA-OQ-005** (если Issue не Open/Mitigating, BR-002/003 не задают Red) |
+| Issue.status | — | **BA-OQ-004** (не авто-Closed; AcceptDateSlip — тип Decision, не Issue.status) |
+| Risk.rag / MS.rag | — | **BA-OQ-005** |
 
 Отдельный полный mock snapshot для AcceptDateSlip **не** добавляется (не Must).
 
@@ -90,17 +88,15 @@ related:
 
 | Check | Snapshot | Expected | Spec Pass |
 |-------|----------|----------|-----------|
-| scenarioAsOfDate ≥ prep date context; narrative in 2027 | A/B/C | future vs 2026-10-30 | yes |
-| Chronology A asOf < B asOf ≤ C asOf | — | 2027-02-15 < 2027-03-01 < 2027-03-02 | yes |
-| DEC due after C asOf (PrioritizeRecovery) | C | 2027-03-20 > 2027-03-02 | yes |
-| NC-001 ISS-001 present | B, C | linked EQ+MS-PS | yes |
-| BR-002 Risk Red when Issue Open/Mitigating | B, C | RISK-001 Red | yes |
-| BR-003 MS-PS Red | B, C | Red | yes |
-| BR-004 Δ=+21 on EQ, MS, Project | B, C | 2027-10-06 | yes |
-| BR-005 aggregate consistency | B, C | same ids/dates/rag | yes |
-| BR-006 no forecast change solely from PrioritizeRecovery | C vs B | forecast unchanged | yes |
-| BR-007 no Green MS with Red risk | B, C | consistent | yes |
-| Equipment → issue → risk → milestone → project | B, C | one causal chain | yes |
+| Temporal frame 2027; A asOf < B ≤ C | A/B/C | chronology | yes |
+| BR-007 **A**: no Open Issue; forecast=baseline; Green = fixture | A | baseline integrity | yes |
+| NC-001 ISS-001 | B, C | linked EQ+MS-PS | yes |
+| BR-002 / BR-003 expected vs fixture | B, C | Risk/MS Red | yes |
+| BR-004 Δ=+21 EQ → MS/PRJ (dates ≠ equal across meanings) | B, C | PS 2027-10-06; EQ delivery 2027-06-05 | yes |
+| BR-005 aggregate: PS dates/RAG match PRJ/MS; EQ delivery dates separate; refs ISS/RISK | B, C | consistent | yes |
+| BR-006 / BR-007 **C**: no auto-reforecast; no Green MS with Red Risk | C | forecast unchanged | yes |
+| Causal chain EQ→ISS→RISK→MS→PRJ | B, C only | present | yes |
+| No Activity entity in Demo v1 dataset | A/B/C | absent | yes |
 
 > **certainty:** assumption
 >

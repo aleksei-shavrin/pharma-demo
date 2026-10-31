@@ -3,7 +3,7 @@ id: DOC-PROD-011
 title: "Demo v1 functional scope"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -48,7 +48,10 @@ related:
 | Auth, multi-tenant, PostgreSQL | Demo v1 architecture |
 | UX layouts / page wireframes | UX phase later |
 | GMP/CSV compliance features | BA-No-Fake-GMP |
+| Activity as standalone Demo v1 domain entity | Removed from Demo v1 model (PROC-001 = explicit EQ/MS dates only) |
+| CPM / float / auto-reforecast / recovery execution | Out of Demo v1 |
 
-## Assumptions until HIP answers
+## Assumptions until HIP / PO answers
 
 - BA-A-001 one project; BA-A-002 avoid GMP theater messaging; BA-A-003 forecast slip rule.
+- Scope remains **proposed freeze** until **BA-OQ-001** (не объявлять approved).

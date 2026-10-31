@@ -3,7 +3,7 @@ id: DOC-BA-010
 title: "BA registers"
 type: business
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -43,9 +43,10 @@ Certainty: demo direction ≠ enterprise-`fact`.
 |----|--------|---------|--------|
 | BA-OQ-001 | Freeze Demo v1 functional scope (PD2) | product owner | open |
 | BA-OQ-002 | HIP-003 / HIP-004 / HIP-007 (messaging, горизонт, framing) | product owner | open (Discovery HIP) |
-| BA-OQ-003 | Нужен ли отдельный Issue vs Risk в UI-данных или достаточно linked records | BA/PD | open — решается в domain/BR |
-| BA-OQ-004 | Issue.status после AcceptDateSlip (AcceptedSlip vs иное; не авто-Closed) | product owner | open |
+| BA-OQ-003 | *(закрыт)* Концептуально Issue и Risk — отдельные связанные сущности | BA/PD | **closed** — Domain Model DOC-BA-015, BR-001/002, REQ-RISK-001 |
+| BA-OQ-004 | Issue.status после AcceptDateSlip (не авто-Closed; AcceptDateSlip = Decision type) | product owner | open |
 | BA-OQ-005 | Risk.rag / Milestone.rag после AcceptDateSlip, если Issue уже не Open/Mitigating | product owner | open |
+| BA-OQ-006 | Как представлять Issue и Risk в UI (раздельные панели vs совместный вид) | product owner / UX | open — не ставит под сомнение отдельность сущностей |
 
 ## Included processes (Demo v1 narrative)
 

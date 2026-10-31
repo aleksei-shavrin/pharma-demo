@@ -3,7 +3,7 @@ id: DOC-BA-017
 title: "BA & Product Definition summary"
 type: business
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -17,27 +17,27 @@ related:
 
 # BA & Product Definition summary
 
-Синтез фазы BA/PD для Demo v1 narrative **SCN-001 → SCN-007** (корректировка domain/decision v0.3).
+Синтез фазы BA/PD для Demo v1 narrative **SCN-001 → SCN-007** (corrective pass consistency).
 
 ## Статус фазы
 
 > **certainty:** fact
 >
-> Артефакты синхронизированы (domain cardinalities, Decision flow, RAG fixture vs BR, C-03/C-04 mapping). `openspec/**` / `apps/**` не изменялись.
+> Corrective pass: process specs ↔ BR; Activity removed from Demo v1 domain; REQ-IMPCT-001 aggregate semantics; BR-007 A vs B/C; BA-OQ-003 closed (domain). `openspec/**` / `apps/**` не изменялись.
 
 > **certainty:** open_question
 >
-> **PO freeze** (BA-OQ-001) **не** подтверждён → DoD freeze **paused**. Пакет готов к PO review.
+> **PO freeze** (BA-OQ-001) **не** подтверждён → DoD freeze **paused**. Пакет **READY FOR PO FREEZE REVIEW**.
 
 ## Что зафиксировано
 
 | Тема | Итог |
 |------|------|
-| Domain | Кардинальности + Phase optional; Decision ≠ recovery execution |
-| Decision | PrioritizeRecovery полностью; AcceptDateSlip — Decision+forecast only; BA-OQ-004/005 |
-| RAG | BR expectation vs mock fixture vs integrity; A Green = baseline |
-| Capabilities | BR-001 только C-04; C-03 без BR-001 |
-| Walkthrough | Primary C = PrioritizeRecovery; AcceptDateSlip ограниченно |
+| Issue.status | Open / Mitigating / Closed; AcceptDateSlip = Decision type |
+| Activity | **Не** сущность Demo v1 |
+| BR-007 | A = baseline integrity; B/C = causal chain |
+| Issue vs Risk | Отдельные сущности (BA-OQ-003 closed); UI layout — BA-OQ-006 |
+| Aggregate | Delivery dates ≠ production-start dates |
 
 ## Кандидатные OpenSpec capability names
 
@@ -49,8 +49,8 @@ related:
 
 - **BA-OQ-001** scope freeze
 - **BA-OQ-004 / BA-OQ-005** AcceptDateSlip post-state
+- **BA-OQ-006** UI presentation Issue/Risk
 - HIP-003, HIP-004, HIP-007
-- Expert HIP — только для enterprise-fact
 
 ## Следующая фаза
 

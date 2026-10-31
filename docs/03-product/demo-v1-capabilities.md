@@ -3,7 +3,7 @@ id: DOC-PROD-010
 title: "Demo v1 capabilities"
 type: product
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -50,7 +50,7 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **SCN** | SCN-001 → SCN-007 |
 | **PROC** | PROC-007, PROC-001 |
 | **BR** | BR-004 (Δ delivery → dates) |
-| **Entities** | Equipment, Activity |
+| **Entities** | Equipment |
 
 ## C-04 — Risk & issue register linked to milestone
 

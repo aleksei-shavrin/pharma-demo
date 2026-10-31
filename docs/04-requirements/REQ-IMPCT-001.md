@@ -3,20 +3,21 @@ id: REQ-IMPCT-001
 title: "REQ-IMPCT-001: Director impact aggregate"
 type: requirement
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
 related:
   - DOC-PROD-010
   - DOC-BA-014
+  - DOC-PROD-012
 ---
 
 # REQ-IMPCT-001: Director impact aggregate
 
 ## Формулировка
 
-Система shall предоставлять агрегированные данные для директора: forecast vs baseline production start, milestone rag, contributing equipment id, ссылки на top risk и issue — **согласованные** с исходными объектами Equipment, Issue, Risk, Milestone и Project.
+Система shall предоставлять агрегированные данные для директора: forecast vs baseline production start, milestone rag, contributing equipment id, ссылки на top risk и issue — согласованные с исходными объектами в пределах смысла полей (не смешивая delivery dates с production-start dates).
 
 ## Обоснование
 
@@ -26,9 +27,27 @@ related:
 
 ## Acceptance criteria
 
-- [ ] Snapshot B/C aggregate содержит: driver EQ-HVAC-01, MS-PS rag Red, forecastProductionStart 2027-10-06, refs RISK-001 и ISS-001.
-- [ ] Значения aggregate **совпадают** с полями исходных объектов (не только «наличие id»): те же rag/даты, что у MS-PS, PRJ-01, EQ-HVAC-01.
-- [ ] Нет состояния Green MS-PS при Red RISK-001 от того же delay (BR-007).
+**Project / Milestone**
+
+- [ ] Aggregate `baselineProductionStart` совпадает с Project.baselineProductionStart.
+- [ ] Aggregate `forecastProductionStart` совпадает с Project.forecastProductionStart и Milestone MS-PS.forecastDate.
+- [ ] Aggregate milestone RAG совпадает с MS-PS.rag.
+
+**Equipment (не равенство дат с production start)**
+
+- [ ] Aggregate содержит ссылку на EQ-HVAC-01.
+- [ ] Aggregate отражает Equipment.baselineDelivery и forecastDelivery (смысл delivery, не production start).
+- [ ] Связь Δ delivery → сдвиг production start соответствует BR-004 (в mock: +21 календарный день); сами даты delivery ≠ даты production start.
+
+**Risk / Issue**
+
+- [ ] Aggregate содержит ссылки на RISK-001 и ISS-001, согласованные с исходными сущностями (id и доступные статусы/rag).
+
+**BR-007**
+
+- [ ] Для Snapshot **B/C**: нет Green MS-PS при Red RISK-001 от того же delay; causal chain согласована (BR-007 B/C).
+- [ ] Для Snapshot **A**: BR-007 применяется только как baseline integrity (нет Open Issue delay; Green = fixture); полная цепочка Issue не требуется.
+
 - [ ] AC не предписывает UI layout.
 
 ## Трассировка

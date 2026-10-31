@@ -20,3 +20,4 @@ related:
 
 - [quality-gates.md](./quality-gates.md)
 - [handoffs/](./handoffs/README.md)
+- [reports/2026-10-30-ba-pd-corrective-pass.md](./reports/2026-10-30-ba-pd-corrective-pass.md)

@@ -3,7 +3,7 @@ id: DOC-BA-013
 title: "Process specs (Demo v1 narrative)"
 type: business
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -12,6 +12,7 @@ related:
   - DOC-DISC-018
   - DOC-BA-011
   - DOC-BA-010
+  - DOC-BA-014
 ---
 
 # Process specs (Demo v1 narrative)
@@ -25,10 +26,10 @@ related:
 | PROC (Discovery) | Вердикт | Вклад в SCN-001→007 |
 |------------------|---------|---------------------|
 | PROC-007 Equipment / supply | **in** | Инцидент и драйвер critical path (SCN-001) |
-| PROC-001 Schedule | **in** | Плановые/прогнозные даты активностей и связь с вехой |
-| PROC-005 Issue management | **in** | Фиксация отклонения как issue с владельцем |
-| PROC-004 Risk management | **in** | Риск срыва вехи / даты запуска, связанный с delay |
-| PROC-010 Milestones / gates | **in** | RAG ключевой вехи ready-for-production |
+| PROC-001 Schedule | **in** | Явные baseline/forecast даты Equipment и Milestone (без сущности Activity) |
+| PROC-005 Issue management | **in** | Фиксация отклонения как Issue с владельцем |
+| PROC-004 Risk management | **in** | Risk RAG, связанный с delay / Issue |
+| PROC-010 Milestones / gates | **in** | RAG и даты ключевой вехи ready-for-production |
 | PROC-011 Management reporting | **in** | Exception-сводка для директора (SCN-007) |
 | PROC-002 Budget | **out** | Нет в causal chain primary; OQ-012 |
 | PROC-003 Change | **out** | SCN-008 не primary; OQ-014 |
@@ -52,32 +53,34 @@ related:
 
 **Шаги:**
 
-1. Зафиксировать плановую дату delivery/FAT (baseline).
+1. Зафиксировать плановую дату delivery/FAT (baselineDelivery).
 2. Получить сигнал сдвига от поставщика / lead.
-3. Обновить прогнозную дату и статус пакета (напр. Delayed).
-4. Связать пакет с milestone production start / critical flag.
+3. Обновить forecastDelivery и status пакета (напр. Delayed).
+4. Отметить пакет как critical driver, связанный с Milestone production start (для последующего BR-004 / Issue).
 
-**Входы:** идентификатор пакета, baseline date, new forecast date, owner.  
-**Выходы:** обновлённый Equipment/Delivery status.  
-**Решение в контуре:** эскалация в risk/issue (не контрактный claim).
+**Входы:** идентификатор пакета, baselineDelivery, new forecastDelivery, owner.  
+**Выходы:** обновлённый Equipment status и даты.  
+**Решение в контуре:** эскалация в Issue/Risk (**не** контрактный claim / претензионный SOP).
+
+**Не подразумевается:** авто-обновление всех зависимых прогнозов «движком»; исполнение recovery; полноценный supply-chain module.
 
 ---
 
-## PROC-001 — Schedule (demo)
+## PROC-001 — Schedule dates (demo, без сущности Activity)
 
 > **certainty:** hypothesis
 
-**Вклад:** держит даты активностей, связанных с equipment path и вехой.
+**Вклад:** явные baseline/forecast даты, нужные для narrative (Equipment delivery и Milestone / Project production start).
 
 **Роли:** SH-002.
 
 **Шаги:**
 
-1. Вести planned vs forecast dates для critical equipment activity.
-2. При сдвиге delivery — обновить forecast activity/milestone link.
-3. Не требует полного CPM-движка в Demo v1 — достаточно явных дат и связи.
+1. Вести baseline vs forecast для critical Equipment delivery dates.
+2. При сдвиге delivery применять **только** демонстрационное правило **BR-004** к forecast production start (Milestone / Project) — без CPM, float, dependency graph.
+3. Не вводить отдельную доменную сущность Activity в Demo v1.
 
-**Входы/выходы:** Activity dates; link to Equipment, Milestone.
+**Входы/выходы:** Equipment.baselineDelivery / forecastDelivery; Milestone/Project baseline и forecast production-start dates.
 
 ---
 
@@ -85,15 +88,28 @@ related:
 
 > **certainty:** hypothesis
 
-**Вклад:** отклонение поставки становится управляемым issue, а не «устным статусом».
+**Вклад:** отклонение поставки становится управляемым Issue, а не «устным статусом».
 
 **Роли:** SH-002 (owner), leads как contributors.
 
 **Шаги:**
 
-1. Создать Issue «Critical equipment delivery slip» linked to Equipment + Milestone.
-2. Назначить owner и due date реакции.
-3. Обновлять статус (Open / Mitigating / Accepted-slip / Closed).
+1. Создать Issue (напр. critical equipment delivery slip), linked to Equipment + Milestone.
+2. Назначить owner (и при необходимости due реакции).
+3. Вести статус Issue только в определённых значениях (см. ниже).
+
+**Issue.status (согласовано с BR-006 / Domain Model):**
+
+| Status | Смысл |
+|--------|--------|
+| Open | Зарегистрированное отклонение |
+| Mitigating | После Decision **PrioritizeRecovery** (execution recovery не моделируется) |
+| Closed | Явное закрытие; **не** авто из AcceptDateSlip |
+
+**Не статусы Issue:**
+
+- **AcceptDateSlip** — тип **Decision** директора (BR-006), не Issue.status.
+- Авто-переход Issue после AcceptDateSlip — **не определён** (BA-OQ-004).
 
 ---
 
@@ -101,15 +117,17 @@ related:
 
 > **certainty:** hypothesis
 
-**Вклад:** видимость угрозы вехе / дате запуска (RAG risk).
+**Вклад:** видимость угрозы вехе / дате запуска через Risk.rag.
 
 **Роли:** SH-002; просмотр SH-001.
 
 **Шаги:**
 
-1. Открыть/обновить Risk, связанный с Issue/Equipment.
-2. Установить impact на Milestone (RAG).
-3. Предложить mitigation (recovery) или принять residual (для решения директора).
+1. Иметь Risk, связанный с Issue и/или Equipment и Milestone.
+2. Для Demo v1 при Issue.status ∈ {Open, Mitigating} ожидать Risk.rag = Red (**BR-002**); mock хранит fixture, integrity сверяет с ожиданием.
+3. Директор использует Risk в impact view; mitigation execution **не** моделируется.
+
+**Не подразумевается:** полноценный risk management engine; авто-исполнение recovery; произвольная Amber-шкала Must.
 
 ---
 
@@ -117,15 +135,21 @@ related:
 
 > **certainty:** hypothesis
 
-**Вклад:** ключевая контрольная точка «ready for production» / production start как объект RAG.
+**Вклад:** ключевая контрольная точка «ready for production» / production start как объект дат и RAG.
 
 **Роли:** SH-001 (обзор), SH-002 (ведение).
 
 **Шаги:**
 
-1. Иметь baseline и forecast date вехи.
-2. Пересчитать/установить RAG при изменении linked risk/issue/equipment.
-3. Отразить влияние на director forecast view.
+1. Иметь baselineDate и forecastDate вехи MS-PS.
+2. Применять **только** явные demo-правила:
+   - **BR-002** — Open/Mitigating Issue → expected Risk Red;
+   - **BR-003** — linked Red Risk → expected Milestone Red;
+   - **BR-004** — ограниченный сдвиг forecast dates от Δ equipment delivery;
+   - **BR-006** — Decision сам по себе **не** запускает auto-reforecast.
+3. Отразить результат в director forecast / impact view (PROC-011).
+
+**Не подразумевается:** универсальный rules engine / пересчёт RAG от «любого» изменения любого объекта.
 
 > **certainty:** open_question
 >
@@ -143,9 +167,9 @@ related:
 
 **Шаги:**
 
-1. Агрегировать: delayed equipment, open risk/issue, milestone RAG, forecast vs baseline date.
+1. Агрегировать: delayed equipment, risk/issue, milestone RAG, forecast vs baseline production start.
 2. Показать contributing driver (equipment).
-3. Зафиксировать решение директора (Accept date slip / Prioritize recovery) как исход narrative.
+3. Зафиксировать Decision (**AcceptDateSlip** / **PrioritizeRecovery**) — без исполнения recovery.
 
 ---
 

@@ -3,7 +3,7 @@ id: DOC-BA-016
 title: "Traceability matrix (BA/PD Demo v1)"
 type: business
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -25,10 +25,10 @@ related:
 | P-001, P-002 | PROC-005 | BR-001, NC-001 | **C-04** | REQ-RISK-001 (AC-I) | Steps 3, 7; ISS-001 |
 | P-001, P-002 | PROC-004 | BR-002 | C-04 | REQ-RISK-001 (AC-R) | Steps 4, 8; RISK fixture |
 | P-001, H-002 | PROC-010 | BR-003, BR-004 | C-02 | REQ-MILE-001 | Steps 1, 5, 8; MS-PS |
-| P-001, H-002 | PROC-001 | BR-004 | C-01 | REQ-PROJ-001 | Steps 1, 5, 8 |
+| P-001, H-002 | PROC-001 (dates only; no Activity entity) | BR-004 | C-01 / C-03 | REQ-PROJ-001, REQ-EQPT-001 | Steps 1, 5, 8 |
 | P-002, H-002 | PROC-011 | BR-005 | C-05 | REQ-IMPCT-001 | Step 6 |
 | P-002 | PROC-011 | BR-006 | C-05 | REQ-IMPCT-002 | Steps 7–8; DEC |
-| integrity | — | BR-007 | — | REQ-IMPCT-001 + mock matrix | Step 8 |
+| integrity | — | BR-007 (A baseline; B/C causal) | — | REQ-IMPCT-001 + mock matrix | Steps 1, 8 |
 | architecture | — | DOC-PROD-003/004 | — | REQ-NFR-001/002 | architecture gate |
 
 **Убрано:** BR-001 ↔ C-03 / REQ-EQPT (искусственная связь).

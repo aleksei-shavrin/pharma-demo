@@ -3,7 +3,7 @@ id: DOC-BA-015
 title: "Domain model (Demo v1)"
 type: business
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-30
 updated: 2026-10-30
 owner: "docs-engineering"
@@ -25,66 +25,76 @@ related:
 | Сущность | Ключевые атрибуты (демо) | Состояния / заметки |
 |----------|--------------------------|---------------------|
 | Project | id, name, baselineProductionStart, forecastProductionStart | Один проект (BA-A-001) |
-| Phase | id, name, projectId | Остаётся для C-01 overview; в mock SCN-001→007 экземпляры **не обязательны** |
-| Activity | id, projectId, name, plannedStart/Finish, forecastFinish, equipmentId? | Critical path activity for EQ |
+| Phase | id, name, projectId | Для C-01 overview; в mock SCN-001→007 экземпляры **не обязательны** |
 | Milestone | id, projectId, name, baselineDate, forecastDate, rag | MS-PS = production start |
-| Equipment | id, name, isCritical, baselineDelivery, forecastDelivery, status | OnTrack / Delayed |
-| Risk | id, projectId, title, rag, milestoneId, issueId?, equipmentId? | rag fixture; согласованность с BR-002 |
-| Issue | id, projectId, title, status, ownerRole, equipmentId, milestoneId | Open / Mitigating / AcceptedSlip? / Closed |
-| Decision | id, projectId, milestoneId?, type, ownerRole?, dueDate?, note | AcceptDateSlip / PrioritizeRecovery; **не** execution recovery |
+| Equipment | id, **projectId**, name, isCritical, baselineDelivery, forecastDelivery, status | OnTrack / Delayed; projectId = логический reference ownership |
+| Risk | id, projectId, title, rag, milestoneId, issueId?, equipmentId? | rag fixture; integrity vs BR-002 на B/C |
+| Issue | id, projectId, title, status, ownerRole, equipmentId, milestoneId | Open / Mitigating / Closed |
+| Decision | id, projectId, milestoneId?, type, ownerRole?, dueDate?, note | AcceptDateSlip / PrioritizeRecovery; **не** execution |
 | OwnerRef | roleId (SH-*) | Не полный User/auth |
+
+**Вне Demo v1 domain (явно):** Activity как самостоятельная сущность; Budget; Contractor aggregate; Document/TOP; Readiness-by-area; Change PQS-grade.
 
 ## Phase в Demo v1
 
 > **certainty:** assumption
 >
-> **Phase остаётся** в модели и C-01 как опциональный контейнер overview. Для primary narrative SCN-001→007 mock **не требует** экземпляров Phase; отсутствие Phase в Snapshots A/B/C не ломает causal chain. Нужны ли Phase в runtime mock — open до реализации (не Must для story).
+> **Phase остаётся** в модели и C-01 как опциональный контейнер overview. Mock primary narrative **не требует** экземпляров Phase.
 
-## Вне scope Demo v1 domain
+## Обозначение кардинальности
 
-Budget, ActualCost, Contractor-as-aggregate, Document/TOP package, ReadinessStatus-by-area (SCN-006), Change (PQS-grade).
+В таблице ниже запись `A — B` читается как связь между сущностями A и B.
 
-## Кардинальности (концептуальные, Demo v1)
+| Символ | Смысл |
+|--------|--------|
+| `1` | Ровно один экземпляр на стороне связи |
+| `0..*` | Ноль или много |
+| `1..*` | Один или много |
+| `\*` | Ноль или много (краткая запись) |
+| `0..1` | Ноль или один |
+
+Число **слева** от «—» относится к стороне **первой** сущности в имени связи (как правило «родитель» / владелец в формулировке строки); число **справа** — ко второй. Пример: `Project — Milestone | 1 — 1..*` = у одного Project есть один или много Milestone; каждый Milestone принадлежит одному Project.
 
 > **certainty:** assumption
 >
-> Только отношения, нужные narrative. Не ER constraints.
+> Это концептуальные кардинальности Demo v1, не DDL.
 
-| Связь | Кардинальность (Demo v1) | Примечание |
-|-------|--------------------------|------------|
+## Кардинальности (Demo v1)
+
+| Связь | Кардинальность | Примечание |
+|-------|----------------|------------|
 | Project — Phase | 1 — 0..\* | Phase опциональны в mock |
 | Project — Milestone | 1 — 1..\* | Минимум MS-PS |
-| Project — Equipment | 1 — 1..\* | Минимум один critical package |
-| Project — Activity | 1 — 0..\* | |
+| Project — Equipment | 1 — 1..\* | Ownership: Equipment.projectId → Project |
 | Project — Risk | 1 — 0..\* | |
 | Project — Issue | 1 — 0..\* | |
 | Project — Decision | 1 — 0..\* | |
-| Equipment — Activity | 1 — 0..\* | Narrative: EQ-HVAC-01 ↔ ACT-EQ-01 (**assumption** 1 активность) |
 | Equipment — Issue | 1 — 0..\* | |
 | Equipment — Risk | 1 — 0..\* | |
 | Issue — Risk | 0..1 — 0..1 | Narrative: ISS-001 ↔ RISK-001 (**assumption** пара) |
-| Issue — Milestone | \* — 1 | N Issues → один MS-PS |
-| Risk — Milestone | \* — 1 | N Risks → один MS-PS |
+| Issue — Milestone | \* — 1 | |
+| Risk — Milestone | \* — 1 | |
 | Decision — Project | \* — 1 | |
-| Decision — Milestone | \* — 0..1 | Обычно MS-PS в SCN-007 |
+| Decision — Milestone | \* — 0..1 | Обычно MS-PS |
 
 > **certainty:** open_question
 >
-> Нужны ли в Demo v1 несколько Milestone/Equipment одновременно — вне текущего single-driver narrative (не расширяем).
+> Нужны ли несколько Milestone/Equipment одновременно — вне single-driver narrative (не расширяем).
 
-## Decision (управленческий выбор)
+## Decision vs Issue.status
 
 > **certainty:** hypothesis
 >
-> **Decision** фиксирует выбор директора относительно **текущего** состояния Project/Milestone (и связанного отклонения). Demo v1 **не** моделирует выполнение recovery actions и **не** автоматически пересчитывает forecast (BR-006).
+> **Decision** фиксирует выбор директора (AcceptDateSlip / PrioritizeRecovery) относительно текущего Project/Milestone. Не моделирует выполнение recovery и не auto-reforecast (BR-006).  
+> **Issue.status** Open / Mitigating / Closed — не путать с типом Decision. AcceptDateSlip ≠ Issue.status.
 
 ## Связи (проза)
 
-1. Project содержит Milestones, Activities, Risks, Issues, Equipment; опционально Phases; Decisions.
-2. Equipment (critical) связан с Activity и может порождать Issue/Risk.
-3. Issue и Risk ссылаются на Milestone MS-PS.
+1. Project владеет Milestones, Equipment, Risks, Issues, Decisions; опционально Phases.
+2. Equipment (critical) может быть связан с Issue/Risk.
+3. Issue и Risk ссылаются на Milestone MS-PS (отдельные сущности, linked).
 4. Milestone.forecastDate и Project.forecastProductionStart согласованы по BR-004.
-5. Decision ссылается на Project и (обычно) Milestone; не является workflow исполнения.
+5. Decision ссылается на Project и (обычно) Milestone.
 
 ## Диаграмма
 
@@ -93,11 +103,9 @@ flowchart LR
   Project --> Phase
   Project --> Milestone
   Project --> Equipment
-  Project --> Activity
   Project --> Risk
   Project --> Issue
   Project --> Decision
-  Equipment --> Activity
   Equipment --> Issue
   Equipment --> Risk
   Issue --> Risk
@@ -112,6 +120,6 @@ flowchart LR
 |--------|----------------|
 | Project, Phase | C-01 |
 | Milestone | C-02, C-05 |
-| Equipment, Activity | C-03 |
+| Equipment | C-03 |
 | Risk, Issue | C-04 |
 | Decision + forecast aggregate | C-05 |
