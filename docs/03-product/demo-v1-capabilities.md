@@ -3,7 +3,7 @@ id: DOC-PROD-010
 title: "Demo v1 capabilities"
 type: product
 status: draft
-version: "0.4.0"
+version: "0.5.0"
 created: 2026-10-30
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -35,8 +35,9 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | **Intent** | Показать один Project (и опционально phases) как контейнер narrative |
 | **SCN** | SCN-001, SCN-007 |
 | **PROC** | контекст всех in-процессов |
-| **BR** | — |
+| **BR** | BR-004, BR-006 (поля Project forecast/baseline; правила сдвига и no auto-reforecast согласованы с C-02/C-03/C-05; текст BR не менялся) |
 | **Entities** | Project, Phase |
+| **OpenSpec** | `project-status-overview` (change `define-demo-v1-project-control`) |
 
 ## C-02 — Milestones / gates + RAG
 
@@ -87,6 +88,15 @@ Capability model для обязательного narrative **SCN-001 → SCN-0
 | C-08…C-09 | Could / out |
 | C-10…C-12 | Won’t |
 
-## Candidate OpenSpec names (hypotheses only)
+## OpenSpec (Stage 1 change)
 
-`project-status-overview`, `milestone-readiness`, `equipment-delivery-status`, `risk-issue-impact`, `management-exception-report` — **не** созданы в `openspec/`.
+> **certainty:** fact
+>
+> Delta change `openspec/changes/define-demo-v1-project-control/` (не публикуется на портале): `project-status-overview`, `milestone-readiness`, `equipment-delivery-status`, `risk-issue-impact`, `management-exception-report`, плюс `demo-v1-architecture-constraints` (**ограничения** Demo v1, не product feature). Living `openspec/specs/` — после human review / apply.
+
+| C | OpenSpec capability |
+|---|---------------------|
+| C-02 | `milestone-readiness` |
+| C-03 | `equipment-delivery-status` |
+| C-04 | `risk-issue-impact` |
+| C-05 | `management-exception-report` |

@@ -23,3 +23,4 @@
 | Файл | Назначение |
 |---|---|
 | [docs-engineering-system.md](./docs-engineering-system.md) | Этап Docs Engineering System (OpenSpec + Docusaurus + Compose) |
+| [openspec-demo-v1-stage1.md](./openspec-demo-v1-stage1.md) | Stage 1: OpenSpec formalization Demo v1 Must (C-01…C-05) |

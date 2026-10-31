@@ -3,7 +3,7 @@ id: DOC-HANDOFF-README-001
 title: "Handoffs"
 type: index
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 created: 2026-10-30
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -24,3 +24,4 @@ related:
 | [2026-10-30-w3-integrate.md](./2026-10-30-w3-integrate.md) | W3: интеграция портала |
 | [2026-10-30-discovery.md](./2026-10-30-discovery.md) | Discovery D0–D5 — **completed** → BA & Product Definition |
 | [2026-10-30-ba-pd.md](./2026-10-30-ba-pd.md) | BA/PD — BA-OQ-001 freeze closed (2026-10-31) → OpenSpec |
+| [2026-10-31-req-openspec.md](./2026-10-31-req-openspec.md) | Req/OpenSpec Stage 1 — change `define-demo-v1-project-control` → human review |

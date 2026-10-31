@@ -3,7 +3,7 @@ id: DOC-DEL-README-001
 title: "Delivery"
 type: index
 status: draft
-version: "0.1.1"
+version: "0.1.2"
 created: 2026-10-30
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -24,3 +24,4 @@ related:
 - [reports/2026-10-31-ba-pd-narrow-corrective.md](./reports/2026-10-31-ba-pd-narrow-corrective.md)
 - [reports/2026-10-31-ba-pd-final-consistency-pass.md](./reports/2026-10-31-ba-pd-final-consistency-pass.md)
 - [reports/2026-10-31-req-openspec-readiness-audit.md](./reports/2026-10-31-req-openspec-readiness-audit.md)
+- [reports/2026-10-31-req-openspec-stage1.md](./reports/2026-10-31-req-openspec-stage1.md)
