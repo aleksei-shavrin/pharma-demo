@@ -3,9 +3,9 @@ id: DOC-BA-013
 title: "Process specs (Demo v1 narrative)"
 type: business
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-DISC-016
@@ -56,13 +56,13 @@ related:
 1. Зафиксировать плановую дату delivery/FAT (baselineDelivery).
 2. Получить сигнал сдвига от поставщика / lead.
 3. Обновить forecastDelivery и status пакета (напр. Delayed).
-4. Отметить пакет как critical driver, связанный с Milestone production start (для последующего BR-004 / Issue).
+4. Отметить пакет как **critical driver** narrative: Equipment входит в **causal chain** к Milestone production start **через Issue и/или Risk** (Domain: Equipment→Issue/Risk→Milestone; **нет** прямой связи Equipment—Milestone). Дальше — PROC-005/004 и demo-правило **BR-004** на forecast dates.
 
 **Входы:** идентификатор пакета, baselineDelivery, new forecastDelivery, owner.  
 **Выходы:** обновлённый Equipment status и даты.  
 **Решение в контуре:** эскалация в Issue/Risk (**не** контрактный claim / претензионный SOP).
 
-**Не подразумевается:** авто-обновление всех зависимых прогнозов «движком»; исполнение recovery; полноценный supply-chain module.
+**Не подразумевается:** прямая доменная связь Equipment—Milestone; авто-обновление всех зависимых прогнозов «движком»; исполнение recovery; полноценный supply-chain module.
 
 ---
 

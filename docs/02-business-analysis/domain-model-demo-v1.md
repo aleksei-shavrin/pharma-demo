@@ -3,9 +3,9 @@ id: DOC-BA-015
 title: "Domain model (Demo v1)"
 type: business
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-DISC-017
@@ -71,11 +71,15 @@ related:
 | Project — Decision | 1 — 0..\* | |
 | Equipment — Issue | 1 — 0..\* | |
 | Equipment — Risk | 1 — 0..\* | |
-| Issue — Risk | 0..1 — 0..1 | Narrative: ISS-001 ↔ RISK-001 (**assumption** пара) |
+| Issue — Risk | 0..1 — 0..1 | См. блок ниже (Demo v1 assumption) |
 | Issue — Milestone | \* — 1 | |
 | Risk — Milestone | \* — 1 | |
 | Decision — Project | \* — 1 | |
 | Decision — Milestone | \* — 0..1 | Обычно MS-PS |
+
+> **certainty:** assumption
+>
+> **Issue — Risk `0..1 — 0..1`:** в концептуальной модели Demo v1 для primary narrative (ISS-001 ↔ RISK-001) допускается не более одной связи Issue↔Risk на пару в этом пути. Это **ограничение модели Demo v1**, а не универсальное бизнес-правило предприятия и не DDL. Risk.issueId? / narrative pair согласованы с этим допущением.
 
 > **certainty:** open_question
 >
