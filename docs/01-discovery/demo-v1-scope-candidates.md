@@ -3,9 +3,9 @@ id: DOC-DISC-020
 title: "Demo v1 scope candidates (preliminary MoSCoW)"
 type: discovery
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-DISC-018
@@ -96,4 +96,8 @@ Tech constraints: [demo-v1-architecture](../03-product/demo-v1-architecture.md).
 | HIP-006 | Primary narrative SCN-001→SCN-007; SCN-006 optional | product owner | answered |
 | HIP-001 / HIP-008 | Primary audience директор; H-002 leading / H-003 supporting | product owner | answered |
 
-Discovery Phase — **completed**. MoSCoW ниже остаётся предварительной приоритизацией (**не** FR) для BA.
+Discovery Phase — **completed**. Таблица MoSCoW выше — исторический Discovery-кандидат (**не** FR).
+
+> **certainty:** fact
+>
+> Согласованный Demo v1 freeze Must **C-01…C-05** (без C-06/C-07 как Must) зафиксирован **BA-OQ-001** (2026-10-31) в [demo-v1-functional-scope](../03-product/demo-v1-functional-scope.md) / [ba-registers](../02-business-analysis/ba-registers.md). Это не повышает достоверность процессов предприятия.

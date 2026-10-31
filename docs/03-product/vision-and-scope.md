@@ -3,9 +3,9 @@ id: DOC-PROD-001
 title: "Vision и scope"
 type: product
 status: draft
-version: "0.4.0"
+version: "0.5.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-PROD-002
@@ -48,10 +48,14 @@ related:
 
 ## Scope in (на уровне направления)
 
+> **certainty:** fact
+>
+> - Demo v1 functional freeze (**BA-OQ-001**, 2026-10-31): Must **C-01…C-05**, narrative **SCN-001→SCN-007**, mock Snapshots A/B/C (+21 дн. critical equipment). Детали: [demo-v1-functional-scope](./demo-v1-functional-scope.md), [ba-registers](../02-business-analysis/ba-registers.md). Решение о демо ≠ enterprise-process confirmation.
+
 > **certainty:** hypothesis
 >
 > - Web (Next.js) + API (NestJS); см. [target-technology-stack](./target-technology-stack.md).
-> - Demo v1 capabilities C-01…C-05 и proposed functional scope: [demo-v1-capabilities](./demo-v1-capabilities.md), [demo-v1-functional-scope](./demo-v1-functional-scope.md) (**proposed freeze**; PO BA-OQ-001). Discovery MoSCoW: [demo-v1-scope-candidates](../01-discovery/demo-v1-scope-candidates.md).
+> - Capabilities detail: [demo-v1-capabilities](./demo-v1-capabilities.md). Discovery MoSCoW (исторический кандидат): [demo-v1-scope-candidates](../01-discovery/demo-v1-scope-candidates.md).
 > - Draft behavior REQ: [`04-requirements/`](../04-requirements/README.md).
 > - Документация как первоклассный артефакт (`docs/**`, портал).
 > - Demo v1 без PostgreSQL (mock в NestJS) — [demo-v1-architecture](./demo-v1-architecture.md).
@@ -62,13 +66,14 @@ related:
 >
 > - Выдуманные FR и GMP/валидационные требования заказчика в этом документе **не** формулируются.
 > - Полная GxP-валидация продукта, ERP/CAD/EDMS-замена — вне текущего направления; см. [product-boundaries](../01-discovery/product-boundaries.md).
-> - SCN-006 как обязательная сцена Demo v1 — вне scope (HIP-006).
+> - SCN-006 как обязательная сцена Demo v1 — вне Must (HIP-006; BA-OQ-001).
+> - C-06/C-07, полноценный CPM, расширенный risk management, полноценные contractor/budget модули — вне обязательного Demo v1 (BA-OQ-001).
 
 ## Открытые вопросы
 
 > **certainty:** open_question
 >
-> PO freeze Demo v1 scope (BA-OQ-001); messaging GMP/CSV (HIP-003); горизонт (HIP-004); framing platform vs MVP (HIP-007); применимость к заказчику (HIP-005). Сводка: [ba-pd-summary](../02-business-analysis/ba-pd-summary.md), [discovery-summary](../01-discovery/discovery-summary.md), [human-input-pack](../01-discovery/human-input-pack.md).
+> Messaging GMP/CSV (HIP-003); горизонт (HIP-004); framing platform vs MVP (HIP-007); применимость к заказчику (HIP-005); AcceptDateSlip post-state (BA-OQ-004/005); UI Issue/Risk (BA-OQ-006). Сводка: [ba-pd-summary](../02-business-analysis/ba-pd-summary.md), [discovery-summary](../01-discovery/discovery-summary.md), [human-input-pack](../01-discovery/human-input-pack.md).
 
 ## Связанные документы
 

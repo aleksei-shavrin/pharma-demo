@@ -3,24 +3,30 @@ id: DOC-PROD-010
 title: "Demo v1 capabilities"
 type: product
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-DISC-020
   - DOC-BA-014
   - DOC-BA-015
   - DOC-BA-013
+  - DOC-PROD-011
+  - DOC-BA-010
 ---
 
 # Demo v1 capabilities
 
-Capability model для обязательного narrative **SCN-001 → SCN-007**. Кандидаты C-01…C-05 из Discovery; **не** FR / OpenSpec living specs.
+Capability model для обязательного narrative **SCN-001 → SCN-007**. C-01…C-05 — Must freeze Demo v1; **не** FR / OpenSpec living specs.
+
+> **certainty:** fact
+>
+> **BA-OQ-001 (2026-10-31):** C-01…C-05 входят в согласованный Must Demo v1; C-06/C-07 — вне обязательного объёма. См. [functional-scope](./demo-v1-functional-scope.md), [ba-registers](../02-business-analysis/ba-registers.md). Решение о демо ≠ enterprise-fact.
 
 > **certainty:** hypothesis
 >
-> MoSCoW Discovery → capability descriptions для BA/PD. Утверждение scope — [functional-scope](./demo-v1-functional-scope.md) (PO freeze).
+> Детальные intent / entities / BR mapping ниже — demo model (из Discovery MoSCoW → BA/PD), не living OpenSpec.
 
 ## C-01 — Project overview
 
