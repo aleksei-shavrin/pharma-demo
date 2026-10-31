@@ -3,7 +3,7 @@ id: DOC-UX-008
 title: "Demo v1 mock data UX requirements"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"

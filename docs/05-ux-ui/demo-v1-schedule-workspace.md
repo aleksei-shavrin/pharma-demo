@@ -3,7 +3,7 @@ id: DOC-UX-005
 title: "Demo v1 Schedule workspace"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -18,7 +18,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> D9–D12 UX recommendations. Schedule = визуализация хранимых дат, **не** scheduling engine.
+> D10–D11 = `approved UX decision`; D12 = `deferred decision`. Schedule = визуализация хранимых дат, **не** scheduling engine.
 
 ## 1. Scope (D11)
 
@@ -33,7 +33,7 @@ related:
 
 ## 2. Table-first (D10)
 
-**TanStack Table** — основное представление.
+**TanStack Table** — основное представление (`approved UX decision`, D10).
 
 Колонки (только из данных): Type, ID, Name, Baseline date, Forecast date, Variance (derived), Status/RAG, Critical (**только** Equipment.isCritical), linked Issue/Risk при наличии реальных links.
 
@@ -61,7 +61,7 @@ Toggle Table | Split | Gantt.
 
 > **certainty:** open_question
 >
-> Финальный выбор библиотеки — после tech evaluation; на этапе Proposal **не** устанавливать пакеты.
+> **D12 = `deferred decision`:** финальный выбор библиотеки после tech evaluation; пакеты **не** устанавливать в этой docs-волне. Read-only Gantt как secondary view (D10) при этом уже `approved UX decision`.
 
 ## 5. Navigation
 

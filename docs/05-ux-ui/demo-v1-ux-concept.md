@@ -3,7 +3,7 @@ id: DOC-UX-001
 title: "Demo v1 UX concept"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -19,13 +19,13 @@ related:
 
 > **certainty:** hypothesis
 >
-> Документ фиксирует **UX Discovery recommendations / proposal baseline** (D1–D12). Это **не** пакет per-item human APPROVE UX-layout. Frontmatter `status: draft`. Domain Model, BR, REQ и living OpenSpec Must сохраняют статус источников требований; UX-композиция — `UX proposal`, пока human отдельно не утвердит.
+> Документ фиксирует **принятые UX-решения для Demo v1** (D1–D11 = `approved UX decision`; D12 = `deferred decision`) плюс открытые BA-OQ/HIP и mock `hypothesis`. Frontmatter `status: draft` — жизненный цикл документа, **не** статус UX-решений. Domain Model, BR, REQ и living OpenSpec Must остаются источниками требований; AI не ставит `status: approved` на UX docs.
 
 ## 1. Executive summary
 
 Pharma Project Control **Demo v1** — компактное enterprise-приложение для директора (primary) и PM (secondary). Главный narrative: Snapshots **A → B → C** и Decision **PrioritizeRecovery** без ложного «улучшения» прогноза (BR-006).
 
-**Рекомендуемая IA (proposal):** Application Shell с пятью разделами Sidebar; Director Impact на **Dashboard**; **Schedule** — визуализация control points (Milestone + Equipment delivery), не Activity/CPM.
+**IA (approved UX decision):** Application Shell с пятью разделами Sidebar; Director Impact на **Dashboard**; **Schedule** — визуализация control points (Milestone + Equipment delivery), не Activity/CPM.
 
 ## 2. Audience
 
@@ -34,7 +34,7 @@ Pharma Project Control **Demo v1** — компактное enterprise-прил�
 | Director (SH-001) | PS baseline/forecast, драйвер delay, Decision | DOC-BA-012 N-DIR-* |
 | Project Manager (SH-002) | Реестры, links, подготовка exception view | DOC-BA-012 N-PM-* |
 
-Один shell / одна IA для обеих ролей (D7, proposal).
+Один shell / одна IA для обеих ролей (D7, `approved UX decision`).
 
 ## 3. Goals
 
@@ -44,26 +44,39 @@ Pharma Project Control **Demo v1** — компактное enterprise-прил�
 
 ## 4. Decision register D1–D12
 
-Статус всех строк: **`UX Discovery recommendation` / `proposal baseline`** — без per-item human APPROVE.
+| ID | Решение | Decision Status | Где зафиксировано |
+|----|---------|-----------------|-------------------|
+| D1 | Dashboard — стартовая страница | `approved UX decision` | [shell](./demo-v1-shell-navigation.md), [screens](./demo-v1-screens-and-flows.md), [dashboard](./demo-v1-dashboard.md) |
+| D2 | Многостраничная структура с Left Sidebar | `approved UX decision` | [shell](./demo-v1-shell-navigation.md) |
+| D3 | IA ориентирована прежде всего на Project Director | `approved UX decision` | [dashboard](./demo-v1-dashboard.md) |
+| D4 | Entity Detail: Full Page + Tabs + breadcrumbs | `approved UX decision` | [entity-detail](./demo-v1-entity-detail.md) |
+| D5 | Явно показывать влияние задержки EQ delivery на Production Start | `approved UX decision` | [dashboard](./demo-v1-dashboard.md) |
+| D6 | PrioritizeRecovery — отдельная управленческая Decision; не изображать execution recovery | `approved UX decision` | [dashboard](./demo-v1-dashboard.md), [screens](./demo-v1-screens-and-flows.md) |
+| D7 | Director и PM — один интерфейс и одна навигация | `approved UX decision` | [shell](./demo-v1-shell-navigation.md), [screens](./demo-v1-screens-and-flows.md) |
+| D8 | Композиция Dashboard утверждена; **BA-OQ-006** open для Issues/Risks Register | `approved UX decision` + `open_question` | [dashboard](./demo-v1-dashboard.md) |
+| D9 | Sidebar: Dashboard, Schedule, Equipment, Issues & Risks, Milestones | `approved UX decision` | [shell](./demo-v1-shell-navigation.md) |
+| D10 | TanStack Table primary; Gantt read-only secondary | `approved UX decision` | [schedule](./demo-v1-schedule-workspace.md), [data-viz](./demo-v1-data-viz-and-components.md) |
+| D11 | Schedule = Milestone + Equipment Delivery only; без Activity/WBS/CPM/deps/engine | `approved UX decision` | [schedule](./demo-v1-schedule-workspace.md) |
+| D12 | Выбор Gantt-библиотеки отложен; SVAR React Gantt — кандидат | `deferred decision` | [schedule](./demo-v1-schedule-workspace.md), [data-viz](./demo-v1-data-viz-and-components.md) |
 
-| ID | Recommendation |
-|----|----------------|
-| D1 | Стартовая страница — Dashboard в Application Shell |
-| D2 | Sidebar multi-page (см. D9) |
-| D3 | Приоритет Director: PS / отклонения / Decision на Dashboard |
-| D4 | Entity Detail: Full Page + Tabs; Breadcrumbs / возврат |
-| D5 | Явная Δ delivery → PS; подписи delivery ≠ production start |
-| D6 | PrioritizeRecovery: панель + honesty BR-006 |
-| D7 | Один shell для Director и PM |
-| D8 | Композиция Dashboard (KPI, causal, Decision, exceptions preview); **BA-OQ-006 open** для layout Issue/Risk на реестре |
-| D9 | Sidebar: Dashboard, Schedule, Equipment, Issues & Risks, Milestones |
-| D10 | Schedule: TanStack Table primary; read-only Gantt secondary |
-| D11 | Schedule rows = Milestone + Equipment delivery only; без Activity / WBS / CPM / scheduling engine |
-| D12 | Gantt: SVAR OS кандидат №1; custom timeline — полноценная альтернатива; **выбор lib отложен** |
+Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 
-Детали: [shell-navigation](./demo-v1-shell-navigation.md), [dashboard](./demo-v1-dashboard.md), [schedule](./demo-v1-schedule-workspace.md), [traceability](./demo-v1-ux-traceability.md).
+## 5. Approved shell / stack (сводка)
 
-## 5. Hard constraints (источники требований)
+| Тема | Решение | Decision Status |
+|------|---------|-----------------|
+| Layout | Left Sidebar + Top Application Bar + breadcrumbs + Page Surface (фон, отделение от shell) | `approved UX decision` |
+| Theme | Light/Dark toggle в Application Bar | `approved UX decision` |
+| Snapshot | Глобальный A/B/C в основном UI | `approved UX decision` (UI control); backend mechanism — deferred impl |
+| UI kit | shadcn/ui | `approved UX decision` |
+| Tables | TanStack Table | `approved UX decision` |
+| Charts | Recharts | `approved UX decision` |
+| Entity Detail tabs | Overview · Links · Impact | `approved UX decision` |
+| Links vs Impact | Links = только прямые Domain links; derived/causal — Impact | `approved UX decision` |
+| KPI tiles | Только при обоснованных данных; если группа метрик есть — ≥4; не изобретать метрики | `approved UX decision` |
+| Density | Содержательная плотность, не декоративное заполнение | `approved UX decision` |
+
+## 6. Hard constraints (источники требований)
 
 | Constraint | Источник |
 |------------|----------|
@@ -75,16 +88,17 @@ Pharma Project Control **Demo v1** — компактное enterprise-прил�
 | Must C-01…C-05; C-06/C-07 out | BA-OQ-001; DOC-PROD-011 |
 | AcceptDateSlip не Must journey | REQ-IMPCT-002; BA-OQ-004/005 open |
 
-## 6. Open questions (не закрывать этим proposal)
+## 7. Open questions (не закрывать)
 
-- **BA-OQ-006** — UI layout Issue и Risk
+- **BA-OQ-006** — UI layout Issue и Risk на реестре
 - **BA-OQ-004 / BA-OQ-005** — AcceptDateSlip post-state
 - **BA-OQ-002 / HIP-003/004/007 / HIP-005** — messaging / framing / enterprise-fact
 - **Closed** / **Amber** в ambient mock — без отдельного решения не использовать
-- **D12** — финальный выбор Gantt library (после tech evaluation)
-- Phase grouping; глубина persistence фильтров списка при Back
+- **D12** — финальный выбор Gantt library (`deferred decision` / tech evaluation)
+- Phase grouping; глубина persistence фильтров списка при Back (`assumption` / `open_question`)
+- Mock volume scale — `hypothesis` (DOC-PROD-012 не менять этим пакетом)
 
-## 7. Связанные UX docs
+## 8. Связанные UX docs
 
 | Документ | Роль |
 |----------|------|

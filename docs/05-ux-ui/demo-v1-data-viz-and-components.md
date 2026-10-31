@@ -3,7 +3,7 @@ id: DOC-UX-007
 title: "Demo v1 tables, charts, and UI components"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -18,16 +18,16 @@ related:
 
 > **certainty:** hypothesis
 >
-> Intent стека для будущей реализации. Пакеты **не** устанавливаются в этой docs-волне. D12 lib choice **open**.
+> Стек UI для Demo v1: shadcn/ui, TanStack Table, Recharts — `approved UX decision`. Пакеты **не** устанавливаются в этой docs-волне. D12 Gantt lib — `deferred decision`.
 
-## 1. Component stack (intent)
+## 1. Component stack
 
-| Layer | Choice | Use |
-|-------|--------|-----|
-| UI kit | shadcn/ui | Shell, buttons, tabs, dialog, theme |
-| Tables | TanStack Table | Все реестры + Schedule table |
-| Charts | Recharts | KPI distributions, A/B/C forecast points |
-| Gantt | Deferred (SVAR OS кандидат №1 / custom timeline) | Read-only Schedule secondary view |
+| Layer | Choice | Decision Status | Use |
+|-------|--------|-----------------|-----|
+| UI kit | shadcn/ui | `approved UX decision` | Shell, buttons, tabs, dialog, theme |
+| Tables | TanStack Table | `approved UX decision` | Все реестры + Schedule table |
+| Charts | Recharts | `approved UX decision` | KPI distributions, A/B/C forecast points |
+| Gantt | Deferred (SVAR OS кандидат №1 / custom timeline) | `deferred decision` (D12) | Read-only Schedule secondary view (D10 approved) |
 
 ## 2. Tables
 
@@ -45,10 +45,10 @@ related:
 
 ## 4. Gantt
 
-См. [schedule-workspace](./demo-v1-schedule-workspace.md). Viz ≠ scheduling engine. Baseline dual markers — custom при OS без PRO.
+См. [schedule-workspace](./demo-v1-schedule-workspace.md). Viz ≠ scheduling engine. Baseline dual markers — custom при OS без PRO. Выбор lib отложен (D12).
 
 ## 5. Density guidelines
 
 - Meaningful widgets only (каждый отвечает на вопрос).
-- Нет обязательных 4 KPI на каждой entity card.
+- KPI/metric group: либо ≥4 обоснованных tiles, либо группу не показывать; не изобретать метрики (`approved UX decision`).
 - Light/Dark: theme tokens; charts читаемы в обеих темах.

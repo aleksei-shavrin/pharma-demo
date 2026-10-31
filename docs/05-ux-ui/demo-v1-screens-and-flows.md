@@ -3,7 +3,7 @@ id: DOC-UX-003
 title: "Demo v1 screens and flows"
 type: product
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -17,13 +17,13 @@ related:
 
 > **certainty:** hypothesis
 >
-> Screen inventory и flows — UX proposal. Бизнес-ожидания A/B/C — из walkthrough и living OpenSpec.
+> Screen inventory (P1–P5, detail) — `approved UX decision` (D1/D2/D4/D7/D9). Бизнес-ожидания A/B/C — из walkthrough и living OpenSpec.
 
 ## 1. Screen inventory
 
-### Предлагаемые страницы навигации (UX proposal)
+### Страницы навигации (approved UX decision)
 
-Колонка Capabilities — трассировка к living OpenSpec C-01…C-05 (утверждённая Must-классификация capabilities **не** меняется этим inventory). Сами P1–P5 — UX proposal IA, не переименование Must.
+Колонка Capabilities — трассировка к living OpenSpec C-01…C-05 (утверждённая Must-классификация capabilities **не** меняется этим inventory). P1–P5 — IA Demo v1 (`approved UX decision`), не переименование Must.
 
 | ID | Screen | Audience | Capabilities |
 |----|--------|----------|--------------|
@@ -41,7 +41,7 @@ related:
 | D-ISS | Issue detail | Full Page + Tabs |
 | D-RSK | Risk detail | Full Page + Tabs |
 | D-MS | Milestone detail | Full Page + Tabs |
-| M-DEC | Record PrioritizeRecovery | Modal/dialog; AcceptDateSlip не Must journey |
+| M-DEC | Record PrioritizeRecovery | Modal/dialog; управленческая Decision, не execution (D6); AcceptDateSlip не Must journey |
 
 ## 2. Flow A → B → C (обязательный narrative)
 
