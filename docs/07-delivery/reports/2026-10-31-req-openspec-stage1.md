@@ -3,7 +3,7 @@ id: DOC-RPT-REQOS-002
 title: "Report: OpenSpec Stage 1 formalization (Demo v1 Must)"
 type: delivery
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -15,7 +15,7 @@ related:
 
 # Report: OpenSpec Stage 1 formalization (Demo v1 Must)
 
-Дата: **2026-10-31**. Stage 1 propose/validate завершены; позже в тот же день — human APPROVE → sync living specs → archive (см. §10).
+Дата: **2026-10-31**. Stage 1 propose/validate завершены; позже в тот же день — human APPROVE → sync living specs → archive → ограниченная post-archive docs sync (см. §10).
 
 ## 1. OpenSpec change (на момент formalization)
 
@@ -98,7 +98,8 @@ BA-OQ-002 / HIP-003/004/007; BA-OQ-004; BA-OQ-005; BA-OQ-006; HIP-005.
 ## 9. Next (на момент formalization; обновлено)
 
 ~~Human review change → apply living specs~~ — **сделано** (APPROVE → sync → archive).  
-Далее: ограниченная docs-синхронизация путей; implementation / Nest/Next — только по явному старту. Не закрывать BA-OQ/HIP «заодно».
+~~Ограниченная docs-синхронизация путей после archive~~ — **сделано** (шесть документов; см. §10).  
+Apps implementation / Nest/Next — **только** по отдельному явному решению. Не закрывать BA-OQ/HIP «заодно».
 
 ## 10. Archive / living sync (post-Stage 1)
 
@@ -107,6 +108,26 @@ BA-OQ-002 / HIP-003/004/007; BA-OQ-004; BA-OQ-005; BA-OQ-006; HIP-005.
 | Human APPROVE | Must C-01…C-05; six specs; A→B→C; BR-004/006; PrioritizeRecovery semantics |
 | Left open | AcceptDateSlip post-state; UI layout; messaging; BA-OQ/HIP open set |
 | Living validate | `openspec validate --specs --strict` — 6/6 PASS |
-| `npm run test:docs` (после sync) | PASS |
-| Git | `7dd319c` Sync approved Demo v1 OpenSpec deltas into living specs and archive the change |
+| `npm run test:docs` (после living sync) | PASS |
+| Git (living + archive) | `7dd319c` Sync approved Demo v1 OpenSpec deltas into living specs and archive the change |
 | Content policy | Текст утверждённых требований/specs не менялся (только формат living + whitespace lint) |
+
+### Post-archive docs sync
+
+Ограниченная актуализация путей living/archive — **завершена** (не является следующей задачей).
+
+| Документ | Роль sync |
+|----------|-----------|
+| `docs/02-business-analysis/traceability-matrix.md` | OpenSpec column → living paths; archive note |
+| `docs/03-product/demo-v1-capabilities.md` | C-01…C-05 + NFR → living; archive history |
+| `docs/04-requirements/README.md` | Living vs `changes/`/`archive/` |
+| `docs/07-delivery/handoffs/2026-10-31-req-openspec.md` | Stage 1 + archive + docs sync complete |
+| `docs/07-delivery/reports/2026-10-31-req-openspec-stage1.md` | Этот отчёт (§10) |
+| `.cursor/plans/openspec-demo-v1-stage1.md` | Status Stage 1 completed; living/archive paths |
+
+| Проверка | Результат |
+|----------|-----------|
+| `npm run test:docs` (после post-archive docs sync) | **PASS** |
+| Git после docs sync (по инструкции волны) | изменения **оставлены unstaged** (без commit/push в рамках sync-волны) |
+| Living specs / REQ / BR / mock / OQ/HIP | не менялись |
+| Apps / ADR | не создавались |
