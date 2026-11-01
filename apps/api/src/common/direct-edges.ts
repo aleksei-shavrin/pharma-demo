@@ -57,13 +57,15 @@ export function buildDirectEdges(snapshot: SnapshotFixture): DirectEdge[] {
         toId: risk.id,
       });
     }
-    pushEdge(edges, seen, {
-      kind: 'direct',
-      fromType: 'risk',
-      fromId: risk.id,
-      toType: 'milestone',
-      toId: risk.milestoneId,
-    });
+    if (risk.milestoneId) {
+      pushEdge(edges, seen, {
+        kind: 'direct',
+        fromType: 'risk',
+        fromId: risk.id,
+        toType: 'milestone',
+        toId: risk.milestoneId,
+      });
+    }
     if (risk.issueId) {
       pushEdge(edges, seen, {
         kind: 'direct',
@@ -83,13 +85,15 @@ export function buildDirectEdges(snapshot: SnapshotFixture): DirectEdge[] {
       toType: 'issue',
       toId: issue.id,
     });
-    pushEdge(edges, seen, {
-      kind: 'direct',
-      fromType: 'issue',
-      fromId: issue.id,
-      toType: 'milestone',
-      toId: issue.milestoneId,
-    });
+    if (issue.milestoneId) {
+      pushEdge(edges, seen, {
+        kind: 'direct',
+        fromType: 'issue',
+        fromId: issue.id,
+        toType: 'milestone',
+        toId: issue.milestoneId,
+      });
+    }
   }
 
   for (const decision of snapshot.decisions) {

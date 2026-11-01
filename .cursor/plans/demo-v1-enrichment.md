@@ -11,7 +11,8 @@ updated: 2026-11-01
 > **Не I9** — iterations **E1…E8**.
 > **R1 design pack APPROVED** (2026-11-01).
 > **E1 + E1-R1 APPROVED** (2026-11-01) — contracts/read models established.
-> **Next: E2** (full A–H fixtures). E3–E8 pending.
+> **E2 implemented / awaiting human review** (full A–H fixtures + integrity; E2-R1 corrections). Not AI-APPROVED.
+> **E3–E8 pending.**
 
 ## Context
 
@@ -53,7 +54,7 @@ updated: 2026-11-01
 - **Exclusions:** full A–H fixtures; UI polish
 - **Gates:** api unit + e2e; web contract-compat tests; OpenSpec validate
 
-### E2 — Fixture expansion
+### E2 — Fixture expansion — **implemented / awaiting human review**
 
 - Full A–H per DOC-PROD-021/022; remove E1 stubs
 - Integrity: BR-004/006/007 state-based; Closed; Decision links; G/H residual

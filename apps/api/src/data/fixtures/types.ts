@@ -1,7 +1,7 @@
 import type { SnapshotId } from '../../snapshot/snapshot-id';
 import type { WorkstreamId } from '../workstream-ids';
 
-/** Re-export API snapshot id — fixtures are discrete A–H maps (E1: A–C populated). */
+/** Re-export API snapshot id — fixtures are discrete A–H maps (E2: all populated). */
 export type { SnapshotId };
 export type { WorkstreamId };
 
@@ -43,7 +43,8 @@ export interface RiskFixture {
   id: string;
   title: string;
   rag: Rag;
-  milestoneId: string;
+  /** null for approved non-milestone risks (e.g. RISK-UTL-02). */
+  milestoneId: string | null;
   equipmentId: string | null;
   issueId: string | null;
   workstream: WorkstreamId;
@@ -55,7 +56,8 @@ export interface IssueFixture {
   status: IssueStatus;
   owner: string;
   equipmentId: string;
-  milestoneId: string;
+  /** null for approved non-milestone issues (e.g. ISS-UTL-02). */
+  milestoneId: string | null;
   workstream: WorkstreamId;
 }
 
@@ -85,10 +87,7 @@ export interface TrendFixture {
   unchangedCritical: string[];
 }
 
-/**
- * Collection-shaped discrete snapshot (E1+).
- * Temporary E1 stubs are multi-record but not full DOC-PROD-021.
- */
+/** Collection-shaped discrete snapshot (E2 full DOC-PROD-021 inventory). */
 export interface SnapshotFixture {
   id: SnapshotId;
   scenarioAsOfDate: string;

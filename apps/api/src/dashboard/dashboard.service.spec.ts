@@ -1,6 +1,11 @@
 import { NotFoundException } from '@nestjs/common';
 import { DemoDataSource } from '../data/demo-data-source';
-import { SNAPSHOT_A, SNAPSHOT_B, SNAPSHOT_C } from '../data/fixtures';
+import {
+  SNAPSHOT_A,
+  SNAPSHOT_B,
+  SNAPSHOT_C,
+  SNAPSHOT_F,
+} from '../data/fixtures';
 import { snapshotWithDec001 } from '../data/fixtures/decision-test-fixture';
 import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
 import type { SnapshotId } from '../snapshot/snapshot-id';
@@ -50,7 +55,7 @@ describe('DashboardService (E1-R1 collection contracts)', () => {
     expect(dto.decisionPanelState).toBe('absent');
   });
 
-  it('B: Yellow local PKG; HVAC/PS calm; Closed present; no DEC', () => {
+  it('B: Yellow local PKG/BLD; HVAC/PS calm; Open local issues; no DEC', () => {
     const dto = service.getOverview('PRJ-01', 'B');
     expect(dto.projectStatus).toBe('Yellow');
     expect(dto.project.forecastProductionStart).toBe('2027-09-15');
@@ -62,11 +67,33 @@ describe('DashboardService (E1-R1 collection contracts)', () => {
     ).toBe('Delayed');
     expect(dto.risks.find((r) => r.id === 'RISK-001')?.rag).toBe('Green');
     expect(dto.milestones.find((m) => m.id === 'MS-PS')?.rag).toBe('Green');
-    expect(dto.issues.some((i) => i.status === 'Closed')).toBe(true);
+    expect(dto.issues.some((i) => i.id === 'ISS-PKG-01' && i.status === 'Open')).toBe(
+      true,
+    );
     expect(dto.issues.some((i) => i.id === 'ISS-001')).toBe(false);
     expect(dto.decisions).toEqual([]);
     expect(dto.decisionPanelState).toBe('absent');
     expect(dto.topExceptions[0]?.priority).toBe(1);
+  });
+
+  it('A inventory scale and F decisions without heal', () => {
+    const a = service.getOverview('PRJ-01', 'A');
+    expect(a.equipment).toHaveLength(23);
+    expect(a.milestones).toHaveLength(14);
+
+    const svc = new DashboardService(
+      new FakeDataSource({
+        A: SNAPSHOT_A,
+        B: SNAPSHOT_B,
+        C: SNAPSHOT_C,
+        F: SNAPSHOT_F,
+      }),
+    );
+    const f = svc.getOverview('PRJ-01', 'F');
+    expect(f.decisions.some((d) => d.id === 'DEC-001')).toBe(true);
+    expect(f.project.forecastProductionStart).toBe('2027-10-06');
+    expect(f.projectStatus).toBe('Red');
+    expect(f.decisionHonesty).toEqual({ recoveryExecuted: false });
   });
 
   it('C: Red HVAC path; ISS Open; DEC absent; panel needed', () => {

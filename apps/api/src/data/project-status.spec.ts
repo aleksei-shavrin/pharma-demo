@@ -1,6 +1,4 @@
-import { SNAPSHOT_A } from './fixtures/snapshot-a';
-import { SNAPSHOT_B } from './fixtures/snapshot-b';
-import { SNAPSHOT_C } from './fixtures/snapshot-c';
+import { SNAPSHOT_A, SNAPSHOT_B, SNAPSHOT_C } from './fixtures';
 import type { SnapshotFixture } from './fixtures/types';
 import {
   computeProjectStatus,

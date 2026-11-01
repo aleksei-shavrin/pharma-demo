@@ -65,7 +65,7 @@ describe('I2 API snapshot (e2e)', () => {
         const body = res.body as ProjectBody;
         expect(body.snapshotId).toBe('B');
         expect(body.forecastProductionStart).toBe('2027-09-15');
-        expect(body.scenarioAsOfDate).toBe('2027-03-01');
+        expect(body.scenarioAsOfDate).toBe('2027-02-28');
         expect(body.baselineProductionStart).toBe('2027-09-15');
       });
   });
@@ -78,7 +78,7 @@ describe('I2 API snapshot (e2e)', () => {
         const body = res.body as ProjectBody;
         expect(body.snapshotId).toBe('C');
         expect(body.forecastProductionStart).toBe('2027-10-06');
-        expect(body.scenarioAsOfDate).toBe('2027-03-15');
+        expect(body.scenarioAsOfDate).toBe('2027-03-01');
       });
   });
 
@@ -88,10 +88,57 @@ describe('I2 API snapshot (e2e)', () => {
       .expect(400);
   });
 
-  it('valid but unpopulated snapshot D → 404 until E2', () => {
-    return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01?snapshot=D')
-      .expect(404);
+  it('populated snapshots D–H return 200; Z remains 400', () => {
+    const server = app.getHttpServer();
+    return Promise.all(
+      (['D', 'E', 'F', 'G', 'H'] as const).map((id) =>
+        request(server).get(`/v1/projects/PRJ-01?snapshot=${id}`).expect(200),
+      ),
+    )
+      .then(() =>
+        request(server)
+          .get('/v1/projects/PRJ-01/dashboard?snapshot=F')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as {
+              decisions: { id: string }[];
+              project: { forecastProductionStart: string };
+              projectStatus: string;
+              decisionHonesty: { recoveryExecuted: boolean } | null;
+            };
+            expect(body.decisions.some((d) => d.id === 'DEC-001')).toBe(true);
+            expect(body.project.forecastProductionStart).toBe('2027-10-06');
+            expect(body.projectStatus).toBe('Red');
+            expect(body.decisionHonesty).toEqual({ recoveryExecuted: false });
+          }),
+      )
+      .then(() =>
+        request(server)
+          .get('/v1/projects/PRJ-01/dashboard?snapshot=G')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as {
+              project: { forecastProductionStart: string };
+              equipment: { id: string; forecastDelivery: string }[];
+              risks: { id: string; rag: string }[];
+              milestones: { id: string; rag: string }[];
+            };
+            expect(body.project.forecastProductionStart).toBe('2027-09-29');
+            expect(
+              body.equipment.find((e) => e.id === 'EQ-HVAC-01')!
+                .forecastDelivery,
+            ).toBe('2027-05-29');
+            expect(body.risks.find((r) => r.id === 'RISK-001')!.rag).toBe(
+              'Red',
+            );
+            expect(body.milestones.find((m) => m.id === 'MS-PS')!.rag).toBe(
+              'Red',
+            );
+          }),
+      )
+      .then(() =>
+        request(server).get('/v1/projects/PRJ-01?snapshot=Z').expect(400),
+      );
   });
 
   it('GET dashboard A: on-track, no decision', () => {
@@ -152,7 +199,9 @@ describe('I2 API snapshot (e2e)', () => {
           body.equipment.find((e) => e.id === 'EQ-PKG-01')!.status,
         ).toBe('Delayed');
         expect(body.issues.some((i) => i.id === 'ISS-001')).toBe(false);
-        expect(body.issues.some((i) => i.status === 'Closed')).toBe(true);
+        expect(
+          body.issues.some((i) => i.id === 'ISS-PKG-01' && i.status === 'Open'),
+        ).toBe(true);
         expect(body.risks.find((r) => r.id === 'RISK-001')!.rag).toBe('Green');
         expect(body.milestones.find((m) => m.id === 'MS-PS')!.rag).toBe(
           'Green',
@@ -252,7 +301,7 @@ describe('I2 API snapshot (e2e)', () => {
             const pkg = body.items.find((i) => i.id === 'EQ-PKG-01')!;
             expect(hvac.status).toBe('OnTrack');
             expect(pkg.status).toBe('Delayed');
-            expect(pkg.deliveryVariance.deltaDays).toBe(7);
+            expect(pkg.deliveryVariance.deltaDays).toBe(10);
           }),
       )
       .then(() =>
@@ -312,8 +361,8 @@ describe('I2 API snapshot (e2e)', () => {
             };
             expect(body.rows.some((r) => r.id === 'ISS-001')).toBe(false);
             expect(
-              body.rows.find((r) => r.id === 'ISS-PKG-CLOSED')?.issueStatus,
-            ).toBe('Closed');
+              body.rows.find((r) => r.id === 'ISS-PKG-01')?.issueStatus,
+            ).toBe('Open');
             expect(body.rows.find((r) => r.id === 'RISK-001')?.rag).toBe(
               'Green',
             );
@@ -399,7 +448,12 @@ describe('I2 API snapshot (e2e)', () => {
         const body = res.body as DetailBody;
         expect(body.snapshotId).toBe('A');
         expect(body.entity.status).toBe('OnTrack');
-        expect(body.links.map((l) => l.targetType).sort()).toEqual(['risk']);
+        expect(body.links.filter((l) => l.targetType === 'risk').length).toBe(
+          2,
+        );
+        expect(
+          body.links.map((l) => l.targetId).sort(),
+        ).toEqual(['RISK-001', 'RISK-HVAC-02']);
         expect(body.links.some((l) => l.targetType === 'milestone')).toBe(
           false,
         );

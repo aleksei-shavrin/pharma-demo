@@ -1,4 +1,4 @@
-import { SNAPSHOT_A } from './fixtures/snapshot-a';
+import { SNAPSHOT_A } from './fixtures';
 import { snapshotWithDec001 } from './fixtures/decision-test-fixture';
 import type { SnapshotFixture } from './fixtures/types';
 import {

@@ -1,12 +1,21 @@
 /**
  * Discrete Demo v1 snapshot machine ids (enrichment A–H).
- * E1 populates A–C only; D–H are valid machine ids but may 404 until E2.
+ * E2 populates all eight snapshots.
  */
 export const SNAPSHOT_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] as const;
 export type SnapshotId = (typeof SNAPSHOT_IDS)[number];
 
-/** Snapshots currently loaded in Nest fixtures (E1 temporary). */
-export const POPULATED_SNAPSHOT_IDS = ['A', 'B', 'C'] as const;
+/** Snapshots currently loaded in Nest fixtures (E2: A–H). */
+export const POPULATED_SNAPSHOT_IDS = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+] as const;
 export type PopulatedSnapshotId = (typeof POPULATED_SNAPSHOT_IDS)[number];
 
 export function isSnapshotId(value: string): value is SnapshotId {

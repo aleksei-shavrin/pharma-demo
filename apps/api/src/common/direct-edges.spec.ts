@@ -1,5 +1,4 @@
-import { SNAPSHOT_B } from '../data/fixtures/snapshot-b';
-import { SNAPSHOT_C } from '../data/fixtures/snapshot-c';
+import { SNAPSHOT_B, SNAPSHOT_C } from '../data/fixtures';
 import {
   snapshotWithAcceptDateSlip,
   snapshotWithDec001,

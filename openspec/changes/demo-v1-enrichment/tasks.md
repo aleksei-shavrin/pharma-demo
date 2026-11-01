@@ -1,6 +1,6 @@
 # Tasks
 
-> R1 design APPROVED. E1 + E1-R1 APPROVED. Namespace **E1…E8** (not I9). Next: E2.
+> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 implemented — awaiting human review (E2-R1: Schedule UX out of E2; DOC-PROD-022 WS-PKG wording aligned). Namespace **E1…E8** (not I9). Next after E2 APPROVED: E3.
 
 ## E1 — Contracts
 
@@ -16,9 +16,10 @@
 
 ## E2 — Fixtures A–H
 
-- [ ] DOC-PROD-021/022 full fixtures; remove stubs
-- [ ] Integrity BR-004/006/007 state-based; Closed; G/H residual honesty
-- [ ] Remap: C=+21; F=DEC-001; G PKG Closed + HVAC +14
+- [x] DOC-PROD-021/022 full fixtures; remove stubs
+- [x] Integrity BR-004/006/007 state-based; Closed; G/H residual honesty
+- [x] Remap: C=+21; F=DEC-001; G PKG Closed + HVAC +14
+- Status: **implemented / awaiting human review** (not APPROVED by AI)
 
 ## E3 — Dashboard
 

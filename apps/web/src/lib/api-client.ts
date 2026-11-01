@@ -75,7 +75,7 @@ export type DashboardOverview = {
     status: 'Open' | 'Mitigating' | 'Closed';
     workstream: WorkstreamId;
     equipmentId: string;
-    milestoneId: string;
+    milestoneId: string | null;
   }[];
   risks: {
     id: string;
@@ -83,7 +83,7 @@ export type DashboardOverview = {
     rag: 'Green' | 'Red';
     workstream: WorkstreamId;
     equipmentId: string | null;
-    milestoneId: string;
+    milestoneId: string | null;
     issueId: string | null;
   }[];
   milestones: {

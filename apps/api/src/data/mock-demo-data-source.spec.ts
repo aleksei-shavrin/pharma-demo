@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import { MockDemoDataSource } from './mock-demo-data-source';
 import {
   findEquipment,
@@ -7,11 +6,20 @@ import {
   findRisk,
 } from './snapshot-access';
 
-describe('MockDemoDataSource (E1-R1 collection stubs)', () => {
+describe('MockDemoDataSource (E2 A–H fixtures)', () => {
   const ds = new MockDemoDataSource();
 
-  it('exposes populated snapshots A, B, C', () => {
-    expect(ds.listSnapshotIds().sort()).toEqual(['A', 'B', 'C']);
+  it('exposes populated snapshots A–H', () => {
+    expect(ds.listSnapshotIds().sort()).toEqual([
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+      'F',
+      'G',
+      'H',
+    ]);
   });
 
   it('default snapshot is A with baseline PS dates equal', () => {
@@ -21,18 +29,21 @@ describe('MockDemoDataSource (E1-R1 collection stubs)', () => {
     expect(a.project.baselineProductionStart).toBe('2027-09-15');
     expect(a.project.forecastProductionStart).toBe('2027-09-15');
     expect(findEquipment(a, 'EQ-HVAC-01')?.status).toBe('OnTrack');
+    expect(a.equipment).toHaveLength(23);
     expect(a.issues).toEqual([]);
     expect(a.decisions).toEqual([]);
   });
 
-  it('snapshot B: local PKG Yellow path; HVAC/PS calm; no DEC', () => {
+  it('snapshot B: local PKG/BLD Yellow path; HVAC/PS calm; no DEC', () => {
     const b = ds.getSnapshot('B');
     expect(findEquipment(b, 'EQ-HVAC-01')?.status).toBe('OnTrack');
     expect(findEquipment(b, 'EQ-PKG-01')?.status).toBe('Delayed');
+    expect(findEquipment(b, 'EQ-BLD-02')?.status).toBe('Delayed');
     expect(b.project.forecastProductionStart).toBe('2027-09-15');
     expect(findMilestone(b, 'MS-PS')?.rag).toBe('Green');
     expect(findRisk(b, 'RISK-001')?.rag).toBe('Green');
     expect(findIssue(b, 'ISS-001')).toBeUndefined();
+    expect(findIssue(b, 'ISS-PKG-01')?.status).toBe('Open');
     expect(b.decisions).toEqual([]);
   });
 
@@ -45,10 +56,19 @@ describe('MockDemoDataSource (E1-R1 collection stubs)', () => {
     expect(findMilestone(c, 'MS-PS')?.forecastDate).toBe('2027-10-06');
     expect(findRisk(c, 'RISK-001')?.rag).toBe('Red');
     expect(findIssue(c, 'ISS-001')?.status).toBe('Open');
+    expect(findIssue(c, 'ISS-BLD-01')?.status).toBe('Closed');
     expect(c.decisions).toEqual([]);
   });
 
-  it('D–H are valid machine ids but not populated in E1', () => {
-    expect(() => ds.getSnapshot('D')).toThrow(NotFoundException);
+  it('D–H are populated; Z remains invalid at parse layer (not this API)', () => {
+    for (const id of ['D', 'E', 'F', 'G', 'H'] as const) {
+      expect(ds.getSnapshot(id).id).toBe(id);
+    }
+    expect(ds.getSnapshot('F').decisions.some((d) => d.id === 'DEC-001')).toBe(
+      true,
+    );
+    expect(ds.getSnapshot('G').project.forecastProductionStart).toBe(
+      '2027-09-29',
+    );
   });
 });

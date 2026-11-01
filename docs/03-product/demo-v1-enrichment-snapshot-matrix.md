@@ -3,7 +3,7 @@ id: DOC-PROD-022
 title: "Demo v1 enrichment — snapshot and causal matrix"
 type: product
 status: draft
-version: "0.3.0"
+version: "0.3.1"
 created: 2026-11-01
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -30,7 +30,7 @@ related:
 | D | 2027-03-20 | Каскад на чистые зоны и HVAC IQ | S1+S2 |
 | E | 2027-04-10 | Несколько параллельных проблем | Peak attention |
 | F | 2027-04-20 | Зафиксированы управленческие решения | ≈ current C+ |
-| G | 2027-05-15 | Частичная стабилизация | PKG OK; HVAC residual |
+| G | 2027-05-15 | Частичная стабилизация | S4 primary recovered; WS-PKG Yellow residual; HVAC residual |
 | H | 2027-06-01 | Обновлённый прогноз / остаточный риск | Residual honesty |
 
 Live Presentation punch: **C**. Deep-dive D–H after Guide update (E7).
@@ -86,11 +86,12 @@ All EQ OnTrack; no open ISS; risks Green; MS Green; PS = 2027-09-15; no decision
 | MS-PS | **Red**; forecast **2027-09-29** |
 | ISS-001 | **Mitigating** |
 | DEC-001 | present from F |
-| Packaging | EQ-PKG-01 Δ0; RISK-PKG-01 Green; ISS-PKG-01 **Closed**; DEC-PKG-01 present — recovery **fixture-authored** |
+| Packaging (S4 primary) | EQ-PKG-01 Δ0; RISK-PKG-01 Green; ISS-PKG-01 **Closed**; DEC-PKG-01 present — primary recovery **fixture-authored** |
+| Packaging (serialization residual) | EQ-PKG-03 Delayed and/or ISS-PKG-02 Open remain → **WS-PKG Yellow** under E1 rollup (primary story recovered ≠ workstream rollup Green) |
 | WFI | residual +12; Mitigating |
 | QC | DEC-QC-01; ISS-QC Mitigating |
 
-**Overall:** Red (RISK-001 / MS-PS).
+**Overall:** Red (RISK-001 / MS-PS). **WS-PKG:** Yellow (serialization residual).
 
 ### H — Residual honesty
 
@@ -99,9 +100,10 @@ All EQ OnTrack; no open ISS; risks Green; MS Green; PS = 2027-09-15; no decision
 | HVAC Δ / RISK-001 / MS-PS / PS | same residual as G (+14 / Red / Red / 2027-09-29) |
 | ISS-001 | Mitigating |
 | DEC-AUT-01 | freeze BMS/EMS |
+| Packaging | same G semantics: S4 primary recovered; **WS-PKG Yellow** while serialization residual attention exists |
 | Narrative | Decisions exist; execution incomplete |
 
-**Overall:** Red.
+**Overall:** Red. **WS-PKG:** Yellow (serialization residual).
 
 ## 3. Causal stories × snapshots
 
@@ -113,7 +115,9 @@ All EQ OnTrack; no open ISS; risks Green; MS Green; PS = 2027-09-15; no decision
 | S4 Packaging | · | ● | ● | ● | ● | ◆ | ✓ | ✓ |
 | S5 QC | · | · | · | · | ● | · | ◆ | ◐ |
 
-● active · quiet ◆ decision ✓ recovered ◐ residual
+● active · quiet ◆ decision ✓ recovered (S4 **primary** packaging path) ◐ residual
+
+**Note (S4 / WS-PKG):** ✓ on G/H means primary packaging recovery (EQ-PKG-01 / RISK-PKG-01 / ISS-PKG-01). It does **not** mean `workstreamStatus(WS-PKG) === Green`. While serialization residual (EQ-PKG-03 Delayed and/or ISS-PKG-02 Open) remains, E1 rollup keeps **WS-PKG Yellow**.
 
 ## 4. PS forecast
 
@@ -161,8 +165,8 @@ Example Snapshot E priorities (read-model `priority` 1…n): HVAC→PS, WFI, CLN
 | B | PKG/BLD Yellow |
 | C | HVAC Red; PKG Yellow |
 | F | HVAC Red (Mitigating Issue does not clear Red Risk) |
-| G | HVAC Red; UTL likely Yellow/Red; PKG Green |
-| H | HVAC Red; residual Yellow elsewhere possible |
+| G | HVAC Red; UTL likely Yellow/Red; **WS-PKG Yellow** (S4 primary recovered; serialization residual) |
+| H | HVAC Red; **WS-PKG Yellow** (same packaging semantics as G); residual Yellow elsewhere possible |
 
 ## 8. Non-goals
 

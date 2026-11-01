@@ -79,8 +79,12 @@ export class DashboardIssueDto {
   @ApiProperty()
   equipmentId!: string;
 
-  @ApiProperty()
-  milestoneId!: string;
+  @ApiPropertyOptional({
+    nullable: true,
+    type: String,
+    description: 'null when Issue has no milestone (e.g. ISS-UTL-02)',
+  })
+  milestoneId!: string | null;
 }
 
 export class DashboardRiskDto {
@@ -99,8 +103,12 @@ export class DashboardRiskDto {
   @ApiPropertyOptional({ nullable: true, type: String })
   equipmentId!: string | null;
 
-  @ApiProperty()
-  milestoneId!: string;
+  @ApiPropertyOptional({
+    nullable: true,
+    type: String,
+    description: 'null when Risk has no milestone (e.g. RISK-UTL-02)',
+  })
+  milestoneId!: string | null;
 
   @ApiPropertyOptional({ nullable: true, type: String })
   issueId!: string | null;

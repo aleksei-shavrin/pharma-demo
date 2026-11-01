@@ -26,11 +26,13 @@ describe('EntityDetailService', () => {
   });
 
   describe('Equipment EQ-HVAC-01', () => {
-    it('A: OnTrack, variance 0, Links Risk only (no Milestone)', () => {
+    it('A: OnTrack, variance 0, Links Risks (no Milestone)', () => {
       const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'A');
       expect(d.entity.status).toBe('OnTrack');
       expect(d.entity.deliveryVariance.deltaDays).toBe(0);
-      expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
+      expect(linkIds(d.links, 'risk')).toEqual(
+        expect.arrayContaining(['RISK-001', 'RISK-HVAC-02']),
+      );
       expect(linkIds(d.links, 'milestone')).toEqual([]);
       expect(linkIds(d.links, 'issue')).toEqual([]);
       expect(d.impact.kind).toBe('none');
@@ -45,12 +47,14 @@ describe('EntityDetailService', () => {
       expect(d.impact.decisionState).toBe('absent');
     });
 
-    it('C: Delayed +21; Links Issue+Risk; no Milestone; needed; no recovery', () => {
+    it('C: Delayed +21; Links Issue+Risks; no Milestone; needed; no recovery', () => {
       const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'C');
       expect(d.entity.status).toBe('Delayed');
       expect(d.entity.deliveryVariance.deltaDays).toBe(21);
       expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
-      expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
+      expect(linkIds(d.links, 'risk')).toEqual(
+        expect.arrayContaining(['RISK-001', 'RISK-HVAC-02']),
+      );
       expect(linkIds(d.links, 'milestone')).toEqual([]);
       expect(d.impact.kind).toBe('aligned_slip');
       expect(d.impact.productionStartDeltaDays).toBe(21);

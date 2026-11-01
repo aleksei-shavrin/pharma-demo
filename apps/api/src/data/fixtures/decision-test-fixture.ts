@@ -1,15 +1,15 @@
+import { buildSnapshot } from './build-snapshot';
 import type { SnapshotFixture } from './types';
-import { SNAPSHOT_C } from './snapshot-c';
 
 /**
  * Test-only SnapshotFixture clone: C HVAC Red path + DEC-001 recorded.
- * Production Snapshot C has no DEC-001 (belongs to enriched F / E2).
- * Do not export via fixtures/index production map.
+ * Production Snapshot C has no DEC-001 (belongs to F).
+ * Do not place this on the production SNAPSHOTS map.
  */
 export function snapshotWithDec001(
   overrides: Partial<SnapshotFixture> = {},
 ): SnapshotFixture {
-  const base = structuredClone(SNAPSHOT_C);
+  const base = structuredClone(buildSnapshot('C'));
   return {
     ...base,
     id: 'C',

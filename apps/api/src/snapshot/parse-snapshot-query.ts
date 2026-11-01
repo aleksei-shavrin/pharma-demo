@@ -10,7 +10,7 @@ export function parseSnapshotQuery(raw: string | undefined | null): SnapshotId {
   }
   if (typeof raw !== 'string' || !isSnapshotId(raw)) {
     throw new BadRequestException(
-      `Invalid snapshot '${String(raw)}'. Allowed values: A, B, C.`,
+      `Invalid snapshot '${String(raw)}'. Allowed values: A, B, C, D, E, F, G, H.`,
     );
   }
   return raw;

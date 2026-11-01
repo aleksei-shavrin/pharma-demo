@@ -46,13 +46,14 @@ describe('RegistersService', () => {
       expect(r.items[0].workstream).toBeTruthy();
     });
 
-    it('B: HVAC OnTrack; PKG Delayed', () => {
+    it('B: HVAC OnTrack; PKG Delayed +10', () => {
       const r = service.listEquipment('PRJ-01', 'B');
       const hvac = r.items.find((i) => i.id === 'EQ-HVAC-01');
       const pkg = r.items.find((i) => i.id === 'EQ-PKG-01');
+      expect(r.items).toHaveLength(23);
       expect(hvac?.status).toBe('OnTrack');
       expect(pkg?.status).toBe('Delayed');
-      expect(pkg?.deliveryVariance.deltaDays).toBe(7);
+      expect(pkg?.deliveryVariance.deltaDays).toBe(10);
     });
 
     it('C: HVAC Delayed +21', () => {
@@ -72,11 +73,16 @@ describe('RegistersService', () => {
       );
     });
 
-    it('B: Closed PKG issue; no ISS-001; RISK Green', () => {
+    it('B: Open PKG/BLD issues; no ISS-001; RISK Green', () => {
       const r = service.listIssuesRisks('PRJ-01', 'B');
       expect(r.rows.some((x) => x.id === 'ISS-001')).toBe(false);
       expect(
-        r.rows.some((x) => x.type === 'Issue' && x.issueStatus === 'Closed'),
+        r.rows.some(
+          (x) =>
+            x.type === 'Issue' &&
+            x.id === 'ISS-PKG-01' &&
+            x.issueStatus === 'Open',
+        ),
       ).toBe(true);
       expect(
         r.rows.some(

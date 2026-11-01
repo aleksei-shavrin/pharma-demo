@@ -1,20 +1,42 @@
-import { SNAPSHOT_A } from './snapshot-a';
-import { SNAPSHOT_B } from './snapshot-b';
-import { SNAPSHOT_C } from './snapshot-c';
+import { buildAllSnapshots } from './build-snapshot';
 import type { SnapshotFixture, SnapshotId } from './types';
 
 export * from './types';
-export { SNAPSHOT_A, SNAPSHOT_B, SNAPSHOT_C };
+export {
+  EQUIPMENT_CATALOG,
+  EQUIPMENT_IDS,
+  MILESTONE_CATALOG,
+  MILESTONE_IDS,
+  ISSUE_CATALOG,
+  ISSUE_IDS,
+  RISK_CATALOG,
+  RISK_IDS,
+  DECISION_CATALOG,
+  DECISION_IDS,
+  PROJECT,
+} from './catalog';
+export { SNAPSHOT_STATES } from './snapshot-states';
+export {
+  buildSnapshot,
+  buildAllSnapshots,
+  decisionsPresentAt,
+  issuesPresentAt,
+  risksPresentAt,
+} from './build-snapshot';
 
 /**
- * Populated Demo snapshots (E1: A–C temporary stubs).
- * Machine contract allows A–H; D–H absent until E2.
+ * Populated Demo snapshots A–H (E2 full DOC-PROD-021/022 fixtures).
  */
-export const SNAPSHOTS: Partial<Record<SnapshotId, SnapshotFixture>> &
-  Record<'A' | 'B' | 'C', SnapshotFixture> = {
-  A: SNAPSHOT_A,
-  B: SNAPSHOT_B,
-  C: SNAPSHOT_C,
-};
+export const SNAPSHOTS: Record<SnapshotId, SnapshotFixture> =
+  buildAllSnapshots();
+
+export const SNAPSHOT_A = SNAPSHOTS.A;
+export const SNAPSHOT_B = SNAPSHOTS.B;
+export const SNAPSHOT_C = SNAPSHOTS.C;
+export const SNAPSHOT_D = SNAPSHOTS.D;
+export const SNAPSHOT_E = SNAPSHOTS.E;
+export const SNAPSHOT_F = SNAPSHOTS.F;
+export const SNAPSHOT_G = SNAPSHOTS.G;
+export const SNAPSHOT_H = SNAPSHOTS.H;
 
 export const DEFAULT_SNAPSHOT_ID: SnapshotId = 'A';
