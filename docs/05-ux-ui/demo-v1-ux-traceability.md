@@ -3,13 +3,14 @@ id: DOC-UX-009
 title: "Demo v1 UX traceability"
 type: product
 status: draft
-version: "0.2.3"
+version: "0.2.5"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
 related:
   - DOC-UX-001
   - DOC-BA-016
+  - DOC-UX-015
 ---
 
 # Demo v1 UX traceability
@@ -66,8 +67,11 @@ related:
 | AcceptDateSlip Must UI | — | REQ-IMPCT-002; BA-OQ-004/005 | — | `open_question` (not Must journey) |
 | VD-A Industrial Control Lattice | Theme / all screens | DOC-UX-010 | — | `approved Visual Direction baseline` |
 | VD-B / VD-C | Comparison only | DOC-UX-010 | — | considered; **not selected** |
-| Design token roles + surface depth (principles) | Shell / components | DOC-UX-011 | Theme CSS vars (UI Design) | `approved Visual Direction baseline` (principles); exact HEX → UI Design |
+| Design token roles + surface depth (principles) | Shell / components | DOC-UX-011 | Theme CSS vars | `approved Visual Direction baseline` (principles) |
+| Concrete HEX Light/Dark + calculated contrast | Theme / badges | DOC-UX-015 | shadcn CSS vars | `proposal` (UI Foundations) |
 | Multi-channel status encoding | Badges / tables | DOC-UX-011; allowlist | Allowlisted statuses only | `approved Visual Direction baseline` (encoding) + `approved requirement` (values) |
 | Dashboard narrative-first composition | P1 | DOC-UX-012; DOC-UX-004 | Same as D8 data | `approved Visual Direction baseline` on `approved UX decision` (blocks) |
 | Schedule table-primary visual mass | P2 | DOC-UX-012; DOC-UX-005 | MS + EQ rows | `approved Visual Direction baseline` + D10/D11 approved |
 | Issues & Risks register layout variants | P4 | DOC-UX-012 | ISS/RISK | `open_question` (BA-OQ-006); variants not closed |
+| UI Design wave overview | Pack DOC-UX-014…020 | DOC-UX-014 | — | wave in progress; new UI Design = `proposal` |
+| BA-OQ-006 working layout V1 (single table + Type) | P4 / UI screens | DOC-UX-014 | Shared columns only | `assumption`; OQ remains open |

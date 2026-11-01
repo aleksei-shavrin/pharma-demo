@@ -3,7 +3,7 @@ id: DOC-UX-011
 title: "Demo v1 design tokens (Visual Direction)"
 type: product
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 created: 2026-10-31
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -11,13 +11,14 @@ related:
   - DOC-UX-010
   - DOC-UX-007
   - DOC-UX-002
+  - DOC-UX-015
 ---
 
 # Demo v1 design tokens (Visual Direction)
 
 > **certainty:** hypothesis
 >
-> Token system под **VD-A** (`approved Visual Direction baseline`). **Роли и принципы** утверждены в рамках VD-A. **Конкретные HEX и окончательные значения токенов** — предмет UI Design (illustrative examples ниже не финальны). Не расширяет status allowlist. Не install / не CSS в apps.
+> Token system под **VD-A** (`approved Visual Direction baseline`). **Роли и принципы** утверждены в рамках VD-A. **Конкретные HEX, contrast calculations и shadcn mapping** — в UI Design foundations: [`demo-v1-ui-foundations.md`](./demo-v1-ui-foundations.md) (**DOC-UX-015**, `proposal`). Illustrative examples в §9 ниже **не** финальны и **superseded** DOC-UX-015 для значений. Не расширяет status allowlist. Не install / не CSS в apps.
 
 ## 1. Color roles (VD-A baseline principles)
 
@@ -117,11 +118,11 @@ Scale compact (enterprise density): roughly 12 / 13 / 14 / 16 / 20 / 24 px equiv
 
 Не заявлять WCAG compliance без таких проверок.
 
-## 9. Illustrative values (UI Design input — not final)
+## 9. Illustrative values (historical input — superseded for HEX)
 
 > **certainty:** hypothesis
 >
-> Примеры Light theme для UI Design. **Не** утверждённая палитра. Окончательные HEX и измеренная контрастность — в UI Design / implementation.
+> Исторические примеры Light theme (вход в UI Design). **Не** утверждённая палитра. **Актуальные proposal HEX + calculated contrast** — [`demo-v1-ui-foundations.md`](./demo-v1-ui-foundations.md) (DOC-UX-015). Browser verification — implementation.
 
 | Role | Example Light (illustrative) |
 |------|------------------------------|

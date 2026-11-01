@@ -25,4 +25,5 @@
 | [docs-engineering-system.md](./docs-engineering-system.md) | Этап Docs Engineering System (OpenSpec + Docusaurus + Compose) |
 | [openspec-demo-v1-stage1.md](./openspec-demo-v1-stage1.md) | Stage 1: OpenSpec formalization Demo v1 Must (C-01…C-05) |
 | [ux-ui-demo-v1.md](./ux-ui-demo-v1.md) | UX/UI Demo v1: Discovery D1–D12 + Proposal/Handoff (этап H) |
-| [visual-direction-demo-v1.md](./visual-direction-demo-v1.md) | Visual Direction Demo v1: **COMPLETED**; VD-A approved baseline; next = UI Design |
+| [visual-direction-demo-v1.md](./visual-direction-demo-v1.md) | Visual Direction Demo v1: **COMPLETED**; VD-A approved baseline |
+| [ui-design-spec-demo-v1.md](./ui-design-spec-demo-v1.md) | UI Design Spec Demo v1: **APPROVED**; Iter 0–1 done; Iter 2–5 pending |

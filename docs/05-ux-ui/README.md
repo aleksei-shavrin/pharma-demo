@@ -3,7 +3,7 @@ id: DOC-UX-README-001
 title: "UX / UI"
 type: index
 status: draft
-version: "0.4.1"
+version: "0.6.0"
 created: 2026-10-30
 updated: 2026-10-31
 owner: "docs-engineering"
@@ -11,13 +11,15 @@ related:
   - DOC-PROD-001
   - DOC-UX-001
   - DOC-UX-010
+  - DOC-UX-014
+  - DOC-UX-015
 ---
 
 # 05-ux-ui
 
-UX + Visual Direction documentation для **Demo v1**. Frontmatter документов — `status: draft` (lifecycle docs ≠ decision status).
+UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter документов — `status: draft` (lifecycle docs ≠ decision status).
 
-**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. **VD-A Industrial Control Lattice** — `approved Visual Direction baseline` для Demo v1. HEX/exact tokens и a11y measurements — UI Design. BA-OQ/HIP и mock volume остаются open / hypothesis.
+**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. **VD-A** — `approved Visual Direction baseline`. **UI Design** — in progress (Iteration 1 foundations done); new UI Design choices = `proposal` until pack APPROVE. BA-OQ-006 open (working assumption V1 table); mock volume = `hypothesis`.
 
 ## Правила
 
@@ -26,6 +28,8 @@ UX + Visual Direction documentation для **Demo v1**. Frontmatter докуме
 - AI не ставит `status: approved` на UX/VD docs (frontmatter).
 - Различать: `approved UX decision` · `approved Visual Direction baseline` · `deferred decision` · `open_question` · `hypothesis` · `proposal` · `assumption`.
 - Макеты (Figma и т.п.) — по ссылке; в git — описания и решения.
+- UI Design overview: [demo-v1-ui-design-overview.md](./demo-v1-ui-design-overview.md) (DOC-UX-014).
+- UI Foundations: [demo-v1-ui-foundations.md](./demo-v1-ui-foundations.md) (DOC-UX-015).
 
 ## Demo v1 UX decisions
 
@@ -50,10 +54,22 @@ UX + Visual Direction documentation для **Demo v1**. Frontmatter докуме
 | [demo-v1-screen-compositions.md](./demo-v1-screen-compositions.md) | DOC-UX-012 | Shell + key screens composition under VD-A |
 | [demo-v1-visual-references.md](./demo-v1-visual-references.md) | DOC-UX-013 | Reference honesty log |
 
+## Demo v1 UI Design Specification (in progress)
+
+| Файл | ID | Назначение |
+|------|-----|------------|
+| [demo-v1-ui-design-overview.md](./demo-v1-ui-design-overview.md) | DOC-UX-014 | Wave overview, status map, constraints (Iteration 0) |
+| [demo-v1-ui-foundations.md](./demo-v1-ui-foundations.md) | DOC-UX-015 | Foundations: HEX Light/Dark, contrast, type, density, shadcn map (`proposal`) |
+| `demo-v1-ui-components.md` | DOC-UX-016 | Planned — Iteration 2 |
+| `demo-v1-ui-screens.md` | DOC-UX-017 | Planned — Iteration 4 |
+| `demo-v1-ui-data-viz.md` | DOC-UX-018 | Planned — Iteration 3 |
+| `demo-v1-ui-interactions.md` | DOC-UX-019 | Planned — Iteration 3 |
+| `demo-v1-ui-quality.md` | DOC-UX-020 | Planned — Iteration 5 |
+
 ## Связанное
 
 - UX handoff: [`docs/07-delivery/handoffs/2026-10-31-ux-ui.md`](../07-delivery/handoffs/2026-10-31-ux-ui.md)
 - Visual Direction handoff: [`docs/07-delivery/handoffs/2026-10-31-visual-direction.md`](../07-delivery/handoffs/2026-10-31-visual-direction.md)
 - Domain / BR / needs: `docs/02-business-analysis/`
 - Living OpenSpec: `openspec/specs/`
-- Plan (repo path, not portal): `.cursor/plans/visual-direction-demo-v1.md`
+- Plans (repo path, not portal): `.cursor/plans/visual-direction-demo-v1.md`, `.cursor/plans/ui-design-spec-demo-v1.md`
