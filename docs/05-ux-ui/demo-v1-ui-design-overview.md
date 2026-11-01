@@ -3,7 +3,7 @@ id: DOC-UX-014
 title: "Demo v1 UI Design Specification — overview"
 type: product
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-31
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -13,6 +13,8 @@ related:
   - DOC-UX-009
   - DOC-UX-015
   - DOC-UX-016
+  - DOC-UX-018
+  - DOC-UX-019
   - DOC-HANDOFF-VD-001
 ---
 
@@ -28,7 +30,7 @@ related:
 |------|--------|
 | Visual Direction | **COMPLETED**; VD-A = `approved Visual Direction baseline` |
 | UX decisions D1–D11 | `approved UX decision` — not reopened |
-| UI Design docs wave | **IN PROGRESS** — Iterations 0–2 done; Iterations 3–5 not started |
+| UI Design docs wave | **IN PROGRESS** — Iterations 0–3 done; Iterations 4–5 not started |
 | Implementation (`apps/`) | **Out of scope** until separate explicit start |
 
 Цель волны: markdown UI Design Specification (foundations → components → screens → viz → interactions → quality), пригодная для последующей frontend implementation без изменения Domain/BR/REQ/OpenSpec.
@@ -80,8 +82,8 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 | DOC-UX-015 | `demo-v1-ui-foundations.md` | 1 | **done** (`proposal`) |
 | DOC-UX-016 | `demo-v1-component-specification.md` | 2 | **done** (`proposal`) |
 | DOC-UX-017 | `demo-v1-ui-screens.md` | 4 | not started |
-| DOC-UX-018 | `demo-v1-ui-data-viz.md` | 3 | not started |
-| DOC-UX-019 | `demo-v1-ui-interactions.md` | 3 | not started |
+| DOC-UX-018 | `demo-v1-ui-data-viz.md` | 3 | **done** (`proposal`) |
+| DOC-UX-019 | `demo-v1-ui-interactions.md` | 3 | **done** (`proposal`) |
 | DOC-UX-020 | `demo-v1-ui-quality.md` | 5 | not started |
 | DOC-HANDOFF-UID-001 | `docs/07-delivery/handoffs/…-ui-design.md` | 5 | not started |
 
@@ -121,8 +123,13 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 
 - [x] DOC-UX-016 component specification: shell, data display, entity summaries, detail patterns, viz boundaries.
 - [x] StatusIndicator four semantic models; Links≠Impact; BR-006 DecisionPanel honesty; BA-OQ-006 left open.
-- [ ] Iteration 3+ **not** started in this pass.
+
+### Iteration 3
+
+- [x] DOC-UX-018 data visualization: Snapshot A/B/C story, Links vs Impact, Δ labeling, charts allow/deny, Gantt semantics.
+- [x] DOC-UX-019 interactions: Snapshot/theme/nav/table/detail/keyboard; Decision Must read-only; selection/pagination off by default.
+- [ ] Iteration 4+ **not** started in this pass.
 
 ## 9. Related
 
-- [ui-foundations](./demo-v1-ui-foundations.md) · [component-specification](./demo-v1-component-specification.md) · [ux-concept](./demo-v1-ux-concept.md) · [visual-direction](./demo-v1-visual-direction.md) · [ux-traceability](./demo-v1-ux-traceability.md) · [README](./README.md)
+- [ui-foundations](./demo-v1-ui-foundations.md) · [component-specification](./demo-v1-component-specification.md) · [ui-data-viz](./demo-v1-ui-data-viz.md) · [ui-interactions](./demo-v1-ui-interactions.md) · [ux-concept](./demo-v1-ux-concept.md) · [visual-direction](./demo-v1-visual-direction.md) · [ux-traceability](./demo-v1-ux-traceability.md) · [README](./README.md)

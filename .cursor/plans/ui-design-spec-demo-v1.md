@@ -1,6 +1,6 @@
 ---
 name: UI Design Spec Demo v1
-overview: "APPROVED UI Design Spec wave: Iterations 0–2 done (DOC-UX-014/015/016); BA-OQ-006 V1 assumption; D12 deferred; Iterations 3–5 pending; no apps."
+overview: "APPROVED UI Design Spec wave: Iterations 0–3 done (DOC-UX-014/015/016/018/019); BA-OQ-006 V1 assumption; D12 deferred; Iterations 4–5 pending; no apps."
 todos:
   - id: await-uid-approve
     content: APPROVE плана UI Design + BA-OQ-006 V1 assumption — confirmed
@@ -16,7 +16,7 @@ todos:
     status: completed
   - id: uid-iter3-viz-ix
     content: "Iteration 3: DOC-UX-018 data-viz + DOC-UX-019 interactions"
-    status: pending
+    status: completed
   - id: uid-iter4-screens
     content: "Iteration 4: DOC-UX-017 eight surfaces (V1 shared columns only)"
     status: pending
@@ -33,13 +33,15 @@ isProject: false
 
 ## Статус плана
 
-**APPROVED** для выполнения. **Iterations 0–2 COMPLETED** (DOC-UX-014, DOC-UX-015, DOC-UX-016). Iterations 3–5 **not started**.
+**APPROVED** для выполнения. **Iterations 0–3 COMPLETED** (DOC-UX-014, DOC-UX-015, DOC-UX-016, DOC-UX-018, DOC-UX-019). Iterations 4–5 **not started**.
 
 **Confirmed:** BA-OQ-006 working assumption = **V1 single table + Type**; BA-OQ-006 remains **open**; D12 **deferred**; VD-A / D1–D11 not reopened.
 
 **Iteration 1 delivered:** concrete Light/Dark HEX; semantic status aliases; WCAG contrast calculations; type/spacing/radius; shadcn map; a11y checklist (`proposal`).
 
-**Iteration 2 delivered:** `demo-v1-component-specification.md` (DOC-UX-016) — screen-driven components; StatusIndicator four models; Links≠Impact; DecisionPanel BR-006; viz boundaries only (`proposal`).
+**Iteration 2 delivered:** DOC-UX-016 — screen-driven components; StatusIndicator four models; Links≠Impact; DecisionPanel BR-006; viz boundaries (`proposal`).
+
+**Iteration 3 delivered:** DOC-UX-018 data viz (Snapshot A/B/C story, Links vs Impact, Δ, charts, Gantt semantics) + DOC-UX-019 interactions (Snapshot/theme/nav/table/detail/keyboard; Must Decision read-only) (`proposal`).
 
 **Clarifications for later iterations:** (1) browser contrast check at impl; (2) StatusIndicator shared shell, distinct semantic models per entity status family; (3) V1 Issues & Risks table = shared columns only.
 
@@ -154,10 +156,10 @@ flowchart TB
 - Table / DecisionPanel (BR-006 honesty) / GanttSurface boundaries (D12 deferred).
 - **Stop criterion met:** every component maps to ≥1 screen; Iter 3+ not started.
 
-### Iteration 3 — Data viz + interactions — NOT STARTED
+### Iteration 3 — Data viz + interactions — DONE
 - DOC-UX-018: Snapshot A (RISK links present, no Issue-driven delay) vs B/C; Links vs Impact; Δ delivery≠PS labels; chart allow/deny; Gantt semantics.
-- DOC-UX-019: Snapshot/theme switch; table filter/sort/page; detail tabs; M-DEC flow; keyboard; empty/loading/error.
-- **Stop:** no invented metrics; BR-006 honesty explicit.
+- DOC-UX-019: Snapshot/theme switch; table filter/sort; detail tabs; Decision Must read-only (not interactive M-DEC write); keyboard; empty/loading/error.
+- **Stop criterion met:** no invented metrics; BR-006 honesty explicit; Iter 4+ not started.
 
 ### Iteration 4 — Screens — NOT STARTED
 - DOC-UX-017 for all 8 surfaces: grid, hierarchy, regions, composition, density, states, L/D, responsive, source links (UX/REQ/VD).
@@ -221,6 +223,6 @@ Implementation **не** следует автоматически из APPROVE �
 
 1. План UI Design — **APPROVED**.
 2. BA-OQ-006 working assumption — **V1 single table + Type**; OQ remains open.
-3. Iterations 0–2 — **done**. Next = Iteration 3 only after explicit continue.
+3. Iterations 0–3 — **done**. Next = Iteration 4 only after explicit continue.
 
 Commit — по отдельной просьбе; apps — не автостарт.
