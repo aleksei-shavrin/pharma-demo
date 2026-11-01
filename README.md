@@ -1,30 +1,27 @@
 # Pharma Project Control
 
-Система управления фармацевтическими проектами. Сейчас в репозитории строится **Docs Engineering System**: документация как код (OpenSpec + Docusaurus), локальный портал за Caddy, инженерные стандарты для AI и качества.
-
-Реализация приложения Demo v1 (Next.js + NestJS) — **следующий этап**, не текущий scope.
+Система управления фармацевтическими проектами. **Demo v1** (Next.js + NestJS + docs portal) развивается дальше; Docs Engineering System — фундамент.
 
 ---
 
-## Быстрый старт (портал docs)
+## Быстрый старт
 
-```bash
-docker compose up --build -d
-```
-
-Открыть: **http://docs.localhost**
-
-Остановка: `docker compose down`
-
-| Host | Назначение | Сейчас |
+| Сценарий | Команда | Назначение |
 |---|---|---|
-| `docs.localhost` | Портал документации | рабочий после compose up |
-| `localhost` | Frontend (Next.js Demo v1) | `docker compose --profile app up --build -d` |
-| `api.localhost` | Backend (NestJS Demo v1) | тот же profile `app` |
+| **Development** | `npm run dev` | Hot reload Web + API + Docs |
+| **Production-like Demo** | `docker compose --profile app up --build -d` | Образы для показа |
 
-Подробности и вклад: [`CONTRIBUTING.md`](CONTRIBUTING.md). Нормы для агентов: [`AGENTS.md`](AGENTS.md).
+Остановка: `npm run dev:down` · `docker compose down`
 
-План этапа: [`.cursor/plans/docs-engineering-system.md`](.cursor/plans/docs-engineering-system.md).
+| Host | Назначение |
+|---|---|
+| `localhost` | Frontend (Next.js) |
+| `api.localhost` | Backend (NestJS) |
+| `docs.localhost` | Портал документации |
+
+Подробности: [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/10-operations/local-dev-and-demo.md`](docs/10-operations/local-dev-and-demo.md). Нормы для агентов: [`AGENTS.md`](AGENTS.md).
+
+Живой показ: [Live Presentation Guide](docs/guides/how-to/demo-v1-live-presentation.md).
 
 ---
 
@@ -35,9 +32,11 @@ docker compose up --build -d
 ├── README.md                 # этот файл
 ├── AGENTS.md                 # инструкции AI / процесс
 ├── CONTRIBUTING.md           # портал, OpenSpec, docs
-├── docker-compose.yml        # Caddy + docs; web/api за profile app
-├── Caddyfile
-├── Dockerfile                # образ статики docs
+├── docker-compose.yml        # production-like: Caddy + docs; web/api за profile app
+├── docker-compose.dev.yml    # development: HMR/watch + Caddyfile.dev
+├── Caddyfile / Caddyfile.dev
+├── Dockerfile                # образ статики docs (prod-like)
+├── website/Dockerfile.dev    # Docusaurus dev
 ├── .cursor/
 │   ├── plans/                # согласованные Cursor plans
 │   └── rules/                # тонкие Cursor rules → AGENTS/docs
@@ -62,11 +61,12 @@ docker compose up --build -d
 
 ---
 
-## Demo v1 (направление, код позже)
+## Demo v1
 
 - **Frontend:** Next.js; данные **только** через API.
 - **Backend:** NestJS; mock data **только** здесь.
 - **Без PostgreSQL** в Demo v1; целевой продукт — + PostgreSQL за тем же API-контрактом.
+- Продолжение развития: [`.cursor/plans/demo-v1-enrichment.md`](.cursor/plans/demo-v1-enrichment.md) (I1–I8 — исторический baseline).
 
 ---
 

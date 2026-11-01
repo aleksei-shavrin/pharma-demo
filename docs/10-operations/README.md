@@ -3,13 +3,14 @@ id: DOC-OPS-README-001
 title: "Эксплуатация"
 type: index
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-PORTAL-004
   - DOC-ADR-0003
+  - DOC-OPS-002
 ---
 
 # 10-operations
@@ -23,4 +24,6 @@ related:
 
 ## Содержимое
 
-Seed-индекс. Операционные страницы — по мере появления инфраструктуры.
+| Документ | Назначение |
+|----------|------------|
+| [Local development and production-like Demo](./local-dev-and-demo.md) | `npm run dev` vs `docker compose --profile app` |

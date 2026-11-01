@@ -1,0 +1,14 @@
+# Development reverse proxy — same public hosts as production-like Demo.
+# Used only by docker-compose.dev.yml (docs target port 3000 = Docusaurus dev).
+
+http://localhost {
+	reverse_proxy web:3000
+}
+
+http://api.localhost {
+	reverse_proxy api:3000
+}
+
+http://docs.localhost {
+	reverse_proxy docs:3000
+}

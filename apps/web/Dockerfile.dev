@@ -1,0 +1,14 @@
+# Next.js development image (HMR). Build context: apps/web
+FROM node:24-bookworm
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY docker-dev-entrypoint.sh /usr/local/bin/docker-dev-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-dev-entrypoint.sh
+
+EXPOSE 3000
+ENTRYPOINT ["docker-dev-entrypoint.sh"]
+CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0", "--port", "3000"]

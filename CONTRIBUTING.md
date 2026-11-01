@@ -6,39 +6,44 @@
 
 ---
 
-## Портал документации (локально)
+## Локальный runtime (два сценария)
 
-Основной runtime — **Docker Compose** + Caddy (Host-routing).
+Одинаковые URL:
+
+| URL | Сервис |
+|---|---|
+| http://localhost | Web (Next.js) |
+| http://api.localhost | API (NestJS) |
+| http://docs.localhost | Docs (Docusaurus) |
+
+По [RFC 6761](https://www.rfc-editor.org/rfc/rfc6761.html) имена `*.localhost` резолвятся в loopback. Не запускайте **Development** и **Production-like** одновременно (порт 80).
+
+Подробности: [`docs/10-operations/local-dev-and-demo.md`](docs/10-operations/local-dev-and-demo.md).
+
+### Development (hot reload)
 
 ```bash
-docker compose up --build -d
+npm run dev
+# docker compose -f docker-compose.dev.yml up --build -d
 ```
 
-Открыть: **http://docs.localhost**
+Остановка: `npm run dev:down`
 
-Остановка:
+Web HMR + Nest watch + Docusaurus live reload за Caddy (`Caddyfile.dev`).
 
-```bash
-docker compose down
-```
+Опционально без Compose (только docs): `npm run docs:dev`.
 
-По [RFC 6761](https://www.rfc-editor.org/rfc/rfc6761.html) имена `*.localhost` резолвятся в loopback в современных браузерах. Если клиент не поддерживает — fallback `/etc/hosts` (не основной путь).
-
-### Hosts на этапе docs
-
-| URL | Сервис | Сейчас |
-|---|---|---|
-| http://docs.localhost | портал (Docusaurus static за Caddy) | ожидается HTTP 200 |
-| http://localhost | Demo v1 web (Next.js) | HTTP 200 при `docker compose --profile app up --build -d` |
-| http://api.localhost | Demo v1 API (NestJS) | HTTP 200 `/health` при profile `app` |
-
-App-стек Demo v1 (I8; images на Node 24):
+### Production-like Demo
 
 ```bash
 docker compose --profile app up --build -d
 curl -fsS http://api.localhost/health
-# UI: http://localhost
+# UI: http://localhost ; docs: http://docs.localhost
 ```
+
+Остановка: `docker compose --profile app down` / `docker compose down`.
+
+Docs без app-profile: `docker compose up --build -d` (статика nginx).
 
 Narrative Playwright (локальные процессы, без Compose):
 
@@ -53,8 +58,6 @@ npm run test:e2e
 ```bash
 npm run test:e2e:compose
 ```
-
-Опционально для авторов портала (hot-reload, не продакшен-runtime): команды `docs:dev` в root `package.json` — появятся вместе со scripts (W2-Scripts).
 
 ---
 
