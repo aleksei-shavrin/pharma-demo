@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import {
   RegisterCell,
@@ -11,6 +12,7 @@ import {
   RegisterTable,
 } from '@/components/registers/register-table';
 import { fetchIssuesRisksRegister } from '@/lib/api-client';
+import { entityDetailHref } from '@/lib/entity-routes';
 import { formatDateRu } from '@/lib/format/ru';
 import { useRegisterQuery } from '@/lib/registers/use-register-query';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
@@ -51,7 +53,15 @@ export default function IssuesRisksPage() {
             <RegisterRow key={`${row.type}:${row.id}`}>
               <RegisterCell>{registerRowTypeLabel(row.type)}</RegisterCell>
               <RegisterCell className="font-medium text-[var(--text)]">
-                {row.id}
+                <Link
+                  href={entityDetailHref(
+                    row.type === 'Issue' ? 'issue' : 'risk',
+                    row.id,
+                  )}
+                  className="underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                >
+                  {row.id}
+                </Link>
               </RegisterCell>
               <RegisterCell>
                 {row.type === 'Issue'

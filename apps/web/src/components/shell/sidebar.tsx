@@ -22,7 +22,12 @@ export function Sidebar() {
           const active =
             item.href === '/'
               ? pathname === '/'
-              : pathname === item.href || pathname.startsWith(`${item.href}/`);
+              : item.href === '/issues-risks'
+                ? pathname === item.href ||
+                  pathname.startsWith('/issues/') ||
+                  pathname.startsWith('/risks/')
+                : pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
           return (
             <Link

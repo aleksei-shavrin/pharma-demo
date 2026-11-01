@@ -47,6 +47,21 @@ export function registerRowTypeLabel(type: 'Issue' | 'Risk'): string {
   return type === 'Issue' ? 'Проблема' : 'Риск';
 }
 
+export function entityTypeLabel(
+  type: 'equipment' | 'issue' | 'risk' | 'milestone',
+): string {
+  switch (type) {
+    case 'equipment':
+      return 'Оборудование';
+    case 'issue':
+      return 'Проблема';
+    case 'risk':
+      return 'Риск';
+    case 'milestone':
+      return 'Веха';
+  }
+}
+
 export function equipmentStatusLabel(
   status: 'OnTrack' | 'Delayed',
 ): string {

@@ -44,6 +44,34 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 export function crumbForPath(pathname: string): string {
-  const item = NAV_ITEMS.find((n) => n.href === pathname);
-  return item?.crumb ?? 'Demo v1';
+  const exact = NAV_ITEMS.find((n) => n.href === pathname);
+  if (exact) return exact.crumb;
+  if (pathname.startsWith('/equipment')) return 'Оборудование';
+  if (
+    pathname.startsWith('/issues-risks') ||
+    pathname.startsWith('/issues') ||
+    pathname.startsWith('/risks')
+  ) {
+    return 'Проблемы и риски';
+  }
+  if (pathname.startsWith('/milestones')) return 'Вехи';
+  if (pathname.startsWith('/schedule')) return 'График';
+  return 'Обзор';
+}
+
+/** Optional entity id segment for detail breadcrumbs (Section / EntityId). */
+export function entityIdFromPath(pathname: string): string | null {
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments.length < 2) return null;
+  const [section, id] = segments;
+  if (
+    (section === 'equipment' ||
+      section === 'issues' ||
+      section === 'risks' ||
+      section === 'milestones') &&
+    id
+  ) {
+    return decodeURIComponent(id);
+  }
+  return null;
 }

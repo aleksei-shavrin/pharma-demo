@@ -222,6 +222,10 @@ describe('I4 registers presentation', () => {
     });
     expect(screen.getByText('без отклонения')).toBeInTheDocument();
     expect(screen.getAllByText('15.05.2027').length).toBeGreaterThan(0);
+    expect(screen.getByRole('link', { name: 'EQ-HVAC-01' })).toHaveAttribute(
+      'href',
+      '/equipment/EQ-HVAC-01',
+    );
 
     await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
     await waitFor(() => {
@@ -243,6 +247,10 @@ describe('I4 registers presentation', () => {
     expect(screen.queryByText(/BA-OQ-006/)).not.toBeInTheDocument();
     expect(screen.queryByText(/Demo v1/)).not.toBeInTheDocument();
     expect(screen.queryByText(/рабочее допущение/i)).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'RISK-001' })).toHaveAttribute(
+      'href',
+      '/risks/RISK-001',
+    );
 
     await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
     await waitFor(() => {
@@ -252,6 +260,10 @@ describe('I4 registers presentation', () => {
       screen.getByText(/Задержка поставки HVAC с длительным сроком изготовления/),
     ).toBeInTheDocument();
     expect(screen.getByText('Риск: красный')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'ISS-001' })).toHaveAttribute(
+      'href',
+      '/issues/ISS-001',
+    );
 
     await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {
@@ -269,6 +281,10 @@ describe('I4 registers presentation', () => {
     });
     expect(screen.getByText('Веха: зелёная')).toBeInTheDocument();
     expect(screen.getByText('без отклонения')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'MS-PS' })).toHaveAttribute(
+      'href',
+      '/milestones/MS-PS',
+    );
 
     await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {

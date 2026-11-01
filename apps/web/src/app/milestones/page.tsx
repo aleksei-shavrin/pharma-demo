@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import {
   RegisterCell,
@@ -11,6 +12,7 @@ import {
   RegisterTable,
 } from '@/components/registers/register-table';
 import { fetchMilestonesRegister } from '@/lib/api-client';
+import { entityDetailHref } from '@/lib/entity-routes';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import { useRegisterQuery } from '@/lib/registers/use-register-query';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
@@ -50,7 +52,12 @@ export default function MilestonesPage() {
           {data.items.map((item) => (
             <RegisterRow key={item.id}>
               <RegisterCell className="font-medium text-[var(--text)]">
-                {item.id}
+                <Link
+                  href={entityDetailHref('milestone', item.id)}
+                  className="underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                >
+                  {item.id}
+                </Link>
               </RegisterCell>
               <RegisterCell>
                 {presentMilestoneName(item.id, item.name)}

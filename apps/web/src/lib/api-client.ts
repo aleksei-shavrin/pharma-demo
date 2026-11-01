@@ -94,6 +94,20 @@ export type DashboardOverview = {
   decisionHonesty: { recoveryExecuted: false } | null;
 };
 
+export class ApiClientError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+    this.name = 'ApiClientError';
+  }
+}
+
+export function isNotFoundError(error: unknown): boolean {
+  return error instanceof ApiClientError && error.status === 404;
+}
+
 function apiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
 }
@@ -102,7 +116,10 @@ async function getJson<T>(path: string): Promise<T> {
   const url = `${apiBaseUrl()}${path}`;
   const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) {
-    throw new Error(`API ${path} failed: ${res.status} ${res.statusText}`);
+    throw new ApiClientError(
+      `API ${path} failed: ${res.status} ${res.statusText}`,
+      res.status,
+    );
   }
   return res.json() as Promise<T>;
 }
@@ -218,5 +235,121 @@ export function fetchMilestonesRegister(
   const qs = new URLSearchParams({ snapshot });
   return getJson<MilestonesRegister>(
     `/v1/projects/${encodeURIComponent(projectId)}/milestones?${qs.toString()}`,
+  );
+}
+
+export type EntityRefType = 'equipment' | 'issue' | 'risk' | 'milestone';
+
+export type EntityLink = {
+  targetType: EntityRefType;
+  targetId: string;
+  displayName: string;
+};
+
+export type EntityImpact = {
+  kind: 'none' | 'aligned_slip';
+  equipmentDeliveryDeltaDays: number;
+  productionStartDeltaDays: number;
+  equipmentStatus: 'OnTrack' | 'Delayed';
+  equipmentForecastDelivery: string;
+  issueId: string | null;
+  issueStatus: 'Open' | 'Mitigating' | null;
+  riskId: string;
+  riskRag: 'Green' | 'Red';
+  milestoneId: string;
+  milestoneName: string;
+  milestoneRag: 'Green' | 'Red';
+  productionStartForecast: string;
+  decisionState: DecisionPanelState;
+  decision: {
+    id: string;
+    type: 'PrioritizeRecovery';
+    ownerRole: string;
+    dueDate: string;
+    note: string;
+  } | null;
+  recoveryExecuted: false | null;
+};
+
+type DetailEnvelope<E> = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  entity: E;
+  links: EntityLink[];
+  impact: EntityImpact;
+};
+
+export type EquipmentDetail = DetailEnvelope<{
+  id: string;
+  critical: boolean;
+  status: 'OnTrack' | 'Delayed';
+  baselineDelivery: string;
+  forecastDelivery: string;
+  deliveryVariance: RegisterVariance;
+}>;
+
+export type IssueDetail = DetailEnvelope<{
+  id: string;
+  title: string;
+  status: 'Open' | 'Mitigating';
+  owner: string;
+}>;
+
+export type RiskDetail = DetailEnvelope<{
+  id: string;
+  rag: 'Green' | 'Red';
+}>;
+
+export type MilestoneDetail = DetailEnvelope<{
+  id: string;
+  name: string;
+  rag: 'Green' | 'Red';
+  baselineDate: string;
+  forecastDate: string;
+  dateVariance: RegisterVariance;
+}>;
+
+export function fetchEquipmentDetail(
+  projectId: string,
+  entityId: string,
+  snapshot: SnapshotId,
+): Promise<EquipmentDetail> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<EquipmentDetail>(
+    `/v1/projects/${encodeURIComponent(projectId)}/equipment/${encodeURIComponent(entityId)}?${qs.toString()}`,
+  );
+}
+
+export function fetchIssueDetail(
+  projectId: string,
+  entityId: string,
+  snapshot: SnapshotId,
+): Promise<IssueDetail> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<IssueDetail>(
+    `/v1/projects/${encodeURIComponent(projectId)}/issues/${encodeURIComponent(entityId)}?${qs.toString()}`,
+  );
+}
+
+export function fetchRiskDetail(
+  projectId: string,
+  entityId: string,
+  snapshot: SnapshotId,
+): Promise<RiskDetail> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<RiskDetail>(
+    `/v1/projects/${encodeURIComponent(projectId)}/risks/${encodeURIComponent(entityId)}?${qs.toString()}`,
+  );
+}
+
+export function fetchMilestoneDetail(
+  projectId: string,
+  entityId: string,
+  snapshot: SnapshotId,
+): Promise<MilestoneDetail> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<MilestoneDetail>(
+    `/v1/projects/${encodeURIComponent(projectId)}/milestones/${encodeURIComponent(entityId)}?${qs.toString()}`,
   );
 }

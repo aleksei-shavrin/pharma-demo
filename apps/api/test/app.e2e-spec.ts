@@ -282,4 +282,74 @@ describe('I2 API snapshot (e2e)', () => {
           }),
       );
   });
+
+  it('GET entity detail A/B + missing issue + invalid snapshot', () => {
+    type DetailBody = {
+      snapshotId: string;
+      links: { targetType: string; targetId: string }[];
+      impact: {
+        kind: string;
+        productionStartDeltaDays: number;
+        recoveryExecuted: false | null;
+      };
+      entity: Record<string, unknown>;
+    };
+
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01/equipment/EQ-HVAC-01')
+      .expect(200)
+      .expect((res) => {
+        const body = res.body as DetailBody;
+        expect(body.snapshotId).toBe('A');
+        expect(body.entity.status).toBe('OnTrack');
+        expect(body.links.map((l) => l.targetType).sort()).toEqual(['risk']);
+        expect(body.links.some((l) => l.targetType === 'milestone')).toBe(
+          false,
+        );
+        expect(body.impact.kind).toBe('none');
+      })
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/issues/ISS-001?snapshot=A')
+          .expect(404),
+      )
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/issues/ISS-001?snapshot=B')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as DetailBody;
+            expect(body.entity.status).toBe('Open');
+            expect(
+              body.links.map((l) => `${l.targetType}:${l.targetId}`).sort(),
+            ).toEqual([
+              'equipment:EQ-HVAC-01',
+              'milestone:MS-PS',
+              'risk:RISK-001',
+            ]);
+            expect(body.impact.productionStartDeltaDays).toBe(21);
+          }),
+      )
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/milestones/MS-PS?snapshot=B')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as DetailBody;
+            expect(body.links.some((l) => l.targetType === 'equipment')).toBe(
+              false,
+            );
+          }),
+      )
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/equipment/EQ-HVAC-01?snapshot=Z')
+          .expect(400),
+      )
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/equipment/EQ-UNKNOWN?snapshot=A')
+          .expect(404),
+      );
+  });
 });

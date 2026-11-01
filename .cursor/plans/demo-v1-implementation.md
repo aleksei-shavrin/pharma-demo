@@ -1,6 +1,6 @@
 ---
 name: Demo v1 Implementation
-overview: "Implementation Plan APPROVED (R1–R4). I1–I4 APPROVED+committed (dbea074 / f104503 / ea4205b / 22d56b2). I5 NOT STARTED. D12 blocks only I7."
+overview: "Implementation Plan APPROVED (R1–R4). I1–I5 APPROVED+committed. I6 NOT STARTED. D12 blocks only I7."
 todos:
   - id: await-impl-plan-approve
     content: Финальный human APPROVE этого Demo v1 Implementation Plan (после R1–R4)
@@ -22,7 +22,7 @@ todos:
     status: completed
   - id: i5-detail
     content: "I5: capability Entity Detail (Overview/Links/Impact) + EmptyState при отсутствии сущности"
-    status: pending
+    status: completed
   - id: i6-schedule
     content: "I6: Schedule Table + Split infrastructure/readiness (без Gantt renderer)"
     status: pending
@@ -46,8 +46,9 @@ isProject: false
 | Implementation I1 | **APPROVED + committed** (`dbea074`) |
 | Implementation I2 | **APPROVED + committed** (`f104503`; includes corrective R1–R2) |
 | Implementation I3 | **APPROVED + committed** (`ea4205b`; includes RU / corrective passes) |
-| Implementation I4 | **APPROVED + committed** (`22d56b2`; includes corrective R1) |
-| Implementation I5+ | **NOT STARTED** — только после явной human-команды |
+| Implementation I4 | **APPROVED + committed** (`8225ee2`; includes corrective R1 + plan sync) |
+| Implementation I5 | **APPROVED + committed** (`cec76a1`; includes corrective R1–R2) |
+| Implementation I6+ | **NOT STARTED** — только после явной human-команды |
 
 **Проверенные источники (primary, не только handoff):** [AGENTS.md](AGENTS.md), [DOC-PROD-003](docs/03-product/demo-v1-architecture.md), [DOC-PROD-002](docs/03-product/target-technology-stack.md), [ADR-0002](docs/06-architecture/decisions/0002-target-technology-stack-direction.md), [ADR-0003](docs/06-architecture/decisions/0003-local-dev-urls-and-proxy.md), [DOC-PROD-012](docs/03-product/demo-v1-mock-narrative-data.md), living specs в `openspec/specs/`, REQ-PROJ/MILE/EQPT/RISK/IMPCT/NFR, UI Design DOC-UX-014…020 + [handoff](docs/07-delivery/handoffs/2026-11-01-ui-design.md), [testing-strategy](docs/08-quality/testing-strategy.md), существующие [docker-compose.yml](docker-compose.yml) / [Caddyfile](Caddyfile).
 
@@ -204,9 +205,10 @@ flowchart LR
 3. ~~I1 scaffold~~ — **APPROVED + committed** (`dbea074`).
 4. ~~I2~~ — **APPROVED + committed** (`f104503`; incl. corrective R1–R2).
 5. ~~I3 Dashboard~~ — **APPROVED + committed** (`ea4205b`).
-6. ~~I4 registers~~ — **APPROVED + committed** (`22d56b2`; incl. corrective R1).
-7. **I5+** — не начинать без явной human-команды на соответствующую итерацию.
-8. D12 / Gantt library — блокирует **только I7**.
+6. ~~I4 registers~~ — **APPROVED + committed** (`8225ee2`; incl. corrective R1).
+7. ~~I5 Entity Detail~~ — **APPROVED + committed** (`cec76a1`; incl. corrective R1–R2).
+8. **I6+** — не начинать без явной human-команды на соответствующую итерацию.
+9. D12 / Gantt library — блокирует **только I7**.
 
 ---
 
@@ -257,11 +259,12 @@ flowchart LR
 
 ### I5 — Entity Detail + Links vs Impact
 
+- **Статус итерации:** **COMPLETED / APPROVED / committed** (`cec76a1`; includes corrective R1–R2).
 - **Цель:** Поставить **Entity detail capability** (Overview / Links / Impact) через OpenAPI paths, выбранные в этой итерации (typed resources допустимы); EmptyState при отсутствии сущности + CTA в реестр; без ложных Domain edges.
 - **Deps:** I4.
 - **SoT:** DOC-UX-006/017/019; DOC-BA-015; BR-004/006.
 - **AC:** Snapshot switch на detail сохраняет URL; 404 → EmptyState; Impact только derived; generic path `{entityType}` не предполагается, пока явно не добавлен в OpenAPI с human review.
-- **STOP:** Review Detail + causal honesty.
+- **STOP:** Review Detail + Links≠Impact + corrective R1–R2 — **пройден** (BA-OQ-006 остаётся OPEN).
 
 ### I6 — Schedule Table + Split infrastructure/readiness
 
@@ -310,12 +313,12 @@ flowchart LR
 
 1. **Последовательность:** I1 → I2 → I3 → I4 → I5 → I6 → I7 (D12-gated) → I8.
 2. **Settled architecture:** Next/Nest/REST/OpenAPI; `DemoDataSource` + mock fixtures; без PG; Caddy URLs; `apps/web`+`apps/api`; FE только через API; `snapshot=A|B|C` request-scoped.
-3. **Сделано:** I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`22d56b2`) — все APPROVED+committed.
-4. **В работе / review:** нет; следующая итерация — **I5** (не начата).
+3. **Сделано:** I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`8225ee2`); I5 (`cec76a1`) — все APPROVED+committed.
+4. **В работе / review:** нет; следующая итерация — **I6** (не начата).
 5. **Нерешённое → блок когда:** D12 → **только I7**; theme/snapshot cross-session persistence = `open_question`; BA-OQ-006 open.
 6. **Gates:** `test:docs` + OpenSpec strict + `test:apps` / e2e / architecture guards по мере итераций.
 7. **Agent habit:** после каждой итерации обновлять YAML todos + этот блок статуса в плане.
 
 **Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; I6 ≠ Gantt visualization; I7 = единственная итерация, заблокированная D12; Must DecisionPanel read-only / без Must POST; BA-OQ-006 open + V1 assumption; без PG/ORM/auth/monorepo tooling.
 
-**Следующий шаг человека:** явная команда на старт **I5**; I5 не начинать без неё.
+**Следующий шаг человека:** явная команда на старт **I6**; I6 не начинать без неё.

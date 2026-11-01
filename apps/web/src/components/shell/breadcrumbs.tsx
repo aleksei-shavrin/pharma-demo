@@ -1,11 +1,12 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { crumbForPath } from '@/lib/navigation';
+import { crumbForPath, entityIdFromPath } from '@/lib/navigation';
 
 export function Breadcrumbs() {
   const pathname = usePathname();
   const section = crumbForPath(pathname);
+  const entityId = entityIdFromPath(pathname);
 
   return (
     <nav aria-label="Навигационная цепочка" className="min-w-0">
@@ -14,9 +15,29 @@ export function Breadcrumbs() {
         <li aria-hidden className="text-[var(--text-muted)]">
           /
         </li>
-        <li className="truncate font-medium text-[var(--text)]" aria-current="page">
+        <li
+          className={
+            entityId
+              ? 'truncate text-[var(--text-secondary)]'
+              : 'truncate font-medium text-[var(--text)]'
+          }
+          aria-current={entityId ? undefined : 'page'}
+        >
           {section}
         </li>
+        {entityId ? (
+          <>
+            <li aria-hidden className="text-[var(--text-muted)]">
+              /
+            </li>
+            <li
+              className="truncate font-medium text-[var(--text)]"
+              aria-current="page"
+            >
+              {entityId}
+            </li>
+          </>
+        ) : null}
       </ol>
     </nav>
   );

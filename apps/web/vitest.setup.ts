@@ -12,3 +12,17 @@ vi.mock('next/link', () => ({
     children?: React.ReactNode;
   }) => React.createElement('a', { href, ...props }, children),
 }));
+
+/** Overridable in tests via globalThis.__testParams */
+vi.mock('next/navigation', () => ({
+  usePathname: () =>
+    (globalThis as { __testPathname?: string }).__testPathname ?? '/',
+  useParams: () =>
+    (globalThis as { __testParams?: Record<string, string> }).__testParams ??
+    {},
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+}));

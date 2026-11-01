@@ -1,13 +1,13 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { calendarDaysDelta } from '../common/calendar-days-delta';
-import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
-import type { SnapshotFixture } from '../data/fixtures/types';
-import type { SnapshotId } from '../snapshot/snapshot-id';
 import {
-  type DashboardOverviewDto,
-  type DecisionPanelState,
-  type DirectEdgeDto,
-} from './dto/dashboard-overview.dto';
+  computeDerivedImpact,
+  decisionPanelState,
+} from '../common/derived-impact';
+import { buildDirectEdges } from '../common/direct-edges';
+import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
+import type { SnapshotId } from '../snapshot/snapshot-id';
+import type { DashboardOverviewDto } from './dto/dashboard-overview.dto';
 
 /**
  * Dashboard read model — BR-004 deltas derived here; BR-006 honesty in response.
@@ -35,7 +35,8 @@ export class DashboardService {
       project.forecastProductionStart,
     );
 
-    const decisionPanelState = this.decisionPanelState(snapshot);
+    const panelState = decisionPanelState(snapshot);
+    const impact = computeDerivedImpact(snapshot);
     const decision =
       snapshot.decision === null
         ? null
@@ -98,77 +99,17 @@ export class DashboardService {
         baselineDate: snapshot.milestone.baselineDate,
         forecastDate: snapshot.milestone.forecastDate,
       },
-      decisionPanelState,
+      decisionPanelState: panelState,
       decision,
-      directEdges: this.buildDirectEdges(snapshot),
+      directEdges: buildDirectEdges(snapshot),
       derivedImpact: {
         rule: 'BR-004',
-        equipmentDeliveryDeltaDays: deliveryDelta,
-        productionStartDeltaDays: psDelta,
-        kind: deliveryDelta === 0 ? 'none' : 'aligned_slip',
+        equipmentDeliveryDeltaDays: impact.equipmentDeliveryDeltaDays,
+        productionStartDeltaDays: impact.productionStartDeltaDays,
+        kind: impact.kind,
       },
       decisionHonesty:
-        decisionPanelState === 'recorded' ? { recoveryExecuted: false } : null,
+        panelState === 'recorded' ? { recoveryExecuted: false } : null,
     };
-  }
-
-  private decisionPanelState(snapshot: SnapshotFixture): DecisionPanelState {
-    if (snapshot.decision) {
-      return 'recorded';
-    }
-    if (snapshot.issue && snapshot.equipment.status === 'Delayed') {
-      return 'needed';
-    }
-    return 'absent';
-  }
-
-  /** DOC-BA-015 direct edges present in this snapshot only. No EQ—MS. */
-  private buildDirectEdges(snapshot: SnapshotFixture): DirectEdgeDto[] {
-    const edges: DirectEdgeDto[] = [];
-    const eq = snapshot.equipment.id;
-    const risk = snapshot.risk.id;
-    const ms = snapshot.milestone.id;
-
-    edges.push({
-      kind: 'direct',
-      fromType: 'equipment',
-      fromId: eq,
-      toType: 'risk',
-      toId: risk,
-    });
-    edges.push({
-      kind: 'direct',
-      fromType: 'risk',
-      fromId: risk,
-      toType: 'milestone',
-      toId: ms,
-    });
-
-    if (snapshot.issue) {
-      const iss = snapshot.issue.id;
-      edges.push({
-        kind: 'direct',
-        fromType: 'equipment',
-        fromId: eq,
-        toType: 'issue',
-        toId: iss,
-      });
-      edges.push({
-        kind: 'direct',
-        fromType: 'issue',
-        fromId: iss,
-        toType: 'risk',
-        toId: risk,
-      });
-      edges.push({
-        kind: 'direct',
-        fromType: 'issue',
-        fromId: iss,
-        toType: 'milestone',
-        toId: ms,
-      });
-    }
-
-    return edges;
   }
 }
