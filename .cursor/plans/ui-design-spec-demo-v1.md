@@ -1,6 +1,6 @@
 ---
 name: UI Design Spec Demo v1
-overview: "APPROVED UI Design Spec wave: Iterations 0–1 done (DOC-UX-014/015); BA-OQ-006 V1 assumption; D12 deferred; Iterations 2–5 pending; no apps."
+overview: "APPROVED UI Design Spec wave: Iterations 0–2 done (DOC-UX-014/015/016); BA-OQ-006 V1 assumption; D12 deferred; Iterations 3–5 pending; no apps."
 todos:
   - id: await-uid-approve
     content: APPROVE плана UI Design + BA-OQ-006 V1 assumption — confirmed
@@ -13,7 +13,7 @@ todos:
     status: completed
   - id: uid-iter2-components
     content: "Iteration 2: DOC-UX-016 screen-driven components (StatusIndicator family)"
-    status: pending
+    status: completed
   - id: uid-iter3-viz-ix
     content: "Iteration 3: DOC-UX-018 data-viz + DOC-UX-019 interactions"
     status: pending
@@ -33,11 +33,13 @@ isProject: false
 
 ## Статус плана
 
-**APPROVED** для выполнения. **Iterations 0–1 COMPLETED** (DOC-UX-014, DOC-UX-015). Iterations 2–5 **not started**.
+**APPROVED** для выполнения. **Iterations 0–2 COMPLETED** (DOC-UX-014, DOC-UX-015, DOC-UX-016). Iterations 3–5 **not started**.
 
 **Confirmed:** BA-OQ-006 working assumption = **V1 single table + Type**; BA-OQ-006 remains **open**; D12 **deferred**; VD-A / D1–D11 not reopened.
 
-**Iteration 1 delivered:** concrete Light/Dark HEX; semantic status aliases; WCAG contrast calculations (all required pairs PASS after border retune); type/spacing/radius; shadcn map; a11y checklist. Values remain **`proposal`** until pack APPROVE.
+**Iteration 1 delivered:** concrete Light/Dark HEX; semantic status aliases; WCAG contrast calculations; type/spacing/radius; shadcn map; a11y checklist (`proposal`).
+
+**Iteration 2 delivered:** `demo-v1-component-specification.md` (DOC-UX-016) — screen-driven components; StatusIndicator four models; Links≠Impact; DecisionPanel BR-006; viz boundaries only (`proposal`).
 
 **Clarifications for later iterations:** (1) browser contrast check at impl; (2) StatusIndicator shared shell, distinct semantic models per entity status family; (3) V1 Issues & Risks table = shared columns only.
 
@@ -99,7 +101,7 @@ isProject: false
 |------|-----|------------|
 | `demo-v1-ui-design-overview.md` | DOC-UX-014 | Scope, status map, link map, boundary vs implementation |
 | `demo-v1-ui-foundations.md` | DOC-UX-015 | Light/Dark concrete tokens, type/spacing/radius/elevation, shadcn CSS var map, a11y checklist (measurable; not claiming pass) |
-| `demo-v1-ui-components.md` | DOC-UX-016 | Screen-driven component specs (anatomy, variants, states, a11y, do/don't) |
+| `demo-v1-component-specification.md` | DOC-UX-016 | Screen-driven component specs (anatomy, variants, states, a11y, do/don't) |
 | `demo-v1-ui-screens.md` | DOC-UX-017 | 8 surfaces: Shell, Dashboard, Schedule, 3 registers, Detail, M-DEC |
 | `demo-v1-ui-data-viz.md` | DOC-UX-018 | Status/RAG/Δ, causal links vs impact, Snapshot A/B/C, charts/Gantt rules |
 | `demo-v1-ui-interactions.md` | DOC-UX-019 | Nav, Snapshot, theme, table, tabs, dialog, keyboard |
@@ -146,11 +148,11 @@ flowchart TB
 - Link from DOC-UX-011; sync README / overview / plan / traceability.
 - **Stop criterion met:** foundations as `proposal`; no npm install; Iter 2+ not started.
 
-### Iteration 2 — Components — NOT STARTED
-- DOC-UX-016 screen-driven inventory; anatomy, variants, sizes, states, tokens, a11y, do/don't.
-- StatusIndicator: shared component shell; **distinct** visual+semantic models for Issue status / Risk RAG / Milestone RAG / Equipment delivery status.
-- Table / Dialog (BR-006 honesty) / Timeline markers.
-- **Stop:** every component maps to ≥1 screen.
+### Iteration 2 — Components — DONE
+- DOC-UX-016 (`demo-v1-component-specification.md`): screen-driven inventory; anatomy, variants, sizes, states, a11y, data constraints.
+- StatusIndicator: shared shell; **distinct** models for Issue / Risk RAG / Milestone RAG / Equipment delivery.
+- Table / DecisionPanel (BR-006 honesty) / GanttSurface boundaries (D12 deferred).
+- **Stop criterion met:** every component maps to ≥1 screen; Iter 3+ not started.
 
 ### Iteration 3 — Data viz + interactions — NOT STARTED
 - DOC-UX-018: Snapshot A (RISK links present, no Issue-driven delay) vs B/C; Links vs Impact; Δ delivery≠PS labels; chart allow/deny; Gantt semantics.
@@ -219,6 +221,6 @@ Implementation **не** следует автоматически из APPROVE �
 
 1. План UI Design — **APPROVED**.
 2. BA-OQ-006 working assumption — **V1 single table + Type**; OQ remains open.
-3. Iterations 0–1 — **done**. Next = Iteration 2 only after explicit continue.
+3. Iterations 0–2 — **done**. Next = Iteration 3 only after explicit continue.
 
 Commit — по отдельной просьбе; apps — не автостарт.

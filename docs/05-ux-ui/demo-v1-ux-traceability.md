@@ -3,14 +3,15 @@ id: DOC-UX-009
 title: "Demo v1 UX traceability"
 type: product
 status: draft
-version: "0.2.5"
+version: "0.2.6"
 created: 2026-10-31
-updated: 2026-10-31
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-UX-001
   - DOC-BA-016
   - DOC-UX-015
+  - DOC-UX-016
 ---
 
 # Demo v1 UX traceability
@@ -69,6 +70,7 @@ related:
 | VD-B / VD-C | Comparison only | DOC-UX-010 | — | considered; **not selected** |
 | Design token roles + surface depth (principles) | Shell / components | DOC-UX-011 | Theme CSS vars | `approved Visual Direction baseline` (principles) |
 | Concrete HEX Light/Dark + calculated contrast | Theme / badges | DOC-UX-015 | shadcn CSS vars | `proposal` (UI Foundations) |
+| Component inventory + StatusIndicator models | Shell / registers / detail | DOC-UX-016 | shadcn + TanStack + Recharts | `proposal` (UI Components) |
 | Multi-channel status encoding | Badges / tables | DOC-UX-011; allowlist | Allowlisted statuses only | `approved Visual Direction baseline` (encoding) + `approved requirement` (values) |
 | Dashboard narrative-first composition | P1 | DOC-UX-012; DOC-UX-004 | Same as D8 data | `approved Visual Direction baseline` on `approved UX decision` (blocks) |
 | Schedule table-primary visual mass | P2 | DOC-UX-012; DOC-UX-005 | MS + EQ rows | `approved Visual Direction baseline` + D10/D11 approved |

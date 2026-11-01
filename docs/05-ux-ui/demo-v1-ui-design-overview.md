@@ -3,15 +3,16 @@ id: DOC-UX-014
 title: "Demo v1 UI Design Specification — overview"
 type: product
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 created: 2026-10-31
-updated: 2026-10-31
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-UX-001
   - DOC-UX-010
   - DOC-UX-009
   - DOC-UX-015
+  - DOC-UX-016
   - DOC-HANDOFF-VD-001
 ---
 
@@ -27,7 +28,7 @@ related:
 |------|--------|
 | Visual Direction | **COMPLETED**; VD-A = `approved Visual Direction baseline` |
 | UX decisions D1–D11 | `approved UX decision` — not reopened |
-| UI Design docs wave | **IN PROGRESS** — Iterations 0–1 done; Iterations 2–5 not started |
+| UI Design docs wave | **IN PROGRESS** — Iterations 0–2 done; Iterations 3–5 not started |
 | Implementation (`apps/`) | **Out of scope** until separate explicit start |
 
 Цель волны: markdown UI Design Specification (foundations → components → screens → viz → interactions → quality), пригодная для последующей frontend implementation без изменения Domain/BR/REQ/OpenSpec.
@@ -77,7 +78,7 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 |----|------|-----------|--------|
 | DOC-UX-014 | `demo-v1-ui-design-overview.md` | 0 | **done** |
 | DOC-UX-015 | `demo-v1-ui-foundations.md` | 1 | **done** (`proposal`) |
-| DOC-UX-016 | `demo-v1-ui-components.md` | 2 | not started |
+| DOC-UX-016 | `demo-v1-component-specification.md` | 2 | **done** (`proposal`) |
 | DOC-UX-017 | `demo-v1-ui-screens.md` | 4 | not started |
 | DOC-UX-018 | `demo-v1-ui-data-viz.md` | 3 | not started |
 | DOC-UX-019 | `demo-v1-ui-interactions.md` | 3 | not started |
@@ -115,8 +116,13 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 
 - [x] DOC-UX-015 foundations: Light/Dark HEX, semantic status aliases, calculated contrast, type/spacing/radius, shadcn map, a11y checklist.
 - [x] Link from DOC-UX-011; README / overview / plan / traceability synced.
-- [ ] Iteration 2+ **not** started in this pass.
+
+### Iteration 2
+
+- [x] DOC-UX-016 component specification: shell, data display, entity summaries, detail patterns, viz boundaries.
+- [x] StatusIndicator four semantic models; Links≠Impact; BR-006 DecisionPanel honesty; BA-OQ-006 left open.
+- [ ] Iteration 3+ **not** started in this pass.
 
 ## 9. Related
 
-- [ui-foundations](./demo-v1-ui-foundations.md) · [ux-concept](./demo-v1-ux-concept.md) · [visual-direction](./demo-v1-visual-direction.md) · [ux-traceability](./demo-v1-ux-traceability.md) · [README](./README.md)
+- [ui-foundations](./demo-v1-ui-foundations.md) · [component-specification](./demo-v1-component-specification.md) · [ux-concept](./demo-v1-ux-concept.md) · [visual-direction](./demo-v1-visual-direction.md) · [ux-traceability](./demo-v1-ux-traceability.md) · [README](./README.md)
