@@ -1,18 +1,16 @@
 import { NotFoundException } from '@nestjs/common';
 import { DemoDataSource } from '../data/demo-data-source';
-import type { ProjectFixture, SnapshotFixture, SnapshotId } from '../data/fixtures/types';
+import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
+import type { SnapshotId } from '../snapshot/snapshot-id';
 import { ProjectsService } from './projects.service';
 
 class FakeDataSource extends DemoDataSource {
-  constructor(private readonly snapshot: SnapshotFixture) {
+  constructor(private readonly snapshots: Record<SnapshotId, SnapshotFixture>) {
     super();
   }
 
   getSnapshot(id: SnapshotId): SnapshotFixture {
-    if (id !== this.snapshot.id) {
-      throw new Error(`unexpected snapshot ${id}`);
-    }
-    return this.snapshot;
+    return this.snapshots[id];
   }
 
   getProject(snapshotId: SnapshotId, projectId: string): ProjectFixture | null {
@@ -21,30 +19,30 @@ class FakeDataSource extends DemoDataSource {
   }
 
   listSnapshotIds(): SnapshotId[] {
-    return [this.snapshot.id];
+    return Object.keys(this.snapshots) as SnapshotId[];
   }
 
   getDefaultSnapshot(): SnapshotFixture {
-    return this.snapshot;
+    return this.snapshots.A;
   }
 }
 
-describe('ProjectsService', () => {
-  const snapshotA: SnapshotFixture = {
-    id: 'A',
-    scenarioAsOfDate: '2027-02-15',
+function stub(id: SnapshotId, forecast: string, asOf: string): SnapshotFixture {
+  return {
+    id,
+    scenarioAsOfDate: asOf,
     project: {
       id: 'PRJ-01',
       name: 'Facility Expansion Alpha',
       baselineProductionStart: '2027-09-15',
-      forecastProductionStart: '2027-09-15',
+      forecastProductionStart: forecast,
     },
     milestone: {
       id: 'MS-PS',
       name: 'Ready for production',
       baselineDate: '2027-09-15',
-      forecastDate: '2027-09-15',
-      rag: 'Green',
+      forecastDate: forecast,
+      rag: id === 'A' ? 'Green' : 'Red',
     },
     equipment: {
       id: 'EQ-HVAC-01',
@@ -56,7 +54,7 @@ describe('ProjectsService', () => {
     },
     risk: {
       id: 'RISK-001',
-      rag: 'Green',
+      rag: id === 'A' ? 'Green' : 'Red',
       milestoneId: 'MS-PS',
       equipmentId: 'EQ-HVAC-01',
       issueId: null,
@@ -64,22 +62,37 @@ describe('ProjectsService', () => {
     issue: null,
     decision: null,
   };
+}
 
-  it('returns project stub from DemoDataSource without fixture imports', () => {
-    const service = new ProjectsService(new FakeDataSource(snapshotA));
-    const dto = service.getProjectStub('PRJ-01');
-    expect(dto).toEqual({
-      id: 'PRJ-01',
-      name: 'Facility Expansion Alpha',
-      baselineProductionStart: '2027-09-15',
-      forecastProductionStart: '2027-09-15',
-      snapshotId: 'A',
-      scenarioAsOfDate: '2027-02-15',
-    });
+describe('ProjectsService', () => {
+  const ds = new FakeDataSource({
+    A: stub('A', '2027-09-15', '2027-02-15'),
+    B: stub('B', '2027-10-06', '2027-03-01'),
+    C: stub('C', '2027-10-06', '2027-03-02'),
+  });
+
+  it('returns project stub for requested snapshot via DemoDataSource', () => {
+    const service = new ProjectsService(ds);
+    expect(service.getProjectStub('PRJ-01', 'A')).toEqual(
+      expect.objectContaining({
+        snapshotId: 'A',
+        forecastProductionStart: '2027-09-15',
+        scenarioAsOfDate: '2027-02-15',
+      }),
+    );
+    expect(service.getProjectStub('PRJ-01', 'B')).toEqual(
+      expect.objectContaining({
+        snapshotId: 'B',
+        forecastProductionStart: '2027-10-06',
+        scenarioAsOfDate: '2027-03-01',
+      }),
+    );
   });
 
   it('throws NotFoundException for unknown project', () => {
-    const service = new ProjectsService(new FakeDataSource(snapshotA));
-    expect(() => service.getProjectStub('NOPE')).toThrow(NotFoundException);
+    const service = new ProjectsService(ds);
+    expect(() => service.getProjectStub('NOPE', 'A')).toThrow(
+      NotFoundException,
+    );
   });
 });

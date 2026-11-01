@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import { AppProviders } from '@/components/providers';
+import { AppShell } from '@/components/shell/app-shell';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'PPC Demo v1 — I1',
-  description: 'Pharma Project Control Demo v1 scaffold',
+  title: 'Pharma Project Control — Demo v1',
+  description: 'Demo v1 App Shell and snapshot infrastructure',
 };
 
 export default function RootLayout({
@@ -12,8 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-white antialiased">{children}</body>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
+      <body>
+        <AppProviders>
+          <AppShell>{children}</AppShell>
+        </AppProviders>
+      </body>
     </html>
   );
 }

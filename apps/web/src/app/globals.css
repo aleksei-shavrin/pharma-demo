@@ -2,20 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* DOC-UX-015 tokens — Light (default) / Dark via [data-theme] */
+
+:root,
+[data-theme='light'] {
+  --canvas: #e8eef2;
+  --surface: #f7fafc;
+  --surface-raised: #ffffff;
+  --surface-sunken: #eef2f6;
+  --text: #1b2430;
+  --text-secondary: #3d4a5c;
+  --text-muted: #4f5b6a;
+  --text-inverse: #f7fafc;
+  --border: #7a8794;
+  --border-subtle: #c5d0da;
+  --interactive: #d5e6ea;
+  --selected: #c5dce2;
+  --primary: #2a6573;
+  --primary-foreground: #ffffff;
+  --link: #1a4f5c;
+  --focus-ring: #1a4f5c;
+  --status-danger-fg: #7a1710;
+  --sidebar-width: 240px;
+  --topbar-height: 52px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --elevation-1: 0 1px 2px rgb(27 36 48 / 6%), 0 1px 3px rgb(27 36 48 / 4%);
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-theme='dark'] {
+  --canvas: #0f1419;
+  --surface: #161c24;
+  --surface-raised: #1e2630;
+  --surface-sunken: #12181f;
+  --text: #e8eef2;
+  --text-secondary: #b8c2ce;
+  --text-muted: #9aa6b4;
+  --text-inverse: #0f1419;
+  --border: #6b7785;
+  --border-subtle: #3a4654;
+  --interactive: #243840;
+  --selected: #2c4a52;
+  --primary: #5bb3c4;
+  --primary-foreground: #0a1216;
+  --link: #8fd0de;
+  --focus-ring: #8fd0de;
+  --status-danger-fg: #f7b4ac;
+  --elevation-1: 0 1px 2px rgb(0 0 0 / 35%);
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--canvas);
+  color: var(--text);
+  font-family:
+    'Segoe UI',
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  z-index: 100;
+  transform: translateY(-120%);
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  box-shadow: 0 0 0 2px var(--canvas), 0 0 0 4px var(--focus-ring);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

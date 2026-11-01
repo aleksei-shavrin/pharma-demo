@@ -1,5 +1,7 @@
-/** Snapshot ids — discrete Demo v1 fixtures (DOC-PROD-012). */
-export type SnapshotId = 'A' | 'B' | 'C';
+import type { SnapshotId } from '../../snapshot/snapshot-id';
+
+/** Re-export API snapshot id — fixtures stay discrete A|B|C maps. */
+export type { SnapshotId };
 
 export type EquipmentStatus = 'OnTrack' | 'Delayed';
 export type IssueStatus = 'Open' | 'Mitigating';

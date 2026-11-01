@@ -3,6 +3,8 @@
  * Must not import apps/api or fixture modules.
  */
 
+import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+
 export type ProjectStub = {
   id: string;
   name: string;
@@ -34,6 +36,12 @@ export function fetchHealth(): Promise<HealthResponse> {
   return getJson<HealthResponse>('/health');
 }
 
-export function fetchProjectStub(projectId: string): Promise<ProjectStub> {
-  return getJson<ProjectStub>(`/v1/projects/${encodeURIComponent(projectId)}`);
+export function fetchProjectStub(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<ProjectStub> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<ProjectStub>(
+    `/v1/projects/${encodeURIComponent(projectId)}?${qs.toString()}`,
+  );
 }

@@ -32,7 +32,9 @@ describe('MockDemoDataSource (DOC-PROD-012 integrity smoke)', () => {
   it('snapshot C keeps B forecasts and records PrioritizeRecovery (BR-006)', () => {
     const b = ds.getSnapshot('B');
     const c = ds.getSnapshot('C');
-    expect(c.project.forecastProductionStart).toBe(b.project.forecastProductionStart);
+    expect(c.project.forecastProductionStart).toBe(
+      b.project.forecastProductionStart,
+    );
     expect(c.milestone.forecastDate).toBe(b.milestone.forecastDate);
     expect(c.milestone.rag).toBe('Red');
     expect(c.risk.rag).toBe('Red');

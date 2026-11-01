@@ -1,5 +1,14 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { SNAPSHOT_IDS } from '../snapshot/snapshot-id';
+import { SnapshotQueryPipe } from '../snapshot/snapshot-query.pipe';
+import type { SnapshotId } from '../snapshot/snapshot-id';
 import { ProjectStubDto } from './dto/project-stub.dto';
 import { ProjectsService } from './projects.service';
 
@@ -10,14 +19,26 @@ export class ProjectsController {
 
   @Get(':id')
   @ApiOperation({
-    summary: 'I1 project stub (Snapshot A default; full A/B/C switch is I2)',
+    summary:
+      'Project stub for request-scoped snapshot (default A; discrete A|B|C)',
+  })
+  @ApiQuery({
+    name: 'snapshot',
+    required: false,
+    enum: SNAPSHOT_IDS,
+    description:
+      'Discrete Demo snapshot context. Omitted defaults to A. Invalid → 400.',
+    schema: { default: 'A' },
   })
   @ApiOkResponse({
     type: ProjectStubDto,
-    description: 'Project stub from Demo mock data (default Snapshot A)',
+    description: 'Project stub for the requested snapshot (no mixed fixtures)',
   })
-  @ApiNotFoundResponse({ description: 'Project not found in default snapshot' })
-  getProject(@Param('id') id: string): ProjectStubDto {
-    return this.projectsService.getProjectStub(id);
+  @ApiNotFoundResponse({ description: 'Project not found in that snapshot' })
+  getProject(
+    @Param('id') id: string,
+    @Query('snapshot', SnapshotQueryPipe) snapshot: SnapshotId,
+  ): ProjectStubDto {
+    return this.projectsService.getProjectStub(id, snapshot);
   }
 }

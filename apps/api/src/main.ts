@@ -6,7 +6,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const webOrigin = process.env.WEB_ORIGIN ?? 'http://localhost:3000';
-  app.enableCors({ origin: [webOrigin, 'http://localhost:3000'] });
+  app.enableCors({
+    origin: [
+      webOrigin,
+      'http://localhost:3000',
+      'http://localhost:3010',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3010',
+      'http://localhost',
+    ],
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Pharma Project Control API')

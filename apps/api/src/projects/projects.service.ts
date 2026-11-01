@@ -1,9 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
+import type { SnapshotId } from '../snapshot/snapshot-id';
 import { ProjectStubDto } from './dto/project-stub.dto';
 
 /**
- * Application use case: project stub for I1 smoke.
+ * Application use case: project stub for Demo narrative.
  * Depends on DemoDataSource — does not import fixture constants.
  */
 @Injectable()
@@ -12,8 +13,8 @@ export class ProjectsService {
     @Inject(DEMO_DATA_SOURCE) private readonly dataSource: DemoDataSource,
   ) {}
 
-  getProjectStub(projectId: string): ProjectStubDto {
-    const snapshot = this.dataSource.getDefaultSnapshot();
+  getProjectStub(projectId: string, snapshotId: SnapshotId): ProjectStubDto {
+    const snapshot = this.dataSource.getSnapshot(snapshotId);
     const project = this.dataSource.getProject(snapshot.id, projectId);
     if (!project) {
       throw new NotFoundException(`Project ${projectId} not found`);

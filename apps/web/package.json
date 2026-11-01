@@ -7,23 +7,31 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "npm run check:architecture",
+    "test": "vitest run && npm run check:architecture",
+    "test:unit": "vitest run",
     "check:architecture": "node scripts/check-no-api-imports.mjs"
   },
   "dependencies": {
+    "lucide-react": "^1.66.0",
+    "next": "15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.1.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "eslint": "^9",
     "eslint-config-next": "15.1.0",
-    "@eslint/eslintrc": "^3"
+    "jsdom": "^29.1.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }

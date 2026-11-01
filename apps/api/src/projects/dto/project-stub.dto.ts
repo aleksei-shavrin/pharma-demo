@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { SNAPSHOT_IDS, type SnapshotId } from '../../snapshot/snapshot-id';
 
-/** I1 project stub response — OpenAPI contract. */
+/** Project stub response — OpenAPI contract. */
 export class ProjectStubDto {
   @ApiProperty({ example: 'PRJ-01' })
   id!: string;
@@ -14,9 +15,8 @@ export class ProjectStubDto {
   @ApiProperty({ example: '2027-09-15' })
   forecastProductionStart!: string;
 
-  /** I1: always A until Snapshot API lands in I2. */
-  @ApiProperty({ example: 'A' })
-  snapshotId!: string;
+  @ApiProperty({ example: 'A', enum: SNAPSHOT_IDS })
+  snapshotId!: SnapshotId;
 
   @ApiProperty({ example: '2027-02-15' })
   scenarioAsOfDate!: string;

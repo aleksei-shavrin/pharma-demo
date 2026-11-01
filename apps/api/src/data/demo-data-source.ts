@@ -1,4 +1,8 @@
-import type { ProjectFixture, SnapshotFixture, SnapshotId } from './fixtures/types';
+import type {
+  ProjectFixture,
+  SnapshotFixture,
+  SnapshotId,
+} from './fixtures/types';
 
 /**
  * Minimal Demo v1 data-access boundary.
@@ -7,7 +11,10 @@ import type { ProjectFixture, SnapshotFixture, SnapshotId } from './fixtures/typ
  */
 export abstract class DemoDataSource {
   abstract getSnapshot(id: SnapshotId): SnapshotFixture;
-  abstract getProject(snapshotId: SnapshotId, projectId: string): ProjectFixture | null;
+  abstract getProject(
+    snapshotId: SnapshotId,
+    projectId: string,
+  ): ProjectFixture | null;
   abstract listSnapshotIds(): SnapshotId[];
   /** I1 default narrative context (Snapshot A) until I2 snapshot switching. */
   abstract getDefaultSnapshot(): SnapshotFixture;

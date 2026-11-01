@@ -4,7 +4,14 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 
-describe('I1 API (e2e)', () => {
+type ProjectBody = {
+  snapshotId: string;
+  forecastProductionStart: string;
+  scenarioAsOfDate: string;
+  baselineProductionStart: string;
+};
+
+describe('I2 API snapshot (e2e)', () => {
   let app: INestApplication<App>;
 
   beforeEach(async () => {
@@ -27,14 +34,57 @@ describe('I1 API (e2e)', () => {
       .expect({ status: 'ok', service: 'ppc-api' });
   });
 
-  it('GET /v1/projects/PRJ-01 (Snapshot A default)', () => {
+  it('omitted snapshot defaults to A', () => {
     return request(app.getHttpServer())
       .get('/v1/projects/PRJ-01')
       .expect(200)
       .expect((res) => {
-        expect(res.body.id).toBe('PRJ-01');
-        expect(res.body.snapshotId).toBe('A');
-        expect(res.body.forecastProductionStart).toBe('2027-09-15');
+        const body = res.body as ProjectBody;
+        expect(body.snapshotId).toBe('A');
+        expect(body.forecastProductionStart).toBe('2027-09-15');
+        expect(body.scenarioAsOfDate).toBe('2027-02-15');
       });
+  });
+
+  it('explicit snapshot=A', () => {
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01?snapshot=A')
+      .expect(200)
+      .expect((res) => {
+        const body = res.body as ProjectBody;
+        expect(body.snapshotId).toBe('A');
+        expect(body.forecastProductionStart).toBe('2027-09-15');
+      });
+  });
+
+  it('snapshot=B returns delayed forecast / asOf', () => {
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01?snapshot=B')
+      .expect(200)
+      .expect((res) => {
+        const body = res.body as ProjectBody;
+        expect(body.snapshotId).toBe('B');
+        expect(body.forecastProductionStart).toBe('2027-10-06');
+        expect(body.scenarioAsOfDate).toBe('2027-03-01');
+        expect(body.baselineProductionStart).toBe('2027-09-15');
+      });
+  });
+
+  it('snapshot=C keeps B forecasts with C asOf', () => {
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01?snapshot=C')
+      .expect(200)
+      .expect((res) => {
+        const body = res.body as ProjectBody;
+        expect(body.snapshotId).toBe('C');
+        expect(body.forecastProductionStart).toBe('2027-10-06');
+        expect(body.scenarioAsOfDate).toBe('2027-03-02');
+      });
+  });
+
+  it('invalid snapshot → 400 (no silent fallback)', () => {
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01?snapshot=D')
+      .expect(400);
   });
 });
