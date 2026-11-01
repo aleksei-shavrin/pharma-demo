@@ -3,9 +3,9 @@ id: DOC-UX-015
 title: "Demo v1 UI Design — foundations"
 type: product
 status: draft
-version: "0.1.1"
+version: "0.1.2"
 created: 2026-10-31
-updated: 2026-10-31
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-UX-014
@@ -14,20 +14,21 @@ related:
   - DOC-UX-007
   - DOC-UX-002
   - DOC-UX-009
+  - DOC-UX-018
 ---
 
 # Demo v1 UI Design — foundations
 
 > **certainty:** hypothesis
 >
-> Общая визуальная гипотеза документа наследуется от **VD-A** (`approved Visual Direction baseline`): industrial control lattice, cool slate, restrained accent, multi-channel status. **Конкретные Foundation values** (HEX, sizes, contrast targets, mapping) — **`proposal`**; они **не** становятся утверждёнными до human APPROVE UI Design pack. Frontmatter `status: draft` = lifecycle документа (не decision status). Не apps / не CSS / не npm. Не переоткрывает VD-A / D1–D11. Не закрывает BA-OQ / HIP / D12.
+> Общая визуальная гипотеза документа наследуется от **VD-A** (`approved Visual Direction baseline`): industrial control lattice, cool slate, restrained accent, multi-channel status. **Конкретные Foundation values** (HEX, sizes, contrast targets, mapping) — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle документа (не decision status). **Не** apps / implementation. Не переоткрывает VD-A / D1–D11. Не закрывает BA-OQ / HIP / D12.
 
 ## 1. Purpose and status
 
 | Item | Status |
 |------|--------|
 | Scope | Color, type, spacing, radius, elevation, interaction tokens, responsive foundations, shadcn mapping, a11y checklist |
-| Decision status of new values | **`proposal`** |
+| Decision status of new values | **`approved UI Design decision`** |
 | VD-A / D1–D11 | Cite only (`approved Visual Direction baseline` / `approved UX decision`) |
 | BA-OQ-006 | Remains **open**; V1 table layout = `assumption` (not specified here) |
 | D12 | Remains **`deferred decision`** |
@@ -39,11 +40,11 @@ related:
 
 From VD-A (`approved Visual Direction baseline`): hierarchy over decoration; surface depth 0–2; status multi-channel; dense but scannable; BR-006 honesty; shadcn-native tokens.
 
-Foundations add (`proposal`):
+Foundations add (`approved UI Design decision`):
 
 1. **One role set, two themes** — Light/Dark change values, not role names or IA.
 2. **Accent ≠ status** — steel-teal primary for chrome/actions; status aliases stay semantic and distinct by entity family.
-3. **Contrast as design gate** — pairs below must meet calculated thresholds before pack APPROVE; browser re-check at implementation.
+3. **Contrast as design gate** — calculated thresholds locked with pack APPROVE; browser re-check at implementation.
 4. **No invented statuses** — only Domain allowlist: Equipment `OnTrack`/`Delayed`; Issue `Open`/`Mitigating` (Closed not Must UI); Risk/Milestone RAG `Green`/`Red`. No Amber.
 
 ## 3. Color system overview
@@ -103,7 +104,7 @@ Each applied semantic role specifies: `*-foreground`, `*-background`, `*-border`
 
 ### 3.4 Light / Dark parity
 
-| Concern | Rule (`proposal`) |
+| Concern | Rule (`approved UI Design decision`) |
 |---------|-------------------|
 | Semantics | Same role names and status aliases in both themes |
 | Neutrals | Dark is tonal redesign (cool slate), not inverted Light |
@@ -112,7 +113,7 @@ Each applied semantic role specifies: `*-foreground`, `*-background`, `*-border`
 | Borders / focus | Structural `border` and `focus-ring` re-tuned per theme; no glow dependency |
 | Accent | Light primary darker teal; Dark primary lighter teal — both pass text contrast on their fg |
 
-## 4. Light theme tokens (`proposal`)
+## 4. Light theme tokens (`approved UI Design decision`)
 
 ### 4.1 Neutrals
 
@@ -158,7 +159,7 @@ Aliases map to these four role rows per §3.3.
 
 **Destructive (forms / rare):** use `status-danger` pair; no separate brand red required in Demo v1.
 
-## 5. Dark theme tokens (`proposal`)
+## 5. Dark theme tokens (`approved UI Design decision`)
 
 ### 5.1 Neutrals
 
@@ -202,20 +203,20 @@ Aliases map to these four role rows per §3.3.
 
 ## 6. Semantic status usage notes
 
-| Family | Label text (EN UI) | Marker shape (`proposal`) | How the model stays distinct |
+| Family | Label text (EN UI) | Marker shape (`approved UI Design decision`) | How the model stays distinct |
 |--------|--------------------|---------------------------|------------------------------|
 | Equipment OnTrack | On track | Filled disc | Equipment delivery family + delivery columns/context |
-| Equipment Delayed | Delayed | Diamond or bold bar | Distinct geometry from RAG Red; variance-aware sort |
-| Issue Open | Open | Outline badge | Issue status family; neutral-steel; **not** Amber |
-| Issue Mitigating | Mitigating | Half-filled / dashed badge | Issue status family; **not** «fixed» / recovery done (BR-006) |
+| Equipment Delayed | Delayed | **Diamond** (locked; DOC-UX-018) | Distinct geometry from RAG Red; variance-aware sort |
+| Issue Open | Open | **Outline badge** (locked; DOC-UX-018) | Issue status family; neutral-steel; **not** Amber |
+| Issue Mitigating | Mitigating | **Half-filled badge** (locked; DOC-UX-018) | Issue status family; **not** «fixed» / recovery done (BR-006) |
 | Risk Green | Green | Filled disc (RAG) | Risk RAG alias + Risk entity chrome / column / Type |
 | Risk Red | Red | Filled disc + optional row left rail | Risk RAG alias + Risk context (not Equipment Delayed diamond) |
 | Milestone Green | Green | Filled disc (RAG) | Milestone RAG alias + Milestone entity chrome / column |
 | Milestone Red | Red | Filled disc + optional row left rail | Milestone RAG alias + Milestone context |
 
-**Risk vs Milestone RAG (`proposal`):** same Green/Red **colors** and **marker geometry**. Differentiation is by **entity context** (register/section/column header, detail entity type, Type/name field), **text label**, and placement — **not** by inventing separate marker shapes for Risk vs Milestone. This keeps VD-A simple and avoids a fourth geometry set.
+**Risk vs Milestone RAG (`approved UI Design decision`):** same Green/Red **colors** and **marker geometry**. Differentiation is by **entity context** (register/section/column header, detail entity type, Type/name field), **text label**, and placement — **not** by inventing separate marker shapes for Risk vs Milestone. This keeps VD-A simple and avoids a fourth geometry set.
 
-**Equipment Delayed vs RAG Red:** different marker geometry (diamond/bar vs filled disc+rail) so delivery delay is not visually identical to Risk/Milestone Red even when both use `status-danger` color.
+**Equipment Delayed vs RAG Red:** different marker geometry (**diamond** vs filled disc+rail) so delivery delay is not visually identical to Risk/Milestone Red even when both use `status-danger` color. Concrete shapes: DOC-UX-018.
 
 **BR-006:** Mitigating label/marker must not imply recovery execution, improved forecast, or RAG upgrade.
 
@@ -262,7 +263,7 @@ Contrast ratio:
 
 Any Node/Python/tool implementing §7.1 should match ratios in §8 within ±0.02. Initial tuning: Light structural border darkened from `#8A96A4` (2.87:1 FAIL vs surface) → `#7A8794` (PASS on all four surfaces; §8.3).
 
-## 8. Contrast results (`proposal` targets)
+## 8. Contrast results (`approved UI Design decision` targets)
 
 ### 8.1 Light theme
 
@@ -338,7 +339,7 @@ Where `border` defines a UI component edge or state boundary, require ≥3:1 aga
 
 **Unresolved contrast pairs:** none among the required checklist (including §8.3). No token retune required for the \(0.04045\) formula refresh or four-surface border expansion.
 
-## 9. Typography (`proposal`)
+## 9. Typography (`approved UI Design decision`)
 
 ### 9.1 Family
 
@@ -373,7 +374,7 @@ Where `border` defines a UI component edge or state boundary, require ≥3:1 aga
 - KPI value: `tabular` 20px/600; KPI caption: `meta`.
 - Δ values: `tabular`; color only with sign/label (not color-alone).
 
-## 10. Spacing and sizing (`proposal`)
+## 10. Spacing and sizing (`approved UI Design decision`)
 
 ### 10.1 Spacing scale (base 4)
 
@@ -415,7 +416,7 @@ Where `border` defines a UI component edge or state boundary, require ≥3:1 aga
 
 Density: enterprise-compact; avoid sub-32px interactive targets for primary controls (icon-only tools ≥28px with clear hit area).
 
-## 11. Radius, borders, elevation (`proposal`)
+## 11. Radius, borders, elevation (`approved UI Design decision`)
 
 ### 11.1 Radius
 
@@ -445,7 +446,7 @@ Density: enterprise-compact; avoid sub-32px interactive targets for primary cont
 
 No multi-layer marketing shadows. Prefer tonal separation over decoration.
 
-## 12. Interaction state tokens (`proposal`)
+## 12. Interaction state tokens (`approved UI Design decision`)
 
 | State | Visual rule | Not to confuse with |
 |-------|-------------|---------------------|
@@ -459,7 +460,7 @@ No multi-layer marketing shadows. Prefer tonal separation over decoration.
 
 **Data states** (loading / empty / error): separate patterns in DOC-UX-016/019 — use `text-muted` + non-status icons; error messages may use `status-danger` text **without** implying Issue/Risk RAG.
 
-## 13. Responsive foundations (`proposal`)
+## 13. Responsive foundations (`approved UI Design decision`)
 
 Desktop-first Demo v1 (from DOC-UX-012 / VD-A):
 
@@ -477,7 +478,7 @@ Desktop-first Demo v1 (from DOC-UX-012 / VD-A):
 | Min work area | **Target** content width ≥720px when full shell is shown — design target for table/Dashboard readability, **not** a guarantee on every device/viewport |
 | Gantt | Secondary; may hide earlier than table (D12 look only) |
 
-## 14. shadcn/ui token mapping (`proposal`)
+## 14. shadcn/ui token mapping (`approved UI Design decision`)
 
 Spec only — **no** CSS/Tailwind files in this iteration.
 
@@ -503,9 +504,9 @@ Spec only — **no** CSS/Tailwind files in this iteration.
 | `border` | `--input` | `#7A8794` | `#6B7785` | Input chrome |
 | `focus-ring` | `--ring` | `#1A4F5C` | `#8FD0DE` | Focus |
 
-\*Destructive solid controls (`proposal`): Light `#FFFFFF` on `#B42318` = **6.57:1**; Dark `#0A1216` on `#E56B60` = **5.94:1**. Badge RAG still uses §4.3/§5.3. Re-measure computed styles at implementation.
+\*Destructive solid controls (`approved UI Design decision`): Light `#FFFFFF` on `#B42318` = **6.57:1**; Dark `#0A1216` on `#E56B60` = **5.94:1**. Badge RAG still uses §4.3/§5.3. Re-measure computed styles at implementation.
 
-### Extra semantic CSS variables (`proposal`)
+### Extra semantic CSS variables (`approved UI Design decision`)
 
 | Variable | Maps to |
 |----------|---------|
@@ -539,7 +540,7 @@ Chart series (`chart-*`): neutrals + status markers; exact series table deferred
 
 | Item | Status |
 |------|--------|
-| UI Design pack APPROVE (locks HEX) | Pending human |
+| UI Design pack APPROVE (locks HEX) | **APPROVED** (human); Implementation NOT STARTED |
 | BA-OQ-006 layout | Open; V1 assumption elsewhere |
 | D12 Gantt library | Deferred |
 | Issue Closed / Amber tokens | Not Must — unspecified |

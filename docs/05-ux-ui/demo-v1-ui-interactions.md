@@ -22,7 +22,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Поведение UI Demo v1 (навигация, Snapshot, theme, tables, detail, keyboard). Новые решения — **`proposal`** до human APPROVE UI Design pack. Frontmatter `status: draft` = lifecycle. Не apps. Не закрывает BA-OQ / HIP / D12. Не меняет Domain / BR / REQ / OpenSpec / mock. Согласовано с DOC-UX-016 (DecisionPanel Must = read-only; selection/pagination off by default).
+> Поведение UI Demo v1 (навигация, Snapshot, theme, tables, detail, keyboard). UI Design решения пакета — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle. **Не** apps. Не закрывает BA-OQ / HIP / D12. Не меняет Domain / BR / REQ / OpenSpec / mock. Согласовано с DOC-UX-016 (DecisionPanel Must = read-only; selection/pagination off by default).
 
 ## 1. Purpose and scope
 
@@ -35,7 +35,7 @@ related:
 
 **Note vs DOC-UX-003 M-DEC:** UX journey mentions recording PrioritizeRecovery. **UI Design Must path (DOC-UX-016 review):** DecisionPanel is **read-only**; Snapshot C shows fixture DEC-001. Interactive write via Dialog is **not** Must Demo v1. Do not imply the user can execute a management action in Must UI.
 
-## 2. Global vs local state (`proposal`)
+## 2. Global vs local state (`approved UI Design decision`)
 
 | Kind | Examples | Behavior |
 |------|----------|----------|
@@ -43,9 +43,9 @@ related:
 | **Local page** | Table sort/filter/search; detail tab; Schedule Table\|Gantt\|Split view | Scoped to page; **MVP assumption:** not restored on breadcrumb return (DOC-UX-002/006) |
 | **Not specified** | Cross-session persistence of filters/theme/snapshot | Do not invent; impl may use ephemeral session defaults |
 
-When Snapshot changes: reload data for current route; **reset or revalidate** local filters that reference statuses absent in new snapshot (`proposal`: clear incompatible filters; keep sort key if column still exists).
+When Snapshot changes: reload data for current route; **reset or revalidate** local filters that reference statuses absent in new snapshot (`approved UI Design decision`: clear incompatible filters; keep sort key if column still exists).
 
-## 3. Primary navigation and Sidebar (`proposal`)
+## 3. Primary navigation and Sidebar (`approved UI Design decision`)
 
 | Action | Behavior |
 |--------|----------|
@@ -54,7 +54,7 @@ When Snapshot changes: reload data for current route; **reset or revalidate** lo
 | Collapse (≥1280 expanded; 1024–1279 icon rail) | Labels → tooltip; accessible name retained |
 | Focus order | See §12 (Skip link + shell order) |
 
-## 4. SnapshotSelector A/B/C (`proposal`)
+## 4. SnapshotSelector A/B/C (`approved UI Design decision`)
 
 | Step | Behavior |
 |------|----------|
@@ -68,7 +68,7 @@ When Snapshot changes: reload data for current route; **reset or revalidate** lo
 
 Announce change politely (live region) at implementation — requirement, not tested claim.
 
-## 5. ThemeToggle (`proposal`)
+## 5. ThemeToggle (`approved UI Design decision`)
 
 | Action | Behavior |
 |--------|----------|
@@ -76,7 +76,7 @@ Announce change politely (live region) at implementation — requirement, not te
 | Control | Button/switch; Enter/Space OK (button, not link) |
 | Charts/status | Must remain readable (DOC-UX-015/018); no glow-only Dark affordances |
 
-## 6. DataTable interactions (`proposal`)
+## 6. DataTable interactions (`approved UI Design decision`)
 
 Aligned with DOC-UX-016 §5.3:
 
@@ -93,7 +93,7 @@ Aligned with DOC-UX-016 §5.3:
 
 BA-OQ-006 remains **open**; V1 Issues&Risks single table + Type = `assumption` for layout only.
 
-## 7. Schedule Table / Gantt (`proposal`)
+## 7. Schedule Table / Gantt (`approved UI Design decision`)
 
 | Action | Behavior |
 |--------|----------|
@@ -105,7 +105,7 @@ BA-OQ-006 remains **open**; V1 Issues&Risks single table + Type = `assumption` f
 
 D12 library choice remains deferred.
 
-## 8. Entity Detail tabs (`proposal`)
+## 8. Entity Detail tabs (`approved UI Design decision`)
 
 | Tab | Interaction |
 |-----|-------------|
@@ -117,7 +117,7 @@ D12 library choice remains deferred.
 
 EntityDetailHeader + StatusIndicator family-correct (DOC-UX-016).
 
-## 9. EntityLink and cross-detail (`proposal`)
+## 9. EntityLink and cross-detail (`approved UI Design decision`)
 
 | Action | Behavior |
 |--------|----------|
@@ -125,7 +125,7 @@ EntityDetailHeader + StatusIndicator family-correct (DOC-UX-016).
 | Derived targets | Must be labeled derived/indirect — not plain Links chips |
 | Back | Breadcrumb or browser back to section; **MVP:** filters not restored (`assumption`) |
 
-## 10. Dashboard interactions (`proposal`)
+## 10. Dashboard interactions (`approved UI Design decision`)
 
 | Element | Behavior |
 |---------|----------|
@@ -135,7 +135,7 @@ EntityDetailHeader + StatusIndicator family-correct (DOC-UX-016).
 | DecisionPanel | **Read-only** Must; Snapshot A empty, B context, C DEC-001 (DOC-UX-016/018) |
 | Chart | Tooltip/legend; not sole critical info |
 
-## 11. Dialog (`proposal`)
+## 11. Dialog (`approved UI Design decision`)
 
 | Rule | Detail |
 |------|--------|
@@ -144,13 +144,13 @@ EntityDetailHeader + StatusIndicator family-correct (DOC-UX-016).
 | Decision | Shown via DecisionPanel from fixtures on C |
 | If used later | Honesty copy required; no false success / RAG upgrade chrome |
 
-## 12. Keyboard, focus, accessibility requirements (`proposal`)
+## 12. Keyboard, focus, accessibility requirements (`approved UI Design decision`)
 
 Practical requirements for implementation (not an audit result):
 
 1. All interactive controls keyboard reachable; visible `:focus-visible` (DOC-UX-015).
 2. **Skip link** is the first focusable control; activating it moves focus to `main` (Page Surface content), bypassing chrome.
-3. **Logical shell focus order (`proposal`):** Skip link → **Top Application Bar** (breadcrumbs, SnapshotSelector, ThemeToggle, project context) → **Sidebar** nav → **Page Surface** (`main`). Rationale: global Snapshot/Theme stay reachable without tabbing through all five nav items first (DOC-UX-002 regions).
+3. **Logical shell focus order (`approved UI Design decision`):** Skip link → **Top Application Bar** (breadcrumbs, SnapshotSelector, ThemeToggle, project context) → **Sidebar** nav → **Page Surface** (`main`). Rationale: global Snapshot/Theme stay reachable without tabbing through all five nav items first (DOC-UX-002 regions).
 4. Tab order must follow **DOM order**. Do not invent a visual-only order that fights the DOM (no `tabindex` gymnastics / `aria-flowto` as primary fix).
 5. On Snapshot switch / tab change / route change: move focus to a sensible target (e.g. `h1` or `main`); avoid focus loss to `body` without recovery. After Snapshot switch with missing entity EmptyState, focus the EmptyState heading or primary “back to register” control.
 6. Links (`a`) vs buttons: navigation = links; actions = buttons (ThemeToggle = button).
@@ -169,9 +169,11 @@ Practical requirements for implementation (not an audit result):
 
 | Item | Handling |
 |------|----------|
-| Filter persistence | MVP non-restore = `assumption` |
-| Snapshot persistence across reload | unspecified |
-| Interactive Decision write / M-DEC | Not Must UI Design path; fixtures on C |
+| Filter persistence on breadcrumb / local return | MVP non-restore = `assumption` (§2, §9) |
+| Cross-session filter persistence | unspecified (`open_question`) — distinct from MVP non-restore |
+| Theme persistence across sessions | unspecified (`open_question`) |
+| Snapshot persistence across reload / sessions | unspecified (`open_question`) |
+| Interactive Decision write / M-DEC outside Must | `open_question` (Must path = read-only DecisionPanel; Snapshot C = fixture DEC-001; not a Must write flow) |
 | Selection/pagination | Off unless scenario confirmed |
 | Shell DOM order Sidebar vs TopBar | open_question / impl constraint (§12) |
 | BA-OQ-006 | remains open |

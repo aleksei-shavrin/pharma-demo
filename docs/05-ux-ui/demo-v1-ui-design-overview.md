@@ -3,7 +3,7 @@ id: DOC-UX-014
 title: "Demo v1 UI Design Specification — overview"
 type: product
 status: draft
-version: "0.5.0"
+version: "0.7.0"
 created: 2026-10-31
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -16,14 +16,16 @@ related:
   - DOC-UX-017
   - DOC-UX-018
   - DOC-UX-019
+  - DOC-UX-020
   - DOC-HANDOFF-VD-001
+  - DOC-HANDOFF-UID-001
 ---
 
 # Demo v1 UI Design Specification — overview
 
 > **certainty:** hypothesis
 >
-> UI Design / Design Specification wave. Новые UI Design решения — **`proposal`** до отдельного human APPROVE UI Design pack. Frontmatter `status: draft` = lifecycle. **Не** переоткрывает VD-A / D1–D11. **Не** apps.
+> UI Design / Design Specification wave. UI Design pack Demo v1 = **APPROVED** (human). Pack decisions = **`approved UI Design decision`**. Frontmatter `status: draft` = lifecycle. **Не** переоткрывает VD-A / D1–D11. Plan COMPLETED ≠ pack APPROVED ≠ Implementation authorized. **Implementation NOT STARTED.**
 
 ## 1. Purpose and wave status
 
@@ -31,10 +33,10 @@ related:
 |------|--------|
 | Visual Direction | **COMPLETED**; VD-A = `approved Visual Direction baseline` |
 | UX decisions D1–D11 | `approved UX decision` — not reopened |
-| UI Design **plan** | **APPROVED for execution** |
-| UI Design docs wave | **IN PROGRESS** — Iterations 0–4 COMPLETED; Iteration 5 NOT STARTED |
-| UI Design **pack** | **NOT APPROVED** — new decisions remain `proposal` |
-| Implementation (`apps/`) | **Out of scope** until separate explicit start |
+| UI Design **plan** | **COMPLETED** (Iterations 0–5) |
+| UI Design docs wave | **COMPLETED** — Iterations 0–5 COMPLETED |
+| UI Design **pack** | **APPROVED** (human, after full review + R1–R3); decisions = `approved UI Design decision` |
+| Implementation (`apps/`) | **NOT STARTED** — requires separate explicit human start |
 
 Цель волны: markdown UI Design Specification (foundations → components → screens → viz → interactions → quality), пригодная для последующей frontend implementation без изменения Domain/BR/REQ/OpenSpec.
 
@@ -44,13 +46,14 @@ related:
 |--------|----------------------|
 | `approved UX decision` | D1–D11 / shell/stack — cite only |
 | `approved Visual Direction baseline` | VD-A — cite only |
-| `proposal` | New UI Design choices (HEX, sizes, component details) until human APPROVE UI Design pack |
-| `assumption` | Temporary design working choice (e.g. BA-OQ-006 V1 layout) |
+| `approved UI Design decision` | UI Design pack choices (HEX, components, screens, viz, interactions, quality) after human pack APPROVE |
+| `proposal` | Residual unapproved UX/UI suggestion (not pack-locked) |
+| `assumption` | Temporary design working choice (e.g. BA-OQ-006 V1 layout; filter non-restore MVP) |
 | `hypothesis` | Unproven scale (mock volume) |
 | `deferred decision` | D12 Gantt library |
-| `open_question` | BA-OQ / HIP still open |
+| `open_question` | Unresolved BA / product / UX / implementation question intentionally left open by this wave (includes BA-OQ/HIP, persistence, shell DOM order, and other non-closed choices — not limited to BA-OQ/HIP or tech-only) |
 
-Do not confuse document frontmatter `status: draft|approved` with decision status above.
+Do not confuse document frontmatter `status: draft|approved` with decision status above. Human Demo v1 pack APPROVE ≠ organizational approval.
 
 ## 3. Approved constraints (do not reopen)
 
@@ -63,32 +66,34 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 - KPI group ≥4 justified metrics or omit.
 - AcceptDateSlip not Must journey (BA-OQ-004/005).
 - FE data later only via HTTP API (REQ-NFR-001).
+- UI Design pack DOC-UX-014…020 (as approved) — cite as `approved UI Design decision`.
 
 ## 4. Working assumptions and deferred / open
 
 | Topic | Handling | Status |
 |-------|----------|--------|
 | Issues & Risks register layout | **V1 — single table + Type column** for UI Design specs | `assumption`; **BA-OQ-006 remains open** |
-| V1 table columns | Only truly shared columns; do not force-unify Issue-only or Risk-only attributes | `assumption` (guidance for Iter 2/4) |
-| StatusIndicator | May be shared component; Issue status / Risk RAG / Milestone RAG / Equipment delivery status keep distinct visual+semantic models | guidance for Iter 2 |
+| V1 table columns | Only truly shared columns; do not force-unify Issue-only or Risk-only attributes | `assumption` |
+| StatusIndicator | May be shared component; Issue status / Risk RAG / Milestone RAG / Equipment delivery status keep distinct visual+semantic models | `approved UI Design decision` |
 | Gantt library | Visual semantics only | `deferred decision` (D12) |
 | Mock volume | Density guidance only | `hypothesis`; DOC-PROD-012 unchanged |
 | BA-OQ-004/005/002, HIP-003/004/005/007 | Stay open; no invented messaging / AcceptDateSlip Must UI | `open_question` |
 | Closed / Amber | Not in Must palette | `open_question` |
-| Contrast ratios | Calculated targets in DOC-UX-015; browser verification at implementation | Iter 1 done (calc); impl later |
+| Interactive PrioritizeRecovery recording outside Must | Must DecisionPanel = read-only + DEC-001 on C | Must = decided; interactive outside Must = `open_question` |
+| Contrast ratios | Calculated targets in DOC-UX-015 locked with pack; browser verification at implementation | calc done; impl later |
 
-## 5. Planned UI Design pack
+## 5. UI Design pack
 
 | ID | File | Iteration | Status |
 |----|------|-----------|--------|
 | DOC-UX-014 | `demo-v1-ui-design-overview.md` | 0 | **done** |
-| DOC-UX-015 | `demo-v1-ui-foundations.md` | 1 | **done** (`proposal`) |
-| DOC-UX-016 | `demo-v1-component-specification.md` | 2 | **done** (`proposal`) |
-| DOC-UX-017 | `demo-v1-ui-screens.md` | 4 | **done** (`proposal`) |
-| DOC-UX-018 | `demo-v1-ui-data-viz.md` | 3 | **done** (`proposal`) |
-| DOC-UX-019 | `demo-v1-ui-interactions.md` | 3 | **done** (`proposal`) |
-| DOC-UX-020 | `demo-v1-ui-quality.md` | 5 | not started |
-| DOC-HANDOFF-UID-001 | `docs/07-delivery/handoffs/…-ui-design.md` | 5 | not started |
+| DOC-UX-015 | `demo-v1-ui-foundations.md` | 1 | **done** (`approved UI Design decision`) |
+| DOC-UX-016 | `demo-v1-component-specification.md` | 2 | **done** (`approved UI Design decision`) |
+| DOC-UX-017 | `demo-v1-ui-screens.md` | 4 | **done** (`approved UI Design decision`) |
+| DOC-UX-018 | `demo-v1-ui-data-viz.md` | 3 | **done** (`approved UI Design decision`) |
+| DOC-UX-019 | `demo-v1-ui-interactions.md` | 3 | **done** (`approved UI Design decision`) |
+| DOC-UX-020 | `demo-v1-ui-quality.md` | 5 | **done** (`approved UI Design decision`) |
+| DOC-HANDOFF-UID-001 | `docs/07-delivery/handoffs/2026-11-01-ui-design.md` | 5 | **done** (pack APPROVED recorded) |
 
 ## 6. Source map (verified paths)
 
@@ -96,47 +101,46 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 |------|-------|
 | UX / VD | [`docs/05-ux-ui/`](./README.md) DOC-UX-001…013 |
 | Domain / BR / OQ | [`docs/02-business-analysis/`](../02-business-analysis/README.md) |
-| Product / mock | [`docs/03-product/`](../03-product/README.md) (not `03-product-definition`) |
+| Product / mock | [`docs/03-product/`](../03-product/README.md) |
 | REQ | [`docs/04-requirements/`](../04-requirements/README.md) |
 | OpenSpec | `openspec/specs/` (6 living specs; portal `/openspec`) — read-only for this wave |
-| Handoffs | [`2026-10-31-visual-direction.md`](../07-delivery/handoffs/2026-10-31-visual-direction.md), [`2026-10-31-ux-ui.md`](../07-delivery/handoffs/2026-10-31-ux-ui.md) |
-| Plan | `.cursor/plans/ui-design-spec-demo-v1.md` (repo path; вне портала) |
+| Handoffs | [`2026-10-31-visual-direction.md`](../07-delivery/handoffs/2026-10-31-visual-direction.md), [`2026-10-31-ux-ui.md`](../07-delivery/handoffs/2026-10-31-ux-ui.md), [`2026-11-01-ui-design.md`](../07-delivery/handoffs/2026-11-01-ui-design.md) |
 
-## 7. Boundary: UI Design vs Implementation
+## 7. Boundary vs Implementation
 
-| UI Design (this wave) | Implementation (later) |
-|-----------------------|------------------------|
-| Markdown specs DOC-UX-014…020 | `apps/web`, `apps/api`, npm |
-| Proposed HEX, token→shadcn map, calculated contrast targets | Applied CSS / measured browser checks |
-| Component & screen specs | React + shadcn code |
-| Gantt look | Library choice (D12) + code |
+| UI Design (this pack) | Implementation (later, explicit start) |
+|-----------------------|----------------------------------------|
+| Markdown specs DOC-UX-014…020 + handoff | `apps/web`, `apps/api`, npm packages |
+| Approved HEX / token maps / component states | Actual CSS variables, shadcn theme, React |
+| Calculated contrast targets + checklist | Browser-measured contrast / keyboard testing |
+| Gantt visual semantics | Library choice (D12) + code |
+| Design AC (DOC-UX-020) | E2E / visual regression against apps |
 
-## 8. Iteration stop criteria
+Pack APPROVE **does not** authorize Implementation.
 
-### Iteration 0
+## 8. Iteration checklist (all COMPLETED)
 
-- [x] Sources and constraints synced; DOC-UX-014 created; README stub; plan synced.
+### Iterations 0–5
 
-### Iteration 1
+- [x] DOC-UX-014…020 + handoff DOC-HANDOFF-UID-001; indexes/plan/traceability synced.
+- [x] Corrective R1–R3 applied.
+- [x] UI Design Spec **plan** COMPLETED; UI Design **pack** **APPROVED**; Implementation **NOT STARTED**.
 
-- [x] DOC-UX-015 foundations: Light/Dark HEX, semantic status aliases, calculated contrast, type/spacing/radius, shadcn map, a11y checklist.
-- [x] Link from DOC-UX-011; README / overview / plan / traceability synced.
+## 9. Handoff summary
 
-### Iteration 2
+Full handoff: [`docs/07-delivery/handoffs/2026-11-01-ui-design.md`](../07-delivery/handoffs/2026-11-01-ui-design.md) (DOC-HANDOFF-UID-001).
 
-- [x] DOC-UX-016 component specification: shell, data display, entity summaries, detail patterns, viz boundaries.
-- [x] StatusIndicator four semantic models; Links≠Impact; BR-006 DecisionPanel honesty; BA-OQ-006 left open.
+| For reviewers | Note |
+|---------------|------|
+| Pack contents | DOC-UX-014…020 + handoff |
+| Dependency chain | 015 → 016 → 018/019 → 017 → 020 |
+| Pack status | **APPROVED** |
+| Use for impl planning | After pack APPROVE **and** separate explicit Implementation start |
+| Do not treat as | Permission to build `apps/` without that separate start |
 
-### Iteration 3
+Open questions remain: BA-OQ-006, D12, interactive PrioritizeRecovery recording **outside Must** (Must DecisionPanel stays read-only), shell DOM order, theme/snapshot/cross-session filter persistence (MVP filter non-restore = `assumption`, DOC-UX-019), AcceptDateSlip/Closed/Amber, HIP-*.
 
-- [x] DOC-UX-018 data visualization: Snapshot A/B/C story, Links vs Impact, Δ labeling, charts allow/deny, Gantt semantics.
-- [x] DOC-UX-019 interactions: Snapshot/theme/nav/table/detail/keyboard; Decision Must read-only; selection/pagination off by default.
+## 10. Related
 
-### Iteration 4
-
-- [x] DOC-UX-017 screen specification: eight surfaces (Shell, Dashboard, Schedule, Equipment, Issues&Risks, Milestones, Detail, M-DEC read-only Must).
-- [ ] Iteration 5 **not** started in this pass.
-
-## 9. Related
-
-- [ui-foundations](./demo-v1-ui-foundations.md) · [component-specification](./demo-v1-component-specification.md) · [ui-screens](./demo-v1-ui-screens.md) · [ui-data-viz](./demo-v1-ui-data-viz.md) · [ui-interactions](./demo-v1-ui-interactions.md) · [ux-concept](./demo-v1-ux-concept.md) · [visual-direction](./demo-v1-visual-direction.md) · [ux-traceability](./demo-v1-ux-traceability.md) · [README](./README.md)
+- [ui-foundations](./demo-v1-ui-foundations.md) · [component-specification](./demo-v1-component-specification.md) · [ui-screens](./demo-v1-ui-screens.md) · [ui-data-viz](./demo-v1-ui-data-viz.md) · [ui-interactions](./demo-v1-ui-interactions.md) · [ui-quality](./demo-v1-ui-quality.md) · [ux-traceability](./demo-v1-ux-traceability.md) · [README](./README.md)
+- Handoff: [2026-11-01-ui-design.md](../07-delivery/handoffs/2026-11-01-ui-design.md)

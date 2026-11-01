@@ -23,7 +23,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Правила визуализации данных Demo v1 поверх VD-A, Foundations (DOC-UX-015) и Components (DOC-UX-016). Новые решения — **`proposal`** до human APPROVE UI Design pack. Frontmatter `status: draft` = lifecycle. Не apps / не выбор Gantt lib (D12 deferred). Не меняет Domain / BR / REQ / OpenSpec / DOC-PROD-012. Не закрывает BA-OQ / HIP.
+> Правила визуализации данных Demo v1 поверх VD-A, Foundations (DOC-UX-015) и Components (DOC-UX-016). UI Design решения пакета — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle. **Не** apps / не выбор Gantt lib (D12 deferred). Не меняет Domain / BR / REQ / OpenSpec / DOC-PROD-012. Не закрывает BA-OQ / HIP.
 
 ## 1. Purpose and scope
 
@@ -38,11 +38,11 @@ related:
 
 Fixture values cited below = DOC-PROD-012 (`demo-v1-mock-narrative-data.md`). Do not alter numbers in this UI Design doc.
 
-## 2. Status and RAG visual models (`proposal`)
+## 2. Status and RAG visual models (`approved UI Design decision`)
 
 Inherit tokens/geometry from DOC-UX-015 §3.3/§6 and StatusIndicator rules from DOC-UX-016 §5.1. Color alone is never sufficient.
 
-| Model | Values (Must) | Marker (`proposal` — one each) | Label | Distinct from |
+| Model | Values (Must) | Marker (`approved UI Design decision` — one each) | Label | Distinct from |
 |-------|---------------|--------------------------------|-------|---------------|
 | Equipment delivery | OnTrack | Filled disc | «On track» | — |
 | Equipment delivery | Delayed | **Diamond** | «Delayed» | ≠ Risk/MS Red (disc + optional rail) |
@@ -53,13 +53,13 @@ Inherit tokens/geometry from DOC-UX-015 §3.3/§6 and StatusIndicator rules from
 
 > **certainty:** assumption
 >
-> Single marker shapes above lock the alternatives previously listed in DOC-UX-015/016 («diamond or bold bar», «half-filled or dashed»). Prefer these locked shapes at implementation; do not reintroduce parallel geometries for the same status.
+> DOC-UX-018 is the **source of concrete marker geometry**. DOC-UX-015/016/011 cite these locked shapes; do not reintroduce parallel geometries (bold bar / dashed) for the same status.
 
 **Not Must UI:** Amber; Issue Closed chrome.
 
 **BR-006 viz rule:** After PrioritizeRecovery (Snapshot C), do not show green wash, RAG upgrade, progress-to-recovered, or “schedule restored” metaphors. Mitigating means decision recorded, not recovery executed.
 
-## 3. Snapshot A / B / C — visual story (`proposal`)
+## 3. Snapshot A / B / C — visual story (`approved UI Design decision`)
 
 Global SnapshotSelector switches the **entire** data context (DOC-UX-002). All surfaces must show one coherent snapshot — never mixed A/B/C fields.
 
@@ -109,7 +109,7 @@ Global SnapshotSelector switches the **entire** data context (DOC-UX-002). All s
 - AcceptDateSlip as Must primary C path (C' not Must mock).
 - Mixing fields from different snapshots on one screen.
 
-## 4. Links vs Impact (`proposal`)
+## 4. Links vs Impact (`approved UI Design decision`)
 
 | Surface | Shows | Must not show |
 |---------|-------|---------------|
@@ -138,7 +138,7 @@ Verify against Domain model; UX does not add edges:
 
 **Causal Dashboard viz:** same edge allowlist as Links; nodes may include PS as **label/aggregate** of MS/Project forecast, not as a Domain edge from EQ.
 
-## 5. Baseline, forecast, variance (`proposal`)
+## 5. Baseline, forecast, variance (`approved UI Design decision`)
 
 | Concept | Visual rule |
 |---------|-------------|
@@ -151,7 +151,7 @@ Verify against Domain model; UX does not add edges:
 
 **Do not** present Equipment delivery date and Milestone/PS date as one field. Positive delay must be understandable from text (e.g. “+21 days”), not color/sign alone (VarianceDelta, DOC-UX-016).
 
-## 6. Charts (Recharts) (`proposal`)
+## 6. Charts (Recharts) (`approved UI Design decision`)
 
 Source allowlist: DOC-UX-007.
 
@@ -159,7 +159,7 @@ Source allowlist: DOC-UX-007.
 
 A/B/C are **three discrete snapshots**, not a continuous timeline and not output of a running forecast engine (DOC-PROD-012 fixtures).
 
-| Rule | Detail (`proposal`) |
+| Rule | Detail (`approved UI Design decision`) |
 |------|---------------------|
 | Preferred | Compact **table** or discrete comparison of three independent PS forecast values (A / B / C), each labeled with snapshot letter + asOf date |
 | If a chart is used | Show **unconnected** points/markers only — **no** connecting line, step bridge, interpolation, or smoothing between A→B→C |
@@ -172,7 +172,7 @@ Do not add fixture values beyond DOC-PROD-012.
 
 Dates are **temporal positions**, not quantitative magnitudes.
 
-| Rule | Detail (`proposal`) |
+| Rule | Detail (`approved UI Design decision`) |
 |------|---------------------|
 | **Primary** | Compact **table**: Baseline \| Forecast \| Δ (with subject caption «Production start») — or equivalent typed summary strip |
 | **Allowed graphic (optional, not in addition to a decorative duplicate)** | Plot on a **time axis** with two explicitly labeled markers «Baseline» and «Forecast» (same subject). Do **not** use ordinary bar lengths that read as “size of a metric” |
@@ -210,7 +210,7 @@ Equipment **delivery** dates remain a separate subject (separate table/markers/�
 - Charts implying CPM, % complete recovery, or auto-reforecast.
 - Decorative gauges / sparkline spam.
 
-## 7. Gantt (read-only secondary) (`proposal`)
+## 7. Gantt (read-only secondary) (`approved UI Design decision`)
 
 | Rule | Detail |
 |------|--------|
@@ -220,7 +220,7 @@ Equipment **delivery** dates remain a separate subject (separate table/markers/�
 | Forbidden | Activity/WBS/CPM; dependency arrows; drag-reschedule; fake duration bars without duration in model |
 | Disclaimer | Control-point visualization — not calculated critical path |
 | Library | **D12 deferred** — no lib choice in this doc |
-| Sync | Optional highlight with table row selection **only if** selection exists; selection off by default (DOC-UX-016) |
+| Sync | Split view MAY share focused/hovered row cue with the table (**without** selection mode). Selection remains off by default; if selection is later added for a confirmed scenario, selected-row sync MAY be additional — not a prerequisite (normative: DOC-UX-019 §7) |
 
 Component boundary: GanttSurface / ChartContainer (DOC-UX-016 §8). Interaction detail → DOC-UX-019.
 

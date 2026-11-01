@@ -3,7 +3,7 @@ id: DOC-UX-016
 title: "Demo v1 UI Design — component specification"
 type: product
 status: draft
-version: "0.1.1"
+version: "0.1.2"
 created: 2026-11-01
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -16,6 +16,7 @@ related:
   - DOC-UX-004
   - DOC-UX-005
   - DOC-UX-010
+  - DOC-UX-018
   - DOC-BA-015
 ---
 
@@ -23,16 +24,16 @@ related:
 
 > **certainty:** hypothesis
 >
-> Компонентная спецификация Demo v1 поверх **VD-A** и Foundations (DOC-UX-015). Новые решения — **`proposal`** до human APPROVE UI Design pack. Frontmatter `status: draft` = lifecycle. Не apps / не CSS / не Storybook / не npm. Не переоткрывает VD-A / D1–D11. Не закрывает BA-OQ / HIP / D12. Не меняет Domain / BR / REQ / OpenSpec.
+> Компонентная спецификация Demo v1 поверх **VD-A** и Foundations (DOC-UX-015). UI Design решения пакета — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle. **Не** apps / CSS / Storybook / npm. Не переоткрывает VD-A / D1–D11. Не закрывает BA-OQ / HIP / D12. Не меняет Domain / BR / REQ / OpenSpec.
 
 ## 1. Purpose and status
 
 | Item | Status |
 |------|--------|
 | Scope | Screen-driven component inventory for Demo v1 shell, registers, detail, Dashboard patterns |
-| New decisions | **`proposal`** |
+| New decisions | **`approved UI Design decision`** |
 | Stack intent | shadcn/ui + TanStack Table + Recharts (`approved UX decision`); Gantt lib = `deferred decision` (D12) |
-| Foundations | Tokens / contrast / density from DOC-UX-015 (`proposal`) |
+| Foundations | Tokens / contrast / density from DOC-UX-015 (`approved UI Design decision`) |
 | Detailed viz | Chart series / Gantt look → DOC-UX-018 (boundaries only here) |
 | Interactions depth | Flows → DOC-UX-019; screens → DOC-UX-017 |
 
@@ -61,11 +62,11 @@ related:
 
 ---
 
-## 3. Cross-cutting rules (`proposal`)
+## 3. Cross-cutting rules (`approved UI Design decision`)
 
 1. **Status multi-channel** — label + color + marker/context; never color alone (DOC-UX-015 §3.3/§6).
 2. **Four semantic models** — Equipment delivery · Issue status · Risk RAG · Milestone RAG; shared low-level tokens OK; aliases + context required.
-3. **Equipment Delayed ≠ Risk/Milestone Red** — different marker geometry (diamond/bar vs filled disc + optional rail).
+3. **Equipment Delayed ≠ Risk/Milestone Red** — different marker geometry (**diamond** vs filled disc + optional rail; DOC-UX-018).
 4. **Risk vs Milestone RAG** — same Green/Red geometry; distinguish via entity context + label + placement.
 5. **Mitigating ≠ recovery done** — BR-006; no green wash / RAG upgrade after PrioritizeRecovery.
 6. **No Amber / Closed Must chrome** — Closed UI unspecified until decided.
@@ -219,7 +220,7 @@ related:
 | Anatomy | `marker` · `label` · optional soft `background` (badge). |
 | Variants by `family` | `equipment` · `issue` · `risk` · `milestone` (required). |
 | Value maps | Equipment: OnTrack / Delayed. Issue: Open / Mitigating. Risk/MS: Green / Red. |
-| Marker geometry | OnTrack: filled disc. Delayed: diamond or bold bar. Open: outline badge. Mitigating: half-filled/dashed. Risk/MS Green: filled disc. Risk/MS Red: filled disc + optional row rail. |
+| Marker geometry | Locked to DOC-UX-018: OnTrack filled disc; Delayed **diamond**; Open **outline badge**; Mitigating **half-filled badge**; Risk/MS Green filled disc; Risk/MS Red filled disc + optional row rail. |
 | Sizes | `sm` (table) · `md` (header). |
 | States | default; N/A hover (non-interactive unless wraps filter chip). |
 | Content rules | Always visible text label; never color-only. No Amber/Closed Must. Mitigating ≠ fixed. |
@@ -518,7 +519,7 @@ Detailed series/Gantt polish → **DOC-UX-018**. Here: component boundaries only
 | Variants | Full Schedule secondary pane; compact Dashboard widget optional. |
 | States | loading · empty · error; read-only always. |
 | Content rules | Not a scheduling engine; no drag-reschedule; no Activity/WBS/CPM. |
-| Interaction / keyboard | Pan/zoom if provided; row focus mirrors table selection if synced — details DOC-UX-019. |
+| Interaction / keyboard | Pan/zoom if provided; optional shared focused/hovered row cue with table when synced — **does not** require selection mode (DOC-UX-019 §7). Selection off by default. |
 | Responsive | May hide before table on narrow widths. |
 | Accessibility | Table remains primary accessible data source; Gantt supplementary. |
 | Data / semantic | Same rows as Schedule table; D12 lib deferred. |

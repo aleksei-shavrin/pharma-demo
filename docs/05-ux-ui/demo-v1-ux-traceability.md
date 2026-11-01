@@ -3,7 +3,7 @@ id: DOC-UX-009
 title: "Demo v1 UX traceability"
 type: product
 status: draft
-version: "0.2.8"
+version: "0.3.0"
 created: 2026-10-31
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -15,6 +15,8 @@ related:
   - DOC-UX-017
   - DOC-UX-018
   - DOC-UX-019
+  - DOC-UX-020
+  - DOC-HANDOFF-UID-001
 ---
 
 # Demo v1 UX traceability
@@ -29,12 +31,13 @@ related:
 |-------|---------|
 | `approved UX decision` | Принятое UX-решение для Demo v1 (зафиксировано в этом pack) |
 | `approved Visual Direction baseline` | Утверждённое Visual Direction для Demo v1 (VD-A) |
+| `approved UI Design decision` | Утверждённое UI Design pack Demo v1 (DOC-UX-014…020 после human pack APPROVE) |
 | `deferred decision` | Решение отложено (напр. D12 lib) |
 | `approved requirement` | Ссылка на действующий BR / REQ / living OpenSpec / BA freeze |
-| `proposal` | Ещё не принятое UX-предложение (остаточные элементы) |
+| `proposal` | Ещё не принятое UX/UI-предложение (остаточные элементы вне pack) |
 | `assumption` | Временное допущение UX/impl |
 | `hypothesis` | Гипотеза (в т.ч. mock volume) |
-| `open_question` | BA-OQ / HIP / нерешённый tech choice |
+| `open_question` | Unresolved BA / product / UX / implementation question intentionally left open (BA-OQ/HIP, persistence, shell DOM, other non-closed choices — not limited to BA-OQ/HIP or tech-only) |
 
 Реестр D1–D12: [demo-v1-ux-concept.md](./demo-v1-ux-concept.md) §4.
 
@@ -72,14 +75,16 @@ related:
 | VD-A Industrial Control Lattice | Theme / all screens | DOC-UX-010 | — | `approved Visual Direction baseline` |
 | VD-B / VD-C | Comparison only | DOC-UX-010 | — | considered; **not selected** |
 | Design token roles + surface depth (principles) | Shell / components | DOC-UX-011 | Theme CSS vars | `approved Visual Direction baseline` (principles) |
-| Concrete HEX Light/Dark + calculated contrast | Theme / badges | DOC-UX-015 | shadcn CSS vars | `proposal` (UI Foundations) |
-| Component inventory + StatusIndicator models | Shell / registers / detail | DOC-UX-016 | shadcn + TanStack + Recharts | `proposal` (UI Components) |
-| Snapshot A/B/C visual story + Links≠Impact viz | Dashboard / detail / charts | DOC-UX-018 | DOC-PROD-012 fixtures | `proposal` (UI Data viz) |
-| Snapshot/theme/table/detail interaction rules | Shell / registers / detail | DOC-UX-019 | — | `proposal` (UI Interactions) |
-| Eight-surface screen compositions | Shell + P1–P5 + Detail + M-DEC | DOC-UX-017 | DOC-PROD-012 | `proposal` (UI Screens); M-DEC Must = read-only |
+| Concrete HEX Light/Dark + calculated contrast | Theme / badges | DOC-UX-015 | shadcn CSS vars | `approved UI Design decision` (UI Foundations) |
+| Component inventory + StatusIndicator models | Shell / registers / detail | DOC-UX-016 | shadcn + TanStack + Recharts | `approved UI Design decision` (UI Components) |
+| Snapshot A/B/C visual story + Links≠Impact viz | Dashboard / detail / charts | DOC-UX-018 | DOC-PROD-012 fixtures | `approved UI Design decision` (UI Data viz) |
+| Snapshot/theme/table/detail interaction rules | Shell / registers / detail | DOC-UX-019 | — | `approved UI Design decision` (UI Interactions) |
+| Eight-surface screen compositions | Shell + P1–P5 + Detail + M-DEC | DOC-UX-017 | DOC-PROD-012 | `approved UI Design decision` (UI Screens); M-DEC Must = read-only |
+| UI Design quality criteria (docs vs impl) | Pack DOC-UX-014…020 | DOC-UX-020 | — | `approved UI Design decision`; pack APPROVED; impl NOT STARTED |
+| Locked marker geometry (diamond/outline/half-filled/disc) | Status chrome | DOC-UX-018 (+015/016/011 sync) | Allowlisted statuses | `approved UI Design decision` (018 SoT) |
 | Multi-channel status encoding | Badges / tables | DOC-UX-011; allowlist | Allowlisted statuses only | `approved Visual Direction baseline` (encoding) + `approved requirement` (values) |
 | Dashboard narrative-first composition | P1 | DOC-UX-012; DOC-UX-004 | Same as D8 data | `approved Visual Direction baseline` on `approved UX decision` (blocks) |
 | Schedule table-primary visual mass | P2 | DOC-UX-012; DOC-UX-005 | MS + EQ rows | `approved Visual Direction baseline` + D10/D11 approved |
 | Issues & Risks register layout variants | P4 | DOC-UX-012 | ISS/RISK | `open_question` (BA-OQ-006); variants not closed |
-| UI Design wave overview | Pack DOC-UX-014…020 | DOC-UX-014 | — | wave in progress; new UI Design = `proposal` |
+| UI Design wave overview | Pack DOC-UX-014…020 | DOC-UX-014 | — | plan COMPLETED; pack APPROVED; docs = `approved UI Design decision` |
 | BA-OQ-006 working layout V1 (single table + Type) | P4 / UI screens | DOC-UX-014 | Shared columns only | `assumption`; OQ remains open |

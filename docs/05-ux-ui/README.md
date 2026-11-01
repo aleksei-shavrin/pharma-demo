@@ -3,7 +3,7 @@ id: DOC-UX-README-001
 title: "UX / UI"
 type: index
 status: draft
-version: "0.9.0"
+version: "1.1.0"
 created: 2026-10-30
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -17,20 +17,22 @@ related:
   - DOC-UX-017
   - DOC-UX-018
   - DOC-UX-019
+  - DOC-UX-020
+  - DOC-HANDOFF-UID-001
 ---
 
 # 05-ux-ui
 
 UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter документов — `status: draft` (lifecycle docs ≠ decision status).
 
-**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. **VD-A** — `approved Visual Direction baseline`. **UI Design plan** — APPROVED for execution; Iterations 0–4 COMPLETED; Iteration 5 NOT STARTED. **UI Design pack** — NOT APPROVED; new UI Design choices = `proposal` until separate pack APPROVE. BA-OQ-006 open (working assumption V1 table); mock volume = `hypothesis`.
+**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. **VD-A** — `approved Visual Direction baseline`. **UI Design Spec plan** — COMPLETED (Iterations 0–5). **UI Design pack** — **APPROVED** (`approved UI Design decision`). **Implementation** — NOT STARTED (pack APPROVE ≠ impl start). BA-OQ-006 open (working assumption V1 table); mock volume = `hypothesis`.
 
 ## Правила
 
 - Не подменять продуктовые REQ / BR / living OpenSpec.
 - Не править DOC-PROD-012 в этом пакете; mock volume = `hypothesis`.
 - AI не ставит `status: approved` на UX/VD docs (frontmatter).
-- Различать: `approved UX decision` · `approved Visual Direction baseline` · `deferred decision` · `open_question` · `hypothesis` · `proposal` · `assumption`.
+- Различать: `approved UX decision` · `approved Visual Direction baseline` · `approved UI Design decision` · `deferred decision` · `open_question` · `hypothesis` · `proposal` · `assumption`.
 - Макеты (Figma и т.п.) — по ссылке; в git — описания и решения.
 - UI Design overview: [demo-v1-ui-design-overview.md](./demo-v1-ui-design-overview.md) (DOC-UX-014).
 - UI Foundations: [demo-v1-ui-foundations.md](./demo-v1-ui-foundations.md) (DOC-UX-015).
@@ -38,6 +40,8 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 - UI Data viz: [demo-v1-ui-data-viz.md](./demo-v1-ui-data-viz.md) (DOC-UX-018).
 - UI Interactions: [demo-v1-ui-interactions.md](./demo-v1-ui-interactions.md) (DOC-UX-019).
 - UI Screens: [demo-v1-ui-screens.md](./demo-v1-ui-screens.md) (DOC-UX-017).
+- UI Quality: [demo-v1-ui-quality.md](./demo-v1-ui-quality.md) (DOC-UX-020).
+- UI Design handoff: [`docs/07-delivery/handoffs/2026-11-01-ui-design.md`](../07-delivery/handoffs/2026-11-01-ui-design.md).
 
 ## Demo v1 UX decisions
 
@@ -62,17 +66,17 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 | [demo-v1-screen-compositions.md](./demo-v1-screen-compositions.md) | DOC-UX-012 | Shell + key screens composition under VD-A |
 | [demo-v1-visual-references.md](./demo-v1-visual-references.md) | DOC-UX-013 | Reference honesty log |
 
-## Demo v1 UI Design Specification (in progress)
+## Demo v1 UI Design Specification (plan COMPLETED; pack APPROVED; Implementation NOT STARTED)
 
 | Файл | ID | Назначение |
 |------|-----|------------|
-| [demo-v1-ui-design-overview.md](./demo-v1-ui-design-overview.md) | DOC-UX-014 | Wave overview, status map, constraints (Iteration 0) |
-| [demo-v1-ui-foundations.md](./demo-v1-ui-foundations.md) | DOC-UX-015 | Foundations: HEX Light/Dark, contrast, type, density, shadcn map (`proposal`) |
-| [demo-v1-component-specification.md](./demo-v1-component-specification.md) | DOC-UX-016 | Components: shell, data display, entity summaries, detail, viz boundaries (`proposal`) |
-| [demo-v1-ui-screens.md](./demo-v1-ui-screens.md) | DOC-UX-017 | Screens: eight surfaces composition (`proposal`) |
-| [demo-v1-ui-data-viz.md](./demo-v1-ui-data-viz.md) | DOC-UX-018 | Data viz: Snapshot A/B/C, Links vs Impact, charts, Gantt semantics (`proposal`) |
-| [demo-v1-ui-interactions.md](./demo-v1-ui-interactions.md) | DOC-UX-019 | Interactions: Snapshot/theme/nav/table/detail/keyboard (`proposal`) |
-| `demo-v1-ui-quality.md` | DOC-UX-020 | Planned — Iteration 5 |
+| [demo-v1-ui-design-overview.md](./demo-v1-ui-design-overview.md) | DOC-UX-014 | Wave overview, status map, constraints, handoff summary |
+| [demo-v1-ui-foundations.md](./demo-v1-ui-foundations.md) | DOC-UX-015 | Foundations: HEX Light/Dark, contrast, type, density, shadcn map (`approved UI Design decision`) |
+| [demo-v1-component-specification.md](./demo-v1-component-specification.md) | DOC-UX-016 | Components: shell, data display, entity summaries, detail, viz boundaries (`approved UI Design decision`) |
+| [demo-v1-ui-screens.md](./demo-v1-ui-screens.md) | DOC-UX-017 | Screens: eight surfaces composition (`approved UI Design decision`) |
+| [demo-v1-ui-data-viz.md](./demo-v1-ui-data-viz.md) | DOC-UX-018 | Data viz: Snapshot A/B/C, Links vs Impact, charts, Gantt semantics (`approved UI Design decision`) |
+| [demo-v1-ui-interactions.md](./demo-v1-ui-interactions.md) | DOC-UX-019 | Interactions: Snapshot/theme/nav/table/detail/keyboard (`approved UI Design decision`) |
+| [demo-v1-ui-quality.md](./demo-v1-ui-quality.md) | DOC-UX-020 | Quality criteria: docs vs impl checks (`approved UI Design decision`) |
 
 ## Связанное
 

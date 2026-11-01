@@ -3,22 +3,23 @@ id: DOC-UX-011
 title: "Demo v1 design tokens (Visual Direction)"
 type: product
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 created: 2026-10-31
-updated: 2026-10-31
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-UX-010
   - DOC-UX-007
   - DOC-UX-002
   - DOC-UX-015
+  - DOC-UX-018
 ---
 
 # Demo v1 design tokens (Visual Direction)
 
 > **certainty:** hypothesis
 >
-> Token system под **VD-A** (`approved Visual Direction baseline`). **Роли и принципы** утверждены в рамках VD-A. **Конкретные HEX, contrast calculations и shadcn mapping** — в UI Design foundations: [`demo-v1-ui-foundations.md`](./demo-v1-ui-foundations.md) (**DOC-UX-015**, `proposal`). Illustrative examples в §9 ниже **не** финальны и **superseded** DOC-UX-015 для значений. Не расширяет status allowlist. Не install / не CSS в apps.
+> Token system под **VD-A** (`approved Visual Direction baseline`). **Роли и принципы** утверждены в рамках VD-A. **Конкретные HEX, contrast calculations и shadcn mapping** — в UI Design foundations: [`demo-v1-ui-foundations.md`](./demo-v1-ui-foundations.md) (**DOC-UX-015**, `approved UI Design decision`). Illustrative examples в §9 ниже **не** финальны и **superseded** DOC-UX-015 для значений. Не расширяет status allowlist. Не install / не CSS в apps.
 
 ## 1. Color roles (VD-A baseline principles)
 
@@ -64,12 +65,12 @@ Elevation: **0–2** only; soft single shadow or tonal separation — не multi
 
 | Status | Text label | Color role | Marker / shape | Hierarchy |
 |--------|------------|------------|----------------|-----------|
-| OnTrack | «On track» | `status-ok` | filled disc / calm | default row |
-| Delayed | «Delayed» | `status-danger` | diamond or bold bar | elevate in sort/filter defaults when variance≠0 |
-| Open | «Open» | `status-open` | outline badge | exceptions preview |
-| Mitigating | «Mitigating» | `status-info` | half-filled / dashed badge | Decision honesty context; **not** «fixed» |
-| Green | «Green» | `status-ok` | filled | MS/Risk rag |
-| Red | «Red» | `status-danger` | filled + optional left rail on row | high scan priority |
+| OnTrack | «On track» | `status-ok` | filled disc | default row |
+| Delayed | «Delayed» | `status-danger` | **diamond** (DOC-UX-018) | elevate in sort/filter defaults when variance≠0 |
+| Open | «Open» | `status-open` | **outline badge** (DOC-UX-018) | exceptions preview |
+| Mitigating | «Mitigating» | `status-info` | **half-filled badge** (DOC-UX-018) | Decision honesty context; **not** «fixed» |
+| Green | «Green» | `status-ok` | filled disc | MS/Risk rag |
+| Red | «Red» | `status-danger` | filled disc + optional left rail on row | high scan priority |
 
 > **certainty:** assumption
 >
@@ -122,7 +123,7 @@ Scale compact (enterprise density): roughly 12 / 13 / 14 / 16 / 20 / 24 px equiv
 
 > **certainty:** hypothesis
 >
-> Исторические примеры Light theme (вход в UI Design). **Не** утверждённая палитра. **Актуальные proposal HEX + calculated contrast** — [`demo-v1-ui-foundations.md`](./demo-v1-ui-foundations.md) (DOC-UX-015). Browser verification — implementation.
+> Исторические примеры Light theme (вход в UI Design). **Не** утверждённая палитра. **Актуальные HEX + calculated contrast** (`approved UI Design decision`) — [`demo-v1-ui-foundations.md`](./demo-v1-ui-foundations.md) (DOC-UX-015). Browser verification — implementation.
 
 | Role | Example Light (illustrative) |
 |------|------------------------------|

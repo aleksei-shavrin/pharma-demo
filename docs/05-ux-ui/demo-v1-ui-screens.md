@@ -27,7 +27,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Экранные композиции восьми поверхностей Demo v1. Новые решения — **`proposal`** до human APPROVE UI Design pack. Frontmatter `status: draft` = lifecycle. Не apps / не Figma / не npm. Не переоткрывает VD-A / D1–D11. Не закрывает BA-OQ / HIP / D12. Не меняет Domain / BR / REQ / OpenSpec / DOC-PROD-012.
+> Экранные композиции восьми поверхностей Demo v1. UI Design решения пакета — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle. **Не** apps / Figma / npm. Не переоткрывает VD-A / D1–D11. Не закрывает BA-OQ / HIP / D12. Не меняет Domain / BR / REQ / OpenSpec / DOC-PROD-012.
 
 ## 1. Purpose and scope
 
@@ -37,7 +37,7 @@ related:
 | Binding to DOC-UX-015…019 + UX + fixtures | Changing fixture values |
 | Screen↔component mapping | Choosing Gantt lib (D12) |
 
-**Certainty vocabulary:** cite `approved UX decision` / `approved Visual Direction baseline`; new layout choices = `proposal`; BA-OQ-006 V1 table = `assumption`; mock volume = `hypothesis`; D12 = `deferred decision`.
+**Certainty vocabulary:** cite `approved UX decision` / `approved Visual Direction baseline` / `approved UI Design decision`; BA-OQ-006 V1 table = `assumption`; mock volume = `hypothesis`; D12 = `deferred decision`; residual unapproved ideas (if any) = `proposal`.
 
 ## 2. Screen inventory (eight surfaces)
 
@@ -54,7 +54,7 @@ related:
 
 Sources: DOC-UX-003 inventory; plan Iteration 4; Must Decision behavior from DOC-UX-016/019 (interactive write **not** Must).
 
-## 3. Global shell and page composition (`proposal`)
+## 3. Global shell and page composition (`approved UI Design decision`)
 
 ```text
 ┌─ canvas ──────────────────────────────────────────────────┐
@@ -92,7 +92,7 @@ Template fields below are filled for each surface.
 | Entry points | App load → Dashboard (D1). |
 | Information hierarchy | 1) Active nav + Snapshot 2) Breadcrumbs/project 3) Page content. |
 | Layout regions | Sidebar \| TopAppBar \| PageSurface as §3. |
-| Grid / proportions (`proposal`) | Sidebar 240px; TopBar 52px; content flex; gutters 24 (≥1280) / 16 (1024–1279). Not measured production values. |
+| Grid / proportions (`approved UI Design decision`) | Sidebar 240px; TopBar 52px; content flex; gutters 24 (≥1280) / 16 (1024–1279). Not measured production values. |
 | Components | AppShell, SidebarNavItem, TopAppBar, Breadcrumbs, SnapshotSelector, ThemeToggle, PageSurface, PageHeader. |
 | Data mapping | Snapshot id; theme; route; PRJ-01 identity. |
 | Snapshot A/B/C | Selector always; content refresh per DOC-UX-019. |
@@ -111,7 +111,7 @@ Template fields below are filled for each surface.
 | Entry points | Sidebar Dashboard; app start. |
 | Information hierarchy | 1) Δ strip (delivery → PS) 2) Causal viz + Decision rail 3) Exceptions / optional KPI / optional chart. |
 | Layout regions | See wireframe. |
-| Grid (`proposal`) | ≥1280: story column ~62% + rail ~38%; stack below 1280 (story then rail). Proportions illustrative. |
+| Grid (`approved UI Design decision`) | ≥1280: story column ~62% + rail ~38%; stack below 1280 (story then rail). Proportions illustrative. |
 | Components | PageHeader, AsOfMeta/SnapshotEcho, VarianceDelta, MetricTile/KpiGroup (conditional), ImpactCallout, RelationshipList/causal nodes via EntityLink, DecisionPanel, EquipmentDeliverySummary / IssueSummary / RiskSummary / MilestoneSummary (preview), ChartContainer (optional), Empty/Loading/Error. **Compact schedule peek** = composition of compact DataTable and/or GanttSurface (DOC-UX-016 variants) — not a separate component. |
 | Data mapping | PRJ baseline/forecast PS; EQ-HVAC-01 delivery; MS-PS; RISK-001; ISS-001 (B/C); DEC-001 (C); Δ derived BR-004. Fixtures DOC-PROD-012. |
 | Snapshot | **A:** calm OnTrack/Green; causal shows RISK—EQ & RISK—MS; no Issue delay chain; Decision empty. **B:** Delayed/+21d delivery Δ; Open Issue; Red; PS forecast 2027-10-06; Decision = needed context. **C:** PrioritizeRecovery read-only; Mitigating; Red + forecast **unchanged** (BR-006). |
@@ -145,7 +145,7 @@ Template fields below are filled for each surface.
 | Entry points | Sidebar Schedule; Dashboard compact peek; detail back. |
 | Information hierarchy | 1) Table of control points 2) Toolbar filters/view 3) Optional Gantt/Split secondary. |
 | Layout regions | Toolbar → primary table (default) → optional Split/Gantt pane. |
-| Grid (`proposal`) | Table 100% default; Split ~55% table / ~45% timeline; Gantt full pane. |
+| Grid (`approved UI Design decision`) | Table 100% default; Split ~55% table / ~45% timeline; Gantt full pane. |
 | Components | PageHeader, TableToolbar, FilterControl, DataTable, GanttSurface, StatusIndicator, VarianceDelta, EntityLink, Empty/Loading/Error. |
 | Data mapping | **Milestone rows:** `baselineDate`, `forecastDate`, rag; **Milestone Δ** = forecastDate − baselineDate (derived). **Equipment rows:** `baselineDelivery`, `forecastDelivery`, status, isCritical; **Delivery Δ** = forecastDelivery − baselineDelivery (derived). Optional Decision.dueDate only if separately decided — default **omit**. Never present delivery dates as Milestone/PS dates. |
 | Snapshot | A: EQ OnTrack / Delivery Δ 0; MS Green / Milestone Δ 0. B/C: EQ Delayed / Delivery Δ +21d; MS Red / Milestone forecast 2027-10-06 (PS-aligned); C same date fields as B. |
@@ -155,7 +155,7 @@ Template fields below are filled for each surface.
 | Navigation / interactions | DOC-UX-019 §6–7; row → Detail. |
 | Traceability | DOC-UX-005/018; REQ-EQPT/MILE; D10–D12. |
 
-**Column semantics (`proposal`):** one shared Schedule table; headers use **type-qualified** labels. Cell meaning depends on `Type`:
+**Column semantics (`approved UI Design decision`):** one shared Schedule table; headers use **type-qualified** labels. Cell meaning depends on `Type`:
 
 | Column header | Equipment row | Milestone row |
 |---------------|---------------|---------------|
@@ -186,11 +186,11 @@ Selection/pagination **off** by default (DOC-UX-016). D12 deferred.
 | Entry points | Sidebar Equipment; Dashboard exceptions; Links. |
 | Information hierarchy | 1) Status + Delivery Δ 2) Delivery Forecast / Delivery Baseline 3) Name/id/critical. |
 | Layout regions | PageHeader → TableToolbar → DataTable. |
-| Grid (`proposal`) | Full-width table; sticky header. |
+| Grid (`approved UI Design decision`) | Full-width table; sticky header. |
 | Components | PageHeader, TableToolbar, FilterControl, DataTable, StatusIndicator(`equipment`), VarianceDelta (delivery), EntityLink, Empty/Loading/Error. |
 | Data mapping | id, name, isCritical, baselineDelivery, forecastDelivery, status OnTrack\|Delayed; projectId context. |
 | Snapshot | A OnTrack Δ0; B/C Delayed +21d diamond marker. |
-| Column priority (`proposal`) | Status · Delivery Δ · Delivery Forecast · Delivery Baseline · Name · ID · Critical. |
+| Column priority (`approved UI Design decision`) | Status · Delivery Δ · Delivery Forecast · Delivery Baseline · Name · ID · Critical. |
 | Visual states | Empty/loading/error; no Closed. |
 | Light / Dark | Per foundations. |
 | Responsive | H-scroll; do not drop Status / Delivery Δ / Delivery Forecast. |
@@ -206,7 +206,7 @@ Selection/pagination **off** by default (DOC-UX-016). D12 deferred.
 | Entry points | Sidebar; Dashboard exceptions. |
 | Information hierarchy | 1) Type + status/RAG 2) Title 3) Key links meta. |
 | Layout regions | PageHeader → Toolbar → **single table** (V1). |
-| Grid (`proposal`) | Full-width table. |
+| Grid (`approved UI Design decision`) | Full-width table. |
 | Components | Same table stack; StatusIndicator(`issue`\|`risk`); Type column. |
 | Data mapping | **Shared columns only** (`assumption` V1): Type (Issue\|Risk), ID, Title, Status/RAG. Optional shared link-id display only if the same column meaning applies to both types without Issue-only or Risk-only placeholders. **Owner is not a shared column** — show on Issue Detail Overview when present in sources. Do **not** force-unify Issue-only / Risk-only fields. |
 | Snapshot | A: may show Risk Green without Open delay Issue; B: ISS Open + RISK Red; C: ISS Mitigating + RISK Red. |
@@ -235,7 +235,7 @@ Selection/pagination **off** by default (DOC-UX-016). D12 deferred.
 | Components | DataTable stack; StatusIndicator(`milestone`); VarianceDelta (PS/MS dates — **not** delivery caption). |
 | Data mapping | id, name, baselineDate, forecastDate, rag Green\|Red. No Domain `critical` field — MS-PS visual emphasis only. |
 | Snapshot | A Green Δ0; B/C Red, forecast 2027-10-06. |
-| Column priority (`proposal`) | RAG · Milestone Δ · Milestone Forecast · Milestone Baseline · Name · ID. |
+| Column priority (`approved UI Design decision`) | RAG · Milestone Δ · Milestone Forecast · Milestone Baseline · Name · ID. |
 | Visual states | Empty/loading/error. |
 | Responsive | Keep RAG / Milestone Δ / Milestone Forecast. |
 | Navigation / interactions | Row → D-MS. |
@@ -250,7 +250,7 @@ Selection/pagination **off** by default (DOC-UX-016). D12 deferred.
 | Entry points | Registers, Schedule, Dashboard, EntityLink. |
 | Information hierarchy | 1) Header identity + status 2) Active tab content 3) Optional metrics (≥4 or omit). |
 | Layout regions | Breadcrumbs → EntityDetailHeader → optional KpiGroup → DetailTabs. |
-| Grid (`proposal`) | Single column; tabs full width; Links quieter than Impact callouts (VD-A). |
+| Grid (`approved UI Design decision`) | Single column; tabs full width; Links quieter than Impact callouts (VD-A). |
 | Components | Breadcrumbs, EntityDetailHeader, StatusIndicator(family), KpiGroup?, DetailTabs, RelationshipList, ImpactCallout, DecisionSummary/Panel (Issue Impact / C), EntityLink, Empty/Loading/Error. |
 | Data mapping | Per entity Overview fields from Domain/REQ/mock; Links = DOC-BA-015 only; Impact = BR-004/006 derived. **No** EQ—MS, Issue—Decision, Risk—Decision, Equipment—Decision links. |
 | Snapshot | Entity missing after switch → EmptyState on same route + register CTA (DOC-UX-019). A/B/C field values from fixtures. |
@@ -282,7 +282,7 @@ Breadcrumb: Section / EntityId
 | Entry points | Dashboard Decision rail; Issue Impact on C. |
 | Information hierarchy | 1) Honesty / outcome 2) Decision type + meta 3) Related Issue Mitigating cue. |
 | Layout regions | **Must Demo v1:** DecisionPanel region (Dashboard rail and/or Issue Impact) — **not** a separate interactive write modal. |
-| Grid (`proposal`) | Raised panel in Dashboard rail (~full rail width); on Detail, callout under Impact. |
+| Grid (`approved UI Design decision`) | Raised panel in Dashboard rail (~full rail width); on Detail, callout under Impact. |
 | Components | DecisionPanel, DecisionSummary, ImpactCallout (honesty), StatusIndicator(issue=Mitigating on C). Dialog **not** used to write Decision in Must (DOC-UX-016/019). |
 | Data mapping | A: none. B: no Decision record — problem context copy. C: DEC-001 type PrioritizeRecovery; owner SH-006; due 2027-03-20; note per fixture; Issue Mitigating; forecasts/RAG unchanged. |
 | Snapshot | A empty; B needed-context; C recorded read-only. |
@@ -307,7 +307,7 @@ Breadcrumb: Section / EntityId
 
 ---
 
-## 5. Cross-screen consistency rules (`proposal`)
+## 5. Cross-screen consistency rules (`approved UI Design decision`)
 
 1. One global Snapshot; never mix A/B/C fields (DOC-UX-018/019).
 2. Status geometry locked: Delayed diamond; Open outline; Mitigating half-filled; RAG filled disc (+ Red rail) (DOC-UX-018).
@@ -320,7 +320,7 @@ Breadcrumb: Section / EntityId
 9. Table primary for dense data; Gantt secondary.
 10. Shell chrome unchanged across pages.
 
-## 6. Responsive behavior (`proposal`)
+## 6. Responsive behavior (`approved UI Design decision`)
 
 | Width | Behavior |
 |-------|----------|
@@ -379,7 +379,7 @@ Min content width **target** ≥720px when full shell shown (DOC-UX-015) — not
 |------|--------|
 | BA-OQ-006 layout | **open**; V1 single table+Type = `assumption` |
 | D12 Gantt lib | **deferred** |
-| Interactive M-DEC write vs read-only Must | **open_question** (Must follows read-only; DOC-UX-003 modal journey not Must UI Design) |
+| Interactive M-DEC / PrioritizeRecovery recording outside Must | **open_question** (Must path = read-only DecisionPanel + fixture DEC-001 on C — decided for Demo v1 Must; DOC-UX-003 modal journey remains outside Must) |
 | Shell DOM Sidebar vs TopBar order | **open_question** (DOC-UX-019) |
 | Filter persistence | MVP non-restore `assumption` |
 | Closed / Amber / AcceptDateSlip Must UI | not in scope |
