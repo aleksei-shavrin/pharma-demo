@@ -32,7 +32,7 @@ related:
 |------|--------|
 | Scope | Screen-driven component inventory for Demo v1 shell, registers, detail, Dashboard patterns |
 | New decisions | **`approved UI Design decision`** |
-| Stack intent | shadcn/ui + TanStack Table + Recharts (`approved UX decision`); Gantt lib = `deferred decision` (D12) |
+| Stack intent | shadcn/ui + TanStack Table + Recharts (`approved UX decision`); Gantt lib = **RESOLVED** (ADR-0004, I7) |
 | Foundations | Tokens / contrast / density from DOC-UX-015 (`approved UI Design decision`) |
 | Detailed viz | Chart series / Gantt look → DOC-UX-018 (boundaries only here) |
 | Interactions depth | Flows → DOC-UX-019; screens → DOC-UX-017 |
@@ -522,8 +522,8 @@ Detailed series/Gantt polish → **DOC-UX-018**. Here: component boundaries only
 | Interaction / keyboard | Pan/zoom if provided; optional shared focused/hovered row cue with table when synced — **does not** require selection mode (DOC-UX-019 §7). Selection off by default. |
 | Responsive | May hide before table on narrow widths. |
 | Accessibility | Table remains primary accessible data source; Gantt supplementary. |
-| Data / semantic | Same rows as Schedule table; D12 lib deferred. |
-| Sources | DOC-UX-005, DOC-UX-007, D12 deferred. |
+| Data / semantic | Same rows as Schedule table; D12 **RESOLVED** (ADR-0004). |
+| Sources | DOC-UX-005, DOC-UX-007, ADR-0004 (D12). |
 
 ### 8.2 ChartContainer
 
@@ -566,7 +566,7 @@ Do not add orphan primitives unused by screens above.
 | Item | Handling |
 |------|----------|
 | BA-OQ-006 | **Closed**; single table+Type = Demo v1 decision (DOC-BA-010) |
-| D12 Gantt lib | Deferred; GanttSurface visual-only |
+| D12 Gantt lib | **RESOLVED** (ADR-0004, I7); adapter-owned GanttSurface |
 | Issue Closed / Amber | Not Must components |
 | AcceptDateSlip UI | Not Must journey |
 | Filter persistence | MVP assumption: not restored |

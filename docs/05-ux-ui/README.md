@@ -25,7 +25,7 @@ related:
 
 UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter документов — `status: draft` (lifecycle docs ≠ decision status).
 
-**D1–D11** — `approved UX decision`; **D12** — resolved (ADR-0004, I7). **VD-A** — `approved Visual Direction baseline`. **UI Design Spec plan** — COMPLETED (Iterations 0–5). **UI Design pack** — **APPROVED** (`approved UI Design decision`). BA-OQ-006 **closed** (единый register + `Тип`, DOC-BA-010); mock volume = `hypothesis`.
+**D1–D11** — `approved UX decision`; **D12** — resolved (ADR-0004, I7). **VD-A** — `approved Visual Direction baseline`. **UI Design Spec plan** — COMPLETED (Iterations 0–5). **UI Design pack** — **APPROVED** (`approved UI Design decision`). **Demo v1 Implementation I1–I8** — **APPROVED + committed** (plan ends at I8). BA-OQ-006 **closed** (единый register + `Тип`, DOC-BA-010); mock volume = `hypothesis`.
 
 ## Правила
 
@@ -66,7 +66,7 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 | [demo-v1-screen-compositions.md](./demo-v1-screen-compositions.md) | DOC-UX-012 | Shell + key screens composition under VD-A |
 | [demo-v1-visual-references.md](./demo-v1-visual-references.md) | DOC-UX-013 | Reference honesty log |
 
-## Demo v1 UI Design Specification (plan COMPLETED; pack APPROVED; Implementation NOT STARTED)
+## Demo v1 UI Design Specification (plan COMPLETED; pack APPROVED; Implementation I1–I8 COMPLETED)
 
 | Файл | ID | Назначение |
 |------|-----|------------|

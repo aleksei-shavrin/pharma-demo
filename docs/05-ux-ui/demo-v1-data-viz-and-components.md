@@ -18,7 +18,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Стек UI для Demo v1: shadcn/ui, TanStack Table, Recharts — `approved UX decision`. Пакеты **не** устанавливаются в этой docs-волне. D12 Gantt lib — `deferred decision`.
+> Стек UI для Demo v1: shadcn/ui, TanStack Table, Recharts — `approved UX decision`. D12 Gantt lib — **RESOLVED** (ADR-0004, I7; Community adapter).
 
 ## 1. Component stack
 
@@ -27,7 +27,7 @@ related:
 | UI kit | shadcn/ui | `approved UX decision` | Shell, buttons, tabs, dialog, theme |
 | Tables | TanStack Table | `approved UX decision` | Все реестры + Schedule table |
 | Charts | Recharts | `approved UX decision` | KPI distributions, A/B/C forecast points |
-| Gantt | Deferred (SVAR OS кандидат №1 / custom timeline) | `deferred decision` (D12) | Read-only Schedule secondary view (D10 approved) |
+| Gantt | `dhtmlx-gantt@10.0.3` Community / MIT | **RESOLVED** (ADR-0004, I7) | Read-only Schedule secondary view (D10) |
 
 ## 2. Tables
 

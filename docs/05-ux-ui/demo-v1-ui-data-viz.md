@@ -23,7 +23,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Правила визуализации данных Demo v1 поверх VD-A, Foundations (DOC-UX-015) и Components (DOC-UX-016). UI Design решения пакета — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle. **Не** apps / не выбор Gantt lib (D12 deferred). Не меняет Domain / BR / REQ / OpenSpec / DOC-PROD-012. Не закрывает BA-OQ / HIP.
+> Правила визуализации данных Demo v1 поверх VD-A, Foundations (DOC-UX-015) и Components (DOC-UX-016). UI Design решения пакета — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle. D12 Gantt lib — **RESOLVED** (ADR-0004). Не меняет Domain / BR / REQ / OpenSpec / DOC-PROD-012.
 
 ## 1. Purpose and scope
 

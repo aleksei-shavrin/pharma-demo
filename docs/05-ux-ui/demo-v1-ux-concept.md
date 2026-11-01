@@ -20,7 +20,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Документ фиксирует **принятые UX-решения для Demo v1** (D1–D11 = `approved UX decision`; D12 = `deferred decision`) плюс открытые BA-OQ/HIP и mock `hypothesis`. Frontmatter `status: draft` — жизненный цикл документа, **не** статус UX-решений. Domain Model, BR, REQ и living OpenSpec Must остаются источниками требований; AI не ставит `status: approved` на UX docs.
+> Документ фиксирует **принятые UX-решения для Demo v1** (D1–D11 = `approved UX decision`; D12 = **RESOLVED**, ADR-0004) плюс открытые BA-OQ/HIP (кроме BA-OQ-006 **closed**) и mock `hypothesis`. Frontmatter `status: draft` — жизненный цикл документа, **не** статус UX-решений. Domain Model, BR, REQ и living OpenSpec Must остаются источниками требований; AI не ставит `status: approved` на UX docs.
 
 ## 1. Executive summary
 
@@ -58,7 +58,7 @@ Pharma Project Control **Demo v1** — компактное enterprise-прил�
 | D9 | Sidebar: Dashboard, Schedule, Equipment, Issues & Risks, Milestones | `approved UX decision` | [shell](./demo-v1-shell-navigation.md) |
 | D10 | TanStack Table primary; Gantt read-only secondary | `approved UX decision` | [schedule](./demo-v1-schedule-workspace.md), [data-viz](./demo-v1-data-viz-and-components.md) |
 | D11 | Schedule = Milestone + Equipment Delivery only; без Activity/WBS/CPM/deps/engine | `approved UX decision` | [schedule](./demo-v1-schedule-workspace.md) |
-| D12 | Выбор Gantt-библиотеки отложен; SVAR React Gantt — кандидат | `deferred decision` | [schedule](./demo-v1-schedule-workspace.md), [data-viz](./demo-v1-data-viz-and-components.md) |
+| D12 | Gantt library: `dhtmlx-gantt@10.0.3` Community / MIT | **RESOLVED** (ADR-0004, I7) | [schedule](./demo-v1-schedule-workspace.md), ADR-0004 |
 
 Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 
@@ -95,7 +95,7 @@ Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 - **BA-OQ-004 / BA-OQ-005** — AcceptDateSlip post-state
 - **BA-OQ-002 / HIP-003/004/007 / HIP-005** — messaging / framing / enterprise-fact
 - **Closed** / **Amber** в ambient mock — без отдельного решения не использовать
-- **D12** — финальный выбор Gantt library (`deferred decision` / tech evaluation)
+- ~~**D12**~~ — Gantt library **RESOLVED** (ADR-0004, I7)
 - Phase grouping; глубина persistence фильтров списка при Back (`assumption` / `open_question`)
 - Mock volume scale — `hypothesis` (DOC-PROD-012 не менять этим пакетом)
 

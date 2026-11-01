@@ -177,7 +177,7 @@ Practical requirements for implementation (not an audit result):
 | Selection/pagination | Off unless scenario confirmed |
 | Shell DOM order Sidebar vs TopBar | open_question / impl constraint (§12) |
 | BA-OQ-006 | **closed** — single register + Type (DOC-BA-010) |
-| D12 | deferred |
+| D12 | **RESOLVED** (ADR-0004, I7) |
 | AcceptDateSlip journey | not Must |
 
 ## 14. Related documents

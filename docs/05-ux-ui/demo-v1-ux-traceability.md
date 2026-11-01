@@ -59,7 +59,7 @@ related:
 | D10 Schedule Table primary | P2 TanStack | Domain dates MS/EQ | baseline/forecast dates | `approved UX decision` |
 | D10 read-only Gantt secondary | P2 Gantt view | D11 constraints | Same control points | `approved UX decision` |
 | D11 Schedule = Milestone + Equipment Delivery only; **без** Activity, WBS, CPM, dependencies (FS/SS и т.п.), scheduling engine | P2 scope | DOC-BA-015; PROC-001; BA-A-003 | Только control-point rows MS + EQ delivery; no Activity/WBS/CPM/deps/engine | `approved UX decision` (+ `approved requirement` no Activity entity) |
-| D12 Gantt library | P2 implementation later | — | — | `deferred decision` |
+| D12 Gantt library | Schedule Timeline (I7) | ADR-0004 | — | **RESOLVED** |
 | Layout shell + Page Surface | App Shell | — | — | `approved UX decision` |
 | Snapshot A/B/C switcher | App Bar | OpenSpec reproducibility; DOC-PROD-012 | Snapshots A/B/C | `approved UX decision` (control); data = mock / `approved requirement` |
 | Light/Dark theme | App Bar + shell | — | Theme tokens | `approved UX decision` |

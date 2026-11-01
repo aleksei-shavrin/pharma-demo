@@ -94,7 +94,7 @@ related:
 - **Table** — основной формат (`approved UX decision` D10); dense; variance tabular; status multi-channel.
 - **Split** — дополнительное представление: таблица + мини read-only timeline.
 - **Gantt** — дополнительный **read-only** режим визуализации контрольных дат (MS forecastDate / EQ forecastDelivery; ghost baseline). **Не** равноправный планировщик: нет Activity/WBS/CPM, нет dependency arrows FS/SS, нет scheduling engine, нет drag-reschedule.
-- D12: lib choice deferred; описан только look.
+- D12: **RESOLVED** (ADR-0004); look + Community adapter.
 - Row click → Entity Detail; breadcrumbs `Schedule / id`.
 
 **Large data:** pagination 25–50; sticky header; filters for Delayed/Red/variance≠0.

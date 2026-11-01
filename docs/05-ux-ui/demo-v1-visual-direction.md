@@ -27,7 +27,7 @@ related:
 ## 2. Constraints inherited (`approved UX decision`)
 
 - Shell: Left Sidebar + Top Application Bar + breadcrumbs + Page Surface; Light/Dark; Snapshot A/B/C.
-- D1–D11; D12 = `deferred decision`.
+- D1–D11; D12 = **RESOLVED** (ADR-0004).
 - KPI group ≥4 or omit; Links = direct Domain only; Schedule = Milestone + Equipment Delivery only.
 - BR-006: PrioritizeRecovery без ложного улучшения forecast/RAG.
 - Один shell Director + PM.
@@ -77,7 +77,7 @@ Tokens и compositions ведутся под VD-A ([design-tokens](./demo-v1-des
 | D6 Decision | Distinct panel; honesty strip (unchanged forecast/RAG) |
 | D7 One shell | No role-skin variants |
 | D10/D11 Schedule | Table primary visual weight; Gantt secondary, marker-based, no dependency arrows |
-| D12 | Look of read-only timeline only; lib choice deferred |
+| D12 | Look of read-only timeline; lib **RESOLVED** (ADR-0004) |
 
 ## 6. Approved vs still open
 
@@ -87,7 +87,7 @@ Tokens и compositions ведутся под VD-A ([design-tokens](./demo-v1-des
 | Visual language principles + screen composition under VD-A | approved within VD-A |
 | Illustrative / final HEX and exact token values | **UI Design** (not finalized here) |
 | Contrast / accessibility measurement | **UI Design / implementation** (principle only in tokens doc) |
-| D12 Gantt library | `deferred decision` |
+| D12 Gantt library | **RESOLVED** (ADR-0004, I7) |
 | BA-OQ / HIP (006, 004/005, 002, …) | remain open if previously open |
 | Mock data volume | `hypothesis` (not approved volume) |
 

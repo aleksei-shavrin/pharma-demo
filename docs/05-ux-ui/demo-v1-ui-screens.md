@@ -175,7 +175,7 @@ Template fields below are filled for each surface.
 └──────────────────────────────────────────────────────────────┘
 ```
 
-Selection/pagination **off** by default (DOC-UX-016). D12 deferred.
+Selection/pagination **off** by default (DOC-UX-016). D12 **RESOLVED** (ADR-0004).
 
 ### 4.4 P3 — Equipment register
 
@@ -378,7 +378,7 @@ Min content width **target** ≥720px when full shell shown (DOC-UX-015) — not
 | Item | Status |
 |------|--------|
 | BA-OQ-006 layout | **closed**; single table+Type = Demo v1 decision (DOC-BA-010) |
-| D12 Gantt lib | **deferred** |
+| D12 Gantt lib | **RESOLVED** (ADR-0004, I7) |
 | Interactive M-DEC / PrioritizeRecovery recording outside Must | **open_question** (Must path = read-only DecisionPanel + fixture DEC-001 on C — decided for Demo v1 Must; DOC-UX-003 modal journey remains outside Must) |
 | Shell DOM Sidebar vs TopBar order | **open_question** (DOC-UX-019) |
 | Filter persistence | MVP non-restore `assumption` |

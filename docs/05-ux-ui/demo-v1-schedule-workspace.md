@@ -18,7 +18,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> D10–D11 = `approved UX decision`; D12 = `deferred decision`. Schedule = визуализация хранимых дат, **не** scheduling engine.
+> D10–D11 = `approved UX decision`; D12 = **RESOLVED** (ADR-0004, I7). Schedule = визуализация хранимых дат, **не** scheduling engine.
 
 ## 1. Scope (D11)
 

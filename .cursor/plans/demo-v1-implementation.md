@@ -1,6 +1,6 @@
 ---
 name: Demo v1 Implementation
-overview: "Implementation Plan APPROVED (R1–R4). I1–I8 APPROVED+committed. D12 RESOLVED. BA-OQ-006 RESOLVED. I9+ NOT STARTED."
+overview: "Implementation Plan APPROVED (R1–R4). I1–I8 APPROVED+committed. Plan COMPLETED — exhausted at I8. D12 RESOLVED. BA-OQ-006 RESOLVED."
 todos:
   - id: await-impl-plan-approve
     content: Финальный human APPROVE этого Demo v1 Implementation Plan (после R1–R4)
@@ -52,7 +52,7 @@ isProject: false
 | D12 Gantt library | **RESOLVED** — `dhtmlx-gantt@10.0.3` MIT Community ([ADR-0004](docs/06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md)) |
 | Implementation I7 | **APPROVED + committed** (`dac0768`; includes corrective R1–R4 + visual acceptance) |
 | Implementation I8 | **APPROVED + committed** (`5c2e43f`; human review + visual acceptance PASSED) |
-| Implementation I9+ | **NOT STARTED** |
+| Implementation plan | **COMPLETED — exhausted at I8** (no further Demo v1 implementation iteration) |
 | BA-OQ-006 | **RESOLVED** — единый Issues & Risks register + `Тип` (DOC-BA-010) |
 
 **Проверенные источники (primary, не только handoff):** [AGENTS.md](AGENTS.md), [DOC-PROD-003](docs/03-product/demo-v1-architecture.md), [DOC-PROD-002](docs/03-product/target-technology-stack.md), [ADR-0002](docs/06-architecture/decisions/0002-target-technology-stack-direction.md), [ADR-0003](docs/06-architecture/decisions/0003-local-dev-urls-and-proxy.md), [DOC-PROD-012](docs/03-product/demo-v1-mock-narrative-data.md), living specs в `openspec/specs/`, REQ-PROJ/MILE/EQPT/RISK/IMPCT/NFR, UI Design DOC-UX-014…020 + [handoff](docs/07-delivery/handoffs/2026-11-01-ui-design.md), [testing-strategy](docs/08-quality/testing-strategy.md), существующие [docker-compose.yml](docker-compose.yml) / [Caddyfile](Caddyfile).
@@ -214,7 +214,7 @@ flowchart LR
 8. ~~I6 Schedule~~ — **APPROVED + committed** (`b9b6780`; incl. corrective R1).
 9. **I7** — **APPROVED + committed** (`dac0768` / tip `ae983e5`; D12 resolved ADR-0004).
 10. **I8** — **APPROVED + committed** (`5c2e43f`; Compose + Playwright + BA-OQ-006; visual acceptance PASSED).
-11. **I9+** — не начинать без явной human-команды.
+11. **Implementation plan** — **COMPLETED — exhausted at I8** (no I9 / no further Demo v1 implementation iteration).
 
 ---
 
@@ -334,4 +334,4 @@ flowchart LR
 
 **Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; Schedule Table primary; Timeline via dhtmlx Community adapter (no PRO); Must DecisionPanel read-only / без Must POST; BA-OQ-006 resolved; без PG/ORM/auth/monorepo tooling.
 
-**Следующий шаг человека:** явная команда на **I9** (если/когда определена); **I9 NOT STARTED**.
+**Следующий шаг человека:** Demo v1 implementation plan **exhausted at I8** — final acceptance / demo; **не** создавать I9.

@@ -21,7 +21,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Общая визуальная гипотеза документа наследуется от **VD-A** (`approved Visual Direction baseline`): industrial control lattice, cool slate, restrained accent, multi-channel status. **Конкретные Foundation values** (HEX, sizes, contrast targets, mapping) — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle документа (не decision status). **Не** apps / implementation. Не переоткрывает VD-A / D1–D11. Не закрывает BA-OQ / HIP / D12.
+> Общая визуальная гипотеза документа наследуется от **VD-A** (`approved Visual Direction baseline`): industrial control lattice, cool slate, restrained accent, multi-channel status. **Конкретные Foundation values** (HEX, sizes, contrast targets, mapping) — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle документа (не decision status). Не переоткрывает VD-A / D1–D11. BA-OQ-006 / D12 — **RESOLVED** (DOC-BA-010 / ADR-0004); HIP и прочие OQ вне Foundations.
 
 ## 1. Purpose and status
 
@@ -31,7 +31,7 @@ related:
 | Decision status of new values | **`approved UI Design decision`** |
 | VD-A / D1–D11 | Cite only (`approved Visual Direction baseline` / `approved UX decision`) |
 | BA-OQ-006 | **closed** — единый register + `Тип` (DOC-BA-010); layout not specified here |
-| D12 | Remains **`deferred decision`** |
+| D12 | **RESOLVED** (ADR-0004, I7 — `dhtmlx-gantt@10.0.3` Community / MIT) |
 | WCAG product compliance | **Not claimed** — calculated targets for selected pairs only |
 
 **Out of scope:** component anatomy (DOC-UX-016), screen grids (DOC-UX-017), chart series detail beyond token roles (DOC-UX-018), interaction flows (DOC-UX-019).
@@ -540,9 +540,9 @@ Chart series (`chart-*`): neutrals + status markers; exact series table deferred
 
 | Item | Status |
 |------|--------|
-| UI Design pack APPROVE (locks HEX) | **APPROVED** (human); Implementation NOT STARTED |
+| UI Design pack APPROVE (locks HEX) | **APPROVED** (human); Implementation I1–I8 COMPLETED |
 | BA-OQ-006 layout | **closed** — single table + Type (DOC-BA-010) |
-| D12 Gantt library | Deferred |
+| D12 Gantt library | **RESOLVED** (ADR-0004, I7) |
 | Issue Closed / Amber tokens | Not Must — unspecified |
 | Webfont choice beyond system stack | Open; system stack default |
 | Exact `--destructive` fg pairing in CSS | Verify at impl (§14 note) |

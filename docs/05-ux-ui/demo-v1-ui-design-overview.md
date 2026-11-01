@@ -25,7 +25,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> UI Design / Design Specification wave. UI Design pack Demo v1 = **APPROVED** (human). Pack decisions = **`approved UI Design decision`**. Frontmatter `status: draft` = lifecycle. **Не** переоткрывает VD-A / D1–D11. Plan COMPLETED ≠ pack APPROVED ≠ Implementation authorized. **Implementation NOT STARTED.**
+> UI Design / Design Specification wave. UI Design pack Demo v1 = **APPROVED** (human). Pack decisions = **`approved UI Design decision`**. Frontmatter `status: draft` = lifecycle. **Не** переоткрывает VD-A / D1–D11. Plan COMPLETED ≠ pack APPROVED. **Demo v1 Implementation I1–I8** — **COMPLETED / APPROVED + committed** (см. `.cursor/plans/demo-v1-implementation.md`).
 
 ## 1. Purpose and wave status
 
@@ -36,7 +36,7 @@ related:
 | UI Design **plan** | **COMPLETED** (Iterations 0–5) |
 | UI Design docs wave | **COMPLETED** — Iterations 0–5 COMPLETED |
 | UI Design **pack** | **APPROVED** (human, after full review + R1–R3); decisions = `approved UI Design decision` |
-| Implementation (`apps/`) | **NOT STARTED** — requires separate explicit human start |
+| Implementation (`apps/`) | **I1–I8 COMPLETED / APPROVED + committed** (Demo v1 implementation plan exhausted at I8) |
 
 Цель волны: markdown UI Design Specification (foundations → components → screens → viz → interactions → quality), пригодная для последующей frontend implementation без изменения Domain/BR/REQ/OpenSpec.
 
@@ -75,7 +75,7 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 | Issues & Risks register layout | **single table + Type column** | **BA-OQ-006 closed** (DOC-BA-010 Demo v1 decision) |
 | V1 table columns | Only truly shared columns; do not force-unify Issue-only or Risk-only attributes | `assumption` |
 | StatusIndicator | May be shared component; Issue status / Risk RAG / Milestone RAG / Equipment delivery status keep distinct visual+semantic models | `approved UI Design decision` |
-| Gantt library | Visual semantics only | `deferred decision` (D12) |
+| Gantt library | Visual semantics + Community adapter | **RESOLVED** (ADR-0004, I7) |
 | Mock volume | Density guidance only | `hypothesis`; DOC-PROD-012 unchanged |
 | BA-OQ-004/005/002, HIP-003/004/005/007 | Stay open; no invented messaging / AcceptDateSlip Must UI | `open_question` |
 | Closed / Amber | Not in Must palette | `open_question` |
@@ -124,7 +124,7 @@ Pack APPROVE **does not** authorize Implementation.
 
 - [x] DOC-UX-014…020 + handoff DOC-HANDOFF-UID-001; indexes/plan/traceability synced.
 - [x] Corrective R1–R3 applied.
-- [x] UI Design Spec **plan** COMPLETED; UI Design **pack** **APPROVED**; Implementation **NOT STARTED**.
+- [x] UI Design Spec **plan** COMPLETED; UI Design **pack** **APPROVED**; Implementation **I1–I8 COMPLETED**.
 
 ## 9. Handoff summary
 

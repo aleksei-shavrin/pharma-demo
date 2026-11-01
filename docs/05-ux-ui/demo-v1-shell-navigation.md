@@ -39,7 +39,7 @@ related:
 | Page Surface | Elevated plate (фон, радиус, тень) — контент страницы | `approved UX decision` |
 | Main content | KPI / tables / charts / detail | — |
 
-Стек: **shadcn/ui**, **TanStack Table**, **Recharts** — `approved UX decision` (intent; пакеты не устанавливаются в этой docs-волне). Gantt lib — `deferred decision` (D12).
+Стек: **shadcn/ui**, **TanStack Table**, **Recharts** — `approved UX decision`. Gantt lib — **RESOLVED** (ADR-0004, I7).
 
 ## 2. Sidebar (D9)
 

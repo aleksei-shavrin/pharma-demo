@@ -22,7 +22,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Проверяемые критерии качества **UI Design Spec** Demo v1 (DOC-UX-014…019). Критерии пакета — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle. **Не** означает WCAG audit pass или browser verification. **Не** apps / Implementation NOT STARTED.
+> Проверяемые критерии качества **UI Design Spec** Demo v1 (DOC-UX-014…019). Критерии пакета — **`approved UI Design decision`** (human APPROVE UI Design pack Demo v1). Frontmatter `status: draft` = lifecycle. **Не** означает WCAG audit pass или browser verification. Apps Implementation I1–I8 — **COMPLETED** (отдельный plan).
 
 ## 1. Purpose and scope
 
