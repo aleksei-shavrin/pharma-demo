@@ -12,7 +12,12 @@
     "check:ids": "node scripts/check-doc-ids.mjs",
     "check:certainty": "node scripts/check-certainty-markers.mjs",
     "check:portal-excludes": "node scripts/check-portal-excludes.mjs",
-    "test:docs": "npm run check:frontmatter && npm run check:ids && npm run check:certainty && npm run check:portal-excludes && npm run lint:docs && npm run docs:build && npm run check:portal-excludes"
+    "test:docs": "npm run check:frontmatter && npm run check:ids && npm run check:certainty && npm run check:portal-excludes && npm run lint:docs && npm run docs:build && npm run check:portal-excludes",
+    "api:dev": "npm --prefix apps/api run start:dev",
+    "api:test": "npm --prefix apps/api test",
+    "web:dev": "npm --prefix apps/web run dev",
+    "web:test": "npm --prefix apps/web test",
+    "test:apps": "npm run api:test && npm run web:test"
   },
   "devDependencies": {
     "glob": "^14.0.3",
