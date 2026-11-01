@@ -20,6 +20,10 @@ export async function runSnapshotLoad(opts: {
   allocateSeq: SeqAllocator;
   dispatch: (action: SnapshotAction) => void;
   fetchDashboard: FetchDashboard;
+  /** Latest requestSeq after sync dispatch; used to skip stale commits. */
+  getRequestSeq?: () => number;
+  /** Fired only when this load's success is the latest request (actually committed). */
+  onCommitted?: (snapshot: SnapshotId) => void;
 }): Promise<void> {
   const seq = opts.allocateSeq();
   opts.dispatch({ type: 'request', snapshot: opts.snapshot, seq });
@@ -38,6 +42,9 @@ export async function runSnapshotLoad(opts: {
       dashboard,
       seq,
     });
+    if (opts.onCommitted && opts.getRequestSeq?.() === seq) {
+      opts.onCommitted(opts.snapshot);
+    }
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     opts.dispatch({ type: 'failure', error: message, seq });

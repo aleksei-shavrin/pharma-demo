@@ -169,12 +169,13 @@ describe('snapshotReducer (atomic switch + dashboard)', () => {
 });
 
 describe('createMonotonicSeq + runSnapshotLoad (dashboard atomic)', () => {
-  it('concurrent loads: older dashboard cannot win', async () => {
+  it('concurrent loads: older dashboard cannot win; stale skips onCommitted', async () => {
     const allocateSeq = createMonotonicSeq();
     let state: SnapshotState = initialSnapshotState;
     const dispatch = (action: SnapshotAction) => {
       state = snapshotReducer(state, action);
     };
+    const committed: string[] = [];
 
     let resolveB!: (p: DashboardOverview) => void;
     let resolveC!: (p: DashboardOverview) => void;
@@ -191,6 +192,10 @@ describe('createMonotonicSeq + runSnapshotLoad (dashboard atomic)', () => {
       allocateSeq,
       dispatch,
       fetchDashboard: async () => fetchB,
+      getRequestSeq: () => state.requestSeq,
+      onCommitted: (s) => {
+        committed.push(s);
+      },
     });
     const loadC = runSnapshotLoad({
       snapshot: 'C',
@@ -198,6 +203,10 @@ describe('createMonotonicSeq + runSnapshotLoad (dashboard atomic)', () => {
       allocateSeq,
       dispatch,
       fetchDashboard: async () => fetchC,
+      getRequestSeq: () => state.requestSeq,
+      onCommitted: (s) => {
+        committed.push(s);
+      },
     });
 
     expect(state.requestSeq).toBe(2);
@@ -207,10 +216,12 @@ describe('createMonotonicSeq + runSnapshotLoad (dashboard atomic)', () => {
     await loadB;
     expect(state.active).toBe('A');
     expect(state.dashboard).toBeNull();
+    expect(committed).toEqual([]);
 
     resolveC(dashboard('C', '2027-10-06'));
     await loadC;
     expect(state.active).toBe('C');
     expect(state.dashboard?.snapshotId).toBe('C');
+    expect(committed).toEqual(['C']);
   });
 });

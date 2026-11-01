@@ -3,7 +3,7 @@ id: DOC-UX-019
 title: "Demo v1 UI Design — interactions"
 type: product
 status: draft
-version: "0.1.1"
+version: "0.1.2"
 created: 2026-11-01
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -41,7 +41,8 @@ related:
 |------|----------|----------|
 | **Global** | Snapshot A\|B\|C; theme Light\|Dark; current route | Shared across shell; Snapshot change refreshes all data-bound widgets |
 | **Local page** | Table sort/filter/search; detail tab; Schedule Table\|Gantt\|Split view | Scoped to page; **MVP assumption:** not restored on breadcrumb return (DOC-UX-002/006) |
-| **Not specified** | Cross-session persistence of filters/theme/snapshot | Do not invent; impl may use ephemeral session defaults |
+| **Session-scoped (Snapshot)** | Last successfully committed Snapshot A\|B\|C | Restored within the same browser tab/session after F5/reload (see §4); not URL; not cross-session |
+| **Not specified** | Cross-session persistence of filters/theme | Do not invent; theme remains ephemeral unless later decided |
 
 When Snapshot changes: reload data for current route; **reset or revalidate** local filters that reference statuses absent in new snapshot (`approved UI Design decision`: clear incompatible filters; keep sort key if column still exists).
 
@@ -65,8 +66,14 @@ When Snapshot changes: reload data for current route; **reset or revalidate** lo
 | Error | Keep the **previous successfully loaded snapshot entirely**; do **not** apply the new snapshot partially. Show a clear switch-error message + **Retry**. Current page remains usable on the previous snapshot. Error must **not** look like the new snapshot succeeded. |
 | Current page | Stay on same route; refresh entity if still present. If entity **missing** in the newly selected snapshot: remain on the Entity Detail route; show EmptyState explaining absence in that snapshot; provide an **explicit** control to open the related register; **no automatic** navigation. |
 | Local UI | Reconcile filters as §2; do not invent cross-snapshot cache merge |
+| Reload / same tab | Last **successfully committed** snapshot is restored from **session-scoped** browser storage (same tab/session). Fresh/independent session defaults to **A**. URL query persistence is **not** used. Cross-session / cross-device persistence is **out of scope**. |
+| First paint after reload | Until the first successful dashboard commit, UI must **not** present a default **A** as the settled selected snapshot when restore target is B/C (short initializing/loading is allowed). |
 
 Announce change politely (live region) at implementation — requirement, not tested claim.
+
+> **certainty:** fact
+>
+> Session-scoped Snapshot restore (same browser tab/session; write only after successful atomic commit; invalid stored value → A) is the Demo presentation-hardening contract. It does **not** add shareable deep links or cross-session preferences.
 
 ## 5. ThemeToggle (`approved UI Design decision`)
 
@@ -172,7 +179,8 @@ Practical requirements for implementation (not an audit result):
 | Filter persistence on breadcrumb / local return | MVP non-restore = `assumption` (§2, §9) |
 | Cross-session filter persistence | unspecified (`open_question`) — distinct from MVP non-restore |
 | Theme persistence across sessions | unspecified (`open_question`) |
-| Snapshot persistence across reload / sessions | unspecified (`open_question`) |
+| Snapshot persistence across reload (same tab/session) | **session-scoped restore** of last successfully committed A\|B\|C (§2, §4) — not URL; fresh session → A |
+| Snapshot persistence across sessions / devices | unspecified (`open_question`) — out of Demo presentation-hardening scope |
 | Interactive Decision write / M-DEC outside Must | `open_question` (Must path = read-only DecisionPanel; Snapshot C = fixture DEC-001; not a Must write flow) |
 | Selection/pagination | Off unless scenario confirmed |
 | Shell DOM order Sidebar vs TopBar | open_question / impl constraint (§12) |

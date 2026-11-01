@@ -28,10 +28,13 @@ export function SnapshotSelector() {
     requested,
     status,
     error,
+    dashboard,
     switchSnapshot,
     retryLastSwitch,
   } = useSnapshot();
   const loading = status === 'loading';
+  /** No successful commit yet this page load — do not paint active as settled. */
+  const settled = dashboard !== null;
   const groupId = useId();
   const [focusId, setFocusId] = useState<SnapshotId>(active);
   const radioRefs = useRef<Partial<Record<SnapshotId, HTMLButtonElement | null>>>(
@@ -39,10 +42,12 @@ export function SnapshotSelector() {
   );
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && settled) {
       setFocusId(active);
+    } else if (loading && requested) {
+      setFocusId(requested);
     }
-  }, [active, loading]);
+  }, [active, loading, requested, settled]);
 
   function focusRadio(id: SnapshotId) {
     setFocusId(id);
@@ -108,7 +113,7 @@ export function SnapshotSelector() {
         className="inline-flex rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] p-0.5"
       >
         {SNAPSHOT_IDS.map((id) => {
-          const selected = active === id;
+          const selected = settled && active === id;
           const pending = loading && requested === id;
           const tabIndex = focusId === id ? 0 : -1;
           return (
@@ -151,7 +156,9 @@ export function SnapshotSelector() {
           className="max-w-xs text-right text-xs text-[var(--status-danger-fg)]"
         >
           <p>
-            Не удалось переключить снимок. Активный снимок остаётся {active}.
+            {settled
+              ? `Не удалось переключить снимок. Активный снимок остаётся ${active}.`
+              : 'Не удалось загрузить снимок.'}
           </p>
           <p className="mt-0.5 text-[var(--text-muted)]">{error}</p>
           <button

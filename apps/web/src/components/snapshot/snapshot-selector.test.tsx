@@ -90,15 +90,17 @@ function renderSelector() {
   );
 }
 
-afterEach(() => {
-  cleanup();
-  vi.clearAllMocks();
-});
-
 beforeEach(() => {
+  sessionStorage.clear();
   fetchDashboardOverview.mockImplementation(
     async (_id: string, snapshot: 'A' | 'B' | 'C') => dash(snapshot),
   );
+});
+
+afterEach(() => {
+  cleanup();
+  sessionStorage.clear();
+  vi.clearAllMocks();
 });
 
 describe('SnapshotSelector keyboard (R2)', () => {

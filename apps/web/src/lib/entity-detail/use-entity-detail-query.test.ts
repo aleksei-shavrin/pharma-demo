@@ -76,6 +76,7 @@ function wrap({ children }: { children: ReactNode }) {
 
 describe('useEntityDetailQuery', () => {
   it('maps 404 to absent', async () => {
+    sessionStorage.clear();
     const fetchDetail = vi.fn(async () => {
       throw new ApiClientError('missing', 404);
     });
@@ -92,6 +93,7 @@ describe('useEntityDetailQuery', () => {
   });
 
   it('keeps coherent payload only for active snapshot', async () => {
+    sessionStorage.clear();
     const fetchDetail = vi.fn(
       async (_p: string, _id: string, snapshot: string) => ({
         snapshotId: snapshot,

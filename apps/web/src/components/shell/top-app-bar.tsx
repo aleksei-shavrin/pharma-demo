@@ -6,10 +6,16 @@ import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { Breadcrumbs } from './breadcrumbs';
 
 export function TopAppBar() {
-  const { project, active } = useSnapshot();
+  const { project, active, dashboard, status, requested } = useSnapshot();
+  const settled = dashboard !== null;
   const projectLabel = project
     ? `${project.id} · ${project.name}`
     : 'PRJ-01';
+  const snapshotLabel = settled
+    ? `Снимок ${active}`
+    : status === 'loading' && requested
+      ? `Загрузка снимка ${requested}…`
+      : 'Загрузка снимка…';
 
   return (
     <header
@@ -30,7 +36,7 @@ export function TopAppBar() {
             {projectLabel}
           </span>
           <span className="mx-1.5 text-[var(--border)]">·</span>
-          <span>Снимок {active}</span>
+          <span>{snapshotLabel}</span>
         </div>
       </div>
     </header>

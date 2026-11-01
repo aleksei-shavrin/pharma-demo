@@ -15,8 +15,13 @@ import { runSnapshotLoad } from './run-snapshot-load';
 import type { SnapshotId } from './snapshot-id';
 import { createMonotonicSeq } from './snapshot-seq';
 import {
+  resolveBootstrapSnapshot,
+  writeSessionSnapshot,
+} from './snapshot-session';
+import {
   initialSnapshotState,
   snapshotReducer,
+  type SnapshotAction,
   type SnapshotState,
 } from './snapshot-state';
 
@@ -30,11 +35,20 @@ type SnapshotContextValue = SnapshotState & {
 const SnapshotContext = createContext<SnapshotContextValue | null>(null);
 
 export function SnapshotProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(snapshotReducer, initialSnapshotState);
+  const [state, rawDispatch] = useReducer(
+    snapshotReducer,
+    initialSnapshotState,
+  );
   const stateRef = useRef(state);
   stateRef.current = state;
   const lastAttemptRef = useRef<SnapshotId>('A');
   const allocateSeqRef = useRef(createMonotonicSeq());
+
+  /** Keep stateRef in sync before React re-render so getRequestSeq sees commits. */
+  const dispatch = useCallback((action: SnapshotAction) => {
+    stateRef.current = snapshotReducer(stateRef.current, action);
+    rawDispatch(action);
+  }, []);
 
   const runLoad = useCallback(async (snapshot: SnapshotId) => {
     lastAttemptRef.current = snapshot;
@@ -44,11 +58,13 @@ export function SnapshotProvider({ children }: { children: ReactNode }) {
       allocateSeq: allocateSeqRef.current,
       dispatch,
       fetchDashboard: fetchDashboardOverview,
+      getRequestSeq: () => stateRef.current.requestSeq,
+      onCommitted: writeSessionSnapshot,
     });
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    void runLoad('A');
+    void runLoad(resolveBootstrapSnapshot());
   }, [runLoad]);
 
   const switchSnapshot = useCallback(

@@ -245,6 +245,7 @@ afterEach(() => {
 });
 
 beforeEach(() => {
+  sessionStorage.clear();
   fetchDashboardOverview.mockImplementation(
     async (_id: string, snapshot: 'A' | 'B' | 'C') => overview(snapshot),
   );

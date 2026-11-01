@@ -170,6 +170,7 @@ afterEach(() => {
 });
 
 beforeEach(() => {
+  sessionStorage.clear();
   fetchDashboardOverview.mockImplementation(
     async (_id: string, s: SnapshotId) => dash(s),
   );

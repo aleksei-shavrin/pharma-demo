@@ -77,11 +77,13 @@ function dash(snapshotId: SnapshotId) {
 
 afterEach(() => {
   cleanup();
+  sessionStorage.clear();
   vi.clearAllMocks();
 });
 
 describe('useRegisterQuery', () => {
   it('does not expose payload when snapshotId mismatches active', async () => {
+    sessionStorage.clear();
     fetchDashboardOverview.mockResolvedValue(dash('A'));
     fetchRegister.mockResolvedValue({
       snapshotId: 'B',
