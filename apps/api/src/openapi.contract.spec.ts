@@ -17,8 +17,8 @@ type OpenApiParam = {
   schema?: JsonSchema;
 };
 
-describe('OpenAPI contract (I2)', () => {
-  it('publishes response DTOs and snapshot query enum', async () => {
+describe('OpenAPI contract (I2/I3)', () => {
+  it('publishes response DTOs, snapshot query, and dashboard path', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -74,6 +74,25 @@ describe('OpenAPI contract (I2)', () => {
         snapshotId: expect.any(Object),
         scenarioAsOfDate: expect.any(Object),
       }),
+    );
+
+    const dashboard = document.paths['/v1/projects/{id}/dashboard']?.get;
+    expect(dashboard).toBeDefined();
+    const dashSchema = dashboard?.responses?.['200']?.content?.[
+      'application/json'
+    ]?.schema as JsonSchema | undefined;
+    expect(dashSchema).toEqual({
+      $ref: '#/components/schemas/DashboardOverviewDto',
+    });
+    const dashSnap = (dashboard?.parameters ?? []).find(
+      (p): p is OpenApiParam =>
+        typeof p === 'object' &&
+        p !== null &&
+        'name' in p &&
+        p.name === 'snapshot',
+    );
+    expect(dashSnap?.schema?.enum).toEqual(
+      expect.arrayContaining(['A', 'B', 'C']),
     );
 
     await app.close();

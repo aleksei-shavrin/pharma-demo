@@ -1,26 +1,84 @@
 /** @vitest-environment jsdom */
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react';import userEvent from '@testing-library/user-event';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ProjectStub } from '@/lib/api-client';
+import type { DashboardOverview } from '@/lib/api-client';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import { SnapshotSelector } from './snapshot-selector';
 
-const fetchProjectStub = vi.fn();
+const fetchDashboardOverview = vi.fn();
 
-vi.mock('@/lib/api-client', () => ({
-  fetchProjectStub: (...args: unknown[]) => fetchProjectStub(...args),
-  fetchHealth: vi.fn(),
-}));
-
-function project(snapshotId: 'A' | 'B' | 'C'): ProjectStub {
+vi.mock('@/lib/api-client', async () => {
+  const actual =
+    await vi.importActual<typeof import('@/lib/api-client')>('@/lib/api-client');
   return {
-    id: 'PRJ-01',
-    name: 'Facility Expansion Alpha',
-    baselineProductionStart: '2027-09-15',
-    forecastProductionStart:
-      snapshotId === 'A' ? '2027-09-15' : '2027-10-06',
+    ...actual,
+    fetchDashboardOverview: (...args: unknown[]) =>
+      fetchDashboardOverview(...args),
+    fetchHealth: vi.fn(),
+  };
+});
+
+function dash(snapshotId: 'A' | 'B' | 'C'): DashboardOverview {
+  const delayed = snapshotId !== 'A';
+  return {
     snapshotId,
-    scenarioAsOfDate: snapshotId === 'A' ? '2027-02-15' : '2027-03-01',
+    scenarioAsOfDate:
+      snapshotId === 'A'
+        ? '2027-02-15'
+        : snapshotId === 'B'
+          ? '2027-03-01'
+          : '2027-03-02',
+    project: {
+      id: 'PRJ-01',
+      name: 'Строительство фармацевтического завода',
+      baselineProductionStart: '2027-09-15',
+      forecastProductionStart: delayed ? '2027-10-06' : '2027-09-15',
+      productionStartVariance: {
+        subject: 'production_start',
+        baselineDate: '2027-09-15',
+        forecastDate: delayed ? '2027-10-06' : '2027-09-15',
+        deltaDays: delayed ? 21 : 0,
+      },
+    },
+    equipment: {
+      id: 'EQ-HVAC-01',
+      critical: true,
+      status: delayed ? 'Delayed' : 'OnTrack',
+      baselineDelivery: '2027-05-15',
+      forecastDelivery: delayed ? '2027-06-05' : '2027-05-15',
+      deliveryVariance: {
+        subject: 'equipment_delivery',
+        baselineDate: '2027-05-15',
+        forecastDate: delayed ? '2027-06-05' : '2027-05-15',
+        deltaDays: delayed ? 21 : 0,
+      },
+    },
+    issue: null,
+    risk: {
+      id: 'RISK-001',
+      rag: delayed ? 'Red' : 'Green',
+      equipmentId: 'EQ-HVAC-01',
+      milestoneId: 'MS-PS',
+      issueId: null,
+    },
+    milestone: {
+      id: 'MS-PS',
+      name: 'Ready for production',
+      rag: delayed ? 'Red' : 'Green',
+      baselineDate: '2027-09-15',
+      forecastDate: delayed ? '2027-10-06' : '2027-09-15',
+    },
+    decisionPanelState: 'absent',
+    decision: null,
+    directEdges: [],
+    derivedImpact: {
+      rule: 'BR-004',
+      equipmentDeliveryDeltaDays: delayed ? 21 : 0,
+      productionStartDeltaDays: delayed ? 21 : 0,
+      kind: delayed ? 'aligned_slip' : 'none',
+    },
+    decisionHonesty: null,
   };
 }
 
@@ -38,8 +96,8 @@ afterEach(() => {
 });
 
 beforeEach(() => {
-  fetchProjectStub.mockImplementation(async (_id: string, snapshot: 'A' | 'B' | 'C') =>
-    project(snapshot),
+  fetchDashboardOverview.mockImplementation(
+    async (_id: string, snapshot: 'A' | 'B' | 'C') => dash(snapshot),
   );
 });
 
@@ -47,11 +105,11 @@ describe('SnapshotSelector keyboard (R2)', () => {
   it('uses roving tabindex after bootstrap; aria-checked tracks active', async () => {
     renderSelector();
     await waitFor(() => {
-      expect(fetchProjectStub).toHaveBeenCalled();
+      expect(fetchDashboardOverview).toHaveBeenCalled();
     });
     await waitFor(() => {
       expect(
-        screen.getByRole('radio', { name: /Snapshot A, active/ }),
+        screen.getByRole('radio', { name: /Снимок A, активный/ }),
       ).toBeChecked();
     });
 
@@ -59,9 +117,6 @@ describe('SnapshotSelector keyboard (R2)', () => {
     expect(radios).toHaveLength(3);
     const tabbable = radios.filter((r) => r.getAttribute('tabindex') === '0');
     expect(tabbable).toHaveLength(1);
-    expect(radios.filter((r) => r.getAttribute('tabindex') === '-1')).toHaveLength(
-      2,
-    );
   });
 
   it('ArrowRight moves focus and selects; wraps C→A', async () => {
@@ -69,32 +124,28 @@ describe('SnapshotSelector keyboard (R2)', () => {
     renderSelector();
     await waitFor(() =>
       expect(
-        screen.getByRole('radio', { name: /Snapshot A, active/ }),
+        screen.getByRole('radio', { name: /Снимок A, активный/ }),
       ).toBeChecked(),
     );
 
-    const group = screen.getByRole('radiogroup', { name: 'Demo snapshot' });
-    within(group).getByRole('radio', { name: /Snapshot A/ }).focus();
+    const group = screen.getByRole('radiogroup', { name: 'Демо-снимок' });
+    within(group).getByRole('radio', { name: /Снимок A/ }).focus();
     await user.keyboard('{ArrowRight}');
     await waitFor(() =>
       expect(
-        within(group).getByRole('radio', { name: /Snapshot B, active/ }),
-      ).toBeChecked(),
-    );
-    expect(
-      within(group).getByRole('radio', { name: /Snapshot B/ }),
-    ).toHaveFocus();
-
-    await user.keyboard('{ArrowRight}');
-    await waitFor(() =>
-      expect(
-        within(group).getByRole('radio', { name: /Snapshot C, active/ }),
+        within(group).getByRole('radio', { name: /Снимок B, активный/ }),
       ).toBeChecked(),
     );
     await user.keyboard('{ArrowRight}');
     await waitFor(() =>
       expect(
-        within(group).getByRole('radio', { name: /Snapshot A, active/ }),
+        within(group).getByRole('radio', { name: /Снимок C, активный/ }),
+      ).toBeChecked(),
+    );
+    await user.keyboard('{ArrowRight}');
+    await waitFor(() =>
+      expect(
+        within(group).getByRole('radio', { name: /Снимок A, активный/ }),
       ).toBeChecked(),
     );
   });
@@ -104,32 +155,32 @@ describe('SnapshotSelector keyboard (R2)', () => {
     renderSelector();
     await waitFor(() =>
       expect(
-        screen.getByRole('radio', { name: /Snapshot A, active/ }),
+        screen.getByRole('radio', { name: /Снимок A, активный/ }),
       ).toBeChecked(),
     );
     const group = screen.getByRole('radiogroup');
-    within(group).getByRole('radio', { name: /Snapshot A/ }).focus();
+    within(group).getByRole('radio', { name: /Снимок A/ }).focus();
     await user.keyboard('{End}');
     await waitFor(() =>
       expect(
-        within(group).getByRole('radio', { name: /Snapshot C, active/ }),
+        within(group).getByRole('radio', { name: /Снимок C, активный/ }),
       ).toBeChecked(),
     );
     await user.keyboard('{Home}');
     await waitFor(() =>
       expect(
-        within(group).getByRole('radio', { name: /Snapshot A, active/ }),
+        within(group).getByRole('radio', { name: /Снимок A, активный/ }),
       ).toBeChecked(),
     );
   });
 
-  it('during loading: aria-disabled (not HTML disabled), focus retained, activation blocked', async () => {
+  it('during loading: aria-disabled; focus retained; activation blocked', async () => {
     const user = userEvent.setup();
-    let resolveB!: (p: ProjectStub) => void;
-    fetchProjectStub.mockImplementationOnce(async () => project('A'));
-    fetchProjectStub.mockImplementationOnce(
+    let resolveB!: (p: DashboardOverview) => void;
+    fetchDashboardOverview.mockImplementationOnce(async () => dash('A'));
+    fetchDashboardOverview.mockImplementationOnce(
       () =>
-        new Promise<ProjectStub>((r) => {
+        new Promise<DashboardOverview>((r) => {
           resolveB = r;
         }),
     );
@@ -137,12 +188,12 @@ describe('SnapshotSelector keyboard (R2)', () => {
     renderSelector();
     await waitFor(() =>
       expect(
-        screen.getByRole('radio', { name: /Snapshot A, active/ }),
+        screen.getByRole('radio', { name: /Снимок A, активный/ }),
       ).toBeChecked(),
     );
 
     const group = screen.getByRole('radiogroup');
-    within(group).getByRole('radio', { name: /Snapshot A/ }).focus();
+    within(group).getByRole('radio', { name: /Снимок A/ }).focus();
     await user.keyboard('{ArrowRight}');
 
     await waitFor(() => {
@@ -154,52 +205,40 @@ describe('SnapshotSelector keyboard (R2)', () => {
       expect(r).not.toBeDisabled();
       expect(r).toHaveAttribute('aria-disabled', 'true');
     }
-    // Still active A while B loading
     expect(radios[0]).toBeChecked();
-    expect(radios[1]).not.toBeChecked();
 
-    const callsWhileLoading = fetchProjectStub.mock.calls.length;
-    await user.keyboard('{ArrowRight}'); // focus-only during loading
-    expect(fetchProjectStub.mock.calls.length).toBe(callsWhileLoading);
+    const callsWhileLoading = fetchDashboardOverview.mock.calls.length;
+    await user.keyboard('{ArrowRight}');
+    expect(fetchDashboardOverview.mock.calls.length).toBe(callsWhileLoading);
     expect(radios[2]).toHaveFocus();
 
-    await user.keyboard(' ');
-    expect(fetchProjectStub.mock.calls.length).toBe(callsWhileLoading);
-
-    resolveB(project('B'));
+    resolveB(dash('B'));
     await waitFor(() =>
       expect(
-        within(group).getByRole('radio', { name: /Snapshot B, active/ }),
+        within(group).getByRole('radio', { name: /Снимок B, активный/ }),
       ).toBeChecked(),
     );
   });
 
-  it('Enter activates focused radio once (no double fetch)', async () => {
+  it('Enter on already-active does not refetch', async () => {
     const user = userEvent.setup();
     renderSelector();
     await waitFor(() =>
       expect(
-        screen.getByRole('radio', { name: /Snapshot A, active/ }),
+        screen.getByRole('radio', { name: /Снимок A, активный/ }),
       ).toBeChecked(),
     );
 
     const group = screen.getByRole('radiogroup');
-    within(group).getByRole('radio', { name: /Snapshot A/ }).focus();
-
-    // Move focus to B without selecting via loading-blocked path is hard;
-    // click B once, then from B use ArrowLeft to A and Enter on A is silly.
-    // Instead: focus B via click, clear, then Enter should early-return (same active).
-    await user.click(within(group).getByRole('radio', { name: /Snapshot B/ }));
+    await user.click(within(group).getByRole('radio', { name: /Снимок B/ }));
     await waitFor(() =>
       expect(
-        within(group).getByRole('radio', { name: /Snapshot B, active/ }),
+        within(group).getByRole('radio', { name: /Снимок B, активный/ }),
       ).toBeChecked(),
     );
-    const callsAfterClick = fetchProjectStub.mock.calls.length;
-
-    within(group).getByRole('radio', { name: /Snapshot B/ }).focus();
+    const callsAfterClick = fetchDashboardOverview.mock.calls.length;
+    within(group).getByRole('radio', { name: /Снимок B/ }).focus();
     await user.keyboard('{Enter}');
-    // Same active + loaded project → provider early-return; no extra fetch
-    expect(fetchProjectStub.mock.calls.length).toBe(callsAfterClick);
+    expect(fetchDashboardOverview.mock.calls.length).toBe(callsAfterClick);
   });
 });

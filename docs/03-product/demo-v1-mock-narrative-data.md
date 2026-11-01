@@ -42,7 +42,7 @@ related:
 
 | Object | Key fields | Rule source |
 |--------|------------|-------------|
-| Project PRJ-01 | name «Facility Expansion Alpha»; baselineProductionStart **2027-09-15**; forecastProductionStart **2027-09-15** | stored |
+| Project PRJ-01 | name «Строительство фармацевтического завода»; baselineProductionStart **2027-09-15**; forecastProductionStart **2027-09-15** | stored |
 | Milestone MS-PS | «Ready for production»; baseline/forecast **2027-09-15**; rag **Green** (baseline fixture; **не** вывод BR-003) | stored baseline |
 | Equipment EQ-HVAC-01 | critical true; projectId PRJ-01; baselineDelivery **2027-05-15**; forecastDelivery **2027-05-15**; status OnTrack | stored |
 | Risk RISK-001 | rag **Green** (baseline fixture; **не** вывод BR-002); milestone MS-PS; equipment EQ-HVAC-01; no open delay issue | stored baseline |

@@ -10,11 +10,15 @@ import {
   useRef,
   type ReactNode,
 } from 'react';
-import { fetchProjectStub } from '@/lib/api-client';
+import { fetchDashboardOverview } from '@/lib/api-client';
 import { runSnapshotLoad } from './run-snapshot-load';
 import type { SnapshotId } from './snapshot-id';
 import { createMonotonicSeq } from './snapshot-seq';
-import { initialSnapshotState, snapshotReducer, type SnapshotState } from './snapshot-state';
+import {
+  initialSnapshotState,
+  snapshotReducer,
+  type SnapshotState,
+} from './snapshot-state';
 
 const DEMO_PROJECT_ID = 'PRJ-01';
 
@@ -30,7 +34,6 @@ export function SnapshotProvider({ children }: { children: ReactNode }) {
   const stateRef = useRef(state);
   stateRef.current = state;
   const lastAttemptRef = useRef<SnapshotId>('A');
-  /** Sync monotonic seq — not derived from React state. */
   const allocateSeqRef = useRef(createMonotonicSeq());
 
   const runLoad = useCallback(async (snapshot: SnapshotId) => {
@@ -40,7 +43,7 @@ export function SnapshotProvider({ children }: { children: ReactNode }) {
       projectId: DEMO_PROJECT_ID,
       allocateSeq: allocateSeqRef.current,
       dispatch,
-      fetchProject: fetchProjectStub,
+      fetchDashboard: fetchDashboardOverview,
     });
   }, []);
 
@@ -53,7 +56,7 @@ export function SnapshotProvider({ children }: { children: ReactNode }) {
       if (
         snapshot === stateRef.current.active &&
         stateRef.current.status !== 'error' &&
-        stateRef.current.project
+        stateRef.current.dashboard
       ) {
         return;
       }

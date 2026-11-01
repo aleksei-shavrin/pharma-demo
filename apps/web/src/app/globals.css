@@ -23,6 +23,14 @@
   --link: #1a4f5c;
   --focus-ring: #1a4f5c;
   --status-danger-fg: #7a1710;
+  --status-danger-bg: #fcebea;
+  --status-danger-border: #b42318;
+  --status-ok-fg: #1a4d36;
+  --status-ok-bg: #e3f2e9;
+  --status-ok-border: #2f6b4f;
+  --status-info-fg: #1e3558;
+  --status-info-bg: #e6eef7;
+  --status-info-border: #3a5f8a;
   --sidebar-width: 240px;
   --topbar-height: 52px;
   --radius-sm: 6px;
@@ -49,6 +57,14 @@
   --link: #8fd0de;
   --focus-ring: #8fd0de;
   --status-danger-fg: #f7b4ac;
+  --status-danger-bg: #3a1a18;
+  --status-danger-border: #e56b60;
+  --status-ok-fg: #b5e3c2;
+  --status-ok-bg: #1a2e24;
+  --status-ok-border: #4aae78;
+  --status-info-fg: #b4cde6;
+  --status-info-bg: #1a2434;
+  --status-info-border: #6b9bc4;
   --elevation-1: 0 1px 2px rgb(0 0 0 / 35%);
   color-scheme: dark;
 }

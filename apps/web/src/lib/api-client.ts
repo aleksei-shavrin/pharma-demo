@@ -19,6 +19,81 @@ export type HealthResponse = {
   service: string;
 };
 
+export type VarianceDto = {
+  subject: 'equipment_delivery' | 'production_start';
+  baselineDate: string;
+  forecastDate: string;
+  deltaDays: number;
+};
+
+export type DirectEdgeDto = {
+  kind: 'direct';
+  fromType: 'equipment' | 'issue' | 'risk' | 'milestone';
+  fromId: string;
+  toType: 'equipment' | 'issue' | 'risk' | 'milestone';
+  toId: string;
+};
+
+export type DecisionPanelState = 'absent' | 'needed' | 'recorded';
+
+export type DashboardOverview = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  project: {
+    id: string;
+    name: string;
+    baselineProductionStart: string;
+    forecastProductionStart: string;
+    productionStartVariance: VarianceDto;
+  };
+  equipment: {
+    id: string;
+    critical: boolean;
+    status: 'OnTrack' | 'Delayed';
+    baselineDelivery: string;
+    forecastDelivery: string;
+    deliveryVariance: VarianceDto;
+  };
+  issue: {
+    id: string;
+    title: string;
+    status: 'Open' | 'Mitigating';
+    equipmentId: string;
+    milestoneId: string;
+  } | null;
+  risk: {
+    id: string;
+    rag: 'Green' | 'Red';
+    equipmentId: string;
+    milestoneId: string;
+    issueId: string | null;
+  };
+  milestone: {
+    id: string;
+    name: string;
+    rag: 'Green' | 'Red';
+    baselineDate: string;
+    forecastDate: string;
+  };
+  decisionPanelState: DecisionPanelState;
+  decision: {
+    id: string;
+    type: 'PrioritizeRecovery';
+    ownerRole: string;
+    dueDate: string;
+    note: string;
+  } | null;
+  /** Machine-readable direct Domain edges; not shown as engineering graph in UI. */
+  directEdges: DirectEdgeDto[];
+  derivedImpact: {
+    rule: 'BR-004';
+    equipmentDeliveryDeltaDays: number;
+    productionStartDeltaDays: number;
+    kind: 'none' | 'aligned_slip';
+  };
+  decisionHonesty: { recoveryExecuted: false } | null;
+};
+
 function apiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
 }
@@ -44,4 +119,27 @@ export function fetchProjectStub(
   return getJson<ProjectStub>(
     `/v1/projects/${encodeURIComponent(projectId)}?${qs.toString()}`,
   );
+}
+
+export function fetchDashboardOverview(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<DashboardOverview> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<DashboardOverview>(
+    `/v1/projects/${encodeURIComponent(projectId)}/dashboard?${qs.toString()}`,
+  );
+}
+
+export function projectStubFromDashboard(
+  dashboard: DashboardOverview,
+): ProjectStub {
+  return {
+    id: dashboard.project.id,
+    name: dashboard.project.name,
+    baselineProductionStart: dashboard.project.baselineProductionStart,
+    forecastProductionStart: dashboard.project.forecastProductionStart,
+    snapshotId: dashboard.snapshotId,
+    scenarioAsOfDate: dashboard.scenarioAsOfDate,
+  };
 }

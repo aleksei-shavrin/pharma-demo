@@ -6,7 +6,7 @@ export class ProjectStubDto {
   @ApiProperty({ example: 'PRJ-01' })
   id!: string;
 
-  @ApiProperty({ example: 'Facility Expansion Alpha' })
+  @ApiProperty({ example: 'Строительство фармацевтического завода' })
   name!: string;
 
   @ApiProperty({ example: '2027-09-15' })

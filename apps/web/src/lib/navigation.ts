@@ -16,30 +16,30 @@ export type NavItem = {
 
 /** Approved IA (DOC-UX-002 / Implementation Plan I2) — exactly five sections. */
 export const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard, crumb: 'Dashboard' },
+  { href: '/', label: 'Обзор', icon: LayoutDashboard, crumb: 'Обзор' },
   {
     href: '/schedule',
-    label: 'Schedule',
+    label: 'График',
     icon: CalendarRange,
-    crumb: 'Schedule',
+    crumb: 'График',
   },
   {
     href: '/equipment',
-    label: 'Equipment',
+    label: 'Оборудование',
     icon: Wrench,
-    crumb: 'Equipment',
+    crumb: 'Оборудование',
   },
   {
     href: '/issues-risks',
-    label: 'Issues & Risks',
+    label: 'Проблемы и риски',
     icon: AlertTriangle,
-    crumb: 'Issues & Risks',
+    crumb: 'Проблемы и риски',
   },
   {
     href: '/milestones',
-    label: 'Milestones',
+    label: 'Вехи',
     icon: Flag,
-    crumb: 'Milestones',
+    crumb: 'Вехи',
   },
 ];
 

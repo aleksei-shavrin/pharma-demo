@@ -2,13 +2,21 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 /**
- * Structural API boundary (I1):
+ * Structural API boundary:
  * use cases / controllers → DemoDataSource → MockDemoDataSource → fixtures.
- * Fixture implementation imports are allowed only under src/data/.
+ * Value imports of fixture modules are allowed only under src/data/.
+ * `import type` of shared shapes from fixtures/types is allowed (no runtime fixture constants).
  */
 
-const FIXTURE_IMPORT_RE =
+const FIXTURE_VALUE_IMPORT_RE =
   /(?:from\s+|require\s*\(\s*)['"][^'"]*data\/fixtures(?:\/|['"])|from\s+['"]\.\/fixtures(?:\/|['"])|from\s+['"]\.\.\/fixtures(?:\/|['"])|fixtures\/snapshot-|SNAPSHOT_[ABC]\b/;
+
+function stripTypeOnlyImports(source: string): string {
+  return source.replace(
+    /import\s+type\s+[\s\S]*?from\s+['"][^'"]+['"]\s*;?/g,
+    '',
+  );
+}
 
 function walkTsFiles(dir: string, out: string[] = []): string[] {
   for (const name of readdirSync(dir)) {
@@ -25,7 +33,7 @@ function walkTsFiles(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-/** True when a non-data source file imports fixture implementation. */
+/** True when a non-data source file value-imports fixture implementation. */
 export function isForbiddenFixtureImport(
   relPosixPath: string,
   source: string,
@@ -34,7 +42,7 @@ export function isForbiddenFixtureImport(
   if (normalized.startsWith('data/')) {
     return false;
   }
-  return FIXTURE_IMPORT_RE.test(source);
+  return FIXTURE_VALUE_IMPORT_RE.test(stripTypeOnlyImports(source));
 }
 
 function findViolations(srcRoot: string): string[] {
@@ -50,10 +58,10 @@ function findViolations(srcRoot: string): string[] {
   return violations;
 }
 
-describe('API layer boundaries (I1 structural)', () => {
+describe('API layer boundaries (structural)', () => {
   const srcRoot = path.join(__dirname);
 
-  it('catches a hypothetical application service that imports fixtures', () => {
+  it('catches application services that value-import fixtures', () => {
     expect(
       isForbiddenFixtureImport(
         'projects/evil.service.ts',
@@ -62,10 +70,19 @@ describe('API layer boundaries (I1 structural)', () => {
     ).toBe(true);
     expect(
       isForbiddenFixtureImport(
-        'projects/evil.controller.ts',
+        'dashboard/evil.service.ts',
         `import { SNAPSHOTS } from '../data/fixtures';\n`,
       ),
     ).toBe(true);
+  });
+
+  it('allows import type of fixture shapes outside data/', () => {
+    expect(
+      isForbiddenFixtureImport(
+        'dashboard/dashboard.service.ts',
+        `import type { SnapshotFixture } from '../data/fixtures/types';\n`,
+      ),
+    ).toBe(false);
   });
 
   it('allows fixture imports inside the data-access boundary', () => {
@@ -75,15 +92,9 @@ describe('API layer boundaries (I1 structural)', () => {
         `import { SNAPSHOT_A } from './fixtures/snapshot-a';\n`,
       ),
     ).toBe(false);
-    expect(
-      isForbiddenFixtureImport(
-        'data/fixtures/index.ts',
-        `import { SNAPSHOT_A } from './snapshot-a';\n`,
-      ),
-    ).toBe(false);
   });
 
-  it('scans src recursively: no application/controller fixture imports', () => {
+  it('scans src recursively: no application value-imports of fixtures', () => {
     const violations = findViolations(srcRoot);
     expect(violations).toEqual([]);
   });

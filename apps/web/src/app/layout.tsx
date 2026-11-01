@@ -5,7 +5,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Pharma Project Control — Demo v1',
-  description: 'Demo v1 App Shell and snapshot infrastructure',
+  description: 'Demo v1: оболочка приложения и обзор проекта',
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="light" suppressHydrationWarning>
+    <html lang="ru" data-theme="light" suppressHydrationWarning>
       <body>
         <AppProviders>
           <AppShell>{children}</AppShell>

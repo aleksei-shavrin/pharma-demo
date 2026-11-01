@@ -33,7 +33,7 @@ function stub(id: SnapshotId, forecast: string, asOf: string): SnapshotFixture {
     scenarioAsOfDate: asOf,
     project: {
       id: 'PRJ-01',
-      name: 'Facility Expansion Alpha',
+      name: 'Строительство фармацевтического завода',
       baselineProductionStart: '2027-09-15',
       forecastProductionStart: forecast,
     },

@@ -44,7 +44,9 @@ describe('MockDemoDataSource (DOC-PROD-012 integrity smoke)', () => {
   });
 
   it('getProject returns PRJ-01 for A and null for unknown', () => {
-    expect(ds.getProject('A', 'PRJ-01')?.name).toContain('Facility Expansion');
+    expect(ds.getProject('A', 'PRJ-01')?.name).toBe(
+      'Строительство фармацевтического завода',
+    );
     expect(ds.getProject('A', 'PRJ-999')).toBeNull();
   });
 });

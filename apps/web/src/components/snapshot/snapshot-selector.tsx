@@ -102,7 +102,7 @@ export function SnapshotSelector() {
     <div className="flex flex-col items-end gap-1">
       <div
         role="radiogroup"
-        aria-label="Demo snapshot"
+        aria-label="Демо-снимок"
         aria-busy={loading || undefined}
         id={groupId}
         className="inline-flex rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] p-0.5"
@@ -119,7 +119,7 @@ export function SnapshotSelector() {
               aria-checked={selected}
               aria-disabled={loading || undefined}
               tabIndex={tabIndex}
-              aria-label={`Snapshot ${id}${selected ? ', active' : ''}${pending ? ', loading' : ''}`}
+              aria-label={`Снимок ${id}${selected ? ', активный' : ''}${pending ? ', загрузка' : ''}`}
               ref={(el) => {
                 radioRefs.current[id] = el;
               }}
@@ -139,7 +139,7 @@ export function SnapshotSelector() {
             >
               {id}
               {pending ? (
-                <span className="sr-only"> loading</span>
+                <span className="sr-only"> загрузка</span>
               ) : null}
             </button>
           );
@@ -150,7 +150,9 @@ export function SnapshotSelector() {
           role="alert"
           className="max-w-xs text-right text-xs text-[var(--status-danger-fg)]"
         >
-          <p>Snapshot switch failed. Active snapshot remains {active}.</p>
+          <p>
+            Не удалось переключить снимок. Активный снимок остаётся {active}.
+          </p>
           <p className="mt-0.5 text-[var(--text-muted)]">{error}</p>
           <button
             type="button"
@@ -159,13 +161,13 @@ export function SnapshotSelector() {
               void retryLastSwitch();
             }}
           >
-            Retry
+            Повторить
           </button>
         </div>
       ) : null}
       {loading && requested ? (
         <p className="text-xs text-[var(--text-muted)]" aria-live="polite">
-          Loading snapshot {requested}…
+          Загрузка снимка {requested}…
         </p>
       ) : null}
     </div>

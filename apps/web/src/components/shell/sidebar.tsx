@@ -10,14 +10,14 @@ export function Sidebar() {
   return (
     <aside
       className="flex w-[var(--sidebar-width)] shrink-0 flex-col border-r border-[var(--border)] bg-[var(--surface-raised)]"
-      aria-label="Primary"
+      aria-label="Основная навигация"
     >
       <div className="flex h-[var(--topbar-height)] items-center border-b border-[var(--border)] px-4">
         <span className="text-sm font-semibold tracking-tight text-[var(--text)]">
           Pharma Project Control
         </span>
       </div>
-      <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Main">
+      <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Разделы">
         {NAV_ITEMS.map((item) => {
           const active =
             item.href === '/'
@@ -44,7 +44,7 @@ export function Sidebar() {
               />
               <span>{item.label}</span>
               {active ? (
-                <span className="sr-only">(current)</span>
+                <span className="sr-only">(текущий раздел)</span>
               ) : null}
             </Link>
           );

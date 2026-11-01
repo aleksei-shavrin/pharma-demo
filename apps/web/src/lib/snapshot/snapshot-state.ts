@@ -1,4 +1,4 @@
-import type { ProjectStub } from '@/lib/api-client';
+import type { DashboardOverview, ProjectStub } from '@/lib/api-client';
 import type { SnapshotId } from './snapshot-id';
 
 export type SnapshotStatus = 'idle' | 'loading' | 'error';
@@ -10,8 +10,10 @@ export type SnapshotState = {
   requested: SnapshotId | null;
   status: SnapshotStatus;
   error: string | null;
-  /** Minimal snapshot-aware payload proving API coherence (I2). */
+  /** Project chip / header — derived from last successful dashboard. */
   project: ProjectStub | null;
+  /** Dashboard payload committed atomically with active snapshot. */
+  dashboard: DashboardOverview | null;
   /** Latest request seq (for ignoring stale responses). */
   requestSeq: number;
 };
@@ -22,6 +24,7 @@ export type SnapshotAction =
       type: 'success';
       snapshot: SnapshotId;
       project: ProjectStub;
+      dashboard: DashboardOverview;
       seq: number;
     }
   | { type: 'failure'; error: string; seq: number };
@@ -32,12 +35,13 @@ export const initialSnapshotState: SnapshotState = {
   status: 'idle',
   error: null,
   project: null,
+  dashboard: null,
   requestSeq: 0,
 };
 
 /**
  * Pure atomic snapshot switch reducer.
- * Active snapshot changes only on success for the latest request seq.
+ * Active + dashboard + project change only on success for the latest request seq.
  */
 export function snapshotReducer(
   state: SnapshotState,
@@ -63,6 +67,7 @@ export function snapshotReducer(
         status: 'idle',
         error: null,
         project: action.project,
+        dashboard: action.dashboard,
       };
     case 'failure':
       if (action.seq !== state.requestSeq) {
@@ -73,7 +78,7 @@ export function snapshotReducer(
         requested: null,
         status: 'error',
         error: action.error,
-        // active + project unchanged — no partial / mixed state
+        // active + project + dashboard unchanged — no partial / mixed state
       };
     default:
       return state;

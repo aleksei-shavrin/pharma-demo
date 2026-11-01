@@ -8,7 +8,7 @@ export function Breadcrumbs() {
   const section = crumbForPath(pathname);
 
   return (
-    <nav aria-label="Breadcrumb" className="min-w-0">
+    <nav aria-label="Навигационная цепочка" className="min-w-0">
       <ol className="flex flex-wrap items-center gap-1 text-sm text-[var(--text-secondary)]">
         <li className="truncate text-[var(--text-muted)]">PRJ-01</li>
         <li aria-hidden className="text-[var(--text-muted)]">

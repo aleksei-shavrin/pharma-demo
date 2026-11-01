@@ -6,7 +6,7 @@ export const SNAPSHOT_B: SnapshotFixture = {
   scenarioAsOfDate: '2027-03-01',
   project: {
     id: 'PRJ-01',
-    name: 'Facility Expansion Alpha',
+    name: 'Строительство фармацевтического завода',
     baselineProductionStart: '2027-09-15',
     forecastProductionStart: '2027-10-06',
   },
