@@ -47,6 +47,13 @@ export function registerRowTypeLabel(type: 'Issue' | 'Risk'): string {
   return type === 'Issue' ? 'Проблема' : 'Риск';
 }
 
+/** Schedule control-point kind → director-facing type label (D11). */
+export function scheduleKindLabel(
+  kind: 'equipment_delivery' | 'milestone',
+): string {
+  return kind === 'equipment_delivery' ? 'Оборудование' : 'Веха';
+}
+
 export function entityTypeLabel(
   type: 'equipment' | 'issue' | 'risk' | 'milestone',
 ): string {

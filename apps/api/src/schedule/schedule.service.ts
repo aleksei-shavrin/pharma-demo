@@ -1,0 +1,80 @@
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { calendarDaysDelta } from '../common/calendar-days-delta';
+import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
+import type { SnapshotId } from '../snapshot/snapshot-id';
+import type {
+  ScheduleDto,
+  ScheduleEquipmentItemDto,
+  ScheduleMilestoneItemDto,
+} from './dto/schedule.dto';
+
+/**
+ * Schedule control-point read model (D11): Milestone + Equipment delivery only.
+ * Does not import fixture constants. No Activity/WBS/CPM/dependencies.
+ */
+@Injectable()
+export class ScheduleService {
+  constructor(
+    @Inject(DEMO_DATA_SOURCE) private readonly dataSource: DemoDataSource,
+  ) {}
+
+  getSchedule(projectId: string, snapshotId: SnapshotId): ScheduleDto {
+    const snapshot = this.dataSource.getSnapshot(snapshotId);
+    const project = this.dataSource.getProject(snapshot.id, projectId);
+    if (!project) {
+      throw new NotFoundException(`Project ${projectId} not found`);
+    }
+
+    const eq = snapshot.equipment;
+    const eqDelta = calendarDaysDelta(
+      eq.baselineDelivery,
+      eq.forecastDelivery,
+    );
+    const equipmentItem: ScheduleEquipmentItemDto = {
+      kind: 'equipment_delivery',
+      id: eq.id,
+      critical: eq.critical,
+      status: eq.status,
+      baselineDate: eq.baselineDelivery,
+      forecastDate: eq.forecastDelivery,
+      dateVariance: {
+        baselineDate: eq.baselineDelivery,
+        forecastDate: eq.forecastDelivery,
+        deltaDays: eqDelta,
+      },
+    };
+
+    const ms = snapshot.milestone;
+    const msDelta = calendarDaysDelta(ms.baselineDate, ms.forecastDate);
+    const milestoneItem: ScheduleMilestoneItemDto = {
+      kind: 'milestone',
+      id: ms.id,
+      name: ms.name,
+      rag: ms.rag,
+      baselineDate: ms.baselineDate,
+      forecastDate: ms.forecastDate,
+      dateVariance: {
+        baselineDate: ms.baselineDate,
+        forecastDate: ms.forecastDate,
+        deltaDays: msDelta,
+      },
+    };
+
+    const items = [equipmentItem, milestoneItem].sort((a, b) => {
+      if (a.forecastDate !== b.forecastDate) {
+        return a.forecastDate.localeCompare(b.forecastDate);
+      }
+      if (a.kind !== b.kind) {
+        return a.kind === 'equipment_delivery' ? -1 : 1;
+      }
+      return a.id.localeCompare(b.id);
+    });
+
+    return {
+      snapshotId: snapshot.id,
+      scenarioAsOfDate: snapshot.scenarioAsOfDate,
+      projectId: project.id,
+      items,
+    };
+  }
+}

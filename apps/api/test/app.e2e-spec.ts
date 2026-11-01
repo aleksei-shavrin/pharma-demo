@@ -352,4 +352,53 @@ describe('I2 API snapshot (e2e)', () => {
           .expect(404),
       );
   });
+
+  it('GET schedule A/B + invalid snapshot', () => {
+    type ScheduleBody = {
+      snapshotId: string;
+      items: {
+        kind: string;
+        id: string;
+        forecastDate: string;
+        dateVariance: { deltaDays: number };
+        status?: string;
+        rag?: string;
+      }[];
+    };
+
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01/schedule')
+      .expect(200)
+      .expect((res) => {
+        const body = res.body as ScheduleBody;
+        expect(body.snapshotId).toBe('A');
+        expect(body.items).toHaveLength(2);
+        expect(body.items.map((i) => i.kind).sort()).toEqual([
+          'equipment_delivery',
+          'milestone',
+        ]);
+        const eq = body.items.find((i) => i.kind === 'equipment_delivery')!;
+        expect(eq.dateVariance.deltaDays).toBe(0);
+        expect(eq.status).toBe('OnTrack');
+      })
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/schedule?snapshot=B')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as ScheduleBody;
+            const eq = body.items.find((i) => i.kind === 'equipment_delivery')!;
+            const ms = body.items.find((i) => i.kind === 'milestone')!;
+            expect(eq.forecastDate).toBe('2027-06-05');
+            expect(eq.dateVariance.deltaDays).toBe(21);
+            expect(ms.forecastDate).toBe('2027-10-06');
+            expect(ms.rag).toBe('Red');
+          }),
+      )
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/schedule?snapshot=Z')
+          .expect(400),
+      );
+  });
 });

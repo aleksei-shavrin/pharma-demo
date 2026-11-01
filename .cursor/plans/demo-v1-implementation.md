@@ -1,6 +1,6 @@
 ---
 name: Demo v1 Implementation
-overview: "Implementation Plan APPROVED (R1–R4). I1–I5 APPROVED+committed. I6 NOT STARTED. D12 blocks only I7."
+overview: "Implementation Plan APPROVED (R1–R4). I1–I6 APPROVED+committed. I7 NOT STARTED. D12 blocks only I7."
 todos:
   - id: await-impl-plan-approve
     content: Финальный human APPROVE этого Demo v1 Implementation Plan (после R1–R4)
@@ -25,7 +25,7 @@ todos:
     status: completed
   - id: i6-schedule
     content: "I6: Schedule Table + Split infrastructure/readiness (без Gantt renderer)"
-    status: pending
+    status: completed
   - id: i7-d12-gantt
     content: "I7: human-выбор D12 + read-only Gantt/timeline renderer (блок до D12)"
     status: pending
@@ -48,7 +48,8 @@ isProject: false
 | Implementation I3 | **APPROVED + committed** (`ea4205b`; includes RU / corrective passes) |
 | Implementation I4 | **APPROVED + committed** (`8225ee2`; includes corrective R1 + plan sync) |
 | Implementation I5 | **APPROVED + committed** (`cec76a1`; includes corrective R1–R2) |
-| Implementation I6+ | **NOT STARTED** — только после явной human-команды |
+| Implementation I6 | **APPROVED + committed** (`b9b6780`; includes corrective R1: Split/Timeline disabled) |
+| Implementation I7+ | **NOT STARTED** |
 
 **Проверенные источники (primary, не только handoff):** [AGENTS.md](AGENTS.md), [DOC-PROD-003](docs/03-product/demo-v1-architecture.md), [DOC-PROD-002](docs/03-product/target-technology-stack.md), [ADR-0002](docs/06-architecture/decisions/0002-target-technology-stack-direction.md), [ADR-0003](docs/06-architecture/decisions/0003-local-dev-urls-and-proxy.md), [DOC-PROD-012](docs/03-product/demo-v1-mock-narrative-data.md), living specs в `openspec/specs/`, REQ-PROJ/MILE/EQPT/RISK/IMPCT/NFR, UI Design DOC-UX-014…020 + [handoff](docs/07-delivery/handoffs/2026-11-01-ui-design.md), [testing-strategy](docs/08-quality/testing-strategy.md), существующие [docker-compose.yml](docker-compose.yml) / [Caddyfile](Caddyfile).
 
@@ -207,8 +208,8 @@ flowchart LR
 5. ~~I3 Dashboard~~ — **APPROVED + committed** (`ea4205b`).
 6. ~~I4 registers~~ — **APPROVED + committed** (`8225ee2`; incl. corrective R1).
 7. ~~I5 Entity Detail~~ — **APPROVED + committed** (`cec76a1`; incl. corrective R1–R2).
-8. **I6+** — не начинать без явной human-команды на соответствующую итерацию.
-9. D12 / Gantt library — блокирует **только I7**.
+8. ~~I6 Schedule~~ — **APPROVED + committed** (`b9b6780`; incl. corrective R1).
+9. **I7+** — не начинать без явной human-команды; D12 / Gantt library блокирует **только I7**.
 
 ---
 
@@ -268,12 +269,14 @@ flowchart LR
 
 ### I6 — Schedule Table + Split infrastructure/readiness
 
+- **Статус итерации:** **COMPLETED / APPROVED / committed** (`b9b6780`; includes corrective R1).
 - **Цель:** Полноценный Schedule **Table** как primary path; infrastructure режимов/layout Schedule; control-point data model (Milestone + Equipment delivery); type-qualified семантика Delivery vs Milestone dates; boundary/interface для будущего timeline/Gantt pane; interaction contract для optional shared focused/hovered row cue (**selection off by default**).
 - **Deps:** I4/I5.
 - **SoT:** DOC-UX-005/017/018/019; D10/D11.
 - **Вне scope / не в I6:** Gantt/timeline **renderer**; ad-hoc fake Gantt visualization; заявка, что Split — готовая визуальная Gantt-панель.
 - **AC:** Table позволяет завершить задачи с клавиатуры; нет Activity/deps/drag; режим Gantt unavailable/disabled/явно deferred — **не** выглядит как рабочая visualization; нет placeholder «как будто Gantt готов».
-- **STOP:** Schedule Table usable; Split readiness к review; D12 всё ещё open.
+- **Итог corrective R1:** Schedule Table — единственный доступный режим; «Разделение» и «Временная шкала» **disabled** до реальной timeline representation; Split infrastructure сохранена в коде для I7; без fake Gantt/bars; selection/sync не реализованы преждевременно.
+- **STOP:** Review Schedule Table + corrective R1 — **пройден (APPROVED)**.
 
 ### I7 — Spike D12 + read-only Gantt/timeline renderer
 
@@ -313,12 +316,12 @@ flowchart LR
 
 1. **Последовательность:** I1 → I2 → I3 → I4 → I5 → I6 → I7 (D12-gated) → I8.
 2. **Settled architecture:** Next/Nest/REST/OpenAPI; `DemoDataSource` + mock fixtures; без PG; Caddy URLs; `apps/web`+`apps/api`; FE только через API; `snapshot=A|B|C` request-scoped.
-3. **Сделано:** I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`8225ee2`); I5 (`cec76a1`) — все APPROVED+committed.
-4. **В работе / review:** нет; следующая итерация — **I6** (не начата).
+3. **Сделано:** I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`8225ee2`); I5 (`cec76a1`); I6 (`b9b6780`) — все APPROVED+committed.
+4. **В работе / review:** нет; следующая итерация — **I7** (NOT STARTED; блок D12).
 5. **Нерешённое → блок когда:** D12 → **только I7**; theme/snapshot cross-session persistence = `open_question`; BA-OQ-006 open.
 6. **Gates:** `test:docs` + OpenSpec strict + `test:apps` / e2e / architecture guards по мере итераций.
 7. **Agent habit:** после каждой итерации обновлять YAML todos + этот блок статуса в плане.
 
-**Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; I6 ≠ Gantt visualization; I7 = единственная итерация, заблокированная D12; Must DecisionPanel read-only / без Must POST; BA-OQ-006 open + V1 assumption; без PG/ORM/auth/monorepo tooling.
+**Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; I6 ≠ Gantt visualization (Table primary; Split/Timeline disabled до I7); I7 = единственная итерация, заблокированная D12; Must DecisionPanel read-only / без Must POST; BA-OQ-006 open + V1 assumption; без PG/ORM/auth/monorepo tooling.
 
-**Следующий шаг человека:** явная команда на старт **I6**; I6 не начинать без неё.
+**Следующий шаг человека:** явная команда на старт **I7** только после human-решения D12; I7 не начинать без неё.

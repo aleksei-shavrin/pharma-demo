@@ -99,7 +99,7 @@ export function RegisterError({
   return (
     <div role="alert" className="space-y-2 text-sm">
       <p className="text-[var(--status-danger-fg)]">
-        Не удалось загрузить реестр. {message}
+        Не удалось загрузить данные. {message}
       </p>
       <button
         type="button"

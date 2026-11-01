@@ -5,9 +5,15 @@ import {
   presentDecisionType,
   presentIssueTitle,
   presentMilestoneName,
+  scheduleKindLabel,
 } from './ui-labels';
 
 describe('Demo v1 presentation mapping', () => {
+  it('maps schedule kinds to director-facing type labels', () => {
+    expect(scheduleKindLabel('equipment_delivery')).toBe('Оборудование');
+    expect(scheduleKindLabel('milestone')).toBe('Веха');
+  });
+
   it('localizes known milestone / issue / decision', () => {
     expect(presentMilestoneName('MS-PS', 'Ready for production')).toBe(
       'Готовность к производству',

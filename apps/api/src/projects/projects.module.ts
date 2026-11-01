@@ -5,6 +5,8 @@ import { EntityDetailController } from '../entity-detail/entity-detail.controlle
 import { EntityDetailService } from '../entity-detail/entity-detail.service';
 import { RegistersController } from '../registers/registers.controller';
 import { RegistersService } from '../registers/registers.service';
+import { ScheduleController } from '../schedule/schedule.controller';
+import { ScheduleService } from '../schedule/schedule.service';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 
@@ -13,12 +15,14 @@ import { ProjectsService } from './projects.service';
     DashboardController,
     RegistersController,
     EntityDetailController,
+    ScheduleController,
     ProjectsController,
   ],
   providers: [
     DashboardService,
     RegistersService,
     EntityDetailService,
+    ScheduleService,
     ProjectsService,
   ],
 })

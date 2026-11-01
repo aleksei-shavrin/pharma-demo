@@ -1,10 +1,7 @@
-import { PagePlaceholder } from '@/components/shell/page-placeholder';
+'use client';
+
+import { ScheduleView } from '@/components/schedule/schedule-view';
 
 export default function SchedulePage() {
-  return (
-    <PagePlaceholder
-      title="График"
-      description="Раздел находится в разработке."
-    />
-  );
+  return <ScheduleView />;
 }

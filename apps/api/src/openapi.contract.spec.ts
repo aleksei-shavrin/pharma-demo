@@ -17,8 +17,8 @@ type OpenApiParam = {
   schema?: JsonSchema;
 };
 
-describe('OpenAPI contract (I2/I3/I4/I5)', () => {
-  it('publishes response DTOs, snapshot query, dashboard, register and detail paths', async () => {
+describe('OpenAPI contract (I2–I6)', () => {
+  it('publishes response DTOs, snapshot query, dashboard, register, detail and schedule paths', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -163,6 +163,33 @@ describe('OpenAPI contract (I2/I3/I4/I5)', () => {
         impact: expect.any(Object),
       }),
     );
+
+    const schedule = document.paths['/v1/projects/{id}/schedule']?.get;
+    expect(schedule).toBeDefined();
+    const scheduleSchema = schedule?.responses?.['200']?.content?.[
+      'application/json'
+    ]?.schema as JsonSchema | undefined;
+    expect(scheduleSchema).toEqual({
+      $ref: '#/components/schemas/ScheduleDto',
+    });
+    const scheduleSnap = (schedule?.parameters ?? []).find(
+      (p): p is OpenApiParam =>
+        typeof p === 'object' &&
+        p !== null &&
+        'name' in p &&
+        p.name === 'snapshot',
+    );
+    expect(scheduleSnap?.schema?.enum).toEqual(
+      expect.arrayContaining(['A', 'B', 'C']),
+    );
+    expect(scheduleSnap?.schema?.default).toBe('A');
+    expect(document.components?.schemas?.ScheduleDto).toBeDefined();
+    expect(
+      document.components?.schemas?.ScheduleEquipmentItemDto,
+    ).toBeDefined();
+    expect(
+      document.components?.schemas?.ScheduleMilestoneItemDto,
+    ).toBeDefined();
 
     await app.close();
   });

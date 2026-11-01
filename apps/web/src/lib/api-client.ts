@@ -353,3 +353,42 @@ export function fetchMilestoneDetail(
     `/v1/projects/${encodeURIComponent(projectId)}/milestones/${encodeURIComponent(entityId)}?${qs.toString()}`,
   );
 }
+
+export type ScheduleEquipmentItem = {
+  kind: 'equipment_delivery';
+  id: string;
+  critical: boolean;
+  status: 'OnTrack' | 'Delayed';
+  baselineDate: string;
+  forecastDate: string;
+  dateVariance: RegisterVariance;
+};
+
+export type ScheduleMilestoneItem = {
+  kind: 'milestone';
+  id: string;
+  name: string;
+  rag: 'Green' | 'Red';
+  baselineDate: string;
+  forecastDate: string;
+  dateVariance: RegisterVariance;
+};
+
+export type ScheduleItem = ScheduleEquipmentItem | ScheduleMilestoneItem;
+
+export type ScheduleReadModel = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  items: ScheduleItem[];
+};
+
+export function fetchSchedule(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<ScheduleReadModel> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<ScheduleReadModel>(
+    `/v1/projects/${encodeURIComponent(projectId)}/schedule?${qs.toString()}`,
+  );
+}
