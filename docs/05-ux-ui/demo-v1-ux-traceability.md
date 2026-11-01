@@ -3,7 +3,7 @@ id: DOC-UX-009
 title: "Demo v1 UX traceability"
 type: product
 status: draft
-version: "0.2.7"
+version: "0.2.8"
 created: 2026-10-31
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -12,6 +12,7 @@ related:
   - DOC-BA-016
   - DOC-UX-015
   - DOC-UX-016
+  - DOC-UX-017
   - DOC-UX-018
   - DOC-UX-019
 ---
@@ -75,6 +76,7 @@ related:
 | Component inventory + StatusIndicator models | Shell / registers / detail | DOC-UX-016 | shadcn + TanStack + Recharts | `proposal` (UI Components) |
 | Snapshot A/B/C visual story + Links≠Impact viz | Dashboard / detail / charts | DOC-UX-018 | DOC-PROD-012 fixtures | `proposal` (UI Data viz) |
 | Snapshot/theme/table/detail interaction rules | Shell / registers / detail | DOC-UX-019 | — | `proposal` (UI Interactions) |
+| Eight-surface screen compositions | Shell + P1–P5 + Detail + M-DEC | DOC-UX-017 | DOC-PROD-012 | `proposal` (UI Screens); M-DEC Must = read-only |
 | Multi-channel status encoding | Badges / tables | DOC-UX-011; allowlist | Allowlisted statuses only | `approved Visual Direction baseline` (encoding) + `approved requirement` (values) |
 | Dashboard narrative-first composition | P1 | DOC-UX-012; DOC-UX-004 | Same as D8 data | `approved Visual Direction baseline` on `approved UX decision` (blocks) |
 | Schedule table-primary visual mass | P2 | DOC-UX-012; DOC-UX-005 | MS + EQ rows | `approved Visual Direction baseline` + D10/D11 approved |

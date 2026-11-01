@@ -3,7 +3,7 @@ id: DOC-UX-README-001
 title: "UX / UI"
 type: index
 status: draft
-version: "0.8.0"
+version: "0.9.0"
 created: 2026-10-30
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -14,6 +14,7 @@ related:
   - DOC-UX-014
   - DOC-UX-015
   - DOC-UX-016
+  - DOC-UX-017
   - DOC-UX-018
   - DOC-UX-019
 ---
@@ -22,7 +23,7 @@ related:
 
 UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter документов — `status: draft` (lifecycle docs ≠ decision status).
 
-**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. **VD-A** — `approved Visual Direction baseline`. **UI Design** — in progress (Iterations 0–3 done); new UI Design choices = `proposal` until pack APPROVE. BA-OQ-006 open (working assumption V1 table); mock volume = `hypothesis`.
+**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. **VD-A** — `approved Visual Direction baseline`. **UI Design plan** — APPROVED for execution; Iterations 0–4 COMPLETED; Iteration 5 NOT STARTED. **UI Design pack** — NOT APPROVED; new UI Design choices = `proposal` until separate pack APPROVE. BA-OQ-006 open (working assumption V1 table); mock volume = `hypothesis`.
 
 ## Правила
 
@@ -36,6 +37,7 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 - UI Components: [demo-v1-component-specification.md](./demo-v1-component-specification.md) (DOC-UX-016).
 - UI Data viz: [demo-v1-ui-data-viz.md](./demo-v1-ui-data-viz.md) (DOC-UX-018).
 - UI Interactions: [demo-v1-ui-interactions.md](./demo-v1-ui-interactions.md) (DOC-UX-019).
+- UI Screens: [demo-v1-ui-screens.md](./demo-v1-ui-screens.md) (DOC-UX-017).
 
 ## Demo v1 UX decisions
 
@@ -67,7 +69,7 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 | [demo-v1-ui-design-overview.md](./demo-v1-ui-design-overview.md) | DOC-UX-014 | Wave overview, status map, constraints (Iteration 0) |
 | [demo-v1-ui-foundations.md](./demo-v1-ui-foundations.md) | DOC-UX-015 | Foundations: HEX Light/Dark, contrast, type, density, shadcn map (`proposal`) |
 | [demo-v1-component-specification.md](./demo-v1-component-specification.md) | DOC-UX-016 | Components: shell, data display, entity summaries, detail, viz boundaries (`proposal`) |
-| `demo-v1-ui-screens.md` | DOC-UX-017 | Planned — Iteration 4 |
+| [demo-v1-ui-screens.md](./demo-v1-ui-screens.md) | DOC-UX-017 | Screens: eight surfaces composition (`proposal`) |
 | [demo-v1-ui-data-viz.md](./demo-v1-ui-data-viz.md) | DOC-UX-018 | Data viz: Snapshot A/B/C, Links vs Impact, charts, Gantt semantics (`proposal`) |
 | [demo-v1-ui-interactions.md](./demo-v1-ui-interactions.md) | DOC-UX-019 | Interactions: Snapshot/theme/nav/table/detail/keyboard (`proposal`) |
 | `demo-v1-ui-quality.md` | DOC-UX-020 | Planned — Iteration 5 |

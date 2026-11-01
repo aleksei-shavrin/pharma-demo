@@ -1,6 +1,6 @@
 ---
 name: UI Design Spec Demo v1
-overview: "APPROVED UI Design Spec wave: Iterations 0–3 done (DOC-UX-014/015/016/018/019); BA-OQ-006 V1 assumption; D12 deferred; Iterations 4–5 pending; no apps."
+overview: "UI Design plan APPROVED for execution; Iterations 0–4 COMPLETED (DOC-UX-014…017); Iteration 5 NOT STARTED; UI Design pack NOT APPROVED (docs remain proposal); BA-OQ-006 open; D12 deferred; no apps."
 todos:
   - id: await-uid-approve
     content: APPROVE плана UI Design + BA-OQ-006 V1 assumption — confirmed
@@ -19,7 +19,7 @@ todos:
     status: completed
   - id: uid-iter4-screens
     content: "Iteration 4: DOC-UX-017 eight surfaces (V1 shared columns only)"
-    status: pending
+    status: completed
   - id: uid-iter5-quality-handoff
     content: "Iteration 5: DOC-UX-020 + indexes + handoff + gates; stop без commit"
     status: pending
@@ -33,15 +33,17 @@ isProject: false
 
 ## Статус плана
 
-**APPROVED** для выполнения. **Iterations 0–3 COMPLETED** (DOC-UX-014, DOC-UX-015, DOC-UX-016, DOC-UX-018, DOC-UX-019). Iterations 4–5 **not started**.
+**UI Design plan — APPROVED for execution.** **Iterations 0–4 — COMPLETED** (DOC-UX-014…019). **Iteration 5 — NOT STARTED.** **UI Design pack — NOT APPROVED** (all new UI Design decisions remain `proposal` until separate human APPROVE of the pack).
 
 **Confirmed:** BA-OQ-006 working assumption = **V1 single table + Type**; BA-OQ-006 remains **open**; D12 **deferred**; VD-A / D1–D11 not reopened.
 
-**Iteration 1 delivered:** concrete Light/Dark HEX; semantic status aliases; WCAG contrast calculations; type/spacing/radius; shadcn map; a11y checklist (`proposal`).
+**Iteration 1 delivered:** Foundations (`proposal`).
 
-**Iteration 2 delivered:** DOC-UX-016 — screen-driven components; StatusIndicator four models; Links≠Impact; DecisionPanel BR-006; viz boundaries (`proposal`).
+**Iteration 2 delivered:** DOC-UX-016 components (`proposal`).
 
-**Iteration 3 delivered:** DOC-UX-018 data viz (Snapshot A/B/C story, Links vs Impact, Δ, charts, Gantt semantics) + DOC-UX-019 interactions (Snapshot/theme/nav/table/detail/keyboard; Must Decision read-only) (`proposal`).
+**Iteration 3 delivered:** DOC-UX-018/019 data viz + interactions (`proposal`).
+
+**Iteration 4 delivered:** DOC-UX-017 eight-surface screen compositions; M-DEC Must = read-only DecisionPanel; V1 Issues&Risks shared columns (`proposal`).
 
 **Clarifications for later iterations:** (1) browser contrast check at impl; (2) StatusIndicator shared shell, distinct semantic models per entity status family; (3) V1 Issues & Risks table = shared columns only.
 
@@ -161,11 +163,11 @@ flowchart TB
 - DOC-UX-019: Snapshot/theme switch; table filter/sort; detail tabs; Decision Must read-only (not interactive M-DEC write); keyboard; empty/loading/error.
 - **Stop criterion met:** no invented metrics; BR-006 honesty explicit; Iter 4+ not started.
 
-### Iteration 4 — Screens — NOT STARTED
+### Iteration 4 — Screens — DONE
 - DOC-UX-017 for all 8 surfaces: grid, hierarchy, regions, composition, density, states, L/D, responsive, source links (UX/REQ/VD).
-- Priority order inside doc: Shell → Dashboard → Schedule → registers → Detail → M-DEC.
-- Issues & Risks: V1 assumption + BA-OQ-006 open; **shared columns only** (no artificial unify of Issue-only / Risk-only fields).
-- **Stop:** screen inventory ↔ 5 nav + details; KPI rule preserved.
+- Priority: Shell → Dashboard → Schedule → registers → Detail → M-DEC (Must read-only).
+- Issues & Risks: V1 assumption + BA-OQ-006 open; **shared columns only**.
+- **Stop criterion met:** Iter 5 not started.
 
 ### Iteration 5 — Quality, indexes, handoff, gates — NOT STARTED
 - DOC-UX-020: consistency matrix, UI AC, traceability UI Design → UX/VD/REQ/OpenSpec.
@@ -221,8 +223,9 @@ Implementation **не** следует автоматически из APPROVE �
 
 ## 9. Решения — confirmed
 
-1. План UI Design — **APPROVED**.
+1. **UI Design plan** — APPROVED for execution (not the same as pack APPROVE).
 2. BA-OQ-006 working assumption — **V1 single table + Type**; OQ remains open.
-3. Iterations 0–3 — **done**. Next = Iteration 4 only after explicit continue.
+3. Iterations 0–4 — COMPLETED; Iteration 5 — NOT STARTED.
+4. **UI Design pack** — NOT APPROVED; docs stay `proposal`.
 
 Commit — по отдельной просьбе; apps — не автостарт.
