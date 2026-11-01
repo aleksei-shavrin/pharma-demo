@@ -3,13 +3,14 @@ id: DOC-PORTAL-001
 title: "Портал документации Pharma Project Control"
 type: portal
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-PORTAL-HOME-001
   - DOC-STD-001
+  - DOC-GUIDE-001
 ---
 
 # Портал документации Pharma Project Control
@@ -34,7 +35,7 @@ related:
 | [09-release](./09-release/README.md) | Релизы |
 | [10-operations](./10-operations/README.md) | Эксплуатация |
 | [11-ai-engineering](./11-ai-engineering/README.md) | Правила работы AI-агентов |
-| [guides](./guides/README.md) | Практические гайды (Diátaxis) |
+| [guides](./guides/README.md) | Практические гайды (Diátaxis); [живой показ Demo v1](./guides/how-to/demo-v1-live-presentation.md) |
 
 ## Быстрый старт
 

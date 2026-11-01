@@ -3,24 +3,31 @@ id: DOC-GUIDES-README-001
 title: "Guides (Diátaxis)"
 type: index
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-PORTAL-002
   - DOC-STD-001
+  - DOC-GUIDE-001
 ---
 
 # Guides (Diátaxis)
 
 Практические материалы по модели **Diátaxis**.
 
+## Актуальные гайды
+
+| Гайд | Квадрант | Для кого |
+|------|----------|----------|
+| [Demo v1 — сценарий живой демонстрации](./how-to/demo-v1-live-presentation.md) | How-to | Оператор живого показа Demo v1 |
+
 ## Политика папок
 
 > **certainty:** fact
 >
-> Квадранты (`tutorials/`, `how-to/`, `explanation/`, `reference/`) создаются **только когда появляется первая реальная страница** в квадранте. Сейчас — только этот README, без пустых деревьев.
+> Квадранты (`tutorials/`, `how-to/`, `explanation/`, `reference/`) создаются **только когда появляется первая реальная страница** в квадранте. Пустые деревья не заводятся заранее.
 
 ## Когда что писать
 
