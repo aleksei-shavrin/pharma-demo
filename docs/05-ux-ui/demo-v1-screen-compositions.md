@@ -19,7 +19,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Визуальная композиция ключевых экранов под **VD-A** (`approved Visual Direction baseline`). IA/blocks — из approved UX docs; иерархия/зоны/плотность утверждены в рамках VD-A. Не дублировать REQ поля. BA-OQ-006 / D12 не закрывать. HEX/pixel polish — UI Design.
+> Визуальная композиция ключевых экранов под **VD-A** (`approved Visual Direction baseline`). IA/blocks — из approved UX docs; иерархия/зоны/плотность утверждены в рамках VD-A. Не дублировать REQ поля. BA-OQ-006 **closed** (DOC-BA-010); D12 **resolved** (ADR-0004). HEX/pixel polish — UI Design.
 
 ## 0. Shared shell
 
@@ -111,9 +111,9 @@ Toolbar + TanStack: id, name, status, critical, baseline/forecast delivery, Δ. 
 
 > **certainty:** open_question
 >
-> **BA-OQ-006** — layout Issue vs Risk на реестре **open**. Visual Direction предлагает варианты **без** выбора/закрытия OQ.
+> **BA-OQ-006** — **closed**: выбран единый register + колонка `Тип` (DOC-BA-010). Ниже — исторические VD-варианты (не альтернативы решения).
 
-| Variant (options; BA-OQ-006 still open) | Idea |
+| Historical VD option (superseded) | Idea |
 |------------------------------|------|
 | V1 | Single table + Type column (Issue or Risk) |
 | V2 | Segmented control / tabs: Issue, Risk, All |

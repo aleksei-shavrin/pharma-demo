@@ -19,7 +19,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Композиция Dashboard — `approved UX decision` (D1, D3, D5, D6, D8). Данные и integrity — REQ-IMPCT / BR / mock. BA-OQ-006 **не** закрывается (`open_question`).
+> Композиция Dashboard — `approved UX decision` (D1, D3, D5, D6, D8). Данные и integrity — REQ-IMPCT / BR / mock. BA-OQ-006 **closed** (единый register + `Тип`, DOC-BA-010); Dashboard composition этим не подменяется.
 
 ## 1. Назначение
 
@@ -54,4 +54,4 @@ Director-first home (D3): состояние production start, драйвер о
 
 > **certainty:** open_question
 >
-> Layout Issue vs Risk на полном реестре Issues & Risks — **open** (BA-OQ-006). Композиция Dashboard (D8) принята; layout реестра P4 этим **не** закрывается. На Dashboard допустим typed preview (две колонки type или явные labels) без закрытия OQ.
+> Layout Issue vs Risk на полном реестре Issues & Risks — **closed** (BA-OQ-006 → единый register + `Тип`, DOC-BA-010). Композиция Dashboard (D8) принята отдельно. На Dashboard допустим typed preview (две колонки type или явные labels).

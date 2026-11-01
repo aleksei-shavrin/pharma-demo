@@ -17,9 +17,13 @@
     "api:test": "npm --prefix apps/api test",
     "web:dev": "npm --prefix apps/web run dev",
     "web:test": "npm --prefix apps/web test",
-    "test:apps": "npm run api:test && npm run web:test"
+    "test:apps": "npm run api:test && npm run web:test",
+    "e2e:build": "npm --prefix apps/api run build && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:3121 npm --prefix apps/web run build",
+    "test:e2e": "npm run e2e:build && playwright test",
+    "test:e2e:compose": "E2E_BASE_URL=http://localhost E2E_SKIP_WEBSERVER=1 playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "glob": "^14.0.3",
     "gray-matter": "^4.0.3",
     "markdownlint-cli2": "^0.18.1"

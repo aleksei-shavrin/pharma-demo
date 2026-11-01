@@ -1,6 +1,6 @@
 ---
 name: Demo v1 Implementation
-overview: "Implementation Plan APPROVED (R1–R4). I1–I7 APPROVED+committed. D12 resolved (ADR-0004, dhtmlx-gantt 10.0.3 Community/MIT). I8 NOT STARTED. BA-OQ-006 OPEN."
+overview: "Implementation Plan APPROVED (R1–R4). I1–I8 APPROVED+committed. D12 RESOLVED. BA-OQ-006 RESOLVED. I9+ NOT STARTED."
 todos:
   - id: await-impl-plan-approve
     content: Финальный human APPROVE этого Demo v1 Implementation Plan (после R1–R4)
@@ -31,7 +31,7 @@ todos:
     status: completed
   - id: i8-compose-e2e
     content: "I8: Compose profile app + Playwright narrative + architecture gates"
-    status: pending
+    status: completed
 isProject: false
 ---
 
@@ -51,8 +51,9 @@ isProject: false
 | Implementation I6 | **APPROVED + committed** (`f776adb`; includes corrective R1: Split/Timeline disabled) |
 | D12 Gantt library | **RESOLVED** — `dhtmlx-gantt@10.0.3` MIT Community ([ADR-0004](docs/06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md)) |
 | Implementation I7 | **APPROVED + committed** (`dac0768`; includes corrective R1–R4 + visual acceptance) |
-| Implementation I8+ | **NOT STARTED** |
-| BA-OQ-006 | **OPEN** |
+| Implementation I8 | **APPROVED + committed** (`5c2e43f`; human review + visual acceptance PASSED) |
+| Implementation I9+ | **NOT STARTED** |
+| BA-OQ-006 | **RESOLVED** — единый Issues & Risks register + `Тип` (DOC-BA-010) |
 
 **Проверенные источники (primary, не только handoff):** [AGENTS.md](AGENTS.md), [DOC-PROD-003](docs/03-product/demo-v1-architecture.md), [DOC-PROD-002](docs/03-product/target-technology-stack.md), [ADR-0002](docs/06-architecture/decisions/0002-target-technology-stack-direction.md), [ADR-0003](docs/06-architecture/decisions/0003-local-dev-urls-and-proxy.md), [DOC-PROD-012](docs/03-product/demo-v1-mock-narrative-data.md), living specs в `openspec/specs/`, REQ-PROJ/MILE/EQPT/RISK/IMPCT/NFR, UI Design DOC-UX-014…020 + [handoff](docs/07-delivery/handoffs/2026-11-01-ui-design.md), [testing-strategy](docs/08-quality/testing-strategy.md), существующие [docker-compose.yml](docker-compose.yml) / [Caddyfile](Caddyfile).
 
@@ -118,7 +119,7 @@ flowchart LR
 |-----------------------|---------------------------------------------|------------|
 | Project overview / Dashboard aggregate | Typed project overview, напр. `GET /v1/projects/{id}?snapshot=` | Поля PRJ, PS Δ, refs; сводка Decision (REQ-PROJ-001, REQ-IMPCT-001) |
 | Equipment list / detail | Typed equipment, напр. `GET /v1/equipment`, `GET /v1/equipment/{id}` | OnTrack/Delayed; delivery dates/Δ (REQ-EQPT-001) |
-| Реестр Issues & Risks V1 | Combined или paired list endpoints | Только Type + shared columns (assumption BA-OQ-006) |
+| Реестр Issues & Risks V1 | Combined list endpoint | Type + shared columns (**BA-OQ-006 resolved**, DOC-BA-010) |
 | Milestones list / detail | Typed milestone resources | RAG + milestone dates/Δ (REQ-MILE-001) |
 | Schedule control points | Schedule list resource | Строки = только Milestone + Equipment delivery (D11) |
 | **Entity detail capability** | Capability загрузки **Overview + Links + Impact** для конкретной сущности в snapshot | Links = только DOC-BA-015; Impact = derived. **Точная HTTP-декомпозиция** фиксируется в OpenAPI в ходе I1–I5. **Typed** detail endpoints допустимы. **`GET /v1/{entityType}/{id}` НЕ является выбранным контрактом** этого плана. |
@@ -185,14 +186,14 @@ flowchart LR
 
 ### Безопасные assumptions для реализации
 
-- Issues & Risks **V1 single table + Type** (BA-OQ-006 остаётся open).
+- Issues & Risks **single table + Type** (BA-OQ-006 **RESOLVED**).
 - Filter non-restore при breadcrumb return.
 - Ephemeral theme/snapshot на сессию (cross-session не специфицирован).
 - Shell DOM order: логический focus order DOC-UX-019; выбранный DOM order задокументировать в коде.
 
 ### Open questions, которые **не** блокируют coding
 
-- BA-OQ-006 (использовать V1 assumption); AcceptDateSlip / Closed / Amber; interactive M-DEC **вне** Must; HIP-*; mock volume `hypothesis`; cross-session persistence.
+- AcceptDateSlip / Closed / Amber (BA-OQ-004/005); interactive M-DEC **вне** Must; HIP-* (BA-OQ-002); mock volume `hypothesis`; cross-session persistence.
 
 ### Блокирует только **позднюю** стадию
 
@@ -211,8 +212,9 @@ flowchart LR
 6. ~~I4 registers~~ — **APPROVED + committed** (`8225ee2`; incl. corrective R1).
 7. ~~I5 Entity Detail~~ — **APPROVED + committed** (`cec76a1`; incl. corrective R1–R2).
 8. ~~I6 Schedule~~ — **APPROVED + committed** (`b9b6780`; incl. corrective R1).
-9. **I7** — **APPROVED + committed** (`dac0768`; D12 resolved ADR-0004).
-10. **I8+** — не начинать без явной human-команды.
+9. **I7** — **APPROVED + committed** (`dac0768` / tip `ae983e5`; D12 resolved ADR-0004).
+10. **I8** — **APPROVED + committed** (`5c2e43f`; Compose + Playwright + BA-OQ-006; visual acceptance PASSED).
+11. **I9+** — не начинать без явной human-команды.
 
 ---
 
@@ -257,9 +259,9 @@ flowchart LR
 - **Статус итерации:** **COMPLETED / APPROVED / committed** (`22d56b2`; includes corrective R1).
 - **Цель:** List APIs + три экрана реестров; модели StatusIndicator; shared columns Issues&Risks only (без Owner).
 - **Deps:** I2 (по умолчанию после I3).
-- **SoT:** DOC-UX-016/017; REQ-EQPT/RISK/MILE; assumption BA-OQ-006 (OQ остаётся open).
+- **SoT:** DOC-UX-016/017; REQ-EQPT/RISK/MILE; на момент I4 BA-OQ-006 ещё был open (closed в I8, DOC-BA-010).
 - **AC:** Фильтры локальные non-restore; row → detail route; markers по DOC-UX-018.
-- **STOP:** Review реестров — **пройден** (BA-OQ-006 остаётся OPEN).
+- **STOP:** Review реестров — **пройден** (исторически: BA-OQ-006 был OPEN до I8).
 
 ### I5 — Entity Detail + Links vs Impact
 
@@ -268,7 +270,7 @@ flowchart LR
 - **Deps:** I4.
 - **SoT:** DOC-UX-006/017/019; DOC-BA-015; BR-004/006.
 - **AC:** Snapshot switch на detail сохраняет URL; 404 → EmptyState; Impact только derived; generic path `{entityType}` не предполагается, пока явно не добавлен в OpenAPI с human review.
-- **STOP:** Review Detail + Links≠Impact + corrective R1–R2 — **пройден** (BA-OQ-006 остаётся OPEN).
+- **STOP:** Review Detail + Links≠Impact + corrective R1–R2 — **пройден** (исторически: BA-OQ-006 был OPEN до I8).
 
 ### I6 — Schedule Table + Split infrastructure/readiness
 
@@ -292,10 +294,13 @@ flowchart LR
 
 ### I8 — Compose profile app + Demo readiness gates
 
+- **Статус итерации:** **COMPLETED / APPROVED / committed** (`5c2e43f`; human review + visual acceptance PASSED).
 - **Цель:** Заменить Compose placeholders `web`/`api` реальными builds; проверить маршруты Caddy; Playwright narrative path; зелёные architecture tests; зафиксировать оставшиеся open questions.
-- **Deps:** минимум I3–I6 (I7 опционален).
+- **Deps:** минимум I3–I6 (I7 опционален) — выполнено (+ I7).
 - **AC:** `docker compose --profile app up` отдаёт FE+API через localhost/api.localhost; E2E A→B→C; docs+OpenSpec gates PASS; Implementation по-прежнему без PG/auth.
-- **STOP:** Review Demo v1 readiness (не auto production).
+- **Итог (факт):** Dockerfiles `apps/web` + `apps/api`; Compose profile `app`; Playwright narrative; architecture guards; BA-OQ-006 **RESOLVED**; remaining OQ: BA-OQ-004/005, BA-OQ-002/HIP-*, cross-session persistence.
+- **Visual acceptance (PASSED):** Dashboard A/B/C Light; Schedule B Split Dark; Issues & Risks B Light — A on-track; B +21 causal; C PrioritizeRecovery without recovery wash; Risk/MS Red; forecast 06.10.2027; 2 logical rows; BA-OQ-006 Type column.
+- **STOP:** Review Demo v1 readiness — **пройден (APPROVED)**; не auto production.
 
 ---
 
@@ -320,12 +325,13 @@ flowchart LR
 
 1. **Последовательность:** I1 → I2 → I3 → I4 → I5 → I6 → I7 (D12-gated) → I8.
 2. **Settled architecture:** Next/Nest/REST/OpenAPI; `DemoDataSource` + mock fixtures; без PG; Caddy URLs; `apps/web`+`apps/api`; FE только через API; `snapshot=A|B|C` request-scoped.
-3. **Сделано:** I1–I7 APPROVED+committed — I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`8225ee2`); I5 (`cec76a1` / tip `ff39f23`); I6 (`f776adb`); I7 (`dac0768`).
+3. **Сделано:** I1–I8 APPROVED+committed — I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`8225ee2`); I5 (`cec76a1` / tip `ff39f23`); I6 (`f776adb`); I7 (`dac0768` / tip `ae983e5`); I8 (`5c2e43f`).
 4. **D12:** **RESOLVED** — `dhtmlx-gantt@10.0.3` Community / MIT (ADR-0004).
-5. **Нерешённое → блок когда:** theme/snapshot cross-session persistence = `open_question`; **BA-OQ-006 OPEN**.
-6. **Gates:** `test:docs` + OpenSpec strict + `test:apps` / e2e / architecture guards по мере итераций.
-7. **Agent habit:** после каждой итерации обновлять YAML todos + этот блок статуса в плане; sync `~/.cursor/plans/demo_v1_implementation_*.plan.md` with workspace SoT.
+5. **BA-OQ-006:** **RESOLVED** (единый register + `Тип`; DOC-BA-010).
+6. **Нерешённое → блок когда:** theme/snapshot cross-session persistence = `open_question`; BA-OQ-004/005; BA-OQ-002 / HIP-*.
+7. **Gates:** `test:docs` + OpenSpec strict + `test:apps` + `test:e2e` / architecture guards.
+8. **Agent habit:** после каждой итерации обновлять YAML todos + этот блок статуса в плане; sync `~/.cursor/plans/demo_v1_implementation_*.plan.md` with workspace SoT.
 
-**Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; Schedule Table primary; Timeline via dhtmlx Community adapter (no PRO); Must DecisionPanel read-only / без Must POST; BA-OQ-006 open + V1 assumption; без PG/ORM/auth/monorepo tooling.
+**Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; Schedule Table primary; Timeline via dhtmlx Community adapter (no PRO); Must DecisionPanel read-only / без Must POST; BA-OQ-006 resolved; без PG/ORM/auth/monorepo tooling.
 
-**Следующий шаг человека:** явная команда на **I8** (Compose app profile + Playwright narrative); I8 **NOT STARTED**.
+**Следующий шаг человека:** явная команда на **I9** (если/когда определена); **I9 NOT STARTED**.

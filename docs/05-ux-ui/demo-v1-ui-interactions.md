@@ -91,7 +91,7 @@ Aligned with DOC-UX-016 §5.3:
 | Empty / loading / error | EmptyState / LoadingState / ErrorState (DOC-UX-016) |
 | Horizontal scroll | Preferred over hiding critical date/status/Δ columns |
 
-BA-OQ-006 remains **open**; V1 Issues&Risks single table + Type = `assumption` for layout only.
+BA-OQ-006 **closed**: Issues&Risks single table + Type (DOC-BA-010).
 
 ## 7. Schedule Table / Gantt (`approved UI Design decision`)
 
@@ -176,7 +176,7 @@ Practical requirements for implementation (not an audit result):
 | Interactive Decision write / M-DEC outside Must | `open_question` (Must path = read-only DecisionPanel; Snapshot C = fixture DEC-001; not a Must write flow) |
 | Selection/pagination | Off unless scenario confirmed |
 | Shell DOM order Sidebar vs TopBar | open_question / impl constraint (§12) |
-| BA-OQ-006 | remains open |
+| BA-OQ-006 | **closed** — single register + Type (DOC-BA-010) |
 | D12 | deferred |
 | AcceptDateSlip journey | not Must |
 

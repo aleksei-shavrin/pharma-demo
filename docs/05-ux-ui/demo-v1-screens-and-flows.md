@@ -30,7 +30,7 @@ related:
 | P1 | Dashboard | Director primary; PM secondary | C-01 + C-05 aggregate |
 | P2 | Schedule | Both | Control points MS + EQ (D10–D11) |
 | P3 | Equipment | Both | C-03 |
-| P4 | Issues & Risks | Both | C-04; BA-OQ-006 open for layout |
+| P4 | Issues & Risks | Both | C-04; BA-OQ-006 closed (single register + Type) |
 | P5 | Milestones | Both | C-02 |
 
 ### Detail / modal

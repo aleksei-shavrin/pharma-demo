@@ -27,19 +27,26 @@ services:
   # App stack — only with: docker compose --profile app up
   web:
     profiles: ["app"]
-    # Placeholder until the app image exists.
-    # build: ./apps/web
-    image: nginx:alpine
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://api.localhost
     expose:
       - "3000"
+    depends_on:
+      - api
     networks:
       - ppc-net
 
   api:
     profiles: ["app"]
-    # Placeholder until the API image exists.
-    # build: ./apps/api
-    image: nginx:alpine
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    environment:
+      PORT: "3000"
+      WEB_ORIGIN: http://localhost
     expose:
       - "3000"
     networks:

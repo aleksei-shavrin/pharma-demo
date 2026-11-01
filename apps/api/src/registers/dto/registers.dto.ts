@@ -50,7 +50,7 @@ export class IssuesRisksRowDto {
   @ApiProperty({
     enum: ['Issue', 'Risk'],
     description:
-      'V1 single-table Type column (BA-OQ-006 remains open — layout assumption only)',
+      'Single-table Type column (BA-OQ-006 resolved — Demo v1 register decision)',
   })
   type!: 'Issue' | 'Risk';
 

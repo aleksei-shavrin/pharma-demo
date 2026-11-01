@@ -61,5 +61,5 @@ related:
 ## Оставшиеся open (не scope freeze)
 
 - BA-OQ-004 / BA-OQ-005 — post-state после AcceptDateSlip
-- BA-OQ-006 — UI presentation Issue/Risk
+- ~~BA-OQ-006~~ — UI presentation Issue/Risk (**closed** 2026-11-01; единый register + `Тип`, DOC-BA-010)
 - HIP-003 / HIP-004 / HIP-007 — messaging, горизонт, framing

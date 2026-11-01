@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "NEXT_DIST_DIR=.next-build next build",
     "start": "NEXT_DIST_DIR=.next-build next start",
+    "start:standalone": "node .next-build/standalone/server.js",
     "dev:fresh": "rm -rf .next && next dev --turbopack",
     "lint": "next lint",
     "test": "vitest run && npm run check:architecture",

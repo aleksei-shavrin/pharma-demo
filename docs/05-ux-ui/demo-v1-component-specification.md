@@ -72,7 +72,7 @@ related:
 6. **No Amber / Closed Must chrome** — Closed UI unspecified until decided.
 7. **Links ≠ Impact** — Links = DOC-BA-015 direct edges only; Impact = derived (BR-004/006, aggregates). No EQ—MS edge; no Issue—Decision / Risk—Decision / Equipment—Decision edges.
 8. **KPI group** — show ≥4 justified metrics or omit group (`approved UX decision`).
-9. **BA-OQ-006** — remains **open**; Issues & Risks **V1 single table + Type** = `assumption` for column layout only.
+9. **BA-OQ-006** — **closed**; Issues & Risks **single table + Type** = Demo v1 decision (DOC-BA-010).
 10. **No inline edit** of Domain fields in Demo v1 registers unless a Must journey requires it (none for Must path here).
 11. **Accessibility** — visible focus, keyboard, accessible names, contrast from DOC-UX-015; **no WCAG audit claim**.
 
@@ -259,7 +259,7 @@ related:
 | Interaction / keyboard | Sort headers activatable; row open/navigate via link or row action; no inline Domain edit in Must registers. |
 | Responsive | Horizontal scroll; desktop-first. |
 | Accessibility | Column headers; sort state announced; status cells use StatusIndicator text. |
-| Data / semantic | Issues&Risks V1: shared columns + Type; BA-OQ-006 **open**. Schedule = Milestone + Equipment delivery only. **Selection and pagination are optional**, off by default; add only with a confirmed Demo v1 scenario. |
+| Data / semantic | Issues&Risks: shared columns + Type; BA-OQ-006 **closed**. Schedule = Milestone + Equipment delivery only. **Selection and pagination are optional**, off by default; add only with a confirmed Demo v1 scenario. |
 | Sources | DOC-UX-007, DOC-UX-005, BA-OQ-006. |
 
 ### 5.4 TableToolbar
@@ -565,7 +565,7 @@ Do not add orphan primitives unused by screens above.
 
 | Item | Handling |
 |------|----------|
-| BA-OQ-006 | Open; V1 table+Type = `assumption` |
+| BA-OQ-006 | **Closed**; single table+Type = Demo v1 decision (DOC-BA-010) |
 | D12 Gantt lib | Deferred; GanttSurface visual-only |
 | Issue Closed / Amber | Not Must components |
 | AcceptDateSlip UI | Not Must journey |

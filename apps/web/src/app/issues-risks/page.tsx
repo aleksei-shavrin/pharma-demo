@@ -22,8 +22,8 @@ import {
 } from '@/lib/ui-labels';
 
 /**
- * V1 working assumption: single table + Type (BA-OQ-006 remains OPEN).
- * Shared columns only — Owner intentionally omitted.
+ * BA-OQ-006 resolved: single Issues & Risks register + Type column.
+ * Domain Issue/Risk remain separate; shared columns only — Owner omitted.
  */
 export default function IssuesRisksPage() {
   const { active } = useSnapshot();

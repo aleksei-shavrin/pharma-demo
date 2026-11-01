@@ -54,7 +54,7 @@ Pharma Project Control **Demo v1** — компактное enterprise-прил�
 | D5 | Явно показывать влияние задержки EQ delivery на Production Start | `approved UX decision` | [dashboard](./demo-v1-dashboard.md) |
 | D6 | PrioritizeRecovery — отдельная управленческая Decision; не изображать execution recovery | `approved UX decision` | [dashboard](./demo-v1-dashboard.md), [screens](./demo-v1-screens-and-flows.md) |
 | D7 | Director и PM — один интерфейс и одна навигация | `approved UX decision` | [shell](./demo-v1-shell-navigation.md), [screens](./demo-v1-screens-and-flows.md) |
-| D8 | Композиция Dashboard утверждена; **BA-OQ-006** open для Issues/Risks Register | `approved UX decision` + `open_question` | [dashboard](./demo-v1-dashboard.md) |
+| D8 | Композиция Dashboard утверждена; Issues/Risks Register — единый + `Тип` (**BA-OQ-006 closed**) | `approved UX decision` + Demo v1 decision | [dashboard](./demo-v1-dashboard.md) |
 | D9 | Sidebar: Dashboard, Schedule, Equipment, Issues & Risks, Milestones | `approved UX decision` | [shell](./demo-v1-shell-navigation.md) |
 | D10 | TanStack Table primary; Gantt read-only secondary | `approved UX decision` | [schedule](./demo-v1-schedule-workspace.md), [data-viz](./demo-v1-data-viz-and-components.md) |
 | D11 | Schedule = Milestone + Equipment Delivery only; без Activity/WBS/CPM/deps/engine | `approved UX decision` | [schedule](./demo-v1-schedule-workspace.md) |
@@ -91,7 +91,7 @@ Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 
 ## 7. Open questions (не закрывать)
 
-- **BA-OQ-006** — UI layout Issue и Risk на реестре
+- ~~**BA-OQ-006**~~ — UI layout Issue и Risk на реестре (**closed**, DOC-BA-010)
 - **BA-OQ-004 / BA-OQ-005** — AcceptDateSlip post-state
 - **BA-OQ-002 / HIP-003/004/007 / HIP-005** — messaging / framing / enterprise-fact
 - **Closed** / **Amber** в ambient mock — без отдельного решения не использовать

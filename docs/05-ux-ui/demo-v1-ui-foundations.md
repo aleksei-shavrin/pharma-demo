@@ -30,7 +30,7 @@ related:
 | Scope | Color, type, spacing, radius, elevation, interaction tokens, responsive foundations, shadcn mapping, a11y checklist |
 | Decision status of new values | **`approved UI Design decision`** |
 | VD-A / D1–D11 | Cite only (`approved Visual Direction baseline` / `approved UX decision`) |
-| BA-OQ-006 | Remains **open**; V1 table layout = `assumption` (not specified here) |
+| BA-OQ-006 | **closed** — единый register + `Тип` (DOC-BA-010); layout not specified here |
 | D12 | Remains **`deferred decision`** |
 | WCAG product compliance | **Not claimed** — calculated targets for selected pairs only |
 
@@ -541,7 +541,7 @@ Chart series (`chart-*`): neutrals + status markers; exact series table deferred
 | Item | Status |
 |------|--------|
 | UI Design pack APPROVE (locks HEX) | **APPROVED** (human); Implementation NOT STARTED |
-| BA-OQ-006 layout | Open; V1 assumption elsewhere |
+| BA-OQ-006 layout | **closed** — single table + Type (DOC-BA-010) |
 | D12 Gantt library | Deferred |
 | Issue Closed / Amber tokens | Not Must — unspecified |
 | Webfont choice beyond system stack | Open; system stack default |

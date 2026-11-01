@@ -42,7 +42,7 @@ export class RegistersController {
   @Get(':id/issues-risks')
   @ApiOperation({
     summary:
-      'Issues & Risks register read model (V1 single table; BA-OQ-006 open)',
+      'Issues & Risks register read model (single table + Type; BA-OQ-006 resolved)',
   })
   @ApiQuery({
     name: 'snapshot',

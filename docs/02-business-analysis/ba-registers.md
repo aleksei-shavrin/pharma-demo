@@ -3,9 +3,9 @@ id: DOC-BA-010
 title: "BA registers"
 type: business
 status: draft
-version: "0.3.0"
+version: "0.4.0"
 created: 2026-10-30
-updated: 2026-10-31
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-DISC-010
@@ -14,6 +14,7 @@ related:
   - DOC-PROD-011
   - DOC-PROD-012
   - DOC-PROD-001
+  - DOC-UX-017
 ---
 
 # BA registers
@@ -49,7 +50,7 @@ Certainty: demo direction ≠ enterprise-`fact`.
 | BA-OQ-003 | *(закрыт)* Концептуально Issue и Risk — отдельные связанные сущности | BA/PD | **closed** — Domain Model DOC-BA-015, BR-001/002, REQ-RISK-001 |
 | BA-OQ-004 | Issue.status после AcceptDateSlip (не авто-Closed; AcceptDateSlip = Decision type) | product owner | open |
 | BA-OQ-005 | Risk.rag / Milestone.rag после AcceptDateSlip, если Issue уже не Open/Mitigating | product owner | open |
-| BA-OQ-006 | Как представлять Issue и Risk в UI (раздельные панели vs совместный вид) | product owner / UX | open — не ставит под сомнение отдельность сущностей |
+| BA-OQ-006 | *(закрыт)* Как представлять Issue и Risk в UI (раздельные панели vs совместный вид) | product owner / UX | **closed** — 2026-11-01; см. § «Решение BA-OQ-006» |
 
 ## Решение BA-OQ-001 (2026-10-31)
 
@@ -70,6 +71,27 @@ Certainty: demo direction ≠ enterprise-`fact`.
 | Вне Demo v1 | Полноценный CPM; управление соответствием GMP/CSV; расширенная методология управления рисками; полноценное управление подрядчиками и бюджетом |
 
 **Связанные документы:** [demo-v1-functional-scope](../03-product/demo-v1-functional-scope.md) (DOC-PROD-011), [demo-v1-capabilities](../03-product/demo-v1-capabilities.md), [demo-v1-mock-narrative-data](../03-product/demo-v1-mock-narrative-data.md), [vision-and-scope](../03-product/vision-and-scope.md), [business-rules-demo-v1](./business-rules-demo-v1.md) (BR-006), Discovery HIP-001/006 ([human-input-pack](../01-discovery/human-input-pack.md)).
+
+## Решение BA-OQ-006 (2026-11-01)
+
+> **certainty:** fact
+>
+> Product Owner подтвердил **presentation / register architecture** Demo v1 для Issues & Risks. Это решение о **директорском UI-реестре**, а **не** объединение Domain-сущностей Issue и Risk.
+
+| Тема | Решение |
+|------|---------|
+| Register | **Единый** реестр Issues & Risks (один director-facing view) |
+| Rationale | Директору нужен единый management-exception view, где проблемы и риски видны совместно |
+| Domain | Issue и Risk остаются **отдельными** сущностями (BA-OQ-003); **нет** общей Exception / generic lifecycle entity |
+| Колонка `Тип` | Обязательна; director-facing: **`Проблема`** / **`Риск`** |
+| Issue lifecycle | Open / Mitigating / Closed (без общего lifecycle с Risk) |
+| Risk status | Отдельный **RAG** (не общий status enum с Issue) |
+| Detail routes | Раздельные: `/issues/:id`, `/risks/:id` |
+| API / relationships | Остаются раздельными; решение не меняет DOC-BA-015 direct-links matrix |
+
+**История:** ранее UI Design pack использовал V1 single table + Type как `assumption` при открытом OQ. С 2026-11-01 это **принятое Demo v1 decision** (бывшая working assumption → decision).
+
+**Связанные документы:** [demo-v1-ui-screens](../05-ux-ui/demo-v1-ui-screens.md) (P4), Domain Model / BR-001/002, OpenSpec `management-exception-report` (capability по-прежнему не предписывает layout impact screens).
 
 ## Included processes (Demo v1 narrative)
 

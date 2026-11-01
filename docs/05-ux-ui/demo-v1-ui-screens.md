@@ -37,7 +37,7 @@ related:
 | Binding to DOC-UX-015…019 + UX + fixtures | Changing fixture values |
 | Screen↔component mapping | Choosing Gantt lib (D12) |
 
-**Certainty vocabulary:** cite `approved UX decision` / `approved Visual Direction baseline` / `approved UI Design decision`; BA-OQ-006 V1 table = `assumption`; mock volume = `hypothesis`; D12 = `deferred decision`; residual unapproved ideas (if any) = `proposal`.
+**Certainty vocabulary:** cite `approved UX decision` / `approved Visual Direction baseline` / `approved UI Design decision`; BA-OQ-006 single table+Type = Demo v1 decision (DOC-BA-010); mock volume = `hypothesis`; D12 resolved (ADR-0004); residual unapproved ideas (if any) = `proposal`.
 
 ## 2. Screen inventory (eight surfaces)
 
@@ -214,7 +214,7 @@ Selection/pagination **off** by default (DOC-UX-016). D12 deferred.
 | Light / Dark | Per foundations. |
 | Responsive | H-scroll; keep Type + Status/RAG + Title. |
 | Navigation / interactions | Row → D-ISS or D-RSK by Type. |
-| Traceability | BA-OQ-006 **open**; V1 = `assumption` only; REQ-RISK; BR-002. |
+| Traceability | BA-OQ-006 **closed** (single table + Type); REQ-RISK; BR-002. |
 
 ```text
 ┌ Type | ID | Title | Status/RAG ─────────────────────────────┐
@@ -368,7 +368,7 @@ Min content width **target** ≥720px when full shell shown (DOC-UX-015) — not
 | Dashboard | D1/D3/D5/D6/D8; DOC-UX-004 | 016–019 | BR-004/006; DOC-PROD-012; C-01/C-05 |
 | Schedule | D10–D12; DOC-UX-005 | 016–018 | REQ-EQPT/MILE |
 | Equipment | DOC-UX-003 P3 | 016 | REQ-EQPT; Domain EQ |
-| Issues&Risks | P4; BA-OQ-006 open | 016 V1 assumption | REQ-RISK; BR-002 |
+| Issues&Risks | P4; BA-OQ-006 closed | 016 single table+Type | REQ-RISK; BR-002 |
 | Milestones | P5 | 016 | REQ-MILE |
 | Detail | D4; DOC-UX-006 | 016–019 | DOC-BA-015 |
 | M-DEC | D6 intent | 016/019 Must read-only | BR-006; REQ-IMPCT-002 |
@@ -377,7 +377,7 @@ Min content width **target** ≥720px when full shell shown (DOC-UX-015) — not
 
 | Item | Status |
 |------|--------|
-| BA-OQ-006 layout | **open**; V1 single table+Type = `assumption` |
+| BA-OQ-006 layout | **closed**; single table+Type = Demo v1 decision (DOC-BA-010) |
 | D12 Gantt lib | **deferred** |
 | Interactive M-DEC / PrioritizeRecovery recording outside Must | **open_question** (Must path = read-only DecisionPanel + fixture DEC-001 on C — decided for Demo v1 Must; DOC-UX-003 modal journey remains outside Must) |
 | Shell DOM Sidebar vs TopBar order | **open_question** (DOC-UX-019) |

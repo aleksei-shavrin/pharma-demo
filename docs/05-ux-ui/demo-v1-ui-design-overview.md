@@ -48,7 +48,7 @@ related:
 | `approved Visual Direction baseline` | VD-A — cite only |
 | `approved UI Design decision` | UI Design pack choices (HEX, components, screens, viz, interactions, quality) after human pack APPROVE |
 | `proposal` | Residual unapproved UX/UI suggestion (not pack-locked) |
-| `assumption` | Temporary design working choice (e.g. BA-OQ-006 V1 layout; filter non-restore MVP) |
+| `assumption` | Temporary design working choice (e.g. filter non-restore MVP) |
 | `hypothesis` | Unproven scale (mock volume) |
 | `deferred decision` | — (D12 resolved: ADR-0004) |
 | `open_question` | Unresolved BA / product / UX / implementation question intentionally left open by this wave (includes BA-OQ/HIP, persistence, shell DOM order, and other non-closed choices — not limited to BA-OQ/HIP or tech-only) |
@@ -72,7 +72,7 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 
 | Topic | Handling | Status |
 |-------|----------|--------|
-| Issues & Risks register layout | **V1 — single table + Type column** for UI Design specs | `assumption`; **BA-OQ-006 remains open** |
+| Issues & Risks register layout | **single table + Type column** | **BA-OQ-006 closed** (DOC-BA-010 Demo v1 decision) |
 | V1 table columns | Only truly shared columns; do not force-unify Issue-only or Risk-only attributes | `assumption` |
 | StatusIndicator | May be shared component; Issue status / Risk RAG / Milestone RAG / Equipment delivery status keep distinct visual+semantic models | `approved UI Design decision` |
 | Gantt library | Visual semantics only | `deferred decision` (D12) |
@@ -138,7 +138,7 @@ Full handoff: [`docs/07-delivery/handoffs/2026-11-01-ui-design.md`](../07-delive
 | Use for impl planning | After pack APPROVE **and** separate explicit Implementation start |
 | Do not treat as | Permission to build `apps/` without that separate start |
 
-Open questions remain: BA-OQ-006, D12, interactive PrioritizeRecovery recording **outside Must** (Must DecisionPanel stays read-only), shell DOM order, theme/snapshot/cross-session filter persistence (MVP filter non-restore = `assumption`, DOC-UX-019), AcceptDateSlip/Closed/Amber, HIP-*.
+Open questions remain: interactive PrioritizeRecovery recording **outside Must** (Must DecisionPanel stays read-only), shell DOM order, theme/snapshot/cross-session filter persistence (MVP filter non-restore = `assumption`, DOC-UX-019), AcceptDateSlip/Closed/Amber (BA-OQ-004/005), HIP-*. BA-OQ-006 **closed**; D12 **resolved** (ADR-0004).
 
 ## 10. Related
 

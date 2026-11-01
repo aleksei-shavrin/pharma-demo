@@ -81,12 +81,13 @@
 
 ### Requirement: No UI layout prescription
 
-Requirements этой capability SHALL NOT предписывать UI layout Issue/Risk или impact screens (BA-OQ-006; REQ-IMPCT-001).
+Requirements этой capability SHALL NOT предписывать конкретный UI layout impact screens (REQ-IMPCT-001). Presentation Issues & Risks register для Demo v1 resolved вне этой capability: единый register + колонка `Тип` (BA-OQ-006 **closed**, DOC-BA-010); Domain Issue/Risk остаются раздельными.
 
 #### Scenario: Behavior without layout
 
 - **WHEN** проверяются acceptance criteria impact/decision
-- **THEN** критерии не требуют конкретного UI layout
+- **THEN** критерии не требуют конкретного UI layout impact screens
+- **AND** критерии не объединяют Issue и Risk в одну Domain entity
 
 ### Requirement: No GMP change workflow for Decision
 

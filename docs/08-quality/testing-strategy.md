@@ -3,9 +3,9 @@ id: DOC-QA-001
 title: "Стратегия тестирования"
 type: quality
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-QA-002
@@ -23,9 +23,9 @@ related:
 > |------|--------------------------|
 > | Unit/UI logic FE | Vitest |
 > | Unit/integration BE | Jest (экосистема NestJS) |
-> | E2E | Playwright |
-> | Contract (OpenAPI) | contract tests против спеки |
-> | Architecture fitness | dependency-cruiser (+ см. architecture-tests) |
+> | E2E | Playwright (`e2e/`, `npm run test:e2e`; optional Compose via `test:e2e:compose`) |
+> | Contract (OpenAPI) | Nest OpenAPI contract Jest (`apps/api/src/openapi.contract.spec.ts`) |
+> | Architecture fitness | FE `check-no-api-imports.mjs` + API `architecture.boundary.spec.ts` (см. architecture-tests); dependency-cruiser — FUTURE |
 
 ## Принципы
 
@@ -39,4 +39,4 @@ related:
 
 > **certainty:** fact
 >
-> Подключение и обязательность в CI — **FUTURE**. Этот документ задаёт направление, не pipeline.
+> Локальные Demo readiness gates (I8): `npm run test:apps`, `npm run test:e2e`, `npm run test:docs`, `openspec validate --all --strict`. CI fail-on-threshold / обязательный pipeline — **FUTURE**.

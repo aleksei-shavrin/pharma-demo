@@ -25,7 +25,7 @@ related:
 
 UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter документов — `status: draft` (lifecycle docs ≠ decision status).
 
-**D1–D11** — `approved UX decision`; **D12** — `deferred decision`. **VD-A** — `approved Visual Direction baseline`. **UI Design Spec plan** — COMPLETED (Iterations 0–5). **UI Design pack** — **APPROVED** (`approved UI Design decision`). **Implementation** — NOT STARTED (pack APPROVE ≠ impl start). BA-OQ-006 open (working assumption V1 table); mock volume = `hypothesis`.
+**D1–D11** — `approved UX decision`; **D12** — resolved (ADR-0004, I7). **VD-A** — `approved Visual Direction baseline`. **UI Design Spec plan** — COMPLETED (Iterations 0–5). **UI Design pack** — **APPROVED** (`approved UI Design decision`). BA-OQ-006 **closed** (единый register + `Тип`, DOC-BA-010); mock volume = `hypothesis`.
 
 ## Правила
 
@@ -50,7 +50,7 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 | [demo-v1-ux-concept.md](./demo-v1-ux-concept.md) | DOC-UX-001 | Summary, D1–D12 statuses, constraints, open Q |
 | [demo-v1-shell-navigation.md](./demo-v1-shell-navigation.md) | DOC-UX-002 | Shell, 5 nav, theme, Snapshot, breadcrumbs |
 | [demo-v1-screens-and-flows.md](./demo-v1-screens-and-flows.md) | DOC-UX-003 | Inventory + A→B→C (+ PM paths) |
-| [demo-v1-dashboard.md](./demo-v1-dashboard.md) | DOC-UX-004 | Director Dashboard (D8); BA-OQ-006 open |
+| [demo-v1-dashboard.md](./demo-v1-dashboard.md) | DOC-UX-004 | Director Dashboard (D8); BA-OQ-006 closed |
 | [demo-v1-schedule-workspace.md](./demo-v1-schedule-workspace.md) | DOC-UX-005 | Table/Gantt control points (D10–D12) |
 | [demo-v1-entity-detail.md](./demo-v1-entity-detail.md) | DOC-UX-006 | Full Page + Tabs + Links vs Impact |
 | [demo-v1-data-viz-and-components.md](./demo-v1-data-viz-and-components.md) | DOC-UX-007 | shadcn / TanStack / Recharts / Gantt deferred |

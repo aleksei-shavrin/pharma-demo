@@ -7,6 +7,8 @@ import type { NextConfig } from "next";
  */
 const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  // Required for Compose image (`apps/web/Dockerfile` copies `.next/standalone`).
+  output: "standalone",
 };
 
 export default nextConfig;

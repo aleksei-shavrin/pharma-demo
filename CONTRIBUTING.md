@@ -29,13 +29,29 @@ docker compose down
 | URL | Сервис | Сейчас |
 |---|---|---|
 | http://docs.localhost | портал (Docusaurus static за Caddy) | ожидается HTTP 200 |
-| http://localhost | future web (Next.js) | **502**, пока не включён profile `app` |
-| http://api.localhost | future API (NestJS) | **502**, пока не включён profile `app` |
+| http://localhost | Demo v1 web (Next.js) | HTTP 200 при `docker compose --profile app up --build -d` |
+| http://api.localhost | Demo v1 API (NestJS) | HTTP 200 `/health` при profile `app` |
 
-App-стек (когда появится код):
+App-стек Demo v1 (I8; images на Node 24):
 
 ```bash
 docker compose --profile app up --build -d
+curl -fsS http://api.localhost/health
+# UI: http://localhost
+```
+
+Narrative Playwright (локальные процессы, без Compose):
+
+```bash
+npm install
+npx playwright install chromium
+npm run test:e2e
+```
+
+Против уже поднятого Compose:
+
+```bash
+npm run test:e2e:compose
 ```
 
 Опционально для авторов портала (hot-reload, не продакшен-runtime): команды `docs:dev` в root `package.json` — появятся вместе со scripts (W2-Scripts).

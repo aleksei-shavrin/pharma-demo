@@ -3,43 +3,52 @@ id: DOC-QA-003
 title: "Архитектурные тесты"
 type: quality
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-QA-001
   - DOC-PROD-003
   - DOC-ADR-0002
+  - DOC-ADR-0004
 ---
 
 # Архитектурные тесты
 
 ## Цель
 
+> **certainty:** fact
+>
+> Автоматически ловить нарушения границ модулей Demo v1: FE → прямые импорты BE/mock internals; FE → vendor Gantt вне adapter; application/controllers → value-import fixture constants в обход `DemoDataSource`.
+
+## Demo v1 enforcement (I8)
+
+> **certainty:** fact
+>
+> | Guard | Где | Что ловит |
+> |-------|-----|-----------|
+> | FE boundary | `apps/web/scripts/check-no-api-imports.mjs` (`npm run check:architecture`) | Импорты Nest/API/fixtures; `dhtmlx-gantt` вне `dhtmlx-gantt-adapter.tsx` |
+> | API boundary | `apps/api/src/architecture.boundary.spec.ts` | Value-import fixture modules вне `src/data/` |
+>
+> Оба входят в `npm run test:apps` / пакетные `test` scripts.
+
+## Направление (после Demo v1)
+
 > **certainty:** hypothesis
 >
-> Автоматически ловить нарушения границ модулей (например FE → прямые импорты BE internals; UI → обход API-слоя; domain → конкретный Postgres driver в обход port).
+> - **dependency-cruiser** (или аналог) с полным графом пакетов.
+> - Запрет `pg` / ORM вне persistence adapter (когда появится DB).
 
-## Направление
-
-> **certainty:** hypothesis
->
-> - **dependency-cruiser** (или аналог) с правилами слоёв.
-> - Дополнительно: лёгкие тесты на наличие только mock-adapter в Demo profile.
-
-## Правила-кандидаты (черновик)
+## Правила-кандидаты (черновик post-Demo)
 
 > **certainty:** open_question
 >
-> Точный граф пакетов появится с кодом. Кандидаты:
->
-> 1. `frontend` не зависит от `nestjs` модулей напрямую.
-> 2. application/domain не импортирует `pg` / ORM вне adapter package.
-> 3. Demo profile не подключает Postgres adapter как default.
+> 1. application/domain не импортирует `pg` / ORM вне adapter package.
+> 2. Demo profile не подключает Postgres adapter как default.
 
 ## Enforcement
 
 > **certainty:** fact
 >
-> **FUTURE** — до появления структуры пакетов.
+> Demo v1 structural guards — **active** (см. таблицу выше). Полный package-graph cruise / CI coverage enforcement — **FUTURE**.

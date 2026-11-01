@@ -228,7 +228,7 @@ Component boundary: GanttSurface / ChartContainer (DOC-UX-016 §8). Interaction 
 
 | Item | Status |
 |------|--------|
-| BA-OQ-006 register layout | open; V1 table+Type assumption elsewhere |
+| BA-OQ-006 register layout | **closed**; single table+Type (DOC-BA-010) |
 | D12 Gantt lib | resolved (ADR-0004) |
 | AcceptDateSlip C' visuals | not Must |
 | Closed / Amber | not Must |

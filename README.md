@@ -19,8 +19,8 @@ docker compose up --build -d
 | Host | Назначение | Сейчас |
 |---|---|---|
 | `docs.localhost` | Портал документации | рабочий после compose up |
-| `localhost` | Frontend (будущий Next.js) | **502**, пока нет profile `app` |
-| `api.localhost` | Backend (будущий NestJS) | **502**, пока нет profile `app` |
+| `localhost` | Frontend (Next.js Demo v1) | `docker compose --profile app up --build -d` |
+| `api.localhost` | Backend (NestJS Demo v1) | тот же profile `app` |
 
 Подробности и вклад: [`CONTRIBUTING.md`](CONTRIBUTING.md). Нормы для агентов: [`AGENTS.md`](AGENTS.md).
 

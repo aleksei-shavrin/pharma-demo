@@ -73,7 +73,7 @@ related:
 
 > **certainty:** open_question
 >
-> Messaging GMP/CSV (HIP-003); горизонт (HIP-004); framing platform vs MVP (HIP-007); применимость к заказчику (HIP-005); AcceptDateSlip post-state (BA-OQ-004/005); UI Issue/Risk (BA-OQ-006). Сводка: [ba-pd-summary](../02-business-analysis/ba-pd-summary.md), [discovery-summary](../01-discovery/discovery-summary.md), [human-input-pack](../01-discovery/human-input-pack.md).
+> Messaging GMP/CSV (HIP-003); горизонт (HIP-004); framing platform vs MVP (HIP-007); применимость к заказчику (HIP-005); AcceptDateSlip post-state (BA-OQ-004/005). UI Issue/Risk (BA-OQ-006) — **resolved** (единый register + `Тип`; DOC-BA-010). Сводка: [ba-pd-summary](../02-business-analysis/ba-pd-summary.md), [discovery-summary](../01-discovery/discovery-summary.md), [human-input-pack](../01-discovery/human-input-pack.md).
 
 ## Связанные документы
 

@@ -3,9 +3,9 @@ id: DOC-BA-017
 title: "BA & Product Definition summary"
 type: business
 status: draft
-version: "0.5.0"
+version: "0.6.0"
 created: 2026-10-30
-updated: 2026-10-31
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-PHASE-BAPD-001
@@ -26,9 +26,13 @@ related:
 >
 > **BA-OQ-001 закрыт 2026-10-31** — согласован freeze функционального объёма Demo v1 ([ba-registers](./ba-registers.md), [demo-v1-functional-scope](../03-product/demo-v1-functional-scope.md)). `openspec/**` / `apps/**` не изменялись в рамках фиксации решения.
 
+> **certainty:** fact
+>
+> **BA-OQ-006 закрыт 2026-11-01** — единый Issues & Risks register + колонка `Тип`; Domain Issue/Risk остаются раздельными ([ba-registers](./ba-registers.md) § «Решение BA-OQ-006»).
+
 > **certainty:** open_question
 >
-> Остаются открытыми: **BA-OQ-004/005** (AcceptDateSlip post-state), **BA-OQ-006** (UI Issue/Risk), **BA-OQ-002** / HIP-003/004/007. DoD фазы по прочим human gates — не полностью закрыт; scope-freeze критерий — **снят**.
+> Остаются открытыми: **BA-OQ-004/005** (AcceptDateSlip post-state), **BA-OQ-002** / HIP-003/004/007. DoD фазы по прочим human gates — не полностью закрыт; scope-freeze критерий — **снят**.
 
 ## Что зафиксировано
 
@@ -40,7 +44,7 @@ related:
 | Issue.status | Open / Mitigating / Closed; AcceptDateSlip = Decision type |
 | Activity | **Не** сущность Demo v1 |
 | BR-007 | A = baseline integrity; B/C = causal chain |
-| Issue vs Risk | Отдельные сущности (BA-OQ-003 closed); UI layout — BA-OQ-006 |
+| Issue vs Risk | Отдельные сущности (BA-OQ-003 closed); UI — единый register + `Тип` (BA-OQ-006 **closed**) |
 | Aggregate | Delivery dates ≠ production-start dates |
 
 ## Кандидатные OpenSpec capability names
@@ -52,7 +56,6 @@ related:
 ## Остаток для человека
 
 - **BA-OQ-004 / BA-OQ-005** AcceptDateSlip post-state
-- **BA-OQ-006** UI presentation Issue/Risk
 - HIP-003, HIP-004, HIP-007 (через BA-OQ-002)
 
 ## Следующая фаза

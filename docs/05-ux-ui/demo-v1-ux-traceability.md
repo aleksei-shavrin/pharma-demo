@@ -55,7 +55,7 @@ related:
 | D6 PrioritizeRecovery honesty | Decision panel; M-DEC | BR-006; REQ-IMPCT-002; OpenSpec C | DEC-001; Issue Mitigating; unchanged forecast/RAG | `approved UX decision` + `approved requirement` (BR-006) |
 | D7 One shell | App Shell | BA-OQ-001 audience | — | `approved UX decision` |
 | D8 Dashboard composition | P1 blocks | REQ-IMPCT-001/002 | Aggregate + refs | `approved UX decision` |
-| D8 Issue/Risk layout on register | P4 Issues & Risks | BA-OQ-006 | ISS/RISK | `open_question` |
+| D8 Issue/Risk layout on register | P4 Issues & Risks | BA-OQ-006 closed | ISS/RISK | `fact` (Demo v1 decision DOC-BA-010) |
 | D10 Schedule Table primary | P2 TanStack | Domain dates MS/EQ | baseline/forecast dates | `approved UX decision` |
 | D10 read-only Gantt secondary | P2 Gantt view | D11 constraints | Same control points | `approved UX decision` |
 | D11 Schedule = Milestone + Equipment Delivery only; **без** Activity, WBS, CPM, dependencies (FS/SS и т.п.), scheduling engine | P2 scope | DOC-BA-015; PROC-001; BA-A-003 | Только control-point rows MS + EQ delivery; no Activity/WBS/CPM/deps/engine | `approved UX decision` (+ `approved requirement` no Activity entity) |
@@ -85,6 +85,6 @@ related:
 | Multi-channel status encoding | Badges / tables | DOC-UX-011; allowlist | Allowlisted statuses only | `approved Visual Direction baseline` (encoding) + `approved requirement` (values) |
 | Dashboard narrative-first composition | P1 | DOC-UX-012; DOC-UX-004 | Same as D8 data | `approved Visual Direction baseline` on `approved UX decision` (blocks) |
 | Schedule table-primary visual mass | P2 | DOC-UX-012; DOC-UX-005 | MS + EQ rows | `approved Visual Direction baseline` + D10/D11 approved |
-| Issues & Risks register layout variants | P4 | DOC-UX-012 | ISS/RISK | `open_question` (BA-OQ-006); variants not closed |
+| Issues & Risks register layout | P4 | DOC-UX-012 / DOC-BA-010 | ISS/RISK | `fact` — single table + Type (BA-OQ-006 closed) |
 | UI Design wave overview | Pack DOC-UX-014…020 | DOC-UX-014 | — | plan COMPLETED; pack APPROVED; docs = `approved UI Design decision` |
-| BA-OQ-006 working layout V1 (single table + Type) | P4 / UI screens | DOC-UX-014 | Shared columns only | `assumption`; OQ remains open |
+| BA-OQ-006 layout (single table + Type) | P4 / UI screens | DOC-UX-014 / DOC-BA-010 | Shared columns only | Demo v1 **decision** (OQ closed) |
