@@ -1,6 +1,6 @@
 ---
 name: Demo v1 Implementation
-overview: "Implementation Plan APPROVED (R1–R4). I1 APPROVED+committed (dbea074). I2 APPROVED (incl. corrective R1–R2). Next: explicit START I3 ONLY. D12 blocks only I7."
+overview: "Implementation Plan APPROVED (R1–R4). I1–I4 APPROVED+committed (dbea074 / f104503 / ea4205b / 22d56b2). I5 NOT STARTED. D12 blocks only I7."
 todos:
   - id: await-impl-plan-approve
     content: Финальный human APPROVE этого Demo v1 Implementation Plan (после R1–R4)
@@ -16,10 +16,10 @@ todos:
     status: completed
   - id: i3-dashboard
     content: "I3: вертикальный срез Dashboard + DecisionPanel read-only + честность BR-006"
-    status: pending
+    status: completed
   - id: i4-registers
     content: "I4: реестры Equipment / Issues&Risks V1 / Milestones"
-    status: pending
+    status: completed
   - id: i5-detail
     content: "I5: capability Entity Detail (Overview/Links/Impact) + EmptyState при отсутствии сущности"
     status: pending
@@ -44,8 +44,10 @@ isProject: false
 | UI Design pack | APPROVED (`approved UI Design decision`) |
 | Этот Implementation Plan | **APPROVED** (human) |
 | Implementation I1 | **APPROVED + committed** (`dbea074`) |
-| Implementation I2 | **APPROVED** (human; includes corrective R1–R2) |
-| Implementation I3+ | **NOT STARTED** — только после явной human-команды |
+| Implementation I2 | **APPROVED + committed** (`f104503`; includes corrective R1–R2) |
+| Implementation I3 | **APPROVED + committed** (`ea4205b`; includes RU / corrective passes) |
+| Implementation I4 | **APPROVED + committed** (`22d56b2`; includes corrective R1) |
+| Implementation I5+ | **NOT STARTED** — только после явной human-команды |
 
 **Проверенные источники (primary, не только handoff):** [AGENTS.md](AGENTS.md), [DOC-PROD-003](docs/03-product/demo-v1-architecture.md), [DOC-PROD-002](docs/03-product/target-technology-stack.md), [ADR-0002](docs/06-architecture/decisions/0002-target-technology-stack-direction.md), [ADR-0003](docs/06-architecture/decisions/0003-local-dev-urls-and-proxy.md), [DOC-PROD-012](docs/03-product/demo-v1-mock-narrative-data.md), living specs в `openspec/specs/`, REQ-PROJ/MILE/EQPT/RISK/IMPCT/NFR, UI Design DOC-UX-014…020 + [handoff](docs/07-delivery/handoffs/2026-11-01-ui-design.md), [testing-strategy](docs/08-quality/testing-strategy.md), существующие [docker-compose.yml](docker-compose.yml) / [Caddyfile](Caddyfile).
 
@@ -200,9 +202,11 @@ flowchart LR
 1. ~~Финальный human APPROVE этого Implementation Plan~~ — **выполнено.**
 2. ~~Явная human-команда на старт Implementation I1~~ — **выполнено.**
 3. ~~I1 scaffold~~ — **APPROVED + committed** (`dbea074`).
-4. ~~I2~~ — **APPROVED** (incl. corrective R1–R2).
-5. **I3+** — не начинать без явной human-команды на соответствующую итерацию.
-6. D12 / Gantt library — блокирует **только I7**.
+4. ~~I2~~ — **APPROVED + committed** (`f104503`; incl. corrective R1–R2).
+5. ~~I3 Dashboard~~ — **APPROVED + committed** (`ea4205b`).
+6. ~~I4 registers~~ — **APPROVED + committed** (`22d56b2`; incl. corrective R1).
+7. **I5+** — не начинать без явной human-команды на соответствующую итерацию.
+8. D12 / Gantt library — блокирует **только I7**.
 
 ---
 
@@ -224,7 +228,7 @@ flowchart LR
 
 ### I2 — Snapshot infrastructure + App Shell
 
-- **Статус итерации:** **COMPLETED / APPROVED** (human; includes corrective R1–R2: monotonic seq + SnapshotSelector keyboard).
+- **Статус итерации:** **COMPLETED / APPROVED / committed** (`f104503`; includes corrective R1–R2: monotonic seq + SnapshotSelector keyboard).
 - **Цель:** Применить `approved implementation decision` (`snapshot=A|B|C`) на API; FE Shell (Sidebar 5 + TopBar Snapshot/Theme/breadcrumbs); atomic switch / ошибка сохраняет предыдущий; theme Light/Dark из DOC-UX-015.
 - **Вне scope:** полные виджеты Dashboard; богатые реестры.
 - **Deps:** I1.
@@ -234,20 +238,22 @@ flowchart LR
 
 ### I3 — Вертикальный срез Dashboard
 
+- **Статус итерации:** **COMPLETED / APPROVED / committed** (`ea4205b`; RU UI + corrective passes + project rename).
 - **Цель:** Overview API + композиция Dashboard: narrative, полоса Δ (Delivery vs PS с подписями), Impact, DecisionPanel read-only (A empty / B needed / C DEC-001), опциональный discrete chart A/B/C (не time series).
 - **Deps:** I2.
 - **SoT:** DOC-UX-004/017/018; REQ-IMPCT-001/002; BR-006; DOC-PROD-012.
 - **AC:** B показывает честность +21d; C — Issue Mitigating, Risk/MS Red, forecasts без изменений; нет UI «recovery progress»; **нет** Must Decision write.
 - **Tests:** BE BR-006; E2E smoke A/B/C header+panel.
-- **STOP:** Director narrative готов к review.
+- **STOP:** Director narrative review — **пройден (APPROVED).**
 
 ### I4 — Реестры (Equipment, Issues & Risks V1, Milestones)
 
+- **Статус итерации:** **COMPLETED / APPROVED / committed** (`22d56b2`; includes corrective R1).
 - **Цель:** List APIs + три экрана реестров; модели StatusIndicator; shared columns Issues&Risks only (без Owner).
 - **Deps:** I2 (по умолчанию после I3).
 - **SoT:** DOC-UX-016/017; REQ-EQPT/RISK/MILE; assumption BA-OQ-006 (OQ остаётся open).
 - **AC:** Фильтры локальные non-restore; row → detail route; markers по DOC-UX-018.
-- **STOP:** Реестры готовы к review.
+- **STOP:** Review реестров — **пройден** (BA-OQ-006 остаётся OPEN).
 
 ### I5 — Entity Detail + Links vs Impact
 
@@ -304,11 +310,12 @@ flowchart LR
 
 1. **Последовательность:** I1 → I2 → I3 → I4 → I5 → I6 → I7 (D12-gated) → I8.
 2. **Settled architecture:** Next/Nest/REST/OpenAPI; `DemoDataSource` + mock fixtures; без PG; Caddy URLs; `apps/web`+`apps/api`; FE только через API; `snapshot=A|B|C` request-scoped.
-3. **Сделано:** I1 APPROVED+committed (`dbea074`); I2 APPROVED (incl. corrective R1–R2).
-4. **Нерешённое → блок когда:** D12 → **только I7**; theme/snapshot cross-session persistence = `open_question`; BA-OQ-006 open.
-5. **Gates:** `test:docs` + OpenSpec strict + `test:apps` / e2e / architecture guards по мере итераций.
-6. **Agent habit:** после каждой итерации обновлять YAML todos + этот блок статуса в плане.
+3. **Сделано:** I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`22d56b2`) — все APPROVED+committed.
+4. **В работе / review:** нет; следующая итерация — **I5** (не начата).
+5. **Нерешённое → блок когда:** D12 → **только I7**; theme/snapshot cross-session persistence = `open_question`; BA-OQ-006 open.
+6. **Gates:** `test:docs` + OpenSpec strict + `test:apps` / e2e / architecture guards по мере итераций.
+7. **Agent habit:** после каждой итерации обновлять YAML todos + этот блок статуса в плане.
 
 **Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; I6 ≠ Gantt visualization; I7 = единственная итерация, заблокированная D12; Must DecisionPanel read-only / без Must POST; BA-OQ-006 open + V1 assumption; без PG/ORM/auth/monorepo tooling.
 
-**Следующий шаг человека:** явная команда **START IMPLEMENTATION I3 ONLY** (не раньше).
+**Следующий шаг человека:** явная команда на старт **I5**; I5 не начинать без неё.

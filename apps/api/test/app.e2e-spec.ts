@@ -175,4 +175,111 @@ describe('I2 API snapshot (e2e)', () => {
       .get('/v1/projects/PRJ-01/dashboard?snapshot=Z')
       .expect(400);
   });
+
+  it('GET equipment A/B + invalid snapshot', () => {
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01/equipment')
+      .expect(200)
+      .expect((res) => {
+        const body = res.body as {
+          snapshotId: string;
+          items: { status: string; deliveryVariance: { deltaDays: number } }[];
+        };
+        expect(body.snapshotId).toBe('A');
+        expect(body.items[0].status).toBe('OnTrack');
+        expect(body.items[0].deliveryVariance.deltaDays).toBe(0);
+      })
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/equipment?snapshot=B')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as {
+              items: {
+                status: string;
+                forecastDelivery: string;
+                deliveryVariance: { deltaDays: number };
+              }[];
+            };
+            expect(body.items[0].status).toBe('Delayed');
+            expect(body.items[0].forecastDelivery).toBe('2027-06-05');
+            expect(body.items[0].deliveryVariance.deltaDays).toBe(21);
+          }),
+      )
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/equipment?snapshot=Z')
+          .expect(400),
+      );
+  });
+
+  it('GET issues-risks A/B/C', () => {
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01/issues-risks?snapshot=A')
+      .expect(200)
+      .expect((res) => {
+        const body = res.body as {
+          rows: { type: string; rag: string | null; issueStatus: string | null }[];
+        };
+        expect(body.rows).toHaveLength(1);
+        expect(body.rows[0].type).toBe('Risk');
+        expect(body.rows[0].rag).toBe('Green');
+      })
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/issues-risks?snapshot=B')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as {
+              rows: { type: string; issueStatus: string | null; rag: string | null }[];
+            };
+            expect(body.rows.map((r) => r.type)).toEqual(['Issue', 'Risk']);
+            expect(body.rows[0].issueStatus).toBe('Open');
+            expect(body.rows[1].rag).toBe('Red');
+            expect(JSON.stringify(body)).not.toMatch(/Pending/);
+          }),
+      )
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/issues-risks?snapshot=C')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as {
+              rows: { issueStatus: string | null; rag: string | null }[];
+            };
+            expect(body.rows[0].issueStatus).toBe('Mitigating');
+            expect(body.rows[1].rag).toBe('Red');
+          }),
+      );
+  });
+
+  it('GET milestones A/C', () => {
+    return request(app.getHttpServer())
+      .get('/v1/projects/PRJ-01/milestones')
+      .expect(200)
+      .expect((res) => {
+        const body = res.body as {
+          items: { rag: string; dateVariance: { deltaDays: number } }[];
+        };
+        expect(body.items[0].rag).toBe('Green');
+        expect(body.items[0].dateVariance.deltaDays).toBe(0);
+      })
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/v1/projects/PRJ-01/milestones?snapshot=C')
+          .expect(200)
+          .expect((res) => {
+            const body = res.body as {
+              items: {
+                rag: string;
+                forecastDate: string;
+                dateVariance: { deltaDays: number };
+              }[];
+            };
+            expect(body.items[0].rag).toBe('Red');
+            expect(body.items[0].forecastDate).toBe('2027-10-06');
+            expect(body.items[0].dateVariance.deltaDays).toBe(21);
+          }),
+      );
+  });
 });

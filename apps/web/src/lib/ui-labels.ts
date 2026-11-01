@@ -43,6 +43,10 @@ export function presentDecisionNote(id: string, apiNote: string): string {
   return DECISION_NOTE_BY_ID[id] ?? apiNote;
 }
 
+export function registerRowTypeLabel(type: 'Issue' | 'Risk'): string {
+  return type === 'Issue' ? 'Проблема' : 'Риск';
+}
+
 export function equipmentStatusLabel(
   status: 'OnTrack' | 'Delayed',
 ): string {

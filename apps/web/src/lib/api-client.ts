@@ -143,3 +143,80 @@ export function projectStubFromDashboard(
     scenarioAsOfDate: dashboard.scenarioAsOfDate,
   };
 }
+
+export type RegisterVariance = {
+  baselineDate: string;
+  forecastDate: string;
+  deltaDays: number;
+};
+
+export type EquipmentRegister = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  items: {
+    id: string;
+    critical: boolean;
+    status: 'OnTrack' | 'Delayed';
+    baselineDelivery: string;
+    forecastDelivery: string;
+    deliveryVariance: RegisterVariance;
+  }[];
+};
+
+export type IssuesRisksRegister = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  rows: {
+    type: 'Issue' | 'Risk';
+    id: string;
+    title: string;
+    issueStatus: 'Open' | 'Mitigating' | null;
+    rag: 'Green' | 'Red' | null;
+  }[];
+};
+
+export type MilestonesRegister = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  items: {
+    id: string;
+    name: string;
+    rag: 'Green' | 'Red';
+    baselineDate: string;
+    forecastDate: string;
+    dateVariance: RegisterVariance;
+  }[];
+};
+
+export function fetchEquipmentRegister(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<EquipmentRegister> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<EquipmentRegister>(
+    `/v1/projects/${encodeURIComponent(projectId)}/equipment?${qs.toString()}`,
+  );
+}
+
+export function fetchIssuesRisksRegister(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<IssuesRisksRegister> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<IssuesRisksRegister>(
+    `/v1/projects/${encodeURIComponent(projectId)}/issues-risks?${qs.toString()}`,
+  );
+}
+
+export function fetchMilestonesRegister(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<MilestonesRegister> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<MilestonesRegister>(
+    `/v1/projects/${encodeURIComponent(projectId)}/milestones?${qs.toString()}`,
+  );
+}

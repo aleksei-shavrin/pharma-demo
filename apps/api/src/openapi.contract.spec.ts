@@ -17,8 +17,8 @@ type OpenApiParam = {
   schema?: JsonSchema;
 };
 
-describe('OpenAPI contract (I2/I3)', () => {
-  it('publishes response DTOs, snapshot query, and dashboard path', async () => {
+describe('OpenAPI contract (I2/I3/I4)', () => {
+  it('publishes response DTOs, snapshot query, dashboard and register paths', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -94,6 +94,33 @@ describe('OpenAPI contract (I2/I3)', () => {
     expect(dashSnap?.schema?.enum).toEqual(
       expect.arrayContaining(['A', 'B', 'C']),
     );
+
+    for (const path of [
+      '/v1/projects/{id}/equipment',
+      '/v1/projects/{id}/issues-risks',
+      '/v1/projects/{id}/milestones',
+    ] as const) {
+      const op = document.paths[path]?.get;
+      expect(op).toBeDefined();
+      const schema = op?.responses?.['200']?.content?.['application/json']
+        ?.schema as JsonSchema | undefined;
+      expect(schema?.$ref).toMatch(/#\/components\/schemas\//);
+      const snap = (op?.parameters ?? []).find(
+        (p): p is OpenApiParam =>
+          typeof p === 'object' &&
+          p !== null &&
+          'name' in p &&
+          p.name === 'snapshot',
+      );
+      expect(snap?.schema?.enum).toEqual(
+        expect.arrayContaining(['A', 'B', 'C']),
+      );
+      expect(snap?.schema?.default).toBe('A');
+    }
+
+    expect(document.components?.schemas?.EquipmentRegisterDto).toBeDefined();
+    expect(document.components?.schemas?.IssuesRisksRegisterDto).toBeDefined();
+    expect(document.components?.schemas?.MilestonesRegisterDto).toBeDefined();
 
     await app.close();
   });
