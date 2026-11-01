@@ -219,7 +219,7 @@ Equipment **delivery** dates remain a separate subject (separate table/markers/�
 | Markers | Forecast primary; baseline ghost; status marker per family rules |
 | Forbidden | Activity/WBS/CPM; dependency arrows; drag-reschedule; fake duration bars without duration in model |
 | Disclaimer | Control-point visualization — not calculated critical path |
-| Library | **D12 deferred** — no lib choice in this doc |
+| Library | **D12 resolved** — `dhtmlx-gantt` Community MIT `10.0.3` via [ADR-0004](../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md); visual semantics remain normative here |
 | Sync | Split view MAY share focused/hovered row cue with the table (**without** selection mode). Selection remains off by default; if selection is later added for a confirmed scenario, selected-row sync MAY be additional — not a prerequisite (normative: DOC-UX-019 §7) |
 
 Component boundary: GanttSurface / ChartContainer (DOC-UX-016 §8). Interaction detail → DOC-UX-019.
@@ -229,7 +229,7 @@ Component boundary: GanttSurface / ChartContainer (DOC-UX-016 §8). Interaction 
 | Item | Status |
 |------|--------|
 | BA-OQ-006 register layout | open; V1 table+Type assumption elsewhere |
-| D12 Gantt lib | deferred |
+| D12 Gantt lib | resolved (ADR-0004) |
 | AcceptDateSlip C' visuals | not Must |
 | Closed / Amber | not Must |
 | Chart series exact HEX | use DOC-UX-015 roles; fine series table optional later |

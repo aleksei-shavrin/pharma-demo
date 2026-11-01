@@ -20,6 +20,7 @@ related:
 | [0001](./0001-documentation-stack.md) | Documentation stack | accepted (направление) |
 | [0002](./0002-target-technology-stack-direction.md) | Target technology stack direction | accepted (направление) |
 | [0003](./0003-local-dev-urls-and-proxy.md) | Local dev URLs and proxy | accepted (направление) |
+| [0004](./0004-d12-dhtmlx-gantt-community.md) | D12 Schedule timeline — dhtmlx-gantt Community | accepted (decision; doc lifecycle `draft`) |
 
 > **certainty:** assumption
 >

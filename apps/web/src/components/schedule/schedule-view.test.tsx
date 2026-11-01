@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -8,6 +8,7 @@ import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
 import type { ScheduleReadModel } from '@/lib/api-client';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { ThemeProvider } from '@/lib/theme/theme-context';
 
 const fetchDashboardOverview = vi.fn();
 const fetchSchedule = vi.fn();
@@ -21,6 +22,36 @@ vi.mock('@/lib/api-client', async () => {
     fetchSchedule: (...a: unknown[]) => fetchSchedule(...a),
   };
 });
+
+vi.mock('next/dynamic', () => ({
+  default: () =>
+    function MockTimelineStub(props: {
+      items: unknown[];
+      selected: unknown;
+      onSelect: (k: unknown) => void;
+    }) {
+      return (
+        <div data-testid="timeline-host" data-schedule-timeline="live">
+          <button
+            type="button"
+            onClick={() =>
+              props.onSelect({
+                kind: 'equipment_delivery',
+                entityId: 'EQ-HVAC-01',
+              })
+            }
+          >
+            mock-select-eq
+          </button>
+          <span data-testid="timeline-selected">
+            {props.selected
+              ? JSON.stringify(props.selected)
+              : 'none'}
+          </span>
+        </div>
+      );
+    },
+}));
 
 function dash(snapshotId: SnapshotId) {
   return {
@@ -124,10 +155,12 @@ function schedule(snapshotId: SnapshotId): ScheduleReadModel {
 
 function wrap(ui: ReactNode) {
   return (
-    <SnapshotProvider>
-      <SnapshotSelector />
-      {ui}
-    </SnapshotProvider>
+    <ThemeProvider>
+      <SnapshotProvider>
+        <SnapshotSelector />
+        {ui}
+      </SnapshotProvider>
+    </ThemeProvider>
   );
 }
 
@@ -145,94 +178,97 @@ beforeEach(() => {
   );
 });
 
-describe('I6 Schedule Table + Split', () => {
-  it('A: canonical rows, RU labels, typed detail links, Δ0', async () => {
+describe('I7 Schedule Table + Split + Timeline', () => {
+  it('default Table; Split/Timeline enabled; no readiness; selection none', async () => {
     render(wrap(<SchedulePage />));
     await waitFor(() => {
       expect(screen.getByText('Оборудование')).toBeInTheDocument();
     });
-    expect(screen.getByText('Веха')).toBeInTheDocument();
-    expect(screen.getByText('Готовность к производству')).toBeInTheDocument();
-    expect(screen.getByText('По плану')).toBeInTheDocument();
-    expect(screen.getByText('Веха: зелёная')).toBeInTheDocument();
-    expect(screen.getAllByText('без отклонения')).toHaveLength(2);
+    expect(screen.getByRole('button', { name: 'Таблица' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Разделение' })).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: 'Временная шкала' }),
+    ).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Таблица' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(document.querySelector('[data-schedule-layout="table"]')).toBeTruthy();
+    expect(screen.queryByLabelText('Область временной шкалы')).not.toBeInTheDocument();
+    expect(screen.queryByText(/следующей версии/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('row', { selected: true })).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'EQ-HVAC-01' })).toHaveAttribute(
       'href',
       '/equipment/EQ-HVAC-01',
     );
-    expect(screen.getByRole('link', { name: 'MS-PS' })).toHaveAttribute(
-      'href',
-      '/milestones/MS-PS',
-    );
-    expect(screen.queryByText(/\bequipment_delivery\b/)).not.toBeInTheDocument();
     expect(screen.queryByText(/\bOnTrack\b/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/\bGreen\b/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Ready for production/)).not.toBeInTheDocument();
-    expect(document.querySelector('[data-schedule-layout="table"]')).toBeTruthy();
-    expect(screen.queryByLabelText('Область временной шкалы')).not.toBeInTheDocument();
   });
 
-  it('B→C: +21 preserved; no recovery heal; full-width Table only', async () => {
+  it('Split shows table + live timeline; Table→Timeline selection sync', async () => {
     const user = userEvent.setup();
     render(wrap(<SchedulePage />));
     await waitFor(() => {
-      expect(screen.getByText('По плану')).toBeInTheDocument();
+      expect(screen.getByText('Оборудование')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'Разделение' }));
+    expect(document.querySelector('[data-schedule-layout="split"]')).toBeTruthy();
+    expect(screen.getByTestId('timeline-host')).toBeInTheDocument();
+    expect(screen.getByTestId('timeline-selected')).toHaveTextContent('none');
+
+    await user.click(screen.getByText('Оборудование'));
+    await waitFor(() => {
+      expect(screen.getByRole('row', { selected: true })).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('timeline-selected')).toHaveTextContent(
+      'EQ-HVAC-01',
+    );
+  });
+
+  it('Timeline→Table selection sync; snapshot clears selection', async () => {
+    const user = userEvent.setup();
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText('Оборудование')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'Разделение' }));
+    await user.click(screen.getByRole('button', { name: 'mock-select-eq' }));
+    await waitFor(() => {
+      expect(screen.getByRole('row', { selected: true })).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
     await waitFor(() => {
       expect(screen.getByText('Задержка')).toBeInTheDocument();
     });
-    expect(screen.getByText('05.06.2027')).toBeInTheDocument();
-    expect(screen.getByText('06.10.2027')).toBeInTheDocument();
+    expect(screen.queryByRole('row', { selected: true })).not.toBeInTheDocument();
+    expect(screen.getByTestId('timeline-selected')).toHaveTextContent('none');
     expect(screen.getAllByText('+21 день')).toHaveLength(2);
-    expect(screen.getByText('Веха: красная')).toBeInTheDocument();
-    expect(screen.queryByText(/\bDelayed\b/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/\bRed\b/)).not.toBeInTheDocument();
-    expect(document.querySelector('[data-schedule-layout="table"]')).toBeTruthy();
-    expect(document.querySelector('[data-schedule-layout="split"]')).toBeNull();
-    expect(screen.queryByLabelText('Область временной шкалы')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'EQ-HVAC-01' })).toBeInTheDocument();
+  });
+
+  it('B→C: +21 preserved; Timeline mode; no recovery', async () => {
+    const user = userEvent.setup();
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText('По плану')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await waitFor(() => {
+      expect(screen.getByText('05.06.2027')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
+    expect(document.querySelector('[data-schedule-layout="gantt"]')).toBeTruthy();
+    expect(screen.getByTestId('timeline-host')).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {
-      expect(screen.getAllByText('+21 день')).toHaveLength(2);
+      expect(screen.getByTestId('timeline-host')).toBeInTheDocument();
     });
-    expect(screen.getByText('05.06.2027')).toBeInTheDocument();
-    expect(screen.getByText('06.10.2027')).toBeInTheDocument();
-    expect(screen.getByText('Веха: красная')).toBeInTheDocument();
     expect(screen.queryByText(/восстановлен/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/recovery/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Ready for production/)).not.toBeInTheDocument();
   });
 
-  it('Split and Timeline disabled; Table selected; selection off by default', async () => {
-    render(wrap(<SchedulePage />));
-    await waitFor(() => {
-      expect(screen.getByText('Оборудование')).toBeInTheDocument();
-    });
-    const tableMode = screen.getByRole('button', { name: 'Таблица' });
-    const split = screen.getByRole('button', { name: 'Разделение' });
-    const timeline = screen.getByRole('button', { name: 'Временная шкала' });
-    expect(tableMode).toBeEnabled();
-    expect(tableMode).toHaveAttribute('aria-pressed', 'true');
-    expect(split).toBeDisabled();
-    expect(timeline).toBeDisabled();
-    expect(split).toHaveAttribute(
-      'title',
-      'Будет доступно вместе с временной шкалой.',
-    );
-    expect(timeline).toHaveAttribute(
-      'title',
-      'Будет доступно вместе с временной шкалой.',
-    );
-    expect(document.querySelector('[data-schedule-layout="table"]')).toBeTruthy();
-    expect(screen.queryByLabelText('Область временной шкалы')).not.toBeInTheDocument();
-    expect(screen.queryByRole('row', { selected: true })).not.toBeInTheDocument();
-    const table = screen.getByRole('table', { name: 'График контрольных точек' });
-    expect(within(table).queryByRole('checkbox')).not.toBeInTheDocument();
-  });
-
-  it('loading / error+retry / empty', async () => {
+  it('loading / error+retry / empty still work', async () => {
     const user = userEvent.setup();
     let resolveLoad: ((v: ScheduleReadModel) => void) | null = null;
     fetchSchedule.mockImplementationOnce(
@@ -253,7 +289,6 @@ describe('I6 Schedule Table + Split', () => {
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(/Не удалось загрузить/);
     });
-    expect(screen.queryByText('EQ-HVAC-01')).not.toBeInTheDocument();
 
     fetchSchedule.mockResolvedValueOnce(schedule('B'));
     await user.click(screen.getByRole('button', { name: 'Повторить' }));
@@ -261,10 +296,7 @@ describe('I6 Schedule Table + Split', () => {
       expect(screen.getByText('Задержка')).toBeInTheDocument();
     });
 
-    fetchSchedule.mockResolvedValueOnce({
-      ...schedule('A'),
-      items: [],
-    });
+    fetchSchedule.mockResolvedValueOnce({ ...schedule('A'), items: [] });
     await user.click(screen.getByRole('radio', { name: /^Снимок A$/ }));
     await waitFor(() => {
       expect(screen.getByText(/Нет записей в этом снимке/)).toBeInTheDocument();

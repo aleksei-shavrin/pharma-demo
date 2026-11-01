@@ -18,6 +18,15 @@ const forbidden = [
   /DemoDataSource/,
 ];
 
+/** Only the DHTMLX adapter may import the Gantt vendor package (ADR-0004). */
+const ganttImport = /from\s+['"]dhtmlx-gantt(?:\/[^'"]*)?['"]|require\(['"]dhtmlx-gantt/;
+const ganttAdapterRel = path.join(
+  'src',
+  'components',
+  'schedule',
+  'dhtmlx-gantt-adapter.tsx',
+);
+
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = [];
@@ -34,17 +43,25 @@ const violations = [];
 
 for (const file of files) {
   const text = await readFile(file, 'utf8');
+  const rel = path.relative(root, file);
   for (const re of forbidden) {
     if (re.test(text)) {
-      violations.push(`${path.relative(root, file)} matches ${re}`);
+      violations.push(`${rel} matches ${re}`);
     }
+  }
+  if (ganttImport.test(text) && rel !== ganttAdapterRel) {
+    violations.push(
+      `${rel} imports dhtmlx-gantt (allowed only in ${ganttAdapterRel})`,
+    );
   }
 }
 
 if (violations.length) {
-  console.error('Architecture guard FAILED (FE → API/mock):');
+  console.error('Architecture guard FAILED (FE → API/mock / Gantt boundary):');
   for (const v of violations) console.error(' -', v);
   process.exit(1);
 }
 
-console.log('Architecture guard OK: no FE imports of API/mock internals.');
+console.log(
+  'Architecture guard OK: no FE imports of API/mock internals; Gantt confined to adapter.',
+);

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import {
   RegisterCell,
@@ -10,6 +11,12 @@ import {
 import type { ScheduleItem } from '@/lib/api-client';
 import { entityDetailHref } from '@/lib/entity-routes';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
+import {
+  selectionKeyEquals,
+  selectionKeyId,
+  selectionKeyOf,
+  type ScheduleSelectionKey,
+} from '@/lib/schedule/selection-key';
 import {
   presentMilestoneName,
   scheduleKindLabel,
@@ -24,6 +31,7 @@ function objectCell(item: ScheduleItem) {
       <Link
         href={entityDetailHref('equipment', item.id)}
         className={linkClass}
+        onClick={(e) => e.stopPropagation()}
       >
         {item.id}
       </Link>
@@ -34,6 +42,7 @@ function objectCell(item: ScheduleItem) {
       <Link
         href={entityDetailHref('milestone', item.id)}
         className={linkClass}
+        onClick={(e) => e.stopPropagation()}
       >
         {item.id}
       </Link>
@@ -53,10 +62,26 @@ function statusCell(item: ScheduleItem) {
 
 type Props = {
   items: ScheduleItem[];
+  selected?: ScheduleSelectionKey | null;
+  onSelect?: (key: ScheduleSelectionKey) => void;
 };
 
 /** Primary Schedule representation — dense control-point table (D10/D11). */
-export function ScheduleTable({ items }: Props) {
+export function ScheduleTable({
+  items,
+  selected = null,
+  onSelect,
+}: Props) {
+  const rowRefs = useRef<Map<string, HTMLTableRowElement | null>>(new Map());
+
+  useEffect(() => {
+    if (!selected) return;
+    const el = rowRefs.current.get(selectionKeyId(selected));
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ block: 'nearest' });
+    }
+  }, [selected]);
+
   return (
     <RegisterTable
       caption="График контрольных точек"
@@ -70,27 +95,38 @@ export function ScheduleTable({ items }: Props) {
         'Критичность',
       ]}
     >
-      {items.map((item) => (
-        <RegisterRow key={`${item.kind}:${item.id}`}>
-          <RegisterCell>{scheduleKindLabel(item.kind)}</RegisterCell>
-          <RegisterCell className="font-medium text-[var(--text)]">
-            {objectCell(item)}
-          </RegisterCell>
-          <RegisterCell>{formatDateRu(item.baselineDate)}</RegisterCell>
-          <RegisterCell>{formatDateRu(item.forecastDate)}</RegisterCell>
-          <RegisterCell className="tabular-nums text-[var(--text)]">
-            {formatDeltaDays(item.dateVariance.deltaDays)}
-          </RegisterCell>
-          <RegisterCell>{statusCell(item)}</RegisterCell>
-          <RegisterCell>
-            {item.kind === 'equipment_delivery'
-              ? item.critical
-                ? 'Да'
-                : 'Нет'
-              : '—'}
-          </RegisterCell>
-        </RegisterRow>
-      ))}
+      {items.map((item) => {
+        const key = selectionKeyOf(item);
+        const isSelected = selectionKeyEquals(selected, key);
+        return (
+          <RegisterRow
+            key={selectionKeyId(key)}
+            selected={isSelected}
+            onSelect={onSelect ? () => onSelect(key) : undefined}
+            rowRef={(el) => {
+              rowRefs.current.set(selectionKeyId(key), el);
+            }}
+          >
+            <RegisterCell>{scheduleKindLabel(item.kind)}</RegisterCell>
+            <RegisterCell className="font-medium text-[var(--text)]">
+              {objectCell(item)}
+            </RegisterCell>
+            <RegisterCell>{formatDateRu(item.baselineDate)}</RegisterCell>
+            <RegisterCell>{formatDateRu(item.forecastDate)}</RegisterCell>
+            <RegisterCell className="tabular-nums text-[var(--text)]">
+              {formatDeltaDays(item.dateVariance.deltaDays)}
+            </RegisterCell>
+            <RegisterCell>{statusCell(item)}</RegisterCell>
+            <RegisterCell>
+              {item.kind === 'equipment_delivery'
+                ? item.critical
+                  ? 'Да'
+                  : 'Нет'
+                : '—'}
+            </RegisterCell>
+          </RegisterRow>
+        );
+      })}
     </RegisterTable>
   );
 }

@@ -32,9 +32,32 @@ export function RegisterTable({
   );
 }
 
-export function RegisterRow({ children }: { children: ReactNode }) {
+export function RegisterRow({
+  children,
+  selected = false,
+  onSelect,
+  rowRef,
+}: {
+  children: ReactNode;
+  selected?: boolean;
+  /** Row-body selection (not used for link navigation). */
+  onSelect?: () => void;
+  rowRef?: (el: HTMLTableRowElement | null) => void;
+}) {
   return (
-    <tr className="border-b border-[var(--border-subtle)] last:border-b-0 hover:bg-[var(--interactive)]">
+    <tr
+      ref={rowRef}
+      aria-selected={selected || undefined}
+      data-selected={selected ? 'true' : undefined}
+      onClick={onSelect}
+      className={[
+        'border-b border-[var(--border-subtle)] last:border-b-0',
+        onSelect ? 'cursor-pointer' : '',
+        selected
+          ? 'bg-[var(--selected)]'
+          : 'hover:bg-[var(--interactive)]',
+      ].join(' ')}
+    >
       {children}
     </tr>
   );

@@ -59,9 +59,9 @@ Toggle Table | Split | Gantt.
 | Custom read-only timeline | Полноценная альтернатива |
 | gantt-task-react | Допустимый lightweight alt |
 
-> **certainty:** open_question
+> **certainty:** fact
 >
-> **D12 = `deferred decision`:** финальный выбор библиотеки после tech evaluation; пакеты **не** устанавливать в этой docs-волне. Read-only Gantt как secondary view (D10) при этом уже `approved UX decision`.
+> **D12 resolved:** `dhtmlx-gantt` Community Edition **MIT `10.0.3`** + project React adapter — [ADR-0004](../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md). Read-only Gantt as secondary view (D10) remains `approved UX decision`.
 
 ## 5. Navigation
 

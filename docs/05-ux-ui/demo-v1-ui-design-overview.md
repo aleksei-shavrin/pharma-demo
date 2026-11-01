@@ -50,7 +50,7 @@ related:
 | `proposal` | Residual unapproved UX/UI suggestion (not pack-locked) |
 | `assumption` | Temporary design working choice (e.g. BA-OQ-006 V1 layout; filter non-restore MVP) |
 | `hypothesis` | Unproven scale (mock volume) |
-| `deferred decision` | D12 Gantt library |
+| `deferred decision` | — (D12 resolved: ADR-0004) |
 | `open_question` | Unresolved BA / product / UX / implementation question intentionally left open by this wave (includes BA-OQ/HIP, persistence, shell DOM order, and other non-closed choices — not limited to BA-OQ/HIP or tech-only) |
 
 Do not confuse document frontmatter `status: draft|approved` with decision status above. Human Demo v1 pack APPROVE ≠ organizational approval.

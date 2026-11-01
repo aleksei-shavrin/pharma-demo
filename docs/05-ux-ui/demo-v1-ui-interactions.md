@@ -103,7 +103,7 @@ BA-OQ-006 remains **open**; V1 Issues&Risks single table + Type = `assumption` f
 | Gantt | Read-only; no drag-reschedule; no dependency editing (DOC-UX-018) |
 | A11y | Keyboard users complete tasks via **table**; Gantt is supplementary |
 
-D12 library choice remains deferred.
+D12 library choice: **resolved** — [ADR-0004](../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md) (`dhtmlx-gantt` Community MIT).
 
 ## 8. Entity Detail tabs (`approved UI Design decision`)
 

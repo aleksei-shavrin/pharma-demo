@@ -1,6 +1,6 @@
 ---
 name: Demo v1 Implementation
-overview: "Implementation Plan APPROVED (R1–R4). I1–I6 APPROVED+committed. I7 NOT STARTED. D12 blocks only I7."
+overview: "Implementation Plan APPROVED (R1–R4). I1–I7 APPROVED+committed. D12 resolved (ADR-0004, dhtmlx-gantt 10.0.3 Community/MIT). I8 NOT STARTED. BA-OQ-006 OPEN."
 todos:
   - id: await-impl-plan-approve
     content: Финальный human APPROVE этого Demo v1 Implementation Plan (после R1–R4)
@@ -27,8 +27,8 @@ todos:
     content: "I6: Schedule Table + Split infrastructure/readiness (без Gantt renderer)"
     status: completed
   - id: i7-d12-gantt
-    content: "I7: human-выбор D12 + read-only Gantt/timeline renderer (блок до D12)"
-    status: pending
+    content: "I7: D12 dhtmlx-gantt Community + read-only Timeline/Split/sync"
+    status: completed
   - id: i8-compose-e2e
     content: "I8: Compose profile app + Playwright narrative + architecture gates"
     status: pending
@@ -48,8 +48,11 @@ isProject: false
 | Implementation I3 | **APPROVED + committed** (`ea4205b`; includes RU / corrective passes) |
 | Implementation I4 | **APPROVED + committed** (`8225ee2`; includes corrective R1 + plan sync) |
 | Implementation I5 | **APPROVED + committed** (`cec76a1`; includes corrective R1–R2) |
-| Implementation I6 | **APPROVED + committed** (`b9b6780`; includes corrective R1: Split/Timeline disabled) |
-| Implementation I7+ | **NOT STARTED** |
+| Implementation I6 | **APPROVED + committed** (`f776adb`; includes corrective R1: Split/Timeline disabled) |
+| D12 Gantt library | **RESOLVED** — `dhtmlx-gantt@10.0.3` MIT Community ([ADR-0004](docs/06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md)) |
+| Implementation I7 | **APPROVED + committed** (`dac0768`; includes corrective R1–R4 + visual acceptance) |
+| Implementation I8+ | **NOT STARTED** |
+| BA-OQ-006 | **OPEN** |
 
 **Проверенные источники (primary, не только handoff):** [AGENTS.md](AGENTS.md), [DOC-PROD-003](docs/03-product/demo-v1-architecture.md), [DOC-PROD-002](docs/03-product/target-technology-stack.md), [ADR-0002](docs/06-architecture/decisions/0002-target-technology-stack-direction.md), [ADR-0003](docs/06-architecture/decisions/0003-local-dev-urls-and-proxy.md), [DOC-PROD-012](docs/03-product/demo-v1-mock-narrative-data.md), living specs в `openspec/specs/`, REQ-PROJ/MILE/EQPT/RISK/IMPCT/NFR, UI Design DOC-UX-014…020 + [handoff](docs/07-delivery/handoffs/2026-11-01-ui-design.md), [testing-strategy](docs/08-quality/testing-strategy.md), существующие [docker-compose.yml](docker-compose.yml) / [Caddyfile](Caddyfile).
 
@@ -145,10 +148,9 @@ flowchart LR
 
 ### Gantt (D12)
 
-- **Не блокирует** Schedule Table, Split infrastructure/readiness, Dashboard, registers, detail.
-- **Блокирует только** реальный read-only Gantt/timeline **renderer** (I7).
-- Перед I7: короткий spike + human-выбор среди кандидатов из docs (SVAR OS №1 / custom / gantt-task-react) — [DOC-UX-005](docs/05-ux-ui/demo-v1-schedule-workspace.md). План библиотеку **не** выбирает.
-- **Не** строить ad-hoc Gantt/timeline в I6 ради обхода D12.
+- **Resolved:** `dhtmlx-gantt@10.0.3` Community MIT + React adapter — [ADR-0004](docs/06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md).
+- **Не** PRO / commercial React wrapper; library model = presentation only.
+- I6 Table/Split readiness preceded renderer; I7 activates Split/Timeline + sync.
 
 ### Пирамида тестов (практичная)
 
@@ -196,7 +198,7 @@ flowchart LR
 
 | Пункт | Блокирует |
 |-------|-----------|
-| Human-выбор Gantt library (D12) | **только I7** (Gantt/timeline renderer) |
+| ~~Human-выбор Gantt library (D12)~~ | **resolved** ADR-0004 (`dhtmlx-gantt@10.0.3` MIT) |
 | Опционально: CI fail-on-threshold coverage | Финальный claim «CI green» — не локальная Demo readiness |
 
 ### Blockers / gates (актуально)
@@ -209,7 +211,8 @@ flowchart LR
 6. ~~I4 registers~~ — **APPROVED + committed** (`8225ee2`; incl. corrective R1).
 7. ~~I5 Entity Detail~~ — **APPROVED + committed** (`cec76a1`; incl. corrective R1–R2).
 8. ~~I6 Schedule~~ — **APPROVED + committed** (`b9b6780`; incl. corrective R1).
-9. **I7+** — не начинать без явной human-команды; D12 / Gantt library блокирует **только I7**.
+9. **I7** — **APPROVED + committed** (`dac0768`; D12 resolved ADR-0004).
+10. **I8+** — не начинать без явной human-команды.
 
 ---
 
@@ -280,11 +283,12 @@ flowchart LR
 
 ### I7 — Spike D12 + read-only Gantt/timeline renderer
 
-- **Цель:** Human-approved выбор библиотеки после spike; реализовать реальный read-only Gantt/timeline renderer для control points MS+EQ; baseline ghost + forecast; связать с границей I6 и focused/hovered cue.
-- **Deps:** I6 + **human-решение D12**.
-- **Вне scope:** PRO features, CPM, dependency arrows.
-- **AC:** Gantt не единственный путь; семантика по DOC-UX-018.
-- **STOP:** Если D12 не решён — skip/defer I7; Demo всё ещё shippable с Schedule Table (+ Split infrastructure без renderer).
+- **Статус итерации:** **COMPLETED / APPROVED / committed** (`dac0768`; includes corrective R1–R4 + visual acceptance).
+- **Цель:** Human-approved выбор библиотеки после spike; реализовать реальный read-only Gantt/timeline renderer для control points MS+EQ; baseline ghost + forecast; связать с границей I6 и selection sync.
+- **Deps:** I6 + **D12** — **RESOLVED** (`dhtmlx-gantt@10.0.3` Community / MIT, ADR-0004).
+- **Вне scope:** PRO features, CPM, dependency arrows, Activity/WBS, EQ—MS Domain relationship, fake duration.
+- **Итоговая модель:** Table / Split / Timeline enabled; **2** logical control-point rows; forecast = zero-duration DHTMLX milestone; baseline = same-row project-owned overlay (`posFromDate` + `getTaskPosition`); fit-to-data; Light/Dark via PPC tokens; synchronized Table↔Timeline selection; R2 bounded viewport (`10.5rem`); no fake duration / dependencies / dual-row; visual acceptance **passed**.
+- **STOP:** Visual + sync review — **пройден (APPROVED)**.
 
 ### I8 — Compose profile app + Demo readiness gates
 
@@ -316,12 +320,12 @@ flowchart LR
 
 1. **Последовательность:** I1 → I2 → I3 → I4 → I5 → I6 → I7 (D12-gated) → I8.
 2. **Settled architecture:** Next/Nest/REST/OpenAPI; `DemoDataSource` + mock fixtures; без PG; Caddy URLs; `apps/web`+`apps/api`; FE только через API; `snapshot=A|B|C` request-scoped.
-3. **Сделано:** I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`8225ee2`); I5 (`cec76a1`); I6 (`b9b6780`) — все APPROVED+committed.
-4. **В работе / review:** нет; следующая итерация — **I7** (NOT STARTED; блок D12).
-5. **Нерешённое → блок когда:** D12 → **только I7**; theme/snapshot cross-session persistence = `open_question`; BA-OQ-006 open.
+3. **Сделано:** I1–I7 APPROVED+committed — I1 (`dbea074`); I2 (`f104503`); I3 (`ea4205b`); I4 (`8225ee2`); I5 (`cec76a1` / tip `ff39f23`); I6 (`f776adb`); I7 (`dac0768`).
+4. **D12:** **RESOLVED** — `dhtmlx-gantt@10.0.3` Community / MIT (ADR-0004).
+5. **Нерешённое → блок когда:** theme/snapshot cross-session persistence = `open_question`; **BA-OQ-006 OPEN**.
 6. **Gates:** `test:docs` + OpenSpec strict + `test:apps` / e2e / architecture guards по мере итераций.
-7. **Agent habit:** после каждой итерации обновлять YAML todos + этот блок статуса в плане.
+7. **Agent habit:** после каждой итерации обновлять YAML todos + этот блок статуса в плане; sync `~/.cursor/plans/demo_v1_implementation_*.plan.md` with workspace SoT.
 
-**Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; I6 ≠ Gantt visualization (Table primary; Split/Timeline disabled до I7); I7 = единственная итерация, заблокированная D12; Must DecisionPanel read-only / без Must POST; BA-OQ-006 open + V1 assumption; без PG/ORM/auth/monorepo tooling.
+**Consistency (R1–R4, сохраняется):** snapshot не выдаётся за прежний ADR; нет обязательного `PersistencePort`; нет выбранного generic-контракта `{entityType}`; Schedule Table primary; Timeline via dhtmlx Community adapter (no PRO); Must DecisionPanel read-only / без Must POST; BA-OQ-006 open + V1 assumption; без PG/ORM/auth/monorepo tooling.
 
-**Следующий шаг человека:** явная команда на старт **I7** только после human-решения D12; I7 не начинать без неё.
+**Следующий шаг человека:** явная команда на **I8** (Compose app profile + Playwright narrative); I8 **NOT STARTED**.

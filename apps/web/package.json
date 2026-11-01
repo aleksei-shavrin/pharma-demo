@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "build": "NEXT_DIST_DIR=.next-build next build",
+    "start": "NEXT_DIST_DIR=.next-build next start",
+    "dev:fresh": "rm -rf .next && next dev --turbopack",
     "lint": "next lint",
     "test": "vitest run && npm run check:architecture",
     "test:unit": "vitest run",
     "check:architecture": "node scripts/check-no-api-imports.mjs"
   },
   "dependencies": {
+    "dhtmlx-gantt": "10.0.3",
     "lucide-react": "^1.66.0",
     "next": "15.1.0",
     "react": "^19.0.0",

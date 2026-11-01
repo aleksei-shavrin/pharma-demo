@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   RegisterEmpty,
   RegisterError,
@@ -10,21 +10,26 @@ import {
 import { fetchSchedule } from '@/lib/api-client';
 import { formatDateRu } from '@/lib/format/ru';
 import { useRegisterQuery } from '@/lib/registers/use-register-query';
+import type { ScheduleSelectionKey } from '@/lib/schedule/selection-key';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 import { ScheduleTable } from './schedule-table';
+import { ScheduleTimeline } from './schedule-timeline';
 import {
   SCHEDULE_VIEW_DEFAULT,
   type ScheduleViewMode,
 } from './schedule-view-mode';
 import { ScheduleViewToggle } from './schedule-view-toggle';
-import { TimelineReadinessPane } from './timeline-readiness-pane';
 
 export function ScheduleView() {
   const { active } = useSnapshot();
   const { data, status, error, retry } = useRegisterQuery(fetchSchedule);
   const [mode, setMode] = useState<ScheduleViewMode>(SCHEDULE_VIEW_DEFAULT);
+  const [selected, setSelected] = useState<ScheduleSelectionKey | null>(null);
 
-  const showSplit = mode === 'split';
+  // Clear selection on committed snapshot change (no ghost across A/B/C).
+  useEffect(() => {
+    setSelected(null);
+  }, [active]);
 
   return (
     <RegisterShell
@@ -47,19 +52,39 @@ export function ScheduleView() {
         <RegisterEmpty />
       ) : null}
       {status === 'idle' && data && data.items.length > 0 ? (
-        showSplit ? (
+        mode === 'split' ? (
           <div
-            className="grid gap-4 lg:grid-cols-[minmax(0,55fr)_minmax(0,45fr)]"
+            className="grid min-h-0 gap-4 lg:grid-cols-[minmax(0,55fr)_minmax(0,45fr)]"
             data-schedule-layout="split"
           >
             <div className="min-w-0">
-              <ScheduleTable items={data.items} />
+              <ScheduleTable
+                items={data.items}
+                selected={selected}
+                onSelect={setSelected}
+              />
             </div>
-            <TimelineReadinessPane />
+            <ScheduleTimeline
+              items={data.items}
+              selected={selected}
+              onSelect={setSelected}
+            />
+          </div>
+        ) : mode === 'gantt' ? (
+          <div data-schedule-layout="gantt">
+            <ScheduleTimeline
+              items={data.items}
+              selected={selected}
+              onSelect={setSelected}
+            />
           </div>
         ) : (
           <div data-schedule-layout="table">
-            <ScheduleTable items={data.items} />
+            <ScheduleTable
+              items={data.items}
+              selected={selected}
+              onSelect={setSelected}
+            />
           </div>
         )
       ) : null}
