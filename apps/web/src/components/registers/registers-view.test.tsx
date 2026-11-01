@@ -9,6 +9,7 @@ import MilestonesPage from '@/app/milestones/page';
 import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 
 const fetchDashboardOverview = vi.fn();
 const fetchEquipmentRegister = vi.fn();
@@ -29,87 +30,12 @@ vi.mock('@/lib/api-client', async () => {
 });
 
 function dash(snapshotId: SnapshotId) {
-  const delayed = snapshotId !== 'A';
-  return {
-    snapshotId,
-    scenarioAsOfDate:
-      snapshotId === 'A'
-        ? '2027-02-15'
-        : snapshotId === 'B'
-          ? '2027-03-01'
-          : '2027-03-02',
-    project: {
-      id: 'PRJ-01',
-      name: 'Строительство фармацевтического завода',
-      baselineProductionStart: '2027-09-15',
-      forecastProductionStart: delayed ? '2027-10-06' : '2027-09-15',
-      productionStartVariance: {
-        subject: 'production_start' as const,
-        baselineDate: '2027-09-15',
-        forecastDate: delayed ? '2027-10-06' : '2027-09-15',
-        deltaDays: delayed ? 21 : 0,
-      },
-    },
-    equipment: {
-      id: 'EQ-HVAC-01',
-      critical: true,
-      status: delayed ? ('Delayed' as const) : ('OnTrack' as const),
-      baselineDelivery: '2027-05-15',
-      forecastDelivery: delayed ? '2027-06-05' : '2027-05-15',
-      deliveryVariance: {
-        subject: 'equipment_delivery' as const,
-        baselineDate: '2027-05-15',
-        forecastDate: delayed ? '2027-06-05' : '2027-05-15',
-        deltaDays: delayed ? 21 : 0,
-      },
-    },
-    issue:
-      snapshotId === 'A'
-        ? null
-        : {
-            id: 'ISS-001',
-            title: 'HVAC long-lead delivery slip',
-            status:
-              snapshotId === 'C'
-                ? ('Mitigating' as const)
-                : ('Open' as const),
-            equipmentId: 'EQ-HVAC-01',
-            milestoneId: 'MS-PS',
-          },
-    risk: {
-      id: 'RISK-001',
-      rag: delayed ? ('Red' as const) : ('Green' as const),
-      equipmentId: 'EQ-HVAC-01',
-      milestoneId: 'MS-PS',
-      issueId: snapshotId === 'A' ? null : 'ISS-001',
-    },
-    milestone: {
-      id: 'MS-PS',
-      name: 'Ready for production',
-      rag: delayed ? ('Red' as const) : ('Green' as const),
-      baselineDate: '2027-09-15',
-      forecastDate: delayed ? '2027-10-06' : '2027-09-15',
-    },
-    decisionPanelState:
-      snapshotId === 'C'
-        ? ('recorded' as const)
-        : delayed
-          ? ('needed' as const)
-          : ('absent' as const),
-    decision: null,
-    directEdges: [],
-    derivedImpact: {
-      rule: 'BR-004' as const,
-      equipmentDeliveryDeltaDays: delayed ? 21 : 0,
-      productionStartDeltaDays: delayed ? 21 : 0,
-      kind: delayed ? ('aligned_slip' as const) : ('none' as const),
-    },
-    decisionHonesty: null,
-  };
+  return dashboardOverviewFixture(snapshotId);
 }
 
 function equipment(snapshotId: SnapshotId) {
-  const delayed = snapshotId !== 'A';
+  const hvacDelayed = snapshotId === 'C';
+  const pkgDelayed = snapshotId === 'B';
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
@@ -118,13 +44,25 @@ function equipment(snapshotId: SnapshotId) {
       {
         id: 'EQ-HVAC-01',
         critical: true,
-        status: delayed ? ('Delayed' as const) : ('OnTrack' as const),
+        status: hvacDelayed ? ('Delayed' as const) : ('OnTrack' as const),
         baselineDelivery: '2027-05-15',
-        forecastDelivery: delayed ? '2027-06-05' : '2027-05-15',
+        forecastDelivery: hvacDelayed ? '2027-06-05' : '2027-05-15',
         deliveryVariance: {
           baselineDate: '2027-05-15',
-          forecastDate: delayed ? '2027-06-05' : '2027-05-15',
-          deltaDays: delayed ? 21 : 0,
+          forecastDate: hvacDelayed ? '2027-06-05' : '2027-05-15',
+          deltaDays: hvacDelayed ? 21 : 0,
+        },
+      },
+      {
+        id: 'EQ-PKG-01',
+        critical: true,
+        status: pkgDelayed ? ('Delayed' as const) : ('OnTrack' as const),
+        baselineDelivery: '2027-06-20',
+        forecastDelivery: pkgDelayed ? '2027-06-27' : '2027-06-20',
+        deliveryVariance: {
+          baselineDate: '2027-06-20',
+          forecastDate: pkgDelayed ? '2027-06-27' : '2027-06-20',
+          deltaDays: pkgDelayed ? 7 : 0,
         },
       },
     ],
@@ -132,17 +70,22 @@ function equipment(snapshotId: SnapshotId) {
 }
 
 function issuesRisks(snapshotId: SnapshotId) {
-  const delayed = snapshotId !== 'A';
   const rows = [];
-  if (snapshotId !== 'A') {
+  if (snapshotId === 'B') {
+    rows.push({
+      type: 'Issue' as const,
+      id: 'ISS-PKG-CLOSED',
+      title: 'Локальное замечание по упаковке (закрыто)',
+      issueStatus: 'Closed' as const,
+      rag: null,
+    });
+  }
+  if (snapshotId === 'C') {
     rows.push({
       type: 'Issue' as const,
       id: 'ISS-001',
-      title: 'HVAC long-lead delivery slip',
-      issueStatus:
-        snapshotId === 'C'
-          ? ('Mitigating' as const)
-          : ('Open' as const),
+      title: 'Прогноз сдвига поставки long-lead AHU',
+      issueStatus: 'Open' as const,
       rag: null,
     });
   }
@@ -151,7 +94,7 @@ function issuesRisks(snapshotId: SnapshotId) {
     id: 'RISK-001',
     title: 'RISK-001',
     issueStatus: null,
-    rag: delayed ? ('Red' as const) : ('Green' as const),
+    rag: snapshotId === 'C' ? ('Red' as const) : ('Green' as const),
   });
   return {
     snapshotId,
@@ -162,7 +105,7 @@ function issuesRisks(snapshotId: SnapshotId) {
 }
 
 function milestones(snapshotId: SnapshotId) {
-  const delayed = snapshotId !== 'A';
+  const delayed = snapshotId === 'C';
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
@@ -215,20 +158,20 @@ beforeEach(() => {
 });
 
 describe('I4 registers presentation', () => {
-  it('Equipment A/B: RU status + deltas; no Ready for production leak', async () => {
+  it('Equipment A/C: RU status + HVAC deltas; no Ready for production leak', async () => {
     const user = userEvent.setup();
     render(wrap(<EquipmentPage />));
     await waitFor(() => {
-      expect(screen.getByText('По плану')).toBeInTheDocument();
+      expect(screen.getAllByText('По плану').length).toBeGreaterThan(0);
     });
-    expect(screen.getByText('без отклонения')).toBeInTheDocument();
+    expect(screen.getAllByText('без отклонения').length).toBeGreaterThan(0);
     expect(screen.getAllByText('15.05.2027').length).toBeGreaterThan(0);
     expect(screen.getByRole('link', { name: 'EQ-HVAC-01' })).toHaveAttribute(
       'href',
       '/equipment/EQ-HVAC-01',
     );
 
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {
       expect(screen.getByText('Задержка')).toBeInTheDocument();
     });
@@ -238,16 +181,13 @@ describe('I4 registers presentation', () => {
     expect(screen.queryByText(/\bDelayed\b/)).not.toBeInTheDocument();
   });
 
-  it('Issues & Risks A/B/C: single table, RU labels, no Pending', async () => {
+  it('Issues & Risks A/B/C: Closed on B; Open ISS-001 on C; no Pending', async () => {
     const user = userEvent.setup();
     render(wrap(<IssuesRisksPage />));
     await waitFor(() => {
       expect(screen.getByText('Риск: зелёный')).toBeInTheDocument();
     });
     expect(screen.queryByText('ISS-001')).not.toBeInTheDocument();
-    expect(screen.queryByText(/BA-OQ-006/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Demo v1/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/рабочее допущение/i)).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'RISK-001' })).toHaveAttribute(
       'href',
       '/risks/RISK-001',
@@ -255,23 +195,24 @@ describe('I4 registers presentation', () => {
 
     await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
     await waitFor(() => {
+      expect(screen.getByText('Закрыта')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Риск: зелёный')).toBeInTheDocument();
+    expect(screen.queryByText('ISS-001')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await waitFor(() => {
       expect(screen.getByText('Открыта')).toBeInTheDocument();
     });
     expect(
-      screen.getByText(/Задержка поставки HVAC с длительным сроком изготовления/),
+      screen.getByText(/Прогноз сдвига поставки long-lead AHU/),
     ).toBeInTheDocument();
     expect(screen.getByText('Риск: красный')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'ISS-001' })).toHaveAttribute(
       'href',
       '/issues/ISS-001',
     );
-
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
-    await waitFor(() => {
-      expect(screen.getByText('Выполняются меры')).toBeInTheDocument();
-    });
     expect(screen.queryByText(/\bPending\b/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/HVAC long-lead/)).not.toBeInTheDocument();
   });
 
   it('Milestones A/C: RU name + RAG + dates', async () => {

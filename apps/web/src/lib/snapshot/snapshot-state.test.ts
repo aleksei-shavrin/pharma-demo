@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { DashboardOverview, ProjectStub } from '@/lib/api-client';
+import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import { createMonotonicSeq } from './snapshot-seq';
 import { runSnapshotLoad } from './run-snapshot-load';
 import {
@@ -13,9 +14,8 @@ function dashboard(
   snapshotId: 'A' | 'B' | 'C',
   forecast: string,
 ): DashboardOverview {
-  return {
-    snapshotId,
-    scenarioAsOfDate: '2027-02-15',
+  const delayed = forecast !== '2027-09-15';
+  return dashboardOverviewFixture(snapshotId, {
     project: {
       id: 'PRJ-01',
       name: 'Строительство фармацевтического завода',
@@ -25,49 +25,52 @@ function dashboard(
         subject: 'production_start',
         baselineDate: '2027-09-15',
         forecastDate: forecast,
-        deltaDays: forecast === '2027-09-15' ? 0 : 21,
+        deltaDays: delayed ? 21 : 0,
       },
     },
-    equipment: {
-      id: 'EQ-HVAC-01',
-      critical: true,
-      status: forecast === '2027-09-15' ? 'OnTrack' : 'Delayed',
-      baselineDelivery: '2027-05-15',
-      forecastDelivery: forecast === '2027-09-15' ? '2027-05-15' : '2027-06-05',
-      deliveryVariance: {
-        subject: 'equipment_delivery',
-        baselineDate: '2027-05-15',
-        forecastDate:
-          forecast === '2027-09-15' ? '2027-05-15' : '2027-06-05',
-        deltaDays: forecast === '2027-09-15' ? 0 : 21,
+    equipment: [
+      {
+        id: 'EQ-HVAC-01',
+        name: 'Приточная установка AHU (long-lead)',
+        critical: true,
+        status: delayed ? 'Delayed' : 'OnTrack',
+        workstream: 'WS-HVAC',
+        baselineDelivery: '2027-05-15',
+        forecastDelivery: delayed ? '2027-06-05' : '2027-05-15',
+        deliveryVariance: {
+          subject: 'equipment_delivery',
+          baselineDate: '2027-05-15',
+          forecastDate: delayed ? '2027-06-05' : '2027-05-15',
+          deltaDays: delayed ? 21 : 0,
+        },
       },
-    },
-    issue: null,
-    risk: {
-      id: 'RISK-001',
-      rag: forecast === '2027-09-15' ? 'Green' : 'Red',
-      equipmentId: 'EQ-HVAC-01',
-      milestoneId: 'MS-PS',
-      issueId: null,
-    },
-    milestone: {
-      id: 'MS-PS',
-      name: 'Ready for production',
-      rag: forecast === '2027-09-15' ? 'Green' : 'Red',
-      baselineDate: '2027-09-15',
-      forecastDate: forecast,
-    },
+    ],
+    issues: [],
+    risks: [
+      {
+        id: 'RISK-001',
+        title: 'Срыв окна монтажа HVAC → сдвиг старта производства',
+        rag: delayed ? 'Red' : 'Green',
+        workstream: 'WS-HVAC',
+        equipmentId: 'EQ-HVAC-01',
+        milestoneId: 'MS-PS',
+        issueId: null,
+      },
+    ],
+    milestones: [
+      {
+        id: 'MS-PS',
+        name: 'Готовность к старту производства',
+        rag: delayed ? 'Red' : 'Green',
+        workstream: null,
+        baselineDate: '2027-09-15',
+        forecastDate: forecast,
+      },
+    ],
+    decisions: [],
     decisionPanelState: 'absent',
-    decision: null,
-    directEdges: [],
-    derivedImpact: {
-      rule: 'BR-004',
-      equipmentDeliveryDeltaDays: forecast === '2027-09-15' ? 0 : 21,
-      productionStartDeltaDays: forecast === '2027-09-15' ? 0 : 21,
-      kind: forecast === '2027-09-15' ? 'none' : 'aligned_slip',
-    },
     decisionHonesty: null,
-  };
+  });
 }
 
 function projectFrom(d: DashboardOverview): ProjectStub {

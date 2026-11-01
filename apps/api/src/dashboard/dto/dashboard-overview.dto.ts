@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { SNAPSHOT_IDS, type SnapshotId } from '../../snapshot/snapshot-id';
+import { WORKSTREAM_IDS, type WorkstreamId } from '../../data/workstream-ids';
 
 export class VarianceDto {
   @ApiProperty({
@@ -41,10 +42,16 @@ export class DashboardEquipmentDto {
   id!: string;
 
   @ApiProperty()
+  name!: string;
+
+  @ApiProperty()
   critical!: boolean;
 
   @ApiProperty({ enum: ['OnTrack', 'Delayed'] })
   status!: 'OnTrack' | 'Delayed';
+
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: WorkstreamId;
 
   @ApiProperty()
   baselineDelivery!: string;
@@ -63,8 +70,11 @@ export class DashboardIssueDto {
   @ApiProperty()
   title!: string;
 
-  @ApiProperty({ enum: ['Open', 'Mitigating'] })
-  status!: 'Open' | 'Mitigating';
+  @ApiProperty({ enum: ['Open', 'Mitigating', 'Closed'] })
+  status!: 'Open' | 'Mitigating' | 'Closed';
+
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: WorkstreamId;
 
   @ApiProperty()
   equipmentId!: string;
@@ -77,11 +87,17 @@ export class DashboardRiskDto {
   @ApiProperty()
   id!: string;
 
+  @ApiProperty()
+  title!: string;
+
   @ApiProperty({ enum: ['Green', 'Red'] })
   rag!: 'Green' | 'Red';
 
-  @ApiProperty()
-  equipmentId!: string;
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: WorkstreamId;
+
+  @ApiPropertyOptional({ nullable: true, type: String })
+  equipmentId!: string | null;
 
   @ApiProperty()
   milestoneId!: string;
@@ -100,6 +116,13 @@ export class DashboardMilestoneDto {
   @ApiProperty({ enum: ['Green', 'Red'] })
   rag!: 'Green' | 'Red';
 
+  @ApiPropertyOptional({
+    enum: WORKSTREAM_IDS,
+    nullable: true,
+    description: 'null for project-level MS-PS',
+  })
+  workstream!: WorkstreamId | null;
+
   @ApiProperty()
   baselineDate!: string;
 
@@ -111,14 +134,20 @@ export class DashboardDecisionDto {
   @ApiProperty()
   id!: string;
 
-  @ApiProperty({ enum: ['PrioritizeRecovery'] })
-  type!: 'PrioritizeRecovery';
+  @ApiProperty()
+  projectId!: string;
+
+  @ApiPropertyOptional({ nullable: true, type: String })
+  milestoneId!: string | null;
+
+  @ApiProperty({ enum: ['PrioritizeRecovery', 'AcceptDateSlip'] })
+  type!: 'PrioritizeRecovery' | 'AcceptDateSlip';
 
   @ApiProperty()
   ownerRole!: string;
 
-  @ApiProperty()
-  dueDate!: string;
+  @ApiPropertyOptional({ nullable: true, type: String })
+  dueDate!: string | null;
 
   @ApiProperty()
   note!: string;
@@ -129,13 +158,13 @@ export class DirectEdgeDto {
   kind!: 'direct';
 
   @ApiProperty()
-  fromType!: 'equipment' | 'issue' | 'risk' | 'milestone';
+  fromType!: 'equipment' | 'issue' | 'risk' | 'milestone' | 'decision';
 
   @ApiProperty()
   fromId!: string;
 
   @ApiProperty()
-  toType!: 'equipment' | 'issue' | 'risk' | 'milestone';
+  toType!: 'equipment' | 'issue' | 'risk' | 'milestone' | 'decision';
 
   @ApiProperty()
   toId!: string;
@@ -170,11 +199,58 @@ export class DecisionHonestyDto {
   recoveryExecuted!: false;
 }
 
-/**
- * Decision surface state for Dashboard (Must = read-only).
- * B uses "needed" — not a Domain Decision status "Pending".
- */
 export type DecisionPanelState = 'absent' | 'needed' | 'recorded';
+
+export class WorkstreamRollupDto {
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: WorkstreamId;
+
+  @ApiProperty({ enum: ['Green', 'Yellow', 'Red'] })
+  status!: 'Green' | 'Yellow' | 'Red';
+}
+
+export class TopExceptionLinkDto {
+  @ApiProperty({ enum: ['equipment', 'issue', 'risk', 'milestone'] })
+  type!: 'equipment' | 'issue' | 'risk' | 'milestone';
+
+  @ApiProperty()
+  id!: string;
+}
+
+/**
+ * Dashboard/read-model Top Exception.
+ * `priority` is presentation metadata only — NOT a Domain field.
+ */
+export class TopExceptionDto {
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty()
+  title!: string;
+
+  @ApiProperty()
+  causeImpact!: string;
+
+  @ApiProperty({ type: [TopExceptionLinkDto] })
+  links!: TopExceptionLinkDto[];
+
+  @ApiProperty({
+    description:
+      'Curated Demo management order on read model only (not Domain managementPriority)',
+  })
+  priority!: number;
+}
+
+export class TrendDto {
+  @ApiProperty({ type: [String] })
+  better!: string[];
+
+  @ApiProperty({ type: [String] })
+  worse!: string[];
+
+  @ApiProperty({ type: [String] })
+  unchangedCritical!: string[];
+}
 
 export class DashboardOverviewDto {
   @ApiProperty({ enum: SNAPSHOT_IDS })
@@ -183,26 +259,38 @@ export class DashboardOverviewDto {
   @ApiProperty()
   scenarioAsOfDate!: string;
 
+  @ApiProperty({ enum: ['Green', 'Yellow', 'Red'] })
+  projectStatus!: 'Green' | 'Yellow' | 'Red';
+
   @ApiProperty({ type: DashboardProjectDto })
   project!: DashboardProjectDto;
 
-  @ApiProperty({ type: DashboardEquipmentDto })
-  equipment!: DashboardEquipmentDto;
+  @ApiProperty({ type: [DashboardEquipmentDto] })
+  equipment!: DashboardEquipmentDto[];
 
-  @ApiPropertyOptional({ type: DashboardIssueDto, nullable: true })
-  issue!: DashboardIssueDto | null;
+  @ApiProperty({ type: [DashboardIssueDto] })
+  issues!: DashboardIssueDto[];
 
-  @ApiProperty({ type: DashboardRiskDto })
-  risk!: DashboardRiskDto;
+  @ApiProperty({ type: [DashboardRiskDto] })
+  risks!: DashboardRiskDto[];
 
-  @ApiProperty({ type: DashboardMilestoneDto })
-  milestone!: DashboardMilestoneDto;
+  @ApiProperty({ type: [DashboardMilestoneDto] })
+  milestones!: DashboardMilestoneDto[];
+
+  @ApiProperty({ type: [DashboardDecisionDto] })
+  decisions!: DashboardDecisionDto[];
+
+  @ApiProperty({ type: [WorkstreamRollupDto] })
+  workstreamRollups!: WorkstreamRollupDto[];
+
+  @ApiProperty({ type: [TopExceptionDto] })
+  topExceptions!: TopExceptionDto[];
+
+  @ApiProperty({ type: TrendDto })
+  trend!: TrendDto;
 
   @ApiProperty({ enum: ['absent', 'needed', 'recorded'] })
   decisionPanelState!: DecisionPanelState;
-
-  @ApiPropertyOptional({ type: DashboardDecisionDto, nullable: true })
-  decision!: DashboardDecisionDto | null;
 
   @ApiProperty({ type: [DirectEdgeDto] })
   directEdges!: DirectEdgeDto[];

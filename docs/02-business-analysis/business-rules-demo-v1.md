@@ -3,9 +3,9 @@ id: DOC-BA-014
 title: "Business rules (Demo v1)"
 type: business
 status: draft
-version: "0.4.0"
+version: "0.5.0"
 created: 2026-10-30
-updated: 2026-10-30
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-BA-013
@@ -59,9 +59,9 @@ related:
 |--------|--------|-----------|
 | Open | Зарегистрированное отклонение; Decision PrioritizeRecovery ещё не записан | hypothesis |
 | Mitigating | После Decision **PrioritizeRecovery**; execution recovery **не** моделируется; forecast **не** авто-пересчитывается (BR-006) | assumption |
-| Closed | Явное закрытие Issue; **не** следует автоматически из AcceptDateSlip | open_question |
+| Closed | Явное закрытие Issue; **не** следует автоматически из AcceptDateSlip; эффекты fixture-authored | assumption |
 
-**AcceptDateSlip** — тип **Decision**, не Issue.status. Post-state Issue после AcceptDateSlip — **BA-OQ-004**.
+**AcceptDateSlip** — тип **Decision**, не Issue.status. Post-state Issue/Risk/MS после AcceptDateSlip для Demo enrichment path — **fixture-authored** (BA-OQ-004/005 **closed** 2026-11-01).
 
 ### RAG: правило vs fixture vs integrity (BR-002)
 
@@ -144,15 +144,15 @@ related:
 | Поле | PrioritizeRecovery (Snapshot C primary) | AcceptDateSlip |
 |------|------------------------------------------|----------------|
 | Decision | type=PrioritizeRecovery; owner/due опционально | type=AcceptDateSlip; due не обязателен |
-| Issue.status | **Mitigating** (определено) | **open_question** (BA-OQ-004): не авто-Closed; не путать с типом Decision |
-| Risk.rag | **Red** (BR-002: Mitigating) | **open_question** (BA-OQ-005), если Issue уже не Open/Mitigating |
-| Milestone.rag | **Red** (BR-003, пока Risk Red) | **open_question** (BA-OQ-005), следует из Risk |
-| Project/MS forecast | **Без изменения** vs Snapshot B | **Без изменения** vs Snapshot B (принят текущий forecast) |
+| Issue.status | **Mitigating** (определено) | **Fixture-authored** (не авто-Closed из Decision; BA-OQ-004 closed for Demo path) |
+| Risk.rag | **Red** (BR-002: Mitigating) | **Fixture-authored** (BA-OQ-005 closed for Demo path) |
+| Milestone.rag | **Red** (BR-003, пока Risk Red) | **Fixture-authored** (следует из Risk fixture / BA-OQ-005 closed) |
+| Project/MS forecast | **Без изменения** vs prior delay snap | **Без изменения** от Decision alone (принят текущий forecast) |
 | Recovery execution | **Не моделируется** | n/a |
 
-> **certainty:** open_question
+> **certainty:** assumption
 >
-> **BA-OQ-004 / BA-OQ-005:** полное post-state Issue/Risk/MS после AcceptDateSlip не утверждено PO. Primary mock Snapshot C = PrioritizeRecovery. AcceptDateSlip остаётся **записываемым** типом Decision (BR-006) без выдуманной полной state-машины.
+> **BA-OQ-004 / BA-OQ-005** закрыты для Demo enrichment path (2026-11-01): AcceptDateSlip post-state = fixture-authored; Decision alone не меняет Issue/Risk/MS/forecast. Primary teaching PrioritizeRecovery на enriched Snapshot F (legacy Snapshot C). AcceptDateSlip остаётся записываемым типом без Decision engine.
 
 ---
 
@@ -168,21 +168,21 @@ related:
 | **Ожидаемый результат** | Соответствующие проверки Pass на уровне спецификации |
 | **Проверяемый пример** | См. [demo-v1-mock-narrative-data](../03-product/demo-v1-mock-narrative-data.md) |
 
-### Применимость по snapshot
+### Применимость (state-based; snapshot letters = examples)
 
-**Snapshot A — baseline integrity**
+**Baseline integrity (e.g. Snapshot A)**
 
 - Нет Open Issue по critical EQ delay fixture.
 - baseline/forecast согласованы (forecast = baseline для EQ delivery и production start).
 - Green Risk/Milestone — **исходные fixture values**, не результат BR-002/003.
 
-**Snapshot B/C — causal-chain integrity**
+**Causal-chain integrity (e.g. enriched C–H when HVAC delay path active)**
 
 - Связаны Equipment, Issue, Risk, Milestone, Project.
 - Fixture Risk/MS rag соответствует ожиданиям BR-002/003.
-- Forecast dates согласованы с BR-004 (Δ delivery).
-- После PrioritizeRecovery (C): forecast не меняется от Decision alone (BR-006).
-- Нет Green MS-PS при Red Risk от того же delay.
+- Forecast dates согласованы с BR-004 (sole driver EQ-HVAC-01).
+- После PrioritizeRecovery: forecast не меняется от Decision alone (BR-006).
+- **Если RISK-001 Red на HVAC→PS path — MS-PS SHALL NOT be Green** (любой snapshot, включая residual G/H).
 - Даты согласованы с scenarioAsOfDate.
 
 **Классификация:** integrity invariant (не user-facing capability). Runtime compute не заявлен.

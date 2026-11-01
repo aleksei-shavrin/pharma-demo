@@ -6,8 +6,12 @@ import type { SnapshotFixture, SnapshotId } from './types';
 export * from './types';
 export { SNAPSHOT_A, SNAPSHOT_B, SNAPSHOT_C };
 
-/** All discrete Demo v1 snapshots keyed by id. */
-export const SNAPSHOTS: Record<SnapshotId, SnapshotFixture> = {
+/**
+ * Populated Demo snapshots (E1: A–C temporary stubs).
+ * Machine contract allows A–H; D–H absent until E2.
+ */
+export const SNAPSHOTS: Partial<Record<SnapshotId, SnapshotFixture>> &
+  Record<'A' | 'B' | 'C', SnapshotFixture> = {
   A: SNAPSHOT_A,
   B: SNAPSHOT_B,
   C: SNAPSHOT_C,

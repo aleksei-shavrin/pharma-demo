@@ -19,15 +19,18 @@ describe('Demo v1 presentation mapping', () => {
       'Готовность к производству',
     );
     expect(
-      presentIssueTitle('ISS-001', 'HVAC long-lead delivery slip'),
-    ).toBe('Задержка поставки HVAC с длительным сроком изготовления');
+      presentIssueTitle('ISS-001', 'Прогноз сдвига поставки long-lead AHU'),
+    ).toBe('Прогноз сдвига поставки long-lead AHU');
     expect(presentDecisionType('PrioritizeRecovery')).toBe(
       'Приоритизировать восстановление сроков',
     );
     expect(
-      presentDecisionNote('DEC-001', 'Expedite vendor / alternate lane'),
+      presentDecisionNote(
+        'DEC-001',
+        'Утвердить ускоренную логистику AHU и резервный монтажный слот',
+      ),
     ).toBe(
-      'Ускорить работу с поставщиком / проработать альтернативный маршрут поставки',
+      'Утвердить ускоренную логистику AHU и резервный монтажный слот',
     );
   });
 

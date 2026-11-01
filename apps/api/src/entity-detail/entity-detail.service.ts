@@ -7,6 +7,12 @@ import {
 } from '../common/direct-edges';
 import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
 import type { SnapshotFixture } from '../data/fixtures/types';
+import {
+  findEquipment,
+  findIssue,
+  findMilestone,
+  findRisk,
+} from '../data/snapshot-access';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import type {
   EntityImpactDto,
@@ -19,7 +25,6 @@ import type {
 
 /**
  * Typed Entity Detail read models. Links = DOC-BA-015 only; Impact = derived.
- * Does not import fixture constants.
  */
 @Injectable()
 export class EntityDetailService {
@@ -33,8 +38,8 @@ export class EntityDetailService {
     snapshotId: SnapshotId,
   ): EquipmentDetailDto {
     const snapshot = this.requireProjectSnapshot(projectId, snapshotId);
-    const eq = snapshot.equipment;
-    if (eq.id !== entityId) {
+    const eq = findEquipment(snapshot, entityId);
+    if (!eq) {
       throw new NotFoundException(`Equipment ${entityId} not found`);
     }
     const deltaDays = calendarDaysDelta(
@@ -68,8 +73,8 @@ export class EntityDetailService {
     snapshotId: SnapshotId,
   ): IssueDetailDto {
     const snapshot = this.requireProjectSnapshot(projectId, snapshotId);
-    const issue = snapshot.issue;
-    if (!issue || issue.id !== entityId) {
+    const issue = findIssue(snapshot, entityId);
+    if (!issue) {
       throw new NotFoundException(`Issue ${entityId} not found`);
     }
     return {
@@ -93,8 +98,8 @@ export class EntityDetailService {
     snapshotId: SnapshotId,
   ): RiskDetailDto {
     const snapshot = this.requireProjectSnapshot(projectId, snapshotId);
-    const risk = snapshot.risk;
-    if (risk.id !== entityId) {
+    const risk = findRisk(snapshot, entityId);
+    if (!risk) {
       throw new NotFoundException(`Risk ${entityId} not found`);
     }
     return {
@@ -116,8 +121,8 @@ export class EntityDetailService {
     snapshotId: SnapshotId,
   ): MilestoneDetailDto {
     const snapshot = this.requireProjectSnapshot(projectId, snapshotId);
-    const ms = snapshot.milestone;
-    if (ms.id !== entityId) {
+    const ms = findMilestone(snapshot, entityId);
+    if (!ms) {
       throw new NotFoundException(`Milestone ${entityId} not found`);
     }
     const deltaDays = calendarDaysDelta(ms.baselineDate, ms.forecastDate);
@@ -143,11 +148,13 @@ export class EntityDetailService {
   }
 
   private mapLinks(links: EntityLink[]): EntityLinkDto[] {
-    return links.map((l) => ({
-      targetType: l.targetType,
-      targetId: l.targetId,
-      displayName: l.displayName,
-    }));
+    return links
+      .filter((l) => l.targetType !== 'decision')
+      .map((l) => ({
+        targetType: l.targetType as EntityLinkDto['targetType'],
+        targetId: l.targetId,
+        displayName: l.displayName,
+      }));
   }
 
   private mapImpact(snapshot: SnapshotFixture): EntityImpactDto {

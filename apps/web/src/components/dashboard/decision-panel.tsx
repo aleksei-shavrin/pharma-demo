@@ -1,4 +1,5 @@
 import type { DashboardOverview } from '@/lib/api-client';
+import { spineDecision } from '@/lib/dashboard/spine';
 import { formatDateRu } from '@/lib/format/ru';
 import {
   presentDecisionNote,
@@ -6,6 +7,8 @@ import {
 } from '@/lib/ui-labels';
 
 export function DecisionPanel({ data }: { data: DashboardOverview }) {
+  const decision = spineDecision(data);
+
   return (
     <section
       aria-labelledby="decision-heading"
@@ -37,22 +40,24 @@ export function DecisionPanel({ data }: { data: DashboardOverview }) {
         </div>
       ) : null}
 
-      {data.decisionPanelState === 'recorded' && data.decision ? (
+      {data.decisionPanelState === 'recorded' && decision ? (
         <div className="mt-3 space-y-3 text-sm">
           <div>
             <p className="text-xs uppercase tracking-wide text-[var(--text-muted)]">
-              Зарегистрировано
+              Зафиксировано
             </p>
             <p className="font-semibold text-[var(--text)]">
-              {presentDecisionType(data.decision.type)}
+              {presentDecisionType(decision.type)}
             </p>
             <p className="text-[var(--text-muted)]">
-              {data.decision.id} · срок{' '}
-              {formatDateRu(data.decision.dueDate)} · владелец{' '}
-              {data.decision.ownerRole}
+              {decision.id}
+              {decision.dueDate
+                ? ` · срок ${formatDateRu(decision.dueDate)}`
+                : ''}{' '}
+              · владелец {decision.ownerRole}
             </p>
             <p className="mt-1 text-[var(--text-secondary)]">
-              {presentDecisionNote(data.decision.id, data.decision.note)}
+              {presentDecisionNote(decision.id, decision.note)}
             </p>
           </div>
           {data.decisionHonesty && !data.decisionHonesty.recoveryExecuted ? (

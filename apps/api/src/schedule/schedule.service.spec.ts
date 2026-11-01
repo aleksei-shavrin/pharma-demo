@@ -18,23 +18,23 @@ describe('ScheduleService', () => {
     service = moduleRef.get(ScheduleService);
   });
 
-  it('A: equipment OnTrack Δ0; milestone Green Δ0; no Activity', () => {
+  it('A: multi control points; HVAC OnTrack; no Activity', () => {
     const s = service.getSchedule('PRJ-01', 'A');
     expect(s.snapshotId).toBe('A');
-    expect(s.items).toHaveLength(2);
+    expect(s.items.length).toBeGreaterThanOrEqual(2);
     expect(s.items.every((i) => i.kind !== ('activity' as string))).toBe(true);
 
-    const eq = s.items.find((i) => i.kind === 'equipment_delivery');
-    const ms = s.items.find((i) => i.kind === 'milestone');
+    const eq = s.items.find(
+      (i) => i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
+    );
+    const ms = s.items.find((i) => i.kind === 'milestone' && i.id === 'MS-PS');
     expect(eq).toMatchObject({
-      id: 'EQ-HVAC-01',
       status: 'OnTrack',
       baselineDate: '2027-05-15',
       forecastDate: '2027-05-15',
       dateVariance: { deltaDays: 0 },
     });
     expect(ms).toMatchObject({
-      id: 'MS-PS',
       rag: 'Green',
       baselineDate: '2027-09-15',
       forecastDate: '2027-09-15',
@@ -43,29 +43,30 @@ describe('ScheduleService', () => {
     expect(JSON.stringify(s)).not.toMatch(/equipmentMilestone|relatedMilestone/);
   });
 
-  it('B: +21 Delayed/Red; chronological order by forecast', () => {
+  it('B: HVAC calm; PKG Delayed; MS-PS Green', () => {
     const s = service.getSchedule('PRJ-01', 'B');
-    expect(s.items.map((i) => i.id)).toEqual(['EQ-HVAC-01', 'MS-PS']);
-    const eq = s.items[0];
-    const ms = s.items[1];
-    expect(eq.kind).toBe('equipment_delivery');
-    expect(eq).toMatchObject({
-      forecastDate: '2027-06-05',
-      status: 'Delayed',
-      dateVariance: { deltaDays: 21 },
-    });
-    expect(ms.kind).toBe('milestone');
+    const hvac = s.items.find(
+      (i) => i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
+    )!;
+    const pkg = s.items.find(
+      (i) => i.kind === 'equipment_delivery' && i.id === 'EQ-PKG-01',
+    )!;
+    const ms = s.items.find((i) => i.kind === 'milestone' && i.id === 'MS-PS')!;
+    expect(hvac.status).toBe('OnTrack');
+    expect(pkg.status).toBe('Delayed');
     expect(ms).toMatchObject({
-      forecastDate: '2027-10-06',
-      rag: 'Red',
-      dateVariance: { deltaDays: 21 },
+      forecastDate: '2027-09-15',
+      rag: 'Green',
+      dateVariance: { deltaDays: 0 },
     });
   });
 
-  it('C: same delayed forecasts as B; no recovery heal', () => {
+  it('C: HVAC +21 Delayed; MS-PS Red +21; no recovery heal', () => {
     const s = service.getSchedule('PRJ-01', 'C');
-    const eq = s.items.find((i) => i.kind === 'equipment_delivery')!;
-    const ms = s.items.find((i) => i.kind === 'milestone')!;
+    const eq = s.items.find(
+      (i) => i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
+    )!;
+    const ms = s.items.find((i) => i.kind === 'milestone' && i.id === 'MS-PS')!;
     expect(eq.forecastDate).toBe('2027-06-05');
     expect(eq.dateVariance.deltaDays).toBe(21);
     expect(ms.forecastDate).toBe('2027-10-06');

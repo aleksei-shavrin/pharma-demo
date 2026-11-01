@@ -6,12 +6,15 @@ import {
 } from '../common/derived-impact';
 import { buildDirectEdges } from '../common/direct-edges';
 import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
+import {
+  computeProjectStatus,
+  computeWorkstreamRollups,
+} from '../data/project-status';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import type { DashboardOverviewDto } from './dto/dashboard-overview.dto';
 
 /**
- * Dashboard read model — BR-004 deltas derived here; BR-006 honesty in response.
- * Does not import fixture constants.
+ * Dashboard read model — collection-shaped; BR-004/006; status/rollups derived.
  */
 @Injectable()
 export class DashboardService {
@@ -26,10 +29,6 @@ export class DashboardService {
       throw new NotFoundException(`Project ${projectId} not found`);
     }
 
-    const deliveryDelta = calendarDaysDelta(
-      snapshot.equipment.baselineDelivery,
-      snapshot.equipment.forecastDelivery,
-    );
     const psDelta = calendarDaysDelta(
       project.baselineProductionStart,
       project.forecastProductionStart,
@@ -37,20 +36,11 @@ export class DashboardService {
 
     const panelState = decisionPanelState(snapshot);
     const impact = computeDerivedImpact(snapshot);
-    const decision =
-      snapshot.decision === null
-        ? null
-        : {
-            id: snapshot.decision.id,
-            type: snapshot.decision.type,
-            ownerRole: snapshot.decision.ownerRole,
-            dueDate: snapshot.decision.dueDate,
-            note: snapshot.decision.note,
-          };
 
     return {
       snapshotId: snapshot.id,
       scenarioAsOfDate: snapshot.scenarioAsOfDate,
+      projectStatus: computeProjectStatus(snapshot),
       project: {
         id: project.id,
         name: project.name,
@@ -63,44 +53,77 @@ export class DashboardService {
           deltaDays: psDelta,
         },
       },
-      equipment: {
-        id: snapshot.equipment.id,
-        critical: snapshot.equipment.critical,
-        status: snapshot.equipment.status,
-        baselineDelivery: snapshot.equipment.baselineDelivery,
-        forecastDelivery: snapshot.equipment.forecastDelivery,
-        deliveryVariance: {
-          subject: 'equipment_delivery',
-          baselineDate: snapshot.equipment.baselineDelivery,
-          forecastDate: snapshot.equipment.forecastDelivery,
-          deltaDays: deliveryDelta,
-        },
-      },
-      issue: snapshot.issue
-        ? {
-            id: snapshot.issue.id,
-            title: snapshot.issue.title,
-            status: snapshot.issue.status,
-            equipmentId: snapshot.issue.equipmentId,
-            milestoneId: snapshot.issue.milestoneId,
-          }
-        : null,
-      risk: {
-        id: snapshot.risk.id,
-        rag: snapshot.risk.rag,
-        equipmentId: snapshot.risk.equipmentId,
-        milestoneId: snapshot.risk.milestoneId,
-        issueId: snapshot.risk.issueId,
-      },
-      milestone: {
-        id: snapshot.milestone.id,
-        name: snapshot.milestone.name,
-        rag: snapshot.milestone.rag,
-        baselineDate: snapshot.milestone.baselineDate,
-        forecastDate: snapshot.milestone.forecastDate,
+      equipment: snapshot.equipment.map((eq) => {
+        const deliveryDelta = calendarDaysDelta(
+          eq.baselineDelivery,
+          eq.forecastDelivery,
+        );
+        return {
+          id: eq.id,
+          name: eq.name,
+          critical: eq.critical,
+          status: eq.status,
+          workstream: eq.workstream,
+          baselineDelivery: eq.baselineDelivery,
+          forecastDelivery: eq.forecastDelivery,
+          deliveryVariance: {
+            subject: 'equipment_delivery' as const,
+            baselineDate: eq.baselineDelivery,
+            forecastDate: eq.forecastDelivery,
+            deltaDays: deliveryDelta,
+          },
+        };
+      }),
+      issues: snapshot.issues.map((issue) => ({
+        id: issue.id,
+        title: issue.title,
+        status: issue.status,
+        workstream: issue.workstream,
+        equipmentId: issue.equipmentId,
+        milestoneId: issue.milestoneId,
+      })),
+      risks: snapshot.risks.map((risk) => ({
+        id: risk.id,
+        title: risk.title,
+        rag: risk.rag,
+        workstream: risk.workstream,
+        equipmentId: risk.equipmentId,
+        milestoneId: risk.milestoneId,
+        issueId: risk.issueId,
+      })),
+      milestones: snapshot.milestones.map((ms) => ({
+        id: ms.id,
+        name: ms.name,
+        rag: ms.rag,
+        workstream: ms.workstream,
+        baselineDate: ms.baselineDate,
+        forecastDate: ms.forecastDate,
+      })),
+      decisions: snapshot.decisions.map((d) => ({
+        id: d.id,
+        projectId: d.projectId,
+        milestoneId: d.milestoneId,
+        type: d.type,
+        ownerRole: d.ownerRole,
+        dueDate: d.dueDate,
+        note: d.note,
+      })),
+      workstreamRollups: computeWorkstreamRollups(snapshot),
+      topExceptions: [...snapshot.topExceptions]
+        .sort((a, b) => a.priority - b.priority)
+        .map((t) => ({
+          id: t.id,
+          title: t.title,
+          causeImpact: t.causeImpact,
+          links: t.links,
+          priority: t.priority,
+        })),
+      trend: {
+        better: [...snapshot.trend.better],
+        worse: [...snapshot.trend.worse],
+        unchangedCritical: [...snapshot.trend.unchangedCritical],
       },
       decisionPanelState: panelState,
-      decision,
       directEdges: buildDirectEdges(snapshot),
       derivedImpact: {
         rule: 'BR-004',

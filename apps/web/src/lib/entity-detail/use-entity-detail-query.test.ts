@@ -4,62 +4,12 @@ import React, { type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiClientError } from '@/lib/api-client';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
+import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import { useEntityDetailQuery } from './use-entity-detail-query';
 
-const fetchDashboardOverview = vi.fn(async () => ({
-  snapshotId: 'A',
-  scenarioAsOfDate: '2027-02-15',
-  project: {
-    id: 'PRJ-01',
-    name: 'Строительство фармацевтического завода',
-    baselineProductionStart: '2027-09-15',
-    forecastProductionStart: '2027-09-15',
-    productionStartVariance: {
-      subject: 'production_start' as const,
-      baselineDate: '2027-09-15',
-      forecastDate: '2027-09-15',
-      deltaDays: 0,
-    },
-  },
-  equipment: {
-    id: 'EQ-HVAC-01',
-    critical: true,
-    status: 'OnTrack' as const,
-    baselineDelivery: '2027-05-15',
-    forecastDelivery: '2027-05-15',
-    deliveryVariance: {
-      subject: 'equipment_delivery' as const,
-      baselineDate: '2027-05-15',
-      forecastDate: '2027-05-15',
-      deltaDays: 0,
-    },
-  },
-  issue: null,
-  risk: {
-    id: 'RISK-001',
-    rag: 'Green' as const,
-    equipmentId: 'EQ-HVAC-01',
-    milestoneId: 'MS-PS',
-    issueId: null,
-  },
-  milestone: {
-    id: 'MS-PS',
-    name: 'Ready for production',
-    rag: 'Green' as const,
-    baselineDate: '2027-09-15',
-    forecastDate: '2027-09-15',
-  },
-  decisionPanelState: 'absent' as const,
-  decision: null,
-  directEdges: [],
-  derivedImpact: {
-    rule: 'BR-004' as const,
-    equipmentDeliveryDeltaDays: 0,
-    productionStartDeltaDays: 0,
-    kind: 'none' as const,
-  },
-  decisionHonesty: null,
-}));
+const fetchDashboardOverview = vi.fn(async () =>
+  dashboardOverviewFixture('A'),
+);
 
 vi.mock('@/lib/api-client', async () => {
   const actual =

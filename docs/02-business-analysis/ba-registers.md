@@ -3,7 +3,7 @@ id: DOC-BA-010
 title: "BA registers"
 type: business
 status: draft
-version: "0.4.0"
+version: "0.5.0"
 created: 2026-10-30
 updated: 2026-11-01
 owner: "docs-engineering"
@@ -13,6 +13,7 @@ related:
   - DOC-BA-README-001
   - DOC-PROD-011
   - DOC-PROD-012
+  - DOC-PROD-020
   - DOC-PROD-001
   - DOC-UX-017
 ---
@@ -48,8 +49,8 @@ Certainty: demo direction ≠ enterprise-`fact`.
 | BA-OQ-001 | *(закрыт)* Freeze Demo v1 functional scope (PD2) | product owner | **closed** — 2026-10-31; см. § «Решение BA-OQ-001»; [demo-v1-functional-scope](../03-product/demo-v1-functional-scope.md) |
 | BA-OQ-002 | HIP-003 / HIP-004 / HIP-007 (messaging, горизонт, framing) | product owner | open (Discovery HIP) |
 | BA-OQ-003 | *(закрыт)* Концептуально Issue и Risk — отдельные связанные сущности | BA/PD | **closed** — Domain Model DOC-BA-015, BR-001/002, REQ-RISK-001 |
-| BA-OQ-004 | Issue.status после AcceptDateSlip (не авто-Closed; AcceptDateSlip = Decision type) | product owner | open |
-| BA-OQ-005 | Risk.rag / Milestone.rag после AcceptDateSlip, если Issue уже не Open/Mitigating | product owner | open |
+| BA-OQ-004 | *(закрыт для Demo enrichment path)* Issue.status после AcceptDateSlip | product owner | **closed** — 2026-11-01; см. § «Решение BA-OQ-004/005» |
+| BA-OQ-005 | *(закрыт для Demo enrichment path)* Risk.rag / Milestone.rag после AcceptDateSlip | product owner | **closed** — 2026-11-01; см. § «Решение BA-OQ-004/005» |
 | BA-OQ-006 | *(закрыт)* Как представлять Issue и Risk в UI (раздельные панели vs совместный вид) | product owner / UX | **closed** — 2026-11-01; см. § «Решение BA-OQ-006» |
 
 ## Решение BA-OQ-001 (2026-10-31)
@@ -67,10 +68,27 @@ Certainty: demo direction ≠ enterprise-`fact`.
 | SCN-006 | Остаётся **дополнительным** сценарием (не Must) |
 | Mock | Snapshots **A/B/C**; задержка поставки критического оборудования на **21 календарный день** |
 | PrioritizeRecovery | Фиксирует управленческое решение; исполнение мероприятий по восстановлению графика и авто-пересчёт прогноза **не** моделируются |
-| AcceptDateSlip | Допускается как тип управленческого решения; последующие статусы Issue / Risk / Milestone — **не определены** до отдельного согласования (BA-OQ-004/005) |
+| AcceptDateSlip | Допускается как тип управленческого решения; post-state — см. BA-OQ-004/005 (закрыты для Demo enrichment path) |
 | Вне Demo v1 | Полноценный CPM; управление соответствием GMP/CSV; расширенная методология управления рисками; полноценное управление подрядчиками и бюджетом |
 
 **Связанные документы:** [demo-v1-functional-scope](../03-product/demo-v1-functional-scope.md) (DOC-PROD-011), [demo-v1-capabilities](../03-product/demo-v1-capabilities.md), [demo-v1-mock-narrative-data](../03-product/demo-v1-mock-narrative-data.md), [vision-and-scope](../03-product/vision-and-scope.md), [business-rules-demo-v1](./business-rules-demo-v1.md) (BR-006), Discovery HIP-001/006 ([human-input-pack](../01-discovery/human-input-pack.md)).
+
+## Решение BA-OQ-004 / BA-OQ-005 (2026-11-01) — Demo enrichment path
+
+> **certainty:** fact
+>
+> Product Owner закрыл AcceptDateSlip post-state **для Demo v1 enrichment / fixture path**. Это demo decision, не enterprise state machine.
+
+| Тема | Решение |
+|------|---------|
+| AcceptDateSlip | Тип **Decision**; не Issue.status |
+| Post-state Issue / Risk / Milestone / forecast | **Fixture-authored** per snapshot |
+| Decision alone | **Не** закрывает Issue, **не** делает Risk Green, **не** меняет Milestone RAG, **не** reforecast |
+| Пример | DEC-PKG-01 @ G; packaging recovery в Snapshot G задаётся fixtures независимо от Decision engine |
+| Issue Closed | Полноценный Must status (Open / Mitigating / Closed); Closed ≠ авто из AcceptDateSlip |
+| BR-004 | Sole PS driver EQ-HVAC-01 / RISK-001 (подтверждено enrichment R1) |
+
+**Связанные документы:** [demo-v1-enrichment-scope](../03-product/demo-v1-enrichment-scope.md) (DOC-PROD-020), [demo-v1-enrichment-fixture-blueprint](../03-product/demo-v1-enrichment-fixture-blueprint.md) (DOC-PROD-021), DOC-BA-014 BR-006.
 
 ## Решение BA-OQ-006 (2026-11-01)
 

@@ -4,7 +4,7 @@
  * Unknown IDs fall back to the API string (no invented translations).
  */
 
-export type DecisionType = 'PrioritizeRecovery';
+export type DecisionType = 'PrioritizeRecovery' | 'AcceptDateSlip';
 
 /** Known Demo v1 milestone display names by id. */
 const MILESTONE_NAME_BY_ID: Readonly<Record<string, string>> = {
@@ -13,18 +13,18 @@ const MILESTONE_NAME_BY_ID: Readonly<Record<string, string>> = {
 
 /** Known Demo v1 issue titles by id. */
 const ISSUE_TITLE_BY_ID: Readonly<Record<string, string>> = {
-  'ISS-001':
-    'Задержка поставки HVAC с длительным сроком изготовления',
+  'ISS-001': 'Прогноз сдвига поставки long-lead AHU',
 };
 
 /** Known Demo v1 decision notes by id. */
 const DECISION_NOTE_BY_ID: Readonly<Record<string, string>> = {
   'DEC-001':
-    'Ускорить работу с поставщиком / проработать альтернативный маршрут поставки',
+    'Утвердить ускоренную логистику AHU и резервный монтажный слот',
 };
 
 export const DECISION_TYPE_LABEL: Record<DecisionType, string> = {
   PrioritizeRecovery: 'Приоритизировать восстановление сроков',
+  AcceptDateSlip: 'Принять сдвиг даты',
 };
 
 export function presentMilestoneName(id: string, apiName: string): string {
@@ -75,8 +75,12 @@ export function equipmentStatusLabel(
   return status === 'OnTrack' ? 'По плану' : 'Задержка';
 }
 
-export function issueStatusLabel(status: 'Open' | 'Mitigating'): string {
-  return status === 'Open' ? 'Открыта' : 'Выполняются меры';
+export function issueStatusLabel(
+  status: 'Open' | 'Mitigating' | 'Closed',
+): string {
+  if (status === 'Open') return 'Открыта';
+  if (status === 'Mitigating') return 'Выполняются меры';
+  return 'Закрыта';
 }
 
 export function ragLabel(

@@ -17,7 +17,24 @@ export class EquipmentRegisterItemDto {
   id!: string;
 
   @ApiProperty()
+  name!: string;
+
+  @ApiProperty()
   critical!: boolean;
+
+  @ApiProperty({
+    enum: [
+      'WS-BLD',
+      'WS-CLN',
+      'WS-HVAC',
+      'WS-UTL',
+      'WS-PRD',
+      'WS-PKG',
+      'WS-QC',
+      'WS-AUT',
+    ],
+  })
+  workstream!: string;
 
   @ApiProperty({ enum: ['OnTrack', 'Delayed'] })
   status!: 'OnTrack' | 'Delayed';
@@ -64,11 +81,11 @@ export class IssuesRisksRowDto {
   title!: string;
 
   @ApiPropertyOptional({
-    enum: ['Open', 'Mitigating'],
+    enum: ['Open', 'Mitigating', 'Closed'],
     nullable: true,
     description: 'Issue status only; null for Risk rows',
   })
-  issueStatus!: 'Open' | 'Mitigating' | null;
+  issueStatus!: 'Open' | 'Mitigating' | 'Closed' | null;
 
   @ApiPropertyOptional({
     enum: ['Green', 'Red'],

@@ -3,6 +3,7 @@ import { cleanup, render, screen, waitFor, within } from '@testing-library/react
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DashboardOverview } from '@/lib/api-client';
+import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import { SnapshotSelector } from './snapshot-selector';
 
@@ -20,66 +21,7 @@ vi.mock('@/lib/api-client', async () => {
 });
 
 function dash(snapshotId: 'A' | 'B' | 'C'): DashboardOverview {
-  const delayed = snapshotId !== 'A';
-  return {
-    snapshotId,
-    scenarioAsOfDate:
-      snapshotId === 'A'
-        ? '2027-02-15'
-        : snapshotId === 'B'
-          ? '2027-03-01'
-          : '2027-03-02',
-    project: {
-      id: 'PRJ-01',
-      name: 'Строительство фармацевтического завода',
-      baselineProductionStart: '2027-09-15',
-      forecastProductionStart: delayed ? '2027-10-06' : '2027-09-15',
-      productionStartVariance: {
-        subject: 'production_start',
-        baselineDate: '2027-09-15',
-        forecastDate: delayed ? '2027-10-06' : '2027-09-15',
-        deltaDays: delayed ? 21 : 0,
-      },
-    },
-    equipment: {
-      id: 'EQ-HVAC-01',
-      critical: true,
-      status: delayed ? 'Delayed' : 'OnTrack',
-      baselineDelivery: '2027-05-15',
-      forecastDelivery: delayed ? '2027-06-05' : '2027-05-15',
-      deliveryVariance: {
-        subject: 'equipment_delivery',
-        baselineDate: '2027-05-15',
-        forecastDate: delayed ? '2027-06-05' : '2027-05-15',
-        deltaDays: delayed ? 21 : 0,
-      },
-    },
-    issue: null,
-    risk: {
-      id: 'RISK-001',
-      rag: delayed ? 'Red' : 'Green',
-      equipmentId: 'EQ-HVAC-01',
-      milestoneId: 'MS-PS',
-      issueId: null,
-    },
-    milestone: {
-      id: 'MS-PS',
-      name: 'Ready for production',
-      rag: delayed ? 'Red' : 'Green',
-      baselineDate: '2027-09-15',
-      forecastDate: delayed ? '2027-10-06' : '2027-09-15',
-    },
-    decisionPanelState: 'absent',
-    decision: null,
-    directEdges: [],
-    derivedImpact: {
-      rule: 'BR-004',
-      equipmentDeliveryDeltaDays: delayed ? 21 : 0,
-      productionStartDeltaDays: delayed ? 21 : 0,
-      kind: delayed ? 'aligned_slip' : 'none',
-    },
-    decisionHonesty: null,
-  };
+  return dashboardOverviewFixture(snapshotId);
 }
 
 function renderSelector() {

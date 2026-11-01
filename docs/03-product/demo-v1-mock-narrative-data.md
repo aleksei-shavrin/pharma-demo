@@ -3,12 +3,14 @@ id: DOC-PROD-012
 title: "Demo v1 mock narrative data"
 type: product
 status: draft
-version: "0.5.0"
+version: "0.5.1"
 created: 2026-10-30
-updated: 2026-10-31
+updated: 2026-11-01
 owner: "docs-engineering"
 related:
   - DOC-PROD-011
+  - DOC-PROD-020
+  - DOC-PROD-021
   - DOC-BA-014
   - DOC-BA-015
   - DOC-DISC-018
@@ -101,3 +103,15 @@ related:
 > **certainty:** assumption
 >
 > Pass — логическая проверка **спецификации** mock data; runtime — later apps.
+
+## Enrichment status
+
+R1 design pack (DOC-PROD-019…022) **approved**. E1 moved public contracts to **collection-shaped** stubs compatible with the enriched timeline (A calm; B local Yellow; C HVAC +21 Red; D–H unpopulated until E2). Full 23/14/11/12/6 A–H inventory remains **E2**.
+
+Authoritative enrichment design:
+
+- [demo-v1-enrichment-scope.md](./demo-v1-enrichment-scope.md)
+- [demo-v1-enrichment-fixture-blueprint.md](./demo-v1-enrichment-fixture-blueprint.md)
+- [demo-v1-enrichment-snapshot-matrix.md](./demo-v1-enrichment-snapshot-matrix.md)
+
+This document’s historical singular A/B/C narrative above is **superseded for timeline meaning** by DOC-PROD-021/022; keep it only as pre-enrichment reference until E2 replaces stubs.

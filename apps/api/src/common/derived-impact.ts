@@ -1,11 +1,18 @@
 import type { SnapshotFixture } from '../data/fixtures/types';
+import {
+  primaryDecision,
+  productionStartIssue,
+  productionStartMilestone,
+  productionStartRisk,
+  psDriverEquipment,
+} from '../data/snapshot-access';
 import { calendarDaysDelta } from './calendar-days-delta';
 
 export type DecisionPanelState = 'absent' | 'needed' | 'recorded';
 
 /**
  * Snapshot-wide derived management impact (BR-004 / BR-006 honesty).
- * Not Domain Links — callers must keep Impact separate from edge lists.
+ * Uses sole PS driver spine (EQ-HVAC-01 / RISK-001 / MS-PS).
  */
 export type DerivedImpact = {
   kind: 'none' | 'aligned_slip';
@@ -14,7 +21,7 @@ export type DerivedImpact = {
   equipmentStatus: 'OnTrack' | 'Delayed';
   equipmentForecastDelivery: string;
   issueId: string | null;
-  issueStatus: 'Open' | 'Mitigating' | null;
+  issueStatus: 'Open' | 'Mitigating' | 'Closed' | null;
   riskId: string;
   riskRag: 'Green' | 'Red';
   milestoneId: string;
@@ -24,31 +31,44 @@ export type DerivedImpact = {
   decisionState: DecisionPanelState;
   decision: {
     id: string;
-    type: 'PrioritizeRecovery';
+    type: 'PrioritizeRecovery' | 'AcceptDateSlip';
+    projectId: string;
+    milestoneId: string | null;
     ownerRole: string;
-    dueDate: string;
+    dueDate: string | null;
     note: string;
   } | null;
-  /** false when a decision is recorded; null otherwise — recovery never “done” in Demo v1. */
   recoveryExecuted: false | null;
 };
 
 export function decisionPanelState(
   snapshot: SnapshotFixture,
 ): DecisionPanelState {
-  if (snapshot.decision) {
+  if (snapshot.decisions.length > 0) {
     return 'recorded';
   }
-  if (snapshot.issue && snapshot.equipment.status === 'Delayed') {
+  const issue = productionStartIssue(snapshot);
+  const eq = psDriverEquipment(snapshot);
+  if (
+    issue &&
+    (issue.status === 'Open' || issue.status === 'Mitigating') &&
+    eq.status === 'Delayed'
+  ) {
     return 'needed';
   }
   return 'absent';
 }
 
 export function computeDerivedImpact(snapshot: SnapshotFixture): DerivedImpact {
+  const equipment = psDriverEquipment(snapshot);
+  const issue = productionStartIssue(snapshot);
+  const risk = productionStartRisk(snapshot);
+  const milestone = productionStartMilestone(snapshot);
+  const decision = primaryDecision(snapshot);
+
   const deliveryDelta = calendarDaysDelta(
-    snapshot.equipment.baselineDelivery,
-    snapshot.equipment.forecastDelivery,
+    equipment.baselineDelivery,
+    equipment.forecastDelivery,
   );
   const psDelta = calendarDaysDelta(
     snapshot.project.baselineProductionStart,
@@ -60,24 +80,26 @@ export function computeDerivedImpact(snapshot: SnapshotFixture): DerivedImpact {
     kind: deliveryDelta === 0 ? 'none' : 'aligned_slip',
     equipmentDeliveryDeltaDays: deliveryDelta,
     productionStartDeltaDays: psDelta,
-    equipmentStatus: snapshot.equipment.status,
-    equipmentForecastDelivery: snapshot.equipment.forecastDelivery,
-    issueId: snapshot.issue?.id ?? null,
-    issueStatus: snapshot.issue?.status ?? null,
-    riskId: snapshot.risk.id,
-    riskRag: snapshot.risk.rag,
-    milestoneId: snapshot.milestone.id,
-    milestoneName: snapshot.milestone.name,
-    milestoneRag: snapshot.milestone.rag,
+    equipmentStatus: equipment.status,
+    equipmentForecastDelivery: equipment.forecastDelivery,
+    issueId: issue?.id ?? null,
+    issueStatus: issue?.status ?? null,
+    riskId: risk.id,
+    riskRag: risk.rag,
+    milestoneId: milestone.id,
+    milestoneName: milestone.name,
+    milestoneRag: milestone.rag,
     productionStartForecast: snapshot.project.forecastProductionStart,
     decisionState: state,
-    decision: snapshot.decision
+    decision: decision
       ? {
-          id: snapshot.decision.id,
-          type: snapshot.decision.type,
-          ownerRole: snapshot.decision.ownerRole,
-          dueDate: snapshot.decision.dueDate,
-          note: snapshot.decision.note,
+          id: decision.id,
+          type: decision.type,
+          projectId: decision.projectId,
+          milestoneId: decision.milestoneId,
+          ownerRole: decision.ownerRole,
+          dueDate: decision.dueDate,
+          note: decision.note,
         }
       : null,
     recoveryExecuted: state === 'recorded' ? false : null,

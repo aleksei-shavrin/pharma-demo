@@ -8,14 +8,14 @@ describe('parseSnapshotQuery', () => {
     expect(parseSnapshotQuery('')).toBe('A');
   });
 
-  it('accepts A, B, C', () => {
+  it('accepts A–H machine ids', () => {
     expect(parseSnapshotQuery('A')).toBe('A');
-    expect(parseSnapshotQuery('B')).toBe('B');
     expect(parseSnapshotQuery('C')).toBe('C');
+    expect(parseSnapshotQuery('H')).toBe('H');
   });
 
   it('rejects invalid values with 400 semantics', () => {
-    expect(() => parseSnapshotQuery('D')).toThrow(BadRequestException);
+    expect(() => parseSnapshotQuery('Z')).toThrow(BadRequestException);
     expect(() => parseSnapshotQuery('a')).toThrow(BadRequestException);
     expect(() => parseSnapshotQuery('AB')).toThrow(BadRequestException);
   });

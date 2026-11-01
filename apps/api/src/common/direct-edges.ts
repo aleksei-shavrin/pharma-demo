@@ -1,8 +1,19 @@
 import type { SnapshotFixture } from '../data/fixtures/types';
+import {
+  findEquipment,
+  findIssue,
+  findMilestone,
+  findRisk,
+} from '../data/snapshot-access';
 
-export type EntityRefType = 'equipment' | 'issue' | 'risk' | 'milestone';
+export type EntityRefType =
+  | 'equipment'
+  | 'issue'
+  | 'risk'
+  | 'milestone'
+  | 'decision';
 
-/** DOC-BA-015 directed edge present in a snapshot (no EQ—MS; no Decision edges). */
+/** DOC-BA-015 directed edge (no EQ—MS; Decision→MS optional; no Decision→EQ/ISS/RISK). */
 export type DirectEdge = {
   kind: 'direct';
   fromType: EntityRefType;
@@ -12,10 +23,21 @@ export type DirectEdge = {
 };
 
 export type EntityLink = {
-  targetType: EntityRefType;
+  targetType: Exclude<EntityRefType, 'decision'> | 'decision';
   targetId: string;
   displayName: string;
 };
+
+function pushEdge(
+  edges: DirectEdge[],
+  seen: Set<string>,
+  edge: DirectEdge,
+): void {
+  const key = `${edge.fromType}:${edge.fromId}->${edge.toType}:${edge.toId}`;
+  if (seen.has(key)) return;
+  seen.add(key);
+  edges.push(edge);
+}
 
 /**
  * Canonical direct Domain edges for the snapshot.
@@ -23,48 +45,63 @@ export type EntityLink = {
  */
 export function buildDirectEdges(snapshot: SnapshotFixture): DirectEdge[] {
   const edges: DirectEdge[] = [];
-  const eq = snapshot.equipment.id;
-  const risk = snapshot.risk.id;
-  const ms = snapshot.milestone.id;
+  const seen = new Set<string>();
 
-  edges.push({
-    kind: 'direct',
-    fromType: 'equipment',
-    fromId: eq,
-    toType: 'risk',
-    toId: risk,
-  });
-  edges.push({
-    kind: 'direct',
-    fromType: 'risk',
-    fromId: risk,
-    toType: 'milestone',
-    toId: ms,
-  });
+  for (const risk of snapshot.risks) {
+    if (risk.equipmentId) {
+      pushEdge(edges, seen, {
+        kind: 'direct',
+        fromType: 'equipment',
+        fromId: risk.equipmentId,
+        toType: 'risk',
+        toId: risk.id,
+      });
+    }
+    pushEdge(edges, seen, {
+      kind: 'direct',
+      fromType: 'risk',
+      fromId: risk.id,
+      toType: 'milestone',
+      toId: risk.milestoneId,
+    });
+    if (risk.issueId) {
+      pushEdge(edges, seen, {
+        kind: 'direct',
+        fromType: 'issue',
+        fromId: risk.issueId,
+        toType: 'risk',
+        toId: risk.id,
+      });
+    }
+  }
 
-  if (snapshot.issue) {
-    const iss = snapshot.issue.id;
-    edges.push({
+  for (const issue of snapshot.issues) {
+    pushEdge(edges, seen, {
       kind: 'direct',
       fromType: 'equipment',
-      fromId: eq,
+      fromId: issue.equipmentId,
       toType: 'issue',
-      toId: iss,
+      toId: issue.id,
     });
-    edges.push({
+    pushEdge(edges, seen, {
       kind: 'direct',
       fromType: 'issue',
-      fromId: iss,
-      toType: 'risk',
-      toId: risk,
-    });
-    edges.push({
-      kind: 'direct',
-      fromType: 'issue',
-      fromId: iss,
+      fromId: issue.id,
       toType: 'milestone',
-      toId: ms,
+      toId: issue.milestoneId,
     });
+  }
+
+  for (const decision of snapshot.decisions) {
+    if (decision.milestoneId) {
+      pushEdge(edges, seen, {
+        kind: 'direct',
+        fromType: 'decision',
+        fromId: decision.id,
+        toType: 'milestone',
+        toId: decision.milestoneId,
+      });
+    }
   }
 
   return edges;
@@ -75,17 +112,21 @@ function displayNameFor(
   type: EntityRefType,
   id: string,
 ): string {
-  if (type === 'equipment' && snapshot.equipment.id === id) {
-    return snapshot.equipment.id;
+  if (type === 'equipment') {
+    return findEquipment(snapshot, id)?.name ?? id;
   }
-  if (type === 'risk' && snapshot.risk.id === id) {
-    return snapshot.risk.id;
+  if (type === 'risk') {
+    return findRisk(snapshot, id)?.title ?? id;
   }
-  if (type === 'milestone' && snapshot.milestone.id === id) {
-    return snapshot.milestone.name;
+  if (type === 'milestone') {
+    return findMilestone(snapshot, id)?.name ?? id;
   }
-  if (type === 'issue' && snapshot.issue?.id === id) {
-    return snapshot.issue.title;
+  if (type === 'issue') {
+    return findIssue(snapshot, id)?.title ?? id;
+  }
+  if (type === 'decision') {
+    const d = snapshot.decisions.find((x) => x.id === id);
+    return d?.note ?? id;
   }
   return id;
 }

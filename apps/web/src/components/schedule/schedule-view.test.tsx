@@ -8,6 +8,7 @@ import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
 import type { ScheduleReadModel } from '@/lib/api-client';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import { ThemeProvider } from '@/lib/theme/theme-context';
 
 const fetchDashboardOverview = vi.fn();
@@ -54,70 +55,11 @@ vi.mock('next/dynamic', () => ({
 }));
 
 function dash(snapshotId: SnapshotId) {
-  return {
-    snapshotId,
-    scenarioAsOfDate:
-      snapshotId === 'A'
-        ? '2027-02-15'
-        : snapshotId === 'B'
-          ? '2027-03-01'
-          : '2027-03-02',
-    project: {
-      id: 'PRJ-01',
-      name: 'Строительство фармацевтического завода',
-      baselineProductionStart: '2027-09-15',
-      forecastProductionStart:
-        snapshotId === 'A' ? '2027-09-15' : '2027-10-06',
-      productionStartVariance: {
-        subject: 'production_start' as const,
-        baselineDate: '2027-09-15',
-        forecastDate: snapshotId === 'A' ? '2027-09-15' : '2027-10-06',
-        deltaDays: snapshotId === 'A' ? 0 : 21,
-      },
-    },
-    equipment: {
-      id: 'EQ-HVAC-01',
-      critical: true,
-      status: snapshotId === 'A' ? ('OnTrack' as const) : ('Delayed' as const),
-      baselineDelivery: '2027-05-15',
-      forecastDelivery: snapshotId === 'A' ? '2027-05-15' : '2027-06-05',
-      deliveryVariance: {
-        subject: 'equipment_delivery' as const,
-        baselineDate: '2027-05-15',
-        forecastDate: snapshotId === 'A' ? '2027-05-15' : '2027-06-05',
-        deltaDays: snapshotId === 'A' ? 0 : 21,
-      },
-    },
-    issue: null,
-    risk: {
-      id: 'RISK-001',
-      rag: snapshotId === 'A' ? ('Green' as const) : ('Red' as const),
-      equipmentId: 'EQ-HVAC-01',
-      milestoneId: 'MS-PS',
-      issueId: null,
-    },
-    milestone: {
-      id: 'MS-PS',
-      name: 'Ready for production',
-      rag: snapshotId === 'A' ? ('Green' as const) : ('Red' as const),
-      baselineDate: '2027-09-15',
-      forecastDate: snapshotId === 'A' ? '2027-09-15' : '2027-10-06',
-    },
-    decisionPanelState: 'absent' as const,
-    decision: null,
-    directEdges: [],
-    derivedImpact: {
-      rule: 'BR-004' as const,
-      equipmentDeliveryDeltaDays: snapshotId === 'A' ? 0 : 21,
-      productionStartDeltaDays: snapshotId === 'A' ? 0 : 21,
-      kind: snapshotId === 'A' ? ('none' as const) : ('aligned_slip' as const),
-    },
-    decisionHonesty: null,
-  };
+  return dashboardOverviewFixture(snapshotId);
 }
 
 function schedule(snapshotId: SnapshotId): ScheduleReadModel {
-  const delayed = snapshotId !== 'A';
+  const delayed = snapshotId === 'C';
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
@@ -237,7 +179,7 @@ describe('I7 Schedule Table + Split + Timeline', () => {
       expect(screen.getByRole('row', { selected: true })).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {
       expect(screen.getByText('Задержка')).toBeInTheDocument();
     });
@@ -246,13 +188,13 @@ describe('I7 Schedule Table + Split + Timeline', () => {
     expect(screen.getAllByText('+21 день')).toHaveLength(2);
   });
 
-  it('B→C: +21 preserved; Timeline mode; no recovery', async () => {
+  it('A→C: +21 HVAC path; Timeline mode; no recovery', async () => {
     const user = userEvent.setup();
     render(wrap(<SchedulePage />));
     await waitFor(() => {
       expect(screen.getByText('По плану')).toBeInTheDocument();
     });
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {
       expect(screen.getByText('05.06.2027')).toBeInTheDocument();
     });
@@ -260,11 +202,6 @@ describe('I7 Schedule Table + Split + Timeline', () => {
     expect(document.querySelector('[data-schedule-layout="gantt"]')).toBeTruthy();
     expect(screen.getByTestId('timeline-host')).toBeInTheDocument();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
-    await waitFor(() => {
-      expect(screen.getByTestId('timeline-host')).toBeInTheDocument();
-    });
     expect(screen.queryByText(/восстановлен/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Ready for production/)).not.toBeInTheDocument();
   });
@@ -286,12 +223,12 @@ describe('I7 Schedule Table + Split + Timeline', () => {
     });
 
     fetchSchedule.mockRejectedValueOnce(new Error('boom'));
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(/Не удалось загрузить/);
     });
 
-    fetchSchedule.mockResolvedValueOnce(schedule('B'));
+    fetchSchedule.mockResolvedValueOnce(schedule('C'));
     await user.click(screen.getByRole('button', { name: 'Повторить' }));
     await waitFor(() => {
       expect(screen.getByText('Задержка')).toBeInTheDocument();
@@ -319,7 +256,7 @@ describe('I7 Schedule Table + Split + Timeline', () => {
     fetchSchedule.mockImplementation(async (_id: string, s: SnapshotId) =>
       schedule(s),
     );
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {
       expect(screen.getByText('Задержка')).toBeInTheDocument();
     });

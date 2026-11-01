@@ -6,7 +6,7 @@ import {
 
 type Props =
   | { family: 'equipment'; value: 'OnTrack' | 'Delayed' }
-  | { family: 'issue'; value: 'Open' | 'Mitigating' }
+  | { family: 'issue'; value: 'Open' | 'Mitigating' | 'Closed' }
   | { family: 'rag'; value: 'Green' | 'Red'; entity: 'risk' | 'milestone' };
 
 export function StatusPill(props: Props) {
@@ -25,7 +25,9 @@ export function StatusPill(props: Props) {
       : props.family === 'issue'
         ? props.value === 'Open'
           ? 'open'
-          : 'info'
+          : props.value === 'Closed'
+            ? 'ok'
+            : 'info'
         : props.value === 'Green'
           ? 'ok'
           : 'danger';
@@ -37,7 +39,9 @@ export function StatusPill(props: Props) {
         ? '○'
         : props.family === 'issue' && props.value === 'Mitigating'
           ? '◐'
-          : '●';
+          : props.family === 'issue' && props.value === 'Closed'
+            ? '●'
+            : '●';
 
   const cls =
     tone === 'ok'

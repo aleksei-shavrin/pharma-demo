@@ -42,9 +42,9 @@ export class EntityImpactDto {
 
   @ApiPropertyOptional({
     nullable: true,
-    enum: ['Open', 'Mitigating'],
+    enum: ['Open', 'Mitigating', 'Closed'],
   })
-  issueStatus!: 'Open' | 'Mitigating' | null;
+  issueStatus!: 'Open' | 'Mitigating' | 'Closed' | null;
 
   @ApiProperty()
   riskId!: string;
@@ -73,9 +73,11 @@ export class EntityImpactDto {
   })
   decision!: {
     id: string;
-    type: 'PrioritizeRecovery';
+    type: 'PrioritizeRecovery' | 'AcceptDateSlip';
+    projectId: string;
+    milestoneId: string | null;
     ownerRole: string;
-    dueDate: string;
+    dueDate: string | null;
     note: string;
   } | null;
 
@@ -125,8 +127,8 @@ export class IssueOverviewDto {
   @ApiProperty()
   title!: string;
 
-  @ApiProperty({ enum: ['Open', 'Mitigating'] })
-  status!: 'Open' | 'Mitigating';
+  @ApiProperty({ enum: ['Open', 'Mitigating', 'Closed'] })
+  status!: 'Open' | 'Mitigating' | 'Closed';
 
   @ApiProperty({ description: 'Canonical Issue.owner from Domain fixture' })
   owner!: string;

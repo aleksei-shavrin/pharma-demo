@@ -1,9 +1,16 @@
+import { NotFoundException } from '@nestjs/common';
 import { MockDemoDataSource } from './mock-demo-data-source';
+import {
+  findEquipment,
+  findIssue,
+  findMilestone,
+  findRisk,
+} from './snapshot-access';
 
-describe('MockDemoDataSource (DOC-PROD-012 integrity smoke)', () => {
+describe('MockDemoDataSource (E1-R1 collection stubs)', () => {
   const ds = new MockDemoDataSource();
 
-  it('exposes discrete snapshots A, B, C', () => {
+  it('exposes populated snapshots A, B, C', () => {
     expect(ds.listSnapshotIds().sort()).toEqual(['A', 'B', 'C']);
   });
 
@@ -13,40 +20,35 @@ describe('MockDemoDataSource (DOC-PROD-012 integrity smoke)', () => {
     expect(a.project.id).toBe('PRJ-01');
     expect(a.project.baselineProductionStart).toBe('2027-09-15');
     expect(a.project.forecastProductionStart).toBe('2027-09-15');
-    expect(a.equipment.status).toBe('OnTrack');
-    expect(a.issue).toBeNull();
-    expect(a.decision).toBeNull();
+    expect(findEquipment(a, 'EQ-HVAC-01')?.status).toBe('OnTrack');
+    expect(a.issues).toEqual([]);
+    expect(a.decisions).toEqual([]);
   });
 
-  it('snapshot B applies +21d delay and Open issue', () => {
+  it('snapshot B: local PKG Yellow path; HVAC/PS calm; no DEC', () => {
     const b = ds.getSnapshot('B');
-    expect(b.equipment.forecastDelivery).toBe('2027-06-05');
-    expect(b.equipment.status).toBe('Delayed');
-    expect(b.project.forecastProductionStart).toBe('2027-10-06');
-    expect(b.milestone.rag).toBe('Red');
-    expect(b.risk.rag).toBe('Red');
-    expect(b.issue?.status).toBe('Open');
-    expect(b.decision).toBeNull();
+    expect(findEquipment(b, 'EQ-HVAC-01')?.status).toBe('OnTrack');
+    expect(findEquipment(b, 'EQ-PKG-01')?.status).toBe('Delayed');
+    expect(b.project.forecastProductionStart).toBe('2027-09-15');
+    expect(findMilestone(b, 'MS-PS')?.rag).toBe('Green');
+    expect(findRisk(b, 'RISK-001')?.rag).toBe('Green');
+    expect(findIssue(b, 'ISS-001')).toBeUndefined();
+    expect(b.decisions).toEqual([]);
   });
 
-  it('snapshot C keeps B forecasts and records PrioritizeRecovery (BR-006)', () => {
-    const b = ds.getSnapshot('B');
+  it('snapshot C: HVAC +21 / Open ISS-001 / Red; no DEC-001', () => {
     const c = ds.getSnapshot('C');
-    expect(c.project.forecastProductionStart).toBe(
-      b.project.forecastProductionStart,
-    );
-    expect(c.milestone.forecastDate).toBe(b.milestone.forecastDate);
-    expect(c.milestone.rag).toBe('Red');
-    expect(c.risk.rag).toBe('Red');
-    expect(c.issue?.status).toBe('Mitigating');
-    expect(c.decision?.id).toBe('DEC-001');
-    expect(c.decision?.type).toBe('PrioritizeRecovery');
+    expect(findEquipment(c, 'EQ-HVAC-01')?.forecastDelivery).toBe('2027-06-05');
+    expect(findEquipment(c, 'EQ-HVAC-01')?.status).toBe('Delayed');
+    expect(c.project.forecastProductionStart).toBe('2027-10-06');
+    expect(findMilestone(c, 'MS-PS')?.rag).toBe('Red');
+    expect(findMilestone(c, 'MS-PS')?.forecastDate).toBe('2027-10-06');
+    expect(findRisk(c, 'RISK-001')?.rag).toBe('Red');
+    expect(findIssue(c, 'ISS-001')?.status).toBe('Open');
+    expect(c.decisions).toEqual([]);
   });
 
-  it('getProject returns PRJ-01 for A and null for unknown', () => {
-    expect(ds.getProject('A', 'PRJ-01')?.name).toBe(
-      'Строительство фармацевтического завода',
-    );
-    expect(ds.getProject('A', 'PRJ-999')).toBeNull();
+  it('D–H are valid machine ids but not populated in E1', () => {
+    expect(() => ds.getSnapshot('D')).toThrow(NotFoundException);
   });
 });

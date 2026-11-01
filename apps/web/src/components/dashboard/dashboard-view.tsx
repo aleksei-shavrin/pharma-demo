@@ -2,6 +2,13 @@
 
 import type { ReactNode } from 'react';
 import type { DashboardOverview } from '@/lib/api-client';
+import {
+  spineDecision,
+  spineEquipment,
+  spineIssue,
+  spineMilestone,
+  spineRisk,
+} from '@/lib/dashboard/spine';
 import { formatDateRu } from '@/lib/format/ru';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 import {
@@ -34,6 +41,12 @@ function EntitySummary({
 
 export function DashboardView({ data }: { data: DashboardOverview }) {
   const { status, active } = useSnapshot();
+  const equipment = spineEquipment(data);
+  const issue = spineIssue(data);
+  const risk = spineRisk(data);
+  const milestone = spineMilestone(data);
+  // Keep decision panel wired to collection contract via spine helper.
+  void spineDecision(data);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-6">
@@ -60,7 +73,7 @@ export function DashboardView({ data }: { data: DashboardOverview }) {
           Базовый план и прогноз
         </h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
-          <VarianceDelta variance={data.equipment.deliveryVariance} />
+          <VarianceDelta variance={equipment.deliveryVariance} />
           <VarianceDelta variance={data.project.productionStartVariance} />
         </div>
       </section>
@@ -82,25 +95,24 @@ export function DashboardView({ data }: { data: DashboardOverview }) {
             <div className="grid gap-3 sm:grid-cols-2">
               <EntitySummary title="Критическое оборудование">
                 <p className="font-medium text-[var(--text)]">
-                  {data.equipment.id}
+                  {equipment.name}
                 </p>
-                <StatusPill family="equipment" value={data.equipment.status} />
+                <p className="text-xs text-[var(--text-muted)]">{equipment.id}</p>
+                <StatusPill family="equipment" value={equipment.status} />
                 <p>
-                  Поставка {formatDateRu(data.equipment.baselineDelivery)} →{' '}
-                  {formatDateRu(data.equipment.forecastDelivery)}
+                  Поставка {formatDateRu(equipment.baselineDelivery)} →{' '}
+                  {formatDateRu(equipment.forecastDelivery)}
                 </p>
               </EntitySummary>
 
               <EntitySummary title="Проблема">
-                {data.issue ? (
+                {issue ? (
                   <>
                     <p className="font-medium text-[var(--text)]">
-                      {data.issue.id}
+                      {issue.id}
                     </p>
-                    <StatusPill family="issue" value={data.issue.status} />
-                    <p>
-                      {presentIssueTitle(data.issue.id, data.issue.title)}
-                    </p>
+                    <StatusPill family="issue" value={issue.status} />
+                    <p>{presentIssueTitle(issue.id, issue.title)}</p>
                   </>
                 ) : (
                   <p>В этом снимке проблемы нет.</p>
@@ -108,26 +120,23 @@ export function DashboardView({ data }: { data: DashboardOverview }) {
               </EntitySummary>
 
               <EntitySummary title="Риск">
-                <p className="font-medium text-[var(--text)]">{data.risk.id}</p>
-                <StatusPill family="rag" value={data.risk.rag} entity="risk" />
+                <p className="font-medium text-[var(--text)]">{risk.id}</p>
+                <StatusPill family="rag" value={risk.rag} entity="risk" />
               </EntitySummary>
 
               <EntitySummary title="Веха (запуск производства)">
                 <p className="font-medium text-[var(--text)]">
-                  {data.milestone.id} ·{' '}
-                  {presentMilestoneName(
-                    data.milestone.id,
-                    data.milestone.name,
-                  )}
+                  {milestone.id} ·{' '}
+                  {presentMilestoneName(milestone.id, milestone.name)}
                 </p>
                 <StatusPill
                   family="rag"
-                  value={data.milestone.rag}
+                  value={milestone.rag}
                   entity="milestone"
                 />
                 <p>
-                  {formatDateRu(data.milestone.baselineDate)} →{' '}
-                  {formatDateRu(data.milestone.forecastDate)}
+                  {formatDateRu(milestone.baselineDate)} →{' '}
+                  {formatDateRu(milestone.forecastDate)}
                 </p>
               </EntitySummary>
             </div>

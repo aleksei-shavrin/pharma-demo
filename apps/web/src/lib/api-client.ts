@@ -28,17 +28,30 @@ export type VarianceDto = {
 
 export type DirectEdgeDto = {
   kind: 'direct';
-  fromType: 'equipment' | 'issue' | 'risk' | 'milestone';
+  fromType: 'equipment' | 'issue' | 'risk' | 'milestone' | 'decision';
   fromId: string;
-  toType: 'equipment' | 'issue' | 'risk' | 'milestone';
+  toType: 'equipment' | 'issue' | 'risk' | 'milestone' | 'decision';
   toId: string;
 };
 
 export type DecisionPanelState = 'absent' | 'needed' | 'recorded';
+export type WorkstreamId =
+  | 'WS-BLD'
+  | 'WS-CLN'
+  | 'WS-HVAC'
+  | 'WS-UTL'
+  | 'WS-PRD'
+  | 'WS-PKG'
+  | 'WS-QC'
+  | 'WS-AUT';
 
+export type ProjectStatus = 'Green' | 'Yellow' | 'Red';
+
+/** Collection-shaped Dashboard contract (E1+). */
 export type DashboardOverview = {
   snapshotId: SnapshotId;
   scenarioAsOfDate: string;
+  projectStatus: ProjectStatus;
   project: {
     id: string;
     name: string;
@@ -48,41 +61,63 @@ export type DashboardOverview = {
   };
   equipment: {
     id: string;
+    name: string;
     critical: boolean;
     status: 'OnTrack' | 'Delayed';
+    workstream: WorkstreamId;
     baselineDelivery: string;
     forecastDelivery: string;
     deliveryVariance: VarianceDto;
-  };
-  issue: {
+  }[];
+  issues: {
     id: string;
     title: string;
-    status: 'Open' | 'Mitigating';
+    status: 'Open' | 'Mitigating' | 'Closed';
+    workstream: WorkstreamId;
     equipmentId: string;
     milestoneId: string;
-  } | null;
-  risk: {
+  }[];
+  risks: {
     id: string;
+    title: string;
     rag: 'Green' | 'Red';
-    equipmentId: string;
+    workstream: WorkstreamId;
+    equipmentId: string | null;
     milestoneId: string;
     issueId: string | null;
-  };
-  milestone: {
+  }[];
+  milestones: {
     id: string;
     name: string;
     rag: 'Green' | 'Red';
+    workstream: WorkstreamId | null;
     baselineDate: string;
     forecastDate: string;
+  }[];
+  decisions: {
+    id: string;
+    projectId: string;
+    milestoneId: string | null;
+    type: 'PrioritizeRecovery' | 'AcceptDateSlip';
+    ownerRole: string;
+    dueDate: string | null;
+    note: string;
+  }[];
+  workstreamRollups: { workstream: WorkstreamId; status: ProjectStatus }[];
+  topExceptions: {
+    id: string;
+    title: string;
+    causeImpact: string;
+    links: { type: 'equipment' | 'issue' | 'risk' | 'milestone'; id: string }[];
+    /** Read-model curated order only — not Domain. */
+    priority: number;
+  }[];
+  trend: {
+    better: string[];
+    worse: string[];
+    unchangedCritical: string[];
   };
   decisionPanelState: DecisionPanelState;
-  decision: {
-    id: string;
-    type: 'PrioritizeRecovery';
-    ownerRole: string;
-    dueDate: string;
-    note: string;
-  } | null;
   /** Machine-readable direct Domain edges; not shown as engineering graph in UI. */
   directEdges: DirectEdgeDto[];
   derivedImpact: {
@@ -173,7 +208,9 @@ export type EquipmentRegister = {
   projectId: string;
   items: {
     id: string;
+    name: string;
     critical: boolean;
+    workstream: string;
     status: 'OnTrack' | 'Delayed';
     baselineDelivery: string;
     forecastDelivery: string;
@@ -189,7 +226,7 @@ export type IssuesRisksRegister = {
     type: 'Issue' | 'Risk';
     id: string;
     title: string;
-    issueStatus: 'Open' | 'Mitigating' | null;
+    issueStatus: 'Open' | 'Mitigating' | 'Closed' | null;
     rag: 'Green' | 'Red' | null;
   }[];
 };
@@ -253,7 +290,7 @@ export type EntityImpact = {
   equipmentStatus: 'OnTrack' | 'Delayed';
   equipmentForecastDelivery: string;
   issueId: string | null;
-  issueStatus: 'Open' | 'Mitigating' | null;
+  issueStatus: 'Open' | 'Mitigating' | 'Closed' | null;
   riskId: string;
   riskRag: 'Green' | 'Red';
   milestoneId: string;
@@ -263,9 +300,9 @@ export type EntityImpact = {
   decisionState: DecisionPanelState;
   decision: {
     id: string;
-    type: 'PrioritizeRecovery';
+    type: 'PrioritizeRecovery' | 'AcceptDateSlip';
     ownerRole: string;
-    dueDate: string;
+    dueDate: string | null;
     note: string;
   } | null;
   recoveryExecuted: false | null;
@@ -292,7 +329,7 @@ export type EquipmentDetail = DetailEnvelope<{
 export type IssueDetail = DetailEnvelope<{
   id: string;
   title: string;
-  status: 'Open' | 'Mitigating';
+  status: 'Open' | 'Mitigating' | 'Closed';
   owner: string;
 }>;
 

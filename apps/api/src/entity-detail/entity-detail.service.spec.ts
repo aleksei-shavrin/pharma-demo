@@ -34,11 +34,19 @@ describe('EntityDetailService', () => {
       expect(linkIds(d.links, 'milestone')).toEqual([]);
       expect(linkIds(d.links, 'issue')).toEqual([]);
       expect(d.impact.kind).toBe('none');
-      expect(d.links).not.toEqual(expect.objectContaining({ kind: 'derived' }));
     });
 
-    it('B: Delayed +21, Links Issue+Risk, no Milestone', () => {
+    it('B: still OnTrack (local attention is PKG, not HVAC)', () => {
       const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'B');
+      expect(d.entity.status).toBe('OnTrack');
+      expect(d.entity.deliveryVariance.deltaDays).toBe(0);
+      expect(linkIds(d.links, 'issue')).toEqual([]);
+      expect(d.impact.kind).toBe('none');
+      expect(d.impact.decisionState).toBe('absent');
+    });
+
+    it('C: Delayed +21; Links Issue+Risk; no Milestone; needed; no recovery', () => {
+      const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'C');
       expect(d.entity.status).toBe('Delayed');
       expect(d.entity.deliveryVariance.deltaDays).toBe(21);
       expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
@@ -46,15 +54,9 @@ describe('EntityDetailService', () => {
       expect(linkIds(d.links, 'milestone')).toEqual([]);
       expect(d.impact.kind).toBe('aligned_slip');
       expect(d.impact.productionStartDeltaDays).toBe(21);
-    });
-
-    it('C: same links/slip; recovery not executed', () => {
-      const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'C');
-      expect(d.entity.deliveryVariance.deltaDays).toBe(21);
-      expect(linkIds(d.links, 'milestone')).toEqual([]);
-      expect(d.impact.decisionState).toBe('recorded');
-      expect(d.impact.recoveryExecuted).toBe(false);
-      expect(d.impact.issueStatus).toBe('Mitigating');
+      expect(d.impact.decisionState).toBe('needed');
+      expect(d.impact.recoveryExecuted).toBeNull();
+      expect(d.impact.issueStatus).toBe('Open');
     });
   });
 
@@ -65,10 +67,16 @@ describe('EntityDetailService', () => {
       );
     });
 
-    it('B: Open; Links Equipment+Risk+Milestone; no Decision', () => {
-      const d = service.getIssue('PRJ-01', 'ISS-001', 'B');
+    it('B: absent → 404', () => {
+      expect(() => service.getIssue('PRJ-01', 'ISS-001', 'B')).toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('C: Open; Links Equipment+Risk+Milestone; no Decision', () => {
+      const d = service.getIssue('PRJ-01', 'ISS-001', 'C');
       expect(d.entity.status).toBe('Open');
-      expect(d.entity.owner).toBe('SH-002');
+      expect(d.entity.owner).toBe('SH-PM-01');
       expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
       expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
       expect(linkIds(d.links, 'milestone')).toEqual(['MS-PS']);
@@ -76,58 +84,51 @@ describe('EntityDetailService', () => {
         true,
       );
       expect(d.impact.kind).toBe('aligned_slip');
-    });
-
-    it('C: Mitigating; same Links; +21 / Red honesty', () => {
-      const d = service.getIssue('PRJ-01', 'ISS-001', 'C');
-      expect(d.entity.status).toBe('Mitigating');
-      expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
       expect(d.impact.productionStartDeltaDays).toBe(21);
       expect(d.impact.riskRag).toBe('Red');
       expect(d.impact.milestoneRag).toBe('Red');
-      expect(d.impact.recoveryExecuted).toBe(false);
     });
   });
 
   describe('Risk RISK-001', () => {
-    it('A: Green; Links Equipment+Milestone; no Issue', () => {
-      const d = service.getRisk('PRJ-01', 'RISK-001', 'A');
-      expect(d.entity.rag).toBe('Green');
-      expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
-      expect(linkIds(d.links, 'milestone')).toEqual(['MS-PS']);
-      expect(linkIds(d.links, 'issue')).toEqual([]);
+    it('A/B: Green; Links Equipment+Milestone; no Issue', () => {
+      for (const snap of ['A', 'B'] as const) {
+        const d = service.getRisk('PRJ-01', 'RISK-001', snap);
+        expect(d.entity.rag).toBe('Green');
+        expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
+        expect(linkIds(d.links, 'milestone')).toEqual(['MS-PS']);
+        expect(linkIds(d.links, 'issue')).toEqual([]);
+      }
     });
 
-    it('B/C: Red; Links Equipment+Issue+Milestone', () => {
-      for (const snap of ['B', 'C'] as const) {
-        const d = service.getRisk('PRJ-01', 'RISK-001', snap);
-        expect(d.entity.rag).toBe('Red');
-        expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
-        expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
-        expect(linkIds(d.links, 'milestone')).toEqual(['MS-PS']);
-      }
+    it('C: Red; Links Equipment+Issue+Milestone', () => {
+      const d = service.getRisk('PRJ-01', 'RISK-001', 'C');
+      expect(d.entity.rag).toBe('Red');
+      expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
+      expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
+      expect(linkIds(d.links, 'milestone')).toEqual(['MS-PS']);
     });
   });
 
   describe('Milestone MS-PS', () => {
-    it('A: Green; Links Risk only; no Equipment', () => {
-      const d = service.getMilestone('PRJ-01', 'MS-PS', 'A');
-      expect(d.entity.rag).toBe('Green');
-      expect(d.entity.dateVariance.deltaDays).toBe(0);
-      expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
-      expect(linkIds(d.links, 'equipment')).toEqual([]);
-      expect(linkIds(d.links, 'issue')).toEqual([]);
-    });
-
-    it('B/C: Red +21; Links Issue+Risk; no Equipment', () => {
-      for (const snap of ['B', 'C'] as const) {
+    it('A/B: Green; Links Risk only; no Equipment', () => {
+      for (const snap of ['A', 'B'] as const) {
         const d = service.getMilestone('PRJ-01', 'MS-PS', snap);
-        expect(d.entity.rag).toBe('Red');
-        expect(d.entity.dateVariance.deltaDays).toBe(21);
-        expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
+        expect(d.entity.rag).toBe('Green');
+        expect(d.entity.dateVariance.deltaDays).toBe(0);
         expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
         expect(linkIds(d.links, 'equipment')).toEqual([]);
+        expect(linkIds(d.links, 'issue')).toEqual([]);
       }
+    });
+
+    it('C: Red +21; Links Issue+Risk; no Equipment', () => {
+      const d = service.getMilestone('PRJ-01', 'MS-PS', 'C');
+      expect(d.entity.rag).toBe('Red');
+      expect(d.entity.dateVariance.deltaDays).toBe(21);
+      expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
+      expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
+      expect(linkIds(d.links, 'equipment')).toEqual([]);
     });
   });
 
@@ -135,7 +136,7 @@ describe('EntityDetailService', () => {
     expect(() =>
       service.getEquipment('PRJ-01', 'EQ-UNKNOWN', 'A'),
     ).toThrow(NotFoundException);
-    expect(() => service.getIssue('PRJ-01', 'ISS-999', 'B')).toThrow(
+    expect(() => service.getIssue('PRJ-01', 'ISS-999', 'C')).toThrow(
       NotFoundException,
     );
     expect(() =>

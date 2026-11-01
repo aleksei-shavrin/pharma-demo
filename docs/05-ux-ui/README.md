@@ -18,6 +18,7 @@ related:
   - DOC-UX-018
   - DOC-UX-019
   - DOC-UX-020
+  - DOC-UX-021
   - DOC-HANDOFF-UID-001
 ---
 
@@ -77,6 +78,12 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 | [demo-v1-ui-data-viz.md](./demo-v1-ui-data-viz.md) | DOC-UX-018 | Data viz: Snapshot A/B/C, Links vs Impact, charts, Gantt semantics (`approved UI Design decision`) |
 | [demo-v1-ui-interactions.md](./demo-v1-ui-interactions.md) | DOC-UX-019 | Interactions: Snapshot/theme/nav/table/detail/keyboard (`approved UI Design decision`) |
 | [demo-v1-ui-quality.md](./demo-v1-ui-quality.md) | DOC-UX-020 | Quality criteria: docs vs impl checks (`approved UI Design decision`) |
+
+## Demo v1 enrichment UX delta (design — R1 applied)
+
+| Файл | ID | Назначение |
+|------|-----|------------|
+| [demo-v1-enrichment-ux-delta.md](./demo-v1-enrichment-ux-delta.md) | DOC-UX-021 | Dashboard hierarchy, rollups, compact A–H selector, registers/schedule at scale |
 
 ## Связанное
 

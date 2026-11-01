@@ -1,4 +1,11 @@
 import type { DashboardOverview } from '@/lib/api-client';
+import {
+  spineEquipment,
+  spineIssue,
+  spineMilestone,
+  spineRisk,
+  spineDecision,
+} from '@/lib/dashboard/spine';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import {
   issueStatusLabel,
@@ -8,15 +15,19 @@ import {
 } from '@/lib/ui-labels';
 
 /**
- * Director-facing causal narrative. Sequence is storytelling / derived impact —
- * not a claim that every adjacent pair is a Domain relationship (DOC-BA-015).
- * Decision is never drawn as a Domain edge.
+ * Director-facing causal narrative using BR-004 spine from collections.
  */
 export function ImpactNarrative({ data }: { data: DashboardOverview }) {
-  const eqDelta = formatDeltaDays(data.equipment.deliveryVariance.deltaDays);
+  const equipment = spineEquipment(data);
+  const issue = spineIssue(data);
+  const risk = spineRisk(data);
+  const milestone = spineMilestone(data);
+  const decision = spineDecision(data);
+
+  const eqDelta = formatDeltaDays(equipment.deliveryVariance.deltaDays);
   const psDelta = formatDeltaDays(data.project.productionStartVariance.deltaDays);
 
-  if (data.derivedImpact.kind === 'none' && !data.issue) {
+  if (data.derivedImpact.kind === 'none' && !issue) {
     return (
       <section
         aria-labelledby="narrative-heading"
@@ -32,27 +43,23 @@ export function ImpactNarrative({ data }: { data: DashboardOverview }) {
           <li>
             Критическое оборудование{' '}
             <span className="font-medium text-[var(--text)]">
-              {data.equipment.id}
+              {equipment.id}
             </span>
-            : поставка по плану ({formatDateRu(data.equipment.forecastDelivery)}
+            : поставка по плану ({formatDateRu(equipment.forecastDelivery)}
             ).
           </li>
           <li>
             Риск{' '}
-            <span className="font-medium text-[var(--text)]">{data.risk.id}</span>{' '}
+            <span className="font-medium text-[var(--text)]">{risk.id}</span>{' '}
             — зелёный.
           </li>
           <li>
             Веха{' '}
             <span className="font-medium text-[var(--text)]">
-              {data.milestone.id}
+              {milestone.id}
             </span>{' '}
-            (
-            {presentMilestoneName(
-              data.milestone.id,
-              data.milestone.name,
-            )}
-            ) — зелёная; запуск производства без отклонения (
+            ({presentMilestoneName(milestone.id, milestone.name)}) — зелёная;
+            запуск производства без отклонения (
             {formatDateRu(data.project.forecastProductionStart)}).
           </li>
         </ol>
@@ -63,43 +70,40 @@ export function ImpactNarrative({ data }: { data: DashboardOverview }) {
   const steps: string[] = [];
 
   steps.push(
-    `Критическое оборудование ${data.equipment.id}: задержка поставки ${eqDelta} (прогноз ${formatDateRu(data.equipment.forecastDelivery)}).`,
+    `Критическое оборудование ${equipment.id}: задержка поставки ${eqDelta} (прогноз ${formatDateRu(equipment.forecastDelivery)}).`,
   );
 
-  if (data.issue) {
+  if (issue) {
     const issueVerb =
-      data.issue.status === 'Open'
+      issue.status === 'Open'
         ? 'открыта'
-        : 'выполняются меры (проблема не закрыта)';
-    const issueTitle = presentIssueTitle(data.issue.id, data.issue.title);
-    steps.push(
-      `Проблема ${data.issue.id} ${issueVerb}: «${issueTitle}».`,
-    );
+        : issue.status === 'Closed'
+          ? 'закрыта'
+          : 'выполняются меры (проблема не закрыта)';
+    const issueTitle = presentIssueTitle(issue.id, issue.title);
+    steps.push(`Проблема ${issue.id} ${issueVerb}: «${issueTitle}».`);
   }
 
   steps.push(
-    data.risk.rag === 'Red'
-      ? `Риск ${data.risk.id} — красный.`
-      : `Риск ${data.risk.id} — зелёный.`,
+    risk.rag === 'Red'
+      ? `Риск ${risk.id} — красный.`
+      : `Риск ${risk.id} — зелёный.`,
   );
 
-  const milestoneName = presentMilestoneName(
-    data.milestone.id,
-    data.milestone.name,
-  );
+  const milestoneName = presentMilestoneName(milestone.id, milestone.name);
   steps.push(
-    data.milestone.rag === 'Red'
-      ? `${milestoneName} (${data.milestone.id}) — красная.`
-      : `${milestoneName} (${data.milestone.id}) — зелёная.`,
+    milestone.rag === 'Red'
+      ? `${milestoneName} (${milestone.id}) — красная.`
+      : `${milestoneName} (${milestone.id}) — зелёная.`,
   );
 
   steps.push(
     `Прогноз запуска производства смещён на ${psDelta} → ${formatDateRu(data.project.forecastProductionStart)} — влияние задержки поставки критического оборудования.`,
   );
 
-  if (data.decisionPanelState === 'recorded' && data.decision) {
+  if (data.decisionPanelState === 'recorded' && decision) {
     steps.push(
-      `Решение ${data.decision.id} («${presentDecisionType(data.decision.type)}») зарегистрировано; восстановление прогноза ещё не произошло.`,
+      `Решение ${decision.id} («${presentDecisionType(decision.type)}») зарегистрировано; восстановление прогноза ещё не произошло.`,
     );
   } else if (data.decisionPanelState === 'needed') {
     steps.push(
@@ -128,9 +132,9 @@ export function ImpactNarrative({ data }: { data: DashboardOverview }) {
           </li>
         ))}
       </ol>
-      {data.issue ? (
+      {issue ? (
         <p className="sr-only">
-          Статус проблемы: {issueStatusLabel(data.issue.status)}.
+          Статус проблемы: {issueStatusLabel(issue.status)}.
         </p>
       ) : null}
     </section>

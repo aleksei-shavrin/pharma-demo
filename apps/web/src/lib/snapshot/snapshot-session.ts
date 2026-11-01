@@ -1,12 +1,14 @@
-import { isSnapshotId, type SnapshotId } from './snapshot-id';
+import {
+  isSelectableSnapshotId,
+  type SnapshotId,
+} from './snapshot-id';
 
 /** Session-scoped key for last successfully committed Demo snapshot. */
 export const SNAPSHOT_SESSION_KEY = 'ppc.demo.snapshot';
 
 /**
- * Read a valid SnapshotId from sessionStorage, or null if missing/invalid/inaccessible.
- * Never returns a value that should be sent to the API without re-validation —
- * callers must treat null as bootstrap A.
+ * Read a selectable SnapshotId from sessionStorage, or null if missing/invalid.
+ * E1: only A–C are restored (D–H unfinished until E2).
  */
 export function readSessionSnapshot(): SnapshotId | null {
   try {
@@ -17,7 +19,7 @@ export function readSessionSnapshot(): SnapshotId | null {
     if (raw === null) {
       return null;
     }
-    return isSnapshotId(raw) ? raw : null;
+    return isSelectableSnapshotId(raw) ? raw : null;
   } catch {
     return null;
   }

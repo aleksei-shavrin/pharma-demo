@@ -7,13 +7,27 @@ import {
   useState,
   type KeyboardEvent,
 } from 'react';
-import { SNAPSHOT_IDS, type SnapshotId } from '@/lib/snapshot/snapshot-id';
+import {
+  SELECTABLE_SNAPSHOT_IDS,
+  isSelectableSnapshotId,
+  type SelectableSnapshotId,
+  type SnapshotId,
+} from '@/lib/snapshot/snapshot-id';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 
-function nextId(current: SnapshotId, delta: number): SnapshotId {
-  const idx = SNAPSHOT_IDS.indexOf(current);
-  const next = (idx + delta + SNAPSHOT_IDS.length) % SNAPSHOT_IDS.length;
-  return SNAPSHOT_IDS[next];
+function isSelectable(id: SnapshotId): id is SelectableSnapshotId {
+  return isSelectableSnapshotId(id);
+}
+
+function nextId(
+  current: SelectableSnapshotId,
+  delta: number,
+): SelectableSnapshotId {
+  const idx = SELECTABLE_SNAPSHOT_IDS.indexOf(current);
+  const next =
+    (idx + delta + SELECTABLE_SNAPSHOT_IDS.length) %
+    SELECTABLE_SNAPSHOT_IDS.length;
+  return SELECTABLE_SNAPSHOT_IDS[next];
 }
 
 /**
@@ -36,27 +50,29 @@ export function SnapshotSelector() {
   /** No successful commit yet this page load — do not paint active as settled. */
   const settled = dashboard !== null;
   const groupId = useId();
-  const [focusId, setFocusId] = useState<SnapshotId>(active);
-  const radioRefs = useRef<Partial<Record<SnapshotId, HTMLButtonElement | null>>>(
-    {},
+  const [focusId, setFocusId] = useState<SelectableSnapshotId>(
+    isSelectable(active) ? active : 'A',
   );
+  const radioRefs = useRef<
+    Partial<Record<SelectableSnapshotId, HTMLButtonElement | null>>
+  >({});
 
   useEffect(() => {
-    if (!loading && settled) {
+    if (!loading && settled && isSelectable(active)) {
       setFocusId(active);
-    } else if (loading && requested) {
+    } else if (loading && requested && isSelectable(requested)) {
       setFocusId(requested);
     }
   }, [active, loading, requested, settled]);
 
-  function focusRadio(id: SnapshotId) {
+  function focusRadio(id: SelectableSnapshotId) {
     setFocusId(id);
     queueMicrotask(() => {
       radioRefs.current[id]?.focus();
     });
   }
 
-  function activate(id: SnapshotId) {
+  function activate(id: SelectableSnapshotId) {
     if (loading) return;
     focusRadio(id);
     void switchSnapshot(id);
@@ -89,7 +105,7 @@ export function SnapshotSelector() {
         break;
       case 'End':
         event.preventDefault();
-        focusRadio('C');
+        focusRadio('C' as SelectableSnapshotId);
         if (!loading) void switchSnapshot('C');
         break;
       case ' ':
@@ -112,7 +128,7 @@ export function SnapshotSelector() {
         id={groupId}
         className="inline-flex rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] p-0.5"
       >
-        {SNAPSHOT_IDS.map((id) => {
+        {SELECTABLE_SNAPSHOT_IDS.map((id) => {
           const selected = settled && active === id;
           const pending = loading && requested === id;
           const tabIndex = focusId === id ? 0 : -1;
