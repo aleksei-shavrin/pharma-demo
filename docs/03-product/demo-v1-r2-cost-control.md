@@ -128,6 +128,7 @@ Optional on significant purchased EQ: `approvedCostRub?`, `committedCostRub?`, `
 3. `contingencyRemainingRub = contingencyTotalRub − contingencyConsumedRub`
 4. **`eacRub = actualCostRub + etcRub`** (authoritative)
 5. **Never** `EAC = Actual + Committed + ETC` (Committed overlaps ETC)
+6. **`Project.eacRub = Σ WS.eacRub + projectLevelForecastRub`** (contingency residual is Project-level; not forced into WS EAC)
 
 ### 3.7 Committed vs ETC (avoid double count)
 
@@ -163,7 +164,13 @@ Contingency is **project reserve inside BAC**, shown as its own row on `/costs`,
 
 > **certainty:** assumption
 >
-> **Normative project totals for R2-M1.** Every row satisfies `EAC = Actual + ETC`, `VAC = BAC − EAC`, `contingencyRemaining = 350_000_000 − contingencyConsumed`. Committed is parallel only. Per-WS splits may be refined later **without** breaking these project totals.
+> **Normative project totals for R2-M1.** Every row satisfies `EAC = Actual + ETC`, `VAC = BAC − EAC`, `contingencyRemaining = 350_000_000 − contingencyConsumed`. Committed is parallel only.
+>
+> **Project ↔ Workstream reconciliation (R2-M1-R1):** Contingency is a **Project-level reserve inside BAC**, not WS-09 and not silently distributed into Workstream ETC/EAC. Authoritative bridge:
+>
+> `Project.eacRub = Σ WS.eacRub + projectLevelForecastRub`
+>
+> where Demo `projectLevelForecastRub = min(contingencyRemainingRub, etcRub)` — unused contingency still expected in Project EAC mid-lifecycle (so unused ≠ automatic +VAC), and `0` at closeout when `ETC = 0` (leftover `contingencyRemaining` sits **outside** EAC). Therefore **`Σ WS.eacRub` SHALL NOT be forced equal to `Project.eacRub`**. On Snapshot A: Σ WS EAC = 5.85B (Σ WS BAC), projectLevelForecast = 350M, Project EAC = 6.2B. WS Actual/Committed still sum to Project Actual/Committed; WS ETC sums to `Project.etc − projectLevelForecast`.
 
 | ID | Actual | Committed | ETC | EAC | VAC | Cont. consumed | Cont. rem. | Note |
 |----|-------:|----------:|----:|----:|----:|---------------:|-----------:|------|

@@ -90,6 +90,26 @@ export class EquipmentCostDto {
   forecastCostRub?: number;
 }
 
+/**
+ * Explicit Project ↔ Workstream EAC bridge (DOC-PROD-026).
+ * Project EAC = workstreamEacSumRub + projectLevelForecastRub.
+ * Contingency is not a ninth Workstream and is not hidden inside WS ETC.
+ */
+export class CostReconciliationDto {
+  @ApiProperty({
+    example: 5_850_000_000,
+    description: 'Σ Workstream eacRub (control-level forecasts only)',
+  })
+  workstreamEacSumRub!: number;
+
+  @ApiProperty({
+    example: DEMO_PROJECT_CONTINGENCY_TOTAL_RUB,
+    description:
+      'Project-level forecast residual inside Project EAC but outside WS control forecasts. Demo: min(contingencyRemaining, etc) — unused contingency still expected mid-lifecycle; 0 at closeout when ETC=0.',
+  })
+  projectLevelForecastRub!: number;
+}
+
 export class ProjectCostsOverviewDto {
   @ApiProperty({ enum: SNAPSHOT_IDS })
   snapshotId!: SnapshotId;
@@ -111,4 +131,11 @@ export class ProjectCostsOverviewDto {
     description: 'Selective cost-bearing equipment only',
   })
   equipment!: EquipmentCostDto[];
+
+  @ApiProperty({
+    type: CostReconciliationDto,
+    description:
+      'Why Project EAC need not equal Σ WS EAC when Project BAC includes contingency reserve',
+  })
+  reconciliation!: CostReconciliationDto;
 }

@@ -4,7 +4,7 @@ import type {
 } from '../../snapshot/snapshot-id';
 import type { WorkstreamId } from '../workstream-ids';
 
-/** Re-export API snapshot ids — accepted A–S; fixtures populate A–H until R2-L1. */
+/** Re-export API snapshot ids — R2-L1 populates full A–S. */
 export type { SnapshotId, PopulatedSnapshotId };
 export type { WorkstreamId };
 
@@ -90,7 +90,7 @@ export interface TrendFixture {
   unchangedCritical: string[];
 }
 
-/** Collection-shaped discrete snapshot (E2 full DOC-PROD-021 inventory). */
+/** Collection-shaped discrete snapshot (DOC-PROD-021 + R2-L1). */
 export interface SnapshotFixture {
   id: SnapshotId;
   scenarioAsOfDate: string;
@@ -100,6 +100,8 @@ export interface SnapshotFixture {
   risks: RiskFixture[];
   issues: IssueFixture[];
   decisions: DecisionFixture[];
+  /** Fixture-authored executive strip subset (always includes MS-PS). */
+  executiveMilestoneIds: string[];
   /** Curated Demo order — read-model metadata only. */
   topExceptions: TopExceptionFixture[];
   trend: TrendFixture;

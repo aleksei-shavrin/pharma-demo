@@ -3,20 +3,52 @@
  * No float money; Committed is never added into EAC.
  */
 
+import {
+  WORKSTREAM_IDS,
+  type WorkstreamId,
+} from '../data/workstream-ids';
+
 /** Frozen Demo BAC (R2-D0-R1). Fictional — not a real plant appraisal. */
 export const DEMO_PROJECT_BAC_RUB = 6_200_000_000;
 export const DEMO_WORKSTREAM_BUDGETS_SUM_RUB = 5_850_000_000;
 export const DEMO_PROJECT_CONTINGENCY_TOTAL_RUB = 350_000_000;
 
+/** Frozen CBS approved control budgets (DOC-PROD-026 §4). */
+export const DEMO_WORKSTREAM_CBS_RUB: Readonly<
+  Record<WorkstreamId, number>
+> = {
+  'WS-BLD': 850_000_000,
+  'WS-CLN': 740_000_000,
+  'WS-HVAC': 880_000_000,
+  'WS-UTL': 940_000_000,
+  'WS-PRD': 1_100_000_000,
+  'WS-PKG': 690_000_000,
+  'WS-QC': 400_000_000,
+  'WS-AUT': 250_000_000,
+};
+
 export function isIntegerRub(value: unknown): value is number {
-  return typeof value === 'number' && Number.isInteger(value);
+  return (
+    typeof value === 'number' &&
+    Number.isInteger(value) &&
+    Number.isSafeInteger(value) &&
+    Number.isFinite(value)
+  );
 }
 
 export function assertIntegerRub(value: unknown, field: string): number {
   if (!isIntegerRub(value)) {
-    throw new Error(`${field} must be an integer RUB value`);
+    throw new Error(`${field} must be a safe integer RUB value`);
   }
   return value;
+}
+
+/** Σ frozen WS CBS must equal DEMO_WORKSTREAM_BUDGETS_SUM_RUB. */
+export function sumWorkstreamCbsRub(): number {
+  return WORKSTREAM_IDS.reduce(
+    (sum, id) => sum + DEMO_WORKSTREAM_CBS_RUB[id],
+    0,
+  );
 }
 
 /** Authoritative: EAC = Actual + ETC (never Actual + Committed + ETC). */
@@ -99,6 +131,9 @@ export function assertProjectCostInvariants(m: ProjectCostMeasures): void {
 
 /** Frozen Demo CBS: BAC = Σ WS control budgets + project contingency. */
 export function assertFrozenDemoBacCbs(): void {
+  if (sumWorkstreamCbsRub() !== DEMO_WORKSTREAM_BUDGETS_SUM_RUB) {
+    throw new Error('Frozen Demo WS CBS sum broken');
+  }
   if (
     DEMO_PROJECT_BAC_RUB !==
     DEMO_WORKSTREAM_BUDGETS_SUM_RUB + DEMO_PROJECT_CONTINGENCY_TOTAL_RUB

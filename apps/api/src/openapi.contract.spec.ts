@@ -198,6 +198,26 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
       document.components?.schemas?.ScheduleMilestoneItemDto,
     ).toBeDefined();
 
+    const costs = document.paths['/v1/projects/{id}/costs']?.get;
+    expect(costs).toBeDefined();
+    const costsSchema = costs?.responses?.['200']?.content?.[
+      'application/json'
+    ]?.schema as JsonSchema | undefined;
+    expect(costsSchema).toEqual({
+      $ref: '#/components/schemas/ProjectCostsOverviewDto',
+    });
+    const costsSnap = (costs?.parameters ?? []).find(
+      (p): p is OpenApiParam =>
+        typeof p === 'object' &&
+        p !== null &&
+        'name' in p &&
+        p.name === 'snapshot',
+    );
+    expect(costsSnap?.schema?.enum).toEqual(
+      expect.arrayContaining(['A', 'S']),
+    );
+    expect(costsSnap?.schema?.default).toBe('A');
+
     for (const name of [
       'PersonDto',
       'PersonListDto',
@@ -229,6 +249,14 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
         contingencyTotalRub: expect.any(Object),
         contingencyConsumedRub: expect.any(Object),
         contingencyRemainingRub: expect.any(Object),
+      }),
+    );
+    expect(document.components?.schemas?.CostReconciliationDto).toBeDefined();
+    const costsOverview = document.components?.schemas
+      ?.ProjectCostsOverviewDto as JsonSchema | undefined;
+    expect(costsOverview?.properties).toEqual(
+      expect.objectContaining({
+        reconciliation: expect.any(Object),
       }),
     );
 

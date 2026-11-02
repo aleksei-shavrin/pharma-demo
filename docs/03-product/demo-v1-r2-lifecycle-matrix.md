@@ -20,7 +20,7 @@ related:
 
 > **certainty:** assumption
 >
-> Normative **design** matrix for R2. A–H narrative core = DOC-PROD-022 (historical). I–S = R2 extension. Fixtures not yet implemented.
+> Normative **design** matrix for R2. A–H narrative core = DOC-PROD-022 (historical). I–S = R2 extension. Runtime fixtures A–S implemented in R2-L1.
 
 ## 1. Phase grouping (selector)
 
@@ -159,7 +159,7 @@ related:
 
 ### S — 2027-09-22 — Production Start achieved — **overall Green**
 
-- Actual PS = `2027-09-22`; MS-PS Green; RISK-001 Green; EQ-HVAC-01 OnTrack at asOf.
+- Actual PS = `2027-09-22`; MS-PS Green; RISK-001 Green; EQ-HVAC-01 operationally OnTrack via fixture-authored status override (historical schedule variance +7 retained; `asOf` does **not** imply delivery).
 - Actual = EAC; ETC = 0; final VAC −80M (DOC-PROD-026).
 - Notifications: readiness / Production Start.
 

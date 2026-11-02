@@ -1,3 +1,4 @@
+import type { BuiltProjectCosts } from './fixtures/build-costs';
 import type {
   ProjectFixture,
   SnapshotFixture,
@@ -18,6 +19,8 @@ export abstract class DemoDataSource {
   abstract listSnapshotIds(): SnapshotId[];
   /** I1 default narrative context (Snapshot A) until I2 snapshot switching. */
   abstract getDefaultSnapshot(): SnapshotFixture;
+  /** Project / Workstream / selective Equipment cost overview (R2-M1). */
+  abstract getCosts(snapshotId: SnapshotId): BuiltProjectCosts;
 }
 
 export const DEMO_DATA_SOURCE = Symbol('DEMO_DATA_SOURCE');

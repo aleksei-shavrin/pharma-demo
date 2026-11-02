@@ -25,7 +25,7 @@ export const SNAPSHOT_IDS = [
 ] as const;
 export type SnapshotId = (typeof SNAPSHOT_IDS)[number];
 
-/** Snapshots loaded in Nest fixtures today (enrichment A–H). */
+/** Snapshots loaded in Nest fixtures (R2-L1: full A–S). */
 export const POPULATED_SNAPSHOT_IDS = [
   'A',
   'B',
@@ -35,6 +35,17 @@ export const POPULATED_SNAPSHOT_IDS = [
   'F',
   'G',
   'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
 ] as const;
 export type PopulatedSnapshotId = (typeof POPULATED_SNAPSHOT_IDS)[number];
 

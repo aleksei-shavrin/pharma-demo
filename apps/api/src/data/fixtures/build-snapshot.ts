@@ -1,6 +1,5 @@
 /**
- * Builds discrete SnapshotFixture A–H from DOC-PROD-021 catalog + DOC-PROD-022 state.
- * I–S overlays are R2-L1 (accepted SnapshotId space is already A–S).
+ * Builds discrete SnapshotFixture A–S from catalog + snapshot-states overlays.
  */
 import { SNAPSHOT_IDS, type PopulatedSnapshotId } from '../../snapshot/snapshot-id';
 import {
@@ -44,11 +43,16 @@ function isAtOrAfter(current: SnapshotId, first: SnapshotId): boolean {
 function buildEquipment(
   snapshotId: PopulatedSnapshotId,
 ): EquipmentFixture[] {
-  const { eqDelta } = SNAPSHOT_STATES[snapshotId];
+  const state = SNAPSHOT_STATES[snapshotId];
+  const { eqDelta, eqStatus } = state;
   return EQUIPMENT_IDS.map((id) => {
     const cat = EQUIPMENT_CATALOG[id];
     const delta = eqDelta[id] ?? 0;
     const forecastDelivery = addDays(cat.baselineDelivery, delta);
+    // Default enrichment semantics: positive schedule variance ⇒ Delayed.
+    // asOf does NOT imply actual delivery. Optional eqStatus is fixture-authored
+    // operational recovery/completion only (e.g. S HVAC after PS achieved).
+    const status = eqStatus?.[id] ?? (delta > 0 ? 'Delayed' : 'OnTrack');
     return {
       id,
       projectId: PROJECT.id,
@@ -56,7 +60,7 @@ function buildEquipment(
       critical: cat.critical,
       baselineDelivery: cat.baselineDelivery,
       forecastDelivery,
-      status: delta > 0 ? 'Delayed' : 'OnTrack',
+      status,
       workstream: cat.workstream,
     };
   });
@@ -109,7 +113,6 @@ function buildRisks(snapshotId: PopulatedSnapshotId): RiskFixture[] {
 
     let issueId = cat.issueId;
     if (issueId && !issues[issueId]) {
-      // Linked issue not yet / no longer present → clear link (Green path pre-issue).
       issueId = null;
     }
 
@@ -162,6 +165,7 @@ export function buildSnapshot(
     issues: buildIssues(snapshotId),
     risks: buildRisks(snapshotId),
     decisions: buildDecisions(snapshotId),
+    executiveMilestoneIds: [...state.executiveMilestoneIds],
     topExceptions: state.topExceptions.map((t) => ({
       ...t,
       links: [...t.links],
@@ -178,16 +182,11 @@ export function buildAllSnapshots(): Record<
   PopulatedSnapshotId,
   SnapshotFixture
 > {
-  return {
-    A: buildSnapshot('A'),
-    B: buildSnapshot('B'),
-    C: buildSnapshot('C'),
-    D: buildSnapshot('D'),
-    E: buildSnapshot('E'),
-    F: buildSnapshot('F'),
-    G: buildSnapshot('G'),
-    H: buildSnapshot('H'),
-  };
+  const out = {} as Record<PopulatedSnapshotId, SnapshotFixture>;
+  for (const id of Object.keys(SNAPSHOT_STATES) as PopulatedSnapshotId[]) {
+    out[id] = buildSnapshot(id);
+  }
+  return out;
 }
 
 /** Decision IDs present at snapshot (for tests). */

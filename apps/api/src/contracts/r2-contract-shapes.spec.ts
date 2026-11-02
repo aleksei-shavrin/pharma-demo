@@ -136,8 +136,16 @@ describe('R2-C1 contract shapes', () => {
       project,
       workstreams: [ws],
       equipment: [eq],
+      reconciliation: {
+        workstreamEacSumRub: 5_850_000_000,
+        projectLevelForecastRub: DEMO_PROJECT_CONTINGENCY_TOTAL_RUB,
+      },
     };
     expect(overview.project.eacRub).toBe(overview.project.actualCostRub + overview.project.etcRub);
+    expect(overview.project.eacRub).toBe(
+      overview.reconciliation.workstreamEacSumRub +
+        overview.reconciliation.projectLevelForecastRub,
+    );
     expect(Object.values(overview.project).every((v) => Number.isInteger(v))).toBe(
       true,
     );

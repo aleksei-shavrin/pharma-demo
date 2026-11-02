@@ -35,6 +35,10 @@ class FakeDataSource extends DemoDataSource {
   getDefaultSnapshot(): SnapshotFixture {
     return this.snapshots.A!;
   }
+
+  getCosts(): never {
+    throw new Error('getCosts not used by RegistersService');
+  }
 }
 
 describe('RegistersService', () => {
@@ -55,7 +59,7 @@ describe('RegistersService', () => {
       const r = service.listEquipment('PRJ-01', 'B');
       const hvac = r.items.find((i) => i.id === 'EQ-HVAC-01');
       const pkg = r.items.find((i) => i.id === 'EQ-PKG-01');
-      expect(r.items).toHaveLength(23);
+      expect(r.items).toHaveLength(52);
       expect(hvac?.status).toBe('OnTrack');
       expect(pkg?.status).toBe('Delayed');
       expect(pkg?.deliveryVariance.deltaDays).toBe(10);
@@ -138,7 +142,7 @@ describe('RegistersService', () => {
       expect(ms?.rag).toBe('Green');
       expect(ms?.dateVariance.deltaDays).toBe(0);
       expect(ms?.workstream).toBeNull();
-      expect(r.items).toHaveLength(14);
+      expect(r.items).toHaveLength(40);
     });
 
     it('B: MS-PS still Green', () => {

@@ -35,18 +35,10 @@ describe('SnapshotId contract A–S (R2-C1)', () => {
     expect(isSnapshotId('AB')).toBe(false);
   });
 
-  it('populated fixtures remain A–H only until R2-L1', () => {
-    expect([...POPULATED_SNAPSHOT_IDS]).toEqual([
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F',
-      'G',
-      'H',
-    ]);
+  it('populated fixtures cover full A–S after R2-L1', () => {
+    expect([...POPULATED_SNAPSHOT_IDS]).toEqual([...SNAPSHOT_IDS]);
     expect(isPopulatedSnapshotId('H')).toBe(true);
-    expect(isPopulatedSnapshotId('S')).toBe(false);
+    expect(isPopulatedSnapshotId('S')).toBe(true);
+    expect(isPopulatedSnapshotId('T')).toBe(false);
   });
 });

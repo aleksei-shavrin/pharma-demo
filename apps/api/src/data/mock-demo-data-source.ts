@@ -8,21 +8,19 @@ import {
   type SnapshotFixture,
   type SnapshotId,
 } from './fixtures';
+import {
+  COST_SNAPSHOTS,
+  type BuiltProjectCosts,
+} from './fixtures/build-costs';
 
-/** Deterministic in-memory adapter over DOC-PROD-012 fixtures. */
+/** Deterministic in-memory adapter over DOC-PROD-012 / R2 fixtures. */
 @Injectable()
 export class MockDemoDataSource extends DemoDataSource {
   getSnapshot(id: SnapshotId): SnapshotFixture {
     if (!isPopulatedSnapshotId(id)) {
-      throw new NotFoundException(
-        `Snapshot '${id}' is accepted by contract but not populated yet (R2-L1).`,
-      );
-    }
-    const snapshot = SNAPSHOTS[id];
-    if (!snapshot) {
       throw new NotFoundException(`Unknown snapshot: ${id}`);
     }
-    return snapshot;
+    return SNAPSHOTS[id];
   }
 
   getProject(snapshotId: SnapshotId, projectId: string): ProjectFixture | null {
@@ -40,5 +38,12 @@ export class MockDemoDataSource extends DemoDataSource {
   /** I1 default context — Snapshot A only (full A/B/C switch is I2). */
   getDefaultSnapshot(): SnapshotFixture {
     return this.getSnapshot(DEFAULT_SNAPSHOT_ID);
+  }
+
+  getCosts(snapshotId: SnapshotId): BuiltProjectCosts {
+    if (!isPopulatedSnapshotId(snapshotId)) {
+      throw new NotFoundException(`Unknown snapshot: ${snapshotId}`);
+    }
+    return COST_SNAPSHOTS[snapshotId];
   }
 }

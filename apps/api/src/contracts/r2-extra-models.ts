@@ -1,4 +1,10 @@
-import { EquipmentCostDto, ProjectCostDto, ProjectCostsOverviewDto, WorkstreamCostDto } from './dto/cost.dto';
+import {
+  CostReconciliationDto,
+  EquipmentCostDto,
+  ProjectCostDto,
+  ProjectCostsOverviewDto,
+  WorkstreamCostDto,
+} from './dto/cost.dto';
 import {
   DecisionCostImpactDto,
   IssueCostImpactDto,
@@ -27,6 +33,7 @@ export const R2_CONTRACT_EXTRA_MODELS = [
   ProjectCostDto,
   WorkstreamCostDto,
   EquipmentCostDto,
+  CostReconciliationDto,
   ProjectCostsOverviewDto,
   RiskCostImpactDto,
   IssueCostImpactDto,

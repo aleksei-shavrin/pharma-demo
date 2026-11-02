@@ -25,6 +25,10 @@ class FakeDataSource extends DemoDataSource {
   getDefaultSnapshot(): SnapshotFixture {
     return this.snapshots.A;
   }
+
+  getCosts(): never {
+    throw new Error('getCosts not used by ProjectsService');
+  }
 }
 
 function stub(id: SnapshotId, forecast: string, asOf: string): SnapshotFixture {

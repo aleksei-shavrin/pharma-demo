@@ -52,6 +52,8 @@ export type DashboardOverview = {
   snapshotId: SnapshotId;
   scenarioAsOfDate: string;
   projectStatus: ProjectStatus;
+  /** Fixture-authored executive strip; optional until callers migrate. */
+  executiveMilestoneIds?: string[];
   project: {
     id: string;
     name: string;
@@ -551,6 +553,11 @@ export type EquipmentCost = {
   forecastCostRub?: number;
 };
 
+export type CostReconciliation = {
+  workstreamEacSumRub: number;
+  projectLevelForecastRub: number;
+};
+
 export type ProjectCostsOverview = {
   snapshotId: SnapshotId;
   scenarioAsOfDate: string;
@@ -558,6 +565,7 @@ export type ProjectCostsOverview = {
   project: ProjectCost;
   workstreams: WorkstreamCost[];
   equipment: EquipmentCost[];
+  reconciliation: CostReconciliation;
 };
 
 export type WorkstreamDetail = {

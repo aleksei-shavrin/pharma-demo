@@ -34,7 +34,27 @@ import { SNAPSHOTS, SNAPSHOT_A, SNAPSHOT_C, SNAPSHOT_F, SNAPSHOT_G, SNAPSHOT_H }
 import { SNAPSHOT_STATES } from './snapshot-states';
 import type { PopulatedSnapshotId, SnapshotFixture } from './types';
 
-const ALL: PopulatedSnapshotId[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+const ALL: PopulatedSnapshotId[] = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+];
 const TRANSITIONS: [PopulatedSnapshotId, PopulatedSnapshotId][] = [
   ['A', 'B'],
   ['B', 'C'],
@@ -43,6 +63,17 @@ const TRANSITIONS: [PopulatedSnapshotId, PopulatedSnapshotId][] = [
   ['E', 'F'],
   ['F', 'G'],
   ['G', 'H'],
+  ['H', 'I'],
+  ['I', 'J'],
+  ['J', 'K'],
+  ['K', 'L'],
+  ['L', 'M'],
+  ['M', 'N'],
+  ['N', 'O'],
+  ['O', 'P'],
+  ['P', 'Q'],
+  ['Q', 'R'],
+  ['R', 'S'],
 ];
 
 function ids(xs: { id: string }[]): string[] {
@@ -50,7 +81,7 @@ function ids(xs: { id: string }[]): string[] {
 }
 
 describe('fixture integrity — inventory / counts', () => {
-  it('union of A–H canonical IDs matches DOC-PROD-021 scale', () => {
+  it('union of A–S canonical IDs matches R2-L1 scale', () => {
     const eq = new Set<string>();
     const ms = new Set<string>();
     const iss = new Set<string>();
@@ -64,11 +95,11 @@ describe('fixture integrity — inventory / counts', () => {
       s.risks.forEach((r) => risk.add(r.id));
       s.decisions.forEach((d) => dec.add(d.id));
     }
-    expect(eq.size).toBe(23);
-    expect(ms.size).toBe(14);
-    expect(iss.size).toBe(11);
-    expect(risk.size).toBe(12);
-    expect(dec.size).toBe(6);
+    expect(eq.size).toBe(52);
+    expect(ms.size).toBe(40);
+    expect(iss.size).toBe(30);
+    expect(risk.size).toBe(30);
+    expect(dec.size).toBe(18);
     expect([...eq].sort()).toEqual([...EQUIPMENT_IDS].sort());
     expect([...ms].sort()).toEqual([...MILESTONE_IDS].sort());
     expect([...iss].sort()).toEqual([...ISSUE_IDS].sort());
@@ -76,10 +107,10 @@ describe('fixture integrity — inventory / counts', () => {
     expect([...dec].sort()).toEqual([...DECISION_IDS].sort());
   });
 
-  it('every snapshot has 23 Equipment and 14 Milestones', () => {
+  it('every snapshot has 52 Equipment and 40 Milestones', () => {
     for (const id of ALL) {
-      expect(SNAPSHOTS[id].equipment).toHaveLength(23);
-      expect(SNAPSHOTS[id].milestones).toHaveLength(14);
+      expect(SNAPSHOTS[id].equipment).toHaveLength(52);
+      expect(SNAPSHOTS[id].milestones).toHaveLength(40);
     }
   });
 
@@ -90,7 +121,7 @@ describe('fixture integrity — inventory / counts', () => {
       expect(s.issues).toHaveLength(Object.keys(st.issues).length);
       expect(s.risks).toHaveLength(Object.keys(st.riskRag).length);
       const expectedDec = DECISION_IDS.filter(
-        (d) => ALL.indexOf(id) >= ALL.indexOf(DECISION_CATALOG[d].first),
+        (d) => ALL.indexOf(id) >= ALL.indexOf(DECISION_CATALOG[d].first as PopulatedSnapshotId),
       );
       expect(ids(s.decisions)).toEqual([...expectedDec].sort());
     }
@@ -233,7 +264,10 @@ describe('fixture integrity — date / delta arithmetic', () => {
       for (const eq of s.equipment) {
         const delta = calendarDaysDelta(eq.baselineDelivery, eq.forecastDelivery);
         expect(delta).toBe(st.eqDelta[eq.id as keyof typeof st.eqDelta] ?? 0);
-        expect(eq.status).toBe(delta > 0 ? 'Delayed' : 'OnTrack');
+        const expectedStatus =
+          st.eqStatus?.[eq.id as keyof typeof st.eqStatus] ??
+          (delta > 0 ? 'Delayed' : 'OnTrack');
+        expect(eq.status).toBe(expectedStatus);
       }
       for (const ms of s.milestones) {
         const delta = calendarDaysDelta(ms.baselineDate, ms.forecastDate);
@@ -441,9 +475,9 @@ describe('fixture integrity — Top Exceptions + Trend', () => {
   });
 });
 
-describe('fixture integrity — A–H retrievable; narrative spine', () => {
-  it('all eight snapshots exist with expected PS / DEC / ISS spine', () => {
-    expect(Object.keys(SNAPSHOTS).sort()).toEqual(ALL);
+describe('fixture integrity — A–S retrievable; narrative spine', () => {
+  it('all nineteen snapshots exist with expected PS / DEC / ISS spine', () => {
+    expect(Object.keys(SNAPSHOTS).sort()).toEqual([...ALL].sort());
     expect(findIssue(SNAPSHOT_A, PS_ISSUE_ID)).toBeUndefined();
     expect(findIssue(SNAPSHOT_C, PS_ISSUE_ID)?.status).toBe('Open');
     expect(SNAPSHOT_F.decisions.some((d) => d.id === 'DEC-001')).toBe(true);
@@ -452,6 +486,120 @@ describe('fixture integrity — A–H retrievable; narrative spine', () => {
     expect(findEquipment(SNAPSHOT_G, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
       'Delayed',
     );
+  });
+});
+
+describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
+  it('O atomically moves HVAC and PS +14 → +7 together', () => {
+    const n = SNAPSHOTS.N;
+    const o = SNAPSHOTS.O;
+    expect(
+      calendarDaysDelta(
+        findEquipment(n, PS_DRIVER_EQUIPMENT_ID)!.baselineDelivery,
+        findEquipment(n, PS_DRIVER_EQUIPMENT_ID)!.forecastDelivery,
+      ),
+    ).toBe(14);
+    expect(
+      calendarDaysDelta(
+        n.project.baselineProductionStart,
+        n.project.forecastProductionStart,
+      ),
+    ).toBe(14);
+    expect(
+      calendarDaysDelta(
+        findEquipment(o, PS_DRIVER_EQUIPMENT_ID)!.baselineDelivery,
+        findEquipment(o, PS_DRIVER_EQUIPMENT_ID)!.forecastDelivery,
+      ),
+    ).toBe(7);
+    expect(
+      calendarDaysDelta(
+        o.project.baselineProductionStart,
+        o.project.forecastProductionStart,
+      ),
+    ).toBe(7);
+    expect(o.project.forecastProductionStart).toBe('2027-09-22');
+  });
+
+  it('no HVAC/PS delta mismatch on any snapshot', () => {
+    for (const id of ALL) {
+      const s = SNAPSHOTS[id];
+      const ps = calendarDaysDelta(
+        s.project.baselineProductionStart,
+        s.project.forecastProductionStart,
+      );
+      const hvac = calendarDaysDelta(
+        findEquipment(s, PS_DRIVER_EQUIPMENT_ID)!.baselineDelivery,
+        findEquipment(s, PS_DRIVER_EQUIPMENT_ID)!.forecastDelivery,
+      );
+      expect(ps).toBe(hvac);
+    }
+  });
+
+  it('I–P Red / Q Yellow / R Yellow / S Green via status rules', () => {
+    for (const id of ['I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'] as const) {
+      expect(computeProjectStatus(SNAPSHOTS[id])).toBe('Red');
+    }
+
+    expect(findRisk(SNAPSHOTS.P, PS_RISK_ID)!.rag).toBe('Red');
+    expect(findMilestone(SNAPSHOTS.P, PS_MILESTONE_ID)!.rag).not.toBe('Green');
+
+    expect(findRisk(SNAPSHOTS.Q, PS_RISK_ID)!.rag).not.toBe('Red');
+    expect(findMilestone(SNAPSHOTS.Q, PS_MILESTONE_ID)!.rag).not.toBe('Red');
+    expect(computeProjectStatus(SNAPSHOTS.Q)).toBe('Yellow');
+    // Q/R keep HVAC Delayed (+7); Yellow via residual attention, not asOf completion.
+    expect(findEquipment(SNAPSHOTS.Q, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+      'Delayed',
+    );
+    expect(findEquipment(SNAPSHOTS.R, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+      'Delayed',
+    );
+
+    expect(findRisk(SNAPSHOTS.R, PS_RISK_ID)!.rag).not.toBe('Red');
+    expect(findMilestone(SNAPSHOTS.R, PS_MILESTONE_ID)!.rag).not.toBe('Red');
+    expect(computeProjectStatus(SNAPSHOTS.R)).toBe('Yellow');
+
+    expect(findRisk(SNAPSHOTS.S, PS_RISK_ID)!.rag).toBe('Green');
+    expect(findMilestone(SNAPSHOTS.S, PS_MILESTONE_ID)!.rag).toBe('Green');
+    const hvacS = findEquipment(SNAPSHOTS.S, PS_DRIVER_EQUIPMENT_ID)!;
+    expect(hvacS.status).toBe('OnTrack');
+    expect(
+      calendarDaysDelta(hvacS.baselineDelivery, hvacS.forecastDelivery),
+    ).toBe(7);
+    expect(computeProjectStatus(SNAPSHOTS.S)).toBe('Green');
+  });
+
+  it('A–H Equipment.status uses schedule variance; not asOf inference', () => {
+    expect(findEquipment(SNAPSHOTS.B, 'EQ-BLD-02')!.status).toBe('Delayed');
+    expect(findEquipment(SNAPSHOTS.B, 'EQ-PKG-01')!.status).toBe('Delayed');
+    expect(findEquipment(SNAPSHOT_C, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+      'Delayed',
+    );
+    // Positive delta remains Delayed even when forecastDelivery <= asOf (B BLD).
+    const bld = findEquipment(SNAPSHOTS.B, 'EQ-BLD-02')!;
+    expect(bld.forecastDelivery <= SNAPSHOTS.B.scenarioAsOfDate).toBe(true);
+    expect(bld.status).toBe('Delayed');
+  });
+
+  it('S HVAC OnTrack is fixture-authored override, not calendar completion', () => {
+    const st = SNAPSHOT_STATES.S;
+    expect(st.eqDelta['EQ-HVAC-01']).toBe(7);
+    expect(st.eqStatus?.['EQ-HVAC-01']).toBe('OnTrack');
+    expect(findEquipment(SNAPSHOTS.S, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+      'OnTrack',
+    );
+  });
+
+  it('executiveMilestoneIds always include MS-PS and resolve', () => {
+    for (const id of ALL) {
+      const s = SNAPSHOTS[id];
+      expect(s.executiveMilestoneIds).toContain('MS-PS');
+      expect(s.executiveMilestoneIds.length).toBeGreaterThanOrEqual(8);
+      expect(s.executiveMilestoneIds.length).toBeLessThanOrEqual(12);
+      const ms = new Set(s.milestones.map((m) => m.id));
+      for (const mid of s.executiveMilestoneIds) {
+        expect(ms.has(mid)).toBe(true);
+      }
+    }
   });
 });
 

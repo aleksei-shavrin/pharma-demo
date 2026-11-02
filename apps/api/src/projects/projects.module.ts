@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { CostsController } from '../costs/costs.controller';
+import { CostsService } from '../costs/costs.service';
 import { DashboardController } from '../dashboard/dashboard.controller';
 import { DashboardService } from '../dashboard/dashboard.service';
 import { EntityDetailController } from '../entity-detail/entity-detail.controller';
@@ -16,6 +18,7 @@ import { ProjectsService } from './projects.service';
     RegistersController,
     EntityDetailController,
     ScheduleController,
+    CostsController,
     ProjectsController,
   ],
   providers: [
@@ -23,6 +26,7 @@ import { ProjectsService } from './projects.service';
     RegistersService,
     EntityDetailService,
     ScheduleService,
+    CostsService,
     ProjectsService,
   ],
 })

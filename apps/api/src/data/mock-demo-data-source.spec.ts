@@ -9,7 +9,7 @@ import {
 describe('MockDemoDataSource (E2 A–H fixtures)', () => {
   const ds = new MockDemoDataSource();
 
-  it('exposes populated snapshots A–H', () => {
+  it('exposes populated snapshots A–S', () => {
     expect(ds.listSnapshotIds().sort()).toEqual([
       'A',
       'B',
@@ -19,6 +19,17 @@ describe('MockDemoDataSource (E2 A–H fixtures)', () => {
       'F',
       'G',
       'H',
+      'I',
+      'J',
+      'K',
+      'L',
+      'M',
+      'N',
+      'O',
+      'P',
+      'Q',
+      'R',
+      'S',
     ]);
   });
 
@@ -29,7 +40,7 @@ describe('MockDemoDataSource (E2 A–H fixtures)', () => {
     expect(a.project.baselineProductionStart).toBe('2027-09-15');
     expect(a.project.forecastProductionStart).toBe('2027-09-15');
     expect(findEquipment(a, 'EQ-HVAC-01')?.status).toBe('OnTrack');
-    expect(a.equipment).toHaveLength(23);
+    expect(a.equipment).toHaveLength(52);
     expect(a.issues).toEqual([]);
     expect(a.decisions).toEqual([]);
   });
@@ -39,6 +50,7 @@ describe('MockDemoDataSource (E2 A–H fixtures)', () => {
     expect(findEquipment(b, 'EQ-HVAC-01')?.status).toBe('OnTrack');
     expect(findEquipment(b, 'EQ-PKG-01')?.status).toBe('Delayed');
     expect(findEquipment(b, 'EQ-BLD-02')?.status).toBe('Delayed');
+    expect(findIssue(b, 'ISS-BLD-01')?.status).toBe('Open');
     expect(b.project.forecastProductionStart).toBe('2027-09-15');
     expect(findMilestone(b, 'MS-PS')?.rag).toBe('Green');
     expect(findRisk(b, 'RISK-001')?.rag).toBe('Green');
@@ -72,8 +84,11 @@ describe('MockDemoDataSource (E2 A–H fixtures)', () => {
     );
   });
 
-  it('accepted I–S ids are not populated yet (R2-L1)', () => {
-    expect(() => ds.getSnapshot('I')).toThrow(/not populated yet/);
-    expect(() => ds.getSnapshot('S')).toThrow(/not populated yet/);
+  it('I–S populated; S achieves Production Start', () => {
+    expect(ds.getSnapshot('I').id).toBe('I');
+    expect(ds.getSnapshot('O').project.forecastProductionStart).toBe(
+      '2027-09-22',
+    );
+    expect(ds.getSnapshot('S').scenarioAsOfDate).toBe('2027-09-22');
   });
 });

@@ -41,6 +41,7 @@ export class DashboardService {
       snapshotId: snapshot.id,
       scenarioAsOfDate: snapshot.scenarioAsOfDate,
       projectStatus: computeProjectStatus(snapshot),
+      executiveMilestoneIds: [...snapshot.executiveMilestoneIds],
       project: {
         id: project.id,
         name: project.name,

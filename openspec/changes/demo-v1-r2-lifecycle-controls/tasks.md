@@ -20,15 +20,17 @@
 
 ## R2-L1 — Lifecycle fixtures
 
-- [ ] Expand catalogues (MS/EQ/ISS/RISK/DEC)
-- [ ] I–S snapshot overlays; preserve A–H core
-- [ ] BR-004/007 integrity A–S; executiveMilestoneIds
+- [x] Expand catalogues (MS/EQ/ISS/RISK/DEC)
+- [x] I–S snapshot overlays; preserve A–H core
+- [x] BR-004/007 integrity A–S; executiveMilestoneIds
+- [x] R2-L1-R1: Equipment.status = delta semantics + authored eqStatus (no asOf inference)
 
 ## R2-M1 — Cost
 
-- [ ] Integer RUB project/WS/selective EQ fields
-- [ ] CBS + contingency invariants; A–S cost story
-- [ ] `/costs` API
+- [x] Integer RUB project/WS/selective EQ fields
+- [x] CBS + contingency invariants; A–S cost story
+- [x] `/costs` API
+- [x] R2-M1-R1: Project↔WS reconciliation — contingency residual not hidden in WS EAC
 
 ## R2-W1 — Workstream
 

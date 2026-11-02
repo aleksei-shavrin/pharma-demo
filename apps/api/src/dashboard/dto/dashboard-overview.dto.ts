@@ -292,6 +292,13 @@ export class DashboardOverviewDto {
   @ApiProperty({ enum: ['Green', 'Yellow', 'Red'] })
   projectStatus!: 'Green' | 'Yellow' | 'Red';
 
+  @ApiProperty({
+    type: [String],
+    description:
+      'Fixture-authored executive milestone subset (always includes MS-PS)',
+  })
+  executiveMilestoneIds!: string[];
+
   @ApiProperty({ type: DashboardProjectDto })
   project!: DashboardProjectDto;
 

@@ -2,6 +2,7 @@ import {
   DEMO_PROJECT_BAC_RUB,
   DEMO_PROJECT_CONTINGENCY_TOTAL_RUB,
   DEMO_WORKSTREAM_BUDGETS_SUM_RUB,
+  DEMO_WORKSTREAM_CBS_RUB,
   assertFrozenDemoBacCbs,
   assertIntegerRub,
   assertProjectCostInvariants,
@@ -10,6 +11,7 @@ import {
   computeEacRub,
   computeVacRub,
   isIntegerRub,
+  sumWorkstreamCbsRub,
 } from './money';
 
 describe('R2-C1 money contract', () => {
@@ -17,6 +19,8 @@ describe('R2-C1 money contract', () => {
     expect(DEMO_PROJECT_BAC_RUB).toBe(6_200_000_000);
     expect(DEMO_WORKSTREAM_BUDGETS_SUM_RUB).toBe(5_850_000_000);
     expect(DEMO_PROJECT_CONTINGENCY_TOTAL_RUB).toBe(350_000_000);
+    expect(sumWorkstreamCbsRub()).toBe(DEMO_WORKSTREAM_BUDGETS_SUM_RUB);
+    expect(DEMO_WORKSTREAM_CBS_RUB['WS-BLD']).toBe(850_000_000);
     expect(() => assertFrozenDemoBacCbs()).not.toThrow();
   });
 
@@ -24,6 +28,8 @@ describe('R2-C1 money contract', () => {
     expect(isIntegerRub(0)).toBe(true);
     expect(isIntegerRub(6_200_000_000)).toBe(true);
     expect(isIntegerRub(1.5)).toBe(false);
+    expect(isIntegerRub(Number.NaN)).toBe(false);
+    expect(isIntegerRub(Number.POSITIVE_INFINITY)).toBe(false);
     expect(isIntegerRub('100')).toBe(false);
     expect(() => assertIntegerRub(1.5, 'x')).toThrow(/integer RUB/);
   });

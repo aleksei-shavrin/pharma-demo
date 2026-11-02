@@ -36,6 +36,10 @@ class FakeDataSource extends DemoDataSource {
   getDefaultSnapshot(): SnapshotFixture {
     return this.snapshots.A!;
   }
+
+  getCosts(): never {
+    throw new Error('getCosts not used by DashboardService');
+  }
 }
 
 describe('DashboardService (E1-R1 collection contracts)', () => {
@@ -78,8 +82,9 @@ describe('DashboardService (E1-R1 collection contracts)', () => {
 
   it('A inventory scale and F decisions without heal', () => {
     const a = service.getOverview('PRJ-01', 'A');
-    expect(a.equipment).toHaveLength(23);
-    expect(a.milestones).toHaveLength(14);
+    expect(a.equipment).toHaveLength(52);
+    expect(a.milestones).toHaveLength(40);
+    expect(a.executiveMilestoneIds).toContain('MS-PS');
 
     const svc = new DashboardService(
       new FakeDataSource({
