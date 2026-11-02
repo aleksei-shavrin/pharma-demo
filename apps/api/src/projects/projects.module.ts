@@ -9,6 +9,8 @@ import { RegistersController } from '../registers/registers.controller';
 import { RegistersService } from '../registers/registers.service';
 import { ScheduleController } from '../schedule/schedule.controller';
 import { ScheduleService } from '../schedule/schedule.service';
+import { NotificationsController } from '../notifications/notifications.controller';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PeopleController } from '../people/people.controller';
 import { PeopleService } from '../people/people.service';
 import { WorkstreamsController } from '../workstreams/workstreams.controller';
@@ -25,6 +27,7 @@ import { ProjectsService } from './projects.service';
     CostsController,
     WorkstreamsController,
     PeopleController,
+    NotificationsController,
     ProjectsController,
   ],
   providers: [
@@ -35,6 +38,7 @@ import { ProjectsService } from './projects.service';
     CostsService,
     WorkstreamsService,
     PeopleService,
+    NotificationsService,
     ProjectsService,
   ],
 })

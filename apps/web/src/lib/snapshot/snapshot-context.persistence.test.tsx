@@ -17,6 +17,7 @@ import {
 } from './snapshot-session';
 
 const fetchDashboardOverview = vi.fn();
+const fetchNotifications = vi.fn();
 
 vi.mock('@/lib/api-client', async () => {
   const actual =
@@ -25,6 +26,7 @@ vi.mock('@/lib/api-client', async () => {
     ...actual,
     fetchDashboardOverview: (...args: unknown[]) =>
       fetchDashboardOverview(...args),
+    fetchNotifications: (...args: unknown[]) => fetchNotifications(...args),
     fetchHealth: vi.fn(),
   };
 });
@@ -78,6 +80,14 @@ beforeEach(() => {
   sessionStorage.clear();
   fetchDashboardOverview.mockImplementation(
     async (_id: string, snapshot: SnapshotId) => dash(snapshot),
+  );
+  fetchNotifications.mockImplementation(
+    async (_id: string, snapshot: SnapshotId) => ({
+      snapshotId: snapshot,
+      scenarioAsOfDate: '2027-02-15',
+      projectId: 'PRJ-01',
+      items: [],
+    }),
   );
 });
 

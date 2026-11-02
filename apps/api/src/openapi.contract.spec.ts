@@ -264,6 +264,24 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
       $ref: '#/components/schemas/PersonDetailDto',
     });
 
+    const notificationsList =
+      document.paths['/v1/projects/{id}/notifications']?.get;
+    expect(notificationsList).toBeDefined();
+    const notificationsSchema = notificationsList?.responses?.['200']?.content?.[
+      'application/json'
+    ]?.schema as JsonSchema | undefined;
+    expect(notificationsSchema).toEqual({
+      $ref: '#/components/schemas/NotificationListDto',
+    });
+    const ntfSnap = (notificationsList?.parameters ?? []).find(
+      (p): p is OpenApiParam =>
+        typeof p === 'object' &&
+        p !== null &&
+        'name' in p &&
+        p.name === 'snapshot',
+    );
+    expect(ntfSnap?.schema?.enum).toEqual([...SNAPSHOT_IDS]);
+
     for (const name of [
       'PersonDto',
       'PersonListDto',

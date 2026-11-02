@@ -105,10 +105,13 @@ No GL, invoices, or contractor ledgers.
 ## 6. Notifications (AppBar)
 
 - Bell + unread badge + popover list
-- Read/unread (sessionStorage)
-- Switch: «Показывать уведомления при смене снимка» (localStorage)
+- Read/unread (sessionStorage key `ppc.demo.notificationRead`; per notification id)
+- Switch: «Показывать уведомления при смене снимка» (localStorage key `ppc.demo.notificationPopup`; **default on**)
 - On **successful** atomic snapshot commit: ≤3 prioritized toasts; remainder in tray
-- Failed/stale switch: **no** toast
+- Failed/stale/bootstrap switch: **no** toast; toast appearance does **not** auto-mark read
+- Fixtures authored per snapshot (not generic diff); Notification not SoT; entityRefs soft only
+- Decision refs: no Decision detail route in N1 → no broken link
+- Director-facing `titleRu` / `bodyRu` / taxonomy labels — RU-only (N1-R1); taxonomy `issue` → «Проблема»; allowed tech terms/IDs (HVAC, WFI, IQ/OQ/PQ, BMS/EMS, QC, HPLC, ETC/EAC/VAC, entity IDs, Production Start)
 - Taxonomy: critical_risk, issue, milestone, cost, decision, recovery, readiness
 - Payload: id, snapshotId, severity, taxonomy, titleRu, bodyRu?, href?, entityRefs?
 

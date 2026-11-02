@@ -3,6 +3,7 @@
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
+import { NotificationBell } from '@/components/notifications/notification-bell';
 import { Breadcrumbs } from './breadcrumbs';
 
 export function TopAppBar() {
@@ -27,6 +28,7 @@ export function TopAppBar() {
       </div>
       <div className="flex flex-wrap items-start gap-3">
         <SnapshotSelector />
+        <NotificationBell />
         <ThemeToggle />
         <div
           className="hidden items-center rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text-muted)] sm:flex"

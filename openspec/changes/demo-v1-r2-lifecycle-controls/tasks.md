@@ -48,8 +48,9 @@
 
 ## R2-N1 — Notifications
 
-- [ ] Notification fixtures + API
-- [ ] AppBar bell/toasts; localStorage/sessionStorage prefs
+- [x] Notification fixtures + API (`GET …/notifications?snapshot=`) — authored A–S; not SoT
+- [x] AppBar bell/popover/toasts; read=`sessionStorage` (`ppc.demo.notificationRead`); popup pref=`localStorage` (`ppc.demo.notificationPopup`, default on); ≤3 toasts only after successful atomic commit — awaiting human visual review; not human-approved yet
+- [x] R2-N1-R1: RU-only director notification copy + taxonomy «Проблема»; full soft entityRef integrity (7 types); Decision remains unroutable — awaiting human visual re-review; not human-approved yet
 
 ## R2-U1 — Dashboard / selector
 

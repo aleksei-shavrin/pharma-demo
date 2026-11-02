@@ -233,6 +233,16 @@ export function fetchPersonDetail(
   );
 }
 
+export function fetchNotifications(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<NotificationList> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<NotificationList>(
+    `/v1/projects/${encodeURIComponent(projectId)}/notifications?${qs.toString()}`,
+  );
+}
+
 export function projectStubFromDashboard(
   dashboard: DashboardOverview,
 ): ProjectStub {

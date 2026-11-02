@@ -1,5 +1,6 @@
 import type { PersonId } from '../contracts/person-id';
 import type { BuiltProjectCosts } from './fixtures/build-costs';
+import type { NotificationFixture } from './fixtures/notification-catalog';
 import type { PersonFixture } from './fixtures/person-catalog';
 import type {
   ProjectFixture,
@@ -30,6 +31,8 @@ export abstract class DemoDataSource {
   abstract personFullNameRu(id: PersonId): string;
   abstract leadPersonIdForWorkstream(ws: WorkstreamId): PersonId;
   abstract leadWorkstreamIdsForPerson(id: PersonId): WorkstreamId[];
+  /** Director notifications read-model (R2-N1; fixture-authored, not SoT). */
+  abstract listNotifications(snapshotId: SnapshotId): NotificationFixture[];
 }
 
 export const DEMO_DATA_SOURCE = Symbol('DEMO_DATA_SOURCE');

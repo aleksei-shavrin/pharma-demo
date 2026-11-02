@@ -14,6 +14,10 @@ import {
   type BuiltProjectCosts,
 } from './fixtures/build-costs';
 import {
+  notificationsForSnapshot,
+  type NotificationFixture,
+} from './fixtures/notification-catalog';
+import {
   leadPersonIdForWorkstream as leadFromCatalog,
   leadWorkstreamIdsForPerson as leadsFromCatalog,
   PERSON_BY_ID,
@@ -75,5 +79,12 @@ export class MockDemoDataSource extends DemoDataSource {
 
   leadWorkstreamIdsForPerson(id: PersonId): WorkstreamId[] {
     return leadsFromCatalog(id);
+  }
+
+  listNotifications(snapshotId: SnapshotId): NotificationFixture[] {
+    if (!isPopulatedSnapshotId(snapshotId)) {
+      throw new NotFoundException(`Unknown snapshot: ${snapshotId}`);
+    }
+    return notificationsForSnapshot(snapshotId);
   }
 }

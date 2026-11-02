@@ -23,7 +23,8 @@ export type NotificationSeverity = (typeof NOTIFICATION_SEVERITIES)[number];
 
 /**
  * Notification read-model — not SoT; cannot mutate Risk/Issue/Milestone/Cost.
- * UI storage (future R2-N1): popup preference → localStorage; read/unread → sessionStorage.
+ * UI storage (R2-N1): popup preference → localStorage; read/unread → sessionStorage.
+ * Backend has no read receipts or user preferences.
  */
 export class NotificationEntityRefDto {
   @ApiProperty({

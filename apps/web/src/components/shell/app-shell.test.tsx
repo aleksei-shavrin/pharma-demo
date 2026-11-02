@@ -8,6 +8,7 @@ import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { AppShell } from './app-shell';
 
 const fetchDashboardOverview = vi.fn();
+const fetchNotifications = vi.fn();
 
 vi.mock('@/lib/api-client', async () => {
   const actual =
@@ -16,6 +17,7 @@ vi.mock('@/lib/api-client', async () => {
     ...actual,
     fetchDashboardOverview: (...args: unknown[]) =>
       fetchDashboardOverview(...args),
+    fetchNotifications: (...args: unknown[]) => fetchNotifications(...args),
   };
 });
 
@@ -25,6 +27,12 @@ beforeEach(() => {
     async (_id: string, snapshot: SnapshotId) =>
       dashboardOverviewFixture(snapshot),
   );
+  fetchNotifications.mockResolvedValue({
+    snapshotId: 'A',
+    scenarioAsOfDate: '2027-02-15',
+    projectId: 'PRJ-01',
+    items: [],
+  });
 });
 
 afterEach(() => {
