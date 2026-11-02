@@ -14,7 +14,7 @@ updated: 2026-11-02
 > **E2 + E2-R1 APPROVED** (full A–H fixtures + integrity).
 > **E3 — APPROVED** (2026-11-02) after E3-R5 human visual review (A/B/C Light + C Dark).
 > **E4 — APPROVED** (2026-11-02) after human visual review (Equipment A/C Light + C Dark; Issues & Risks C; Milestones C Light/Dark).
-> **E5 — PENDING / NOT STARTED.** **E6–E8 pending.**
+> **E5 + E5-R1 — APPROVED** (2026-11-02) after human visual review (bounded viewport / Split rail / month spans / no row selection). **E6+E7 FAST-TRACK next.** **E8 pending.**
 
 ## Context
 
@@ -82,35 +82,36 @@ updated: 2026-11-02
 - Single Issues & Risks table + Тип (BA-OQ-006); Closed visible but not active attention
 - Human visual: Equipment A/C Light + C Dark; Issues & Risks C Light (+ Risks filter); Milestones C Light/Dark — **APPROVED** (2026-11-02). No E4-R1.
 
-### E5 — Schedule — **PENDING / NOT STARTED**
+### E5 — Schedule — **APPROVED** (after E5-R1)
 
-Human review (post–E3-R4) recorded acceptance criteria for a future Schedule iteration:
+Human AC (post–E3-R4) implemented as unified Schedule control board:
 
-**Problem today:** table and Gantt/timeline panes feel like independent scroll surfaces — row heights can diverge; table grows with ~37 control points; viewport is not bound to available shell height.
+- One logical row model for Table / Split / Timeline (`ScheduleBoard`)
+- Fixed row height 48px; sticky header band; single vertical scroll viewport (`min-h-0` / flex fill)
+- Sticky left info rail + timeline in one scroll container (no dual `scrollTop` sync)
+- Point markers (Equipment circle / Milestone diamond); baseline ghost + connector when Δ≠0
+- Client filters: search, attention, workstream, kind; additive schedule DTO `name` + `workstream`
+- Default view: Split. dhtmlx-gantt adapter retained in repo but **not wired** for E5 board (cannot share row geometry with left rail — ADR-0004 presentation superseded for enrichment Split/Timeline)
 
-**Target Split View model:** one logical grid, two panes (LEFT table columns / RIGHT timeline). Each entity is **one** logical row — identical row height left/right; marker on the right sits in the same row as the left entity.
+**E5-R1 corrective (visual):**
+- Shell `h-dvh` + overflow chain so ScheduleBoard is height-bounded (page no longer scrolls away AppBar/controls)
+- Split left rail: Object | Status | Forecast/Δ (no Type column); wider Object (`26rem`)
+- Month headers as cell spans (not boundary-centered) — first/last labels not clipped
+- Removed meaningless row-click selection; title link + marker tooltip only; tooltip portaled
 
-**Headers:** table header sticky; timeline calendar header sticky; vertical scroll keeps headers fixed.
+Status: **E5 + E5-R1 — APPROVED** (2026-11-02) after human visual review.
 
-**Vertical scroll:** scrolls rows only; working area bounded to available viewport height; prefer **one shared row model / shared vertical scroll container**. Do **not** default to dual containers with `left.scrollTop ↔ right.scrollTop` JS sync — that is fallback only if shared viewport is impossible in the existing DOM.
-
-**Horizontal scroll:** timeline pane only; left columns stable; calendar header syncs horizontally with timeline body.
-
-**Investigate before coding:** shared CSS grid rows; sticky headers; shell-available height; scrollbar ownership; horizontal sync. Virtualization is **not** required for ~37 points — prefer simple durable layout. Align Table / Split / Timeline modes on one viewport/scrolling model.
-
-Do **not** mark Schedule work completed until that iteration ships.
-
-### E6 — Detail density
+### E6 — Detail density — FAST-TRACK with E7
 
 - Overview/Links/Impact; BA-015 links only
 
-### E7 — Snapshot narrative / selector / Guide
+### E7 — Snapshot narrative / selector / Guide — FAST-TRACK with E6
 
 - Compact current-snapshot trigger + disclosure A–H (letter, asOf, RU context)
 - **One** valid ARIA pattern (listbox **or** radio popover **or** other) — **no mixed patterns**
 - Atomic switch + stale protection; Live Guide C punch + optional D–H
 
-### E8 — Acceptance
+### E8 — Acceptance — PENDING / NOT STARTED
 
 - Walkthrough + regression; `test:apps` / e2e / docs gates
 - No Demo v2 / I9

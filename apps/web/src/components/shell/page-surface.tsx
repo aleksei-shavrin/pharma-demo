@@ -3,10 +3,10 @@ import type { ReactNode } from 'react';
 export function PageSurface({ children }: { children: ReactNode }) {
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col bg-[var(--canvas)] p-4 md:p-5"
+      className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--canvas)] p-4 md:p-5"
       data-page-surface="true"
     >
-      <div className="flex min-h-0 flex-1 flex-col rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface)] shadow-[var(--elevation-1)]">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface)] shadow-[var(--elevation-1)]">
         {children}
       </div>
     </div>

@@ -1,6 +1,6 @@
 # Tasks
 
-> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. **E3 APPROVED** (2026-11-02, after E3-R5). **E4 APPROVED** (2026-11-02). Namespace **E1…E8** (not I9). Next: E5.
+> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. **E3 APPROVED**. **E4 APPROVED**. **E5 + E5-R1 APPROVED** (2026-11-02). Namespace **E1…E8** (not I9).
 
 ## E1 — Contracts
 
@@ -41,20 +41,23 @@
 - [x] Human visual review — APPROVED (2026-11-02): Equipment A/C Light + C Dark; Issues & Risks C; Milestones C Light/Dark. No E4-R1.
 - Status: **E4 — APPROVED**
 
-## E5 — Schedule — PENDING / NOT STARTED
+## E5 — Schedule — APPROVED (E5 + E5-R1)
 
-- [ ] Group/filter/compact/fit; no Activity; visual checkpoint
-- [ ] Split View: shared row model + sticky headers + viewport-bounded vertical scroll (see plan E5 notes; not started)
+- [x] Unified ScheduleBoard: shared row model Table/Split/Timeline; row-height 48; sticky headers; viewport scroll
+- [x] Point markers + baseline/forecast geometry; filters/search; no Activity/WBS/CPM
+- [x] Additive schedule DTO name/workstream
+- [x] E5-R1: bounded `h-dvh` layout chain; Split Object|Status|Forecast (no Type); month cell spans; no row selection; portaled marker tooltip
+- [x] Human visual review — **APPROVED** (2026-11-02)
 
-## E6 — Details
+## E6 — Details — PENDING (E6+E7 FAST-TRACK after E5 commit)
 
 - [ ] Overview/Links/Impact density; BA-015 links only
 
-## E7 — Selector / Guide
+## E7 — Selector / Guide — PENDING (E6+E7 FAST-TRACK after E5 commit)
 
 - [ ] Compact trigger + A–H disclosure; one valid ARIA pattern (no mix)
 - [ ] Atomic switch + stale protection; Guide C punch + D–H notes
 
-## E8 — Acceptance
+## E8 — Acceptance — PENDING / NOT STARTED
 
 - [ ] Walkthrough + regression; apps/e2e/docs gates; no Demo v2 / I9

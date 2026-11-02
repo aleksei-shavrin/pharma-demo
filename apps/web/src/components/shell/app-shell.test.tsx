@@ -62,4 +62,11 @@ describe('AppShell Page Surface vs Dashboard canvas', () => {
     expect(document.querySelector('[data-dashboard-canvas="true"]')).toBeNull();
     expect(document.querySelector('[data-page-surface]')).toBeTruthy();
   });
+
+  it('shell uses bounded dvh height (viewport chain for Schedule)', async () => {
+    const { container } = await renderShell('/schedule');
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.className).toMatch(/h-dvh/);
+    expect(root.className).toMatch(/overflow-hidden/);
+  });
 });

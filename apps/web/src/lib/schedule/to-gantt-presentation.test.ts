@@ -12,6 +12,8 @@ import {
 const eqA: ScheduleItem = {
   kind: 'equipment_delivery',
   id: 'EQ-HVAC-01',
+  name: 'Центральный AHU',
+  workstream: 'WS-HVAC',
   critical: true,
   status: 'OnTrack',
   baselineDate: '2027-05-15',
@@ -38,6 +40,7 @@ const msA: ScheduleItem = {
   kind: 'milestone',
   id: 'MS-PS',
   name: 'Ready for production',
+  workstream: null,
   rag: 'Green',
   baselineDate: '2027-09-15',
   forecastDate: '2027-09-15',

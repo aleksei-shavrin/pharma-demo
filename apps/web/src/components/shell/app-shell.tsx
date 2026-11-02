@@ -16,10 +16,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isDashboard = pathname === '/';
 
   return (
-    <div className="flex min-h-screen bg-[var(--canvas)] text-[var(--text)]">
+    <div className="flex h-dvh min-h-0 overflow-hidden bg-[var(--canvas)] text-[var(--text)]">
       <SkipLink />
       <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <TopAppBar />
         {isDashboard ? (
           <main
@@ -35,7 +35,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <main
               id="main-content"
               tabIndex={-1}
-              className="flex min-h-0 flex-1 flex-col outline-none"
+              className="flex min-h-0 flex-1 flex-col overflow-hidden outline-none"
             >
               {children}
             </main>

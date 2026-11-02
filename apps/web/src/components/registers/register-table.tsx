@@ -129,7 +129,7 @@ export function RegisterShell({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 p-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-6">
       <header className="shrink-0 space-y-1">
         <h1 className="text-xl font-semibold tracking-tight text-[var(--text)]">
           {title}

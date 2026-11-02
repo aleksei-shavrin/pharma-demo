@@ -34,6 +34,8 @@ export class ScheduleService {
         return {
           kind: 'equipment_delivery',
           id: eq.id,
+          name: eq.name,
+          workstream: eq.workstream,
           critical: eq.critical,
           status: eq.status,
           baselineDate: eq.baselineDelivery,
@@ -54,6 +56,7 @@ export class ScheduleService {
           kind: 'milestone',
           id: ms.id,
           name: ms.name,
+          workstream: ms.workstream,
           rag: ms.rag,
           baselineDate: ms.baselineDate,
           forecastDate: ms.forecastDate,
@@ -65,15 +68,7 @@ export class ScheduleService {
         };
       });
 
-    const items = [...equipmentItems, ...milestoneItems].sort((a, b) => {
-      if (a.forecastDate !== b.forecastDate) {
-        return a.forecastDate.localeCompare(b.forecastDate);
-      }
-      if (a.kind !== b.kind) {
-        return a.kind === 'equipment_delivery' ? -1 : 1;
-      }
-      return a.id.localeCompare(b.id);
-    });
+    const items = [...equipmentItems, ...milestoneItems].sort(compareScheduleItems);
 
     return {
       snapshotId: snapshot.id,
@@ -82,4 +77,18 @@ export class ScheduleService {
       items,
     };
   }
+}
+
+/** Canonical schedule order — forecastDate → kind → id (not fixture array order). */
+export function compareScheduleItems(
+  a: { forecastDate: string; kind: string; id: string },
+  b: { forecastDate: string; kind: string; id: string },
+): number {
+  if (a.forecastDate !== b.forecastDate) {
+    return a.forecastDate.localeCompare(b.forecastDate);
+  }
+  if (a.kind !== b.kind) {
+    return a.kind === 'equipment_delivery' ? -1 : 1;
+  }
+  return a.id.localeCompare(b.id);
 }

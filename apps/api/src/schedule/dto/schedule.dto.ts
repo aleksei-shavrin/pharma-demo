@@ -1,4 +1,5 @@
 import { ApiProperty, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
+import { WORKSTREAM_IDS } from '../../data/workstream-ids';
 import { SNAPSHOT_IDS, type SnapshotId } from '../../snapshot/snapshot-id';
 
 export class ScheduleVarianceDto {
@@ -18,6 +19,12 @@ export class ScheduleEquipmentItemDto {
 
   @ApiProperty({ example: 'EQ-HVAC-01' })
   id!: string;
+
+  @ApiProperty({ description: 'RU equipment name for director-facing rows' })
+  name!: string;
+
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: string;
 
   @ApiProperty()
   critical!: boolean;
@@ -44,6 +51,13 @@ export class ScheduleMilestoneItemDto {
 
   @ApiProperty()
   name!: string;
+
+  @ApiProperty({
+    enum: WORKSTREAM_IDS,
+    nullable: true,
+    description: 'null for project-level MS-PS',
+  })
+  workstream!: string | null;
 
   @ApiProperty({ enum: ['Green', 'Red'] })
   rag!: 'Green' | 'Red';

@@ -33,12 +33,20 @@ describe('ScheduleService', () => {
       baselineDate: '2027-05-15',
       forecastDate: '2027-05-15',
       dateVariance: { deltaDays: 0 },
+      workstream: 'WS-HVAC',
     });
+    expect(eq && 'name' in eq && eq.name.length).toBeGreaterThan(0);
+    expect(s.items).toHaveLength(37);
+    expect(
+      s.items.filter((i) => i.kind === 'equipment_delivery'),
+    ).toHaveLength(23);
+    expect(s.items.filter((i) => i.kind === 'milestone')).toHaveLength(14);
     expect(ms).toMatchObject({
       rag: 'Green',
       baselineDate: '2027-09-15',
       forecastDate: '2027-09-15',
       dateVariance: { deltaDays: 0 },
+      workstream: null,
     });
     expect(JSON.stringify(s)).not.toMatch(/equipmentMilestone|relatedMilestone/);
   });

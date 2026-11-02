@@ -404,6 +404,8 @@ export function fetchMilestoneDetail(
 export type ScheduleEquipmentItem = {
   kind: 'equipment_delivery';
   id: string;
+  name: string;
+  workstream: WorkstreamId;
   critical: boolean;
   status: 'OnTrack' | 'Delayed';
   baselineDate: string;
@@ -415,6 +417,7 @@ export type ScheduleMilestoneItem = {
   kind: 'milestone';
   id: string;
   name: string;
+  workstream: WorkstreamId | null;
   rag: 'Green' | 'Red';
   baselineDate: string;
   forecastDate: string;
