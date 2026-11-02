@@ -35,6 +35,10 @@ related:
 
 **Вне Demo v1 domain (явно):** Activity как самостоятельная сущность; Budget; Contractor aggregate; Document/TOP; Readiness-by-area; Change PQS-grade.
 
+> **certainty:** assumption
+>
+> **R2 extensions** (Workstream read-model, Person `PER-*`, Cost measures, Notifications) — см. [DOC-BA-018](./demo-v1-r2-domain-and-controls.md). Историческая таблица выше описывает enrichment baseline; R2 не удаляет BA-015 edges.
+
 ## Phase в Demo v1
 
 > **certainty:** assumption

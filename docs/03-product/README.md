@@ -34,15 +34,28 @@ related:
 - [demo-v1-mock-narrative-data.md](./demo-v1-mock-narrative-data.md)
 - [demo-v1-acceptance-walkthrough.md](./demo-v1-acceptance-walkthrough.md)
 
-## Demo v1 enrichment (E1–E8 COMPLETE; Demo v1 APPROVED / RELEASED)
+## Demo v1 enrichment (E1–E8 COMPLETE; local tag `demo-v1.0.0`)
 
-> **certainty:** fact — R1 design APPROVED; E1–E8 implementation APPROVED (2026-11-02). Demo v1 enrichment COMPLETE; local release tag `demo-v1.0.0`.
+> **certainty:** fact — R1 design APPROVED; E1–E8 implementation APPROVED (2026-11-02). Enrichment COMPLETE as historical checkpoint. **Demo v1 product work continues** in R2 (lifecycle & project controls). Tags `demo-v1.0.0` / `demo-v1-enrichment-baseline` are Git checkpoints, not end of Demo v1.
 
 - [demo-v1-enrichment-current-state-audit.md](./demo-v1-enrichment-current-state-audit.md) (DOC-PROD-019)
 - [demo-v1-enrichment-scope.md](./demo-v1-enrichment-scope.md) (DOC-PROD-020)
 - [demo-v1-enrichment-fixture-blueprint.md](./demo-v1-enrichment-fixture-blueprint.md) (DOC-PROD-021)
 - [demo-v1-enrichment-snapshot-matrix.md](./demo-v1-enrichment-snapshot-matrix.md) (DOC-PROD-022)
 - Plan: `.cursor/plans/demo-v1-enrichment.md`
+
+## Demo v1 R2 — lifecycle & project controls (design)
+
+> **certainty:** hypothesis — R2-D0 design pack (2026-11-02). Not implemented in apps yet. Same Demo v1; not Demo v2 / not I9.
+
+- [demo-v1-r2-scope.md](./demo-v1-r2-scope.md) (DOC-PROD-023)
+- [demo-v1-r2-lifecycle-matrix.md](./demo-v1-r2-lifecycle-matrix.md) (DOC-PROD-024)
+- [demo-v1-r2-data-blueprint.md](./demo-v1-r2-data-blueprint.md) (DOC-PROD-025)
+- [demo-v1-r2-cost-control.md](./demo-v1-r2-cost-control.md) (DOC-PROD-026)
+- BA: [demo-v1-r2-domain-and-controls.md](../02-business-analysis/demo-v1-r2-domain-and-controls.md) (DOC-BA-018)
+- UX: [demo-v1-r2-ux-delta.md](../05-ux-ui/demo-v1-r2-ux-delta.md) (DOC-UX-022)
+- Plan: `.cursor/plans/demo-v1-r2-lifecycle-controls.md`
+- OpenSpec: `openspec/changes/demo-v1-r2-lifecycle-controls/`
 
 > **certainty:** fact
 >

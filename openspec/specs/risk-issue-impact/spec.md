@@ -24,25 +24,6 @@
 - **WHEN** активен Snapshot A
 - **THEN** нет Open Issue, связанного с delay EQ-HVAC-01
 
-### Requirement: Snapshot B Issue fixture NC-001
-
-В Snapshot B система SHALL иметь Issue ISS-001 status Open, linked to EQ-HVAC-01 и MS-PS (NC-001; REQ-RISK-001). NC-001 — narrative fixture, не тождественный BR-001.
-
-#### Scenario: ISS-001 open in Snapshot B
-
-- **WHEN** активен Snapshot B
-- **THEN** существует ISS-001 со status Open и links на EQ-HVAC-01 и MS-PS
-
-### Requirement: Snapshot C Issue Mitigating after PrioritizeRecovery
-
-В Snapshot C при Decision PrioritizeRecovery система SHALL иметь ISS-001 status Mitigating. Mitigating отражает запись управленческого Decision; recovery execution SHALL NOT моделироваться (REQ-RISK-001; BR-006).
-
-#### Scenario: Mitigating means Decision recorded
-
-- **WHEN** в Snapshot C записан PrioritizeRecovery
-- **THEN** ISS-001 status равен Mitigating
-- **AND** исполнение recovery не требуется и не моделируется
-
 ### Requirement: Risk baseline fixture Snapshot A
 
 В Snapshot A система SHALL иметь RISK-001 rag Green как baseline fixture (не следствие BR-002), связанный с EQ-HVAC-01 и MS-PS, без open delay Issue (REQ-RISK-001 AC-R).
@@ -53,25 +34,74 @@
 - **THEN** RISK-001.rag равен Green и RISK-001 связан с EQ-HVAC-01 и MS-PS
 - **AND** открытого delay Issue нет
 
-### Requirement: Risk Red fixture and integrity on B and C
+### Requirement: Multi issue and risk inventory
 
-В Snapshot B система SHALL иметь RISK-001 связанный с ISS-001, EQ-HVAC-01 и MS-PS, rag fixture Red с integrity vs expected BR-002 (Issue Open). В Snapshot C PrioritizeRecovery те же связи сохраняются; Issue Mitigating; rag fixture Red с integrity vs BR-002. Система SHALL NOT требовать runtime risk engine (REQ-RISK-001).
+Система SHALL предоставлять множественные Issue и Risk (DOC-PROD-021) с RU titles, workstream, и allowed edges: Issue↔Equipment, Issue↔Risk, Issue→Milestone, Risk↔Equipment, Risk→Milestone.
 
-#### Scenario: Snapshot B RISK Red with links
+#### Scenario: Snapshot E exposes parallel issues and risks
 
-- **WHEN** активен Snapshot B
-- **THEN** RISK-001 связан с ISS-001, EQ-HVAC-01 и MS-PS и rag fixture равен Red, согласованный с BR-002 expectation
+- **WHEN** активен Snapshot E
+- **THEN** register содержит более одной Issue и более одного Risk
 
-#### Scenario: Snapshot C RISK links preserved
+### Requirement: Issue Closed status in Must lifecycle
 
-- **WHEN** активен Snapshot C с PrioritizeRecovery
-- **THEN** связи RISK-001 с ISS-001, EQ-HVAC-01 и MS-PS сохраняются и rag fixture Red проходит integrity vs BR-002 для Mitigating
+Система SHALL поддерживать Issue.status ∈ {Open, Mitigating, Closed}. Closed effects SHALL be fixture-authored. Closed SHALL NOT автоматически делать Risk Green, менять Milestone, или reforecast.
 
-### Requirement: AcceptDateSlip Issue and Risk post-state out of scope
+#### Scenario: Snapshot G packaging issue Closed without healing HVAC
 
-Спецификация SHALL NOT определять Issue.status, Risk.rag или Milestone.rag после AcceptDateSlip. AcceptDateSlip не является Issue.status. BA-OQ-004 и BA-OQ-005 остаются open (REQ-RISK-001).
+- **WHEN** активен Snapshot G с ISS-PKG-01 Closed и RISK-001 Red
+- **THEN** ISS-PKG-01 status равен Closed
+- **AND** RISK-001 остаётся Red
+- **AND** forecastProductionStart остаётся согласованным с HVAC residual
 
-#### Scenario: No AcceptDateSlip post-state requirements
+### Requirement: Combined register remains typed at scale
 
-- **WHEN** рассматривается ветка AcceptDateSlip
-- **THEN** post-state Issue/Risk/Milestone RAG не задаётся этими requirements
+Система SHALL сохранять единый Issues & Risks register с типом Issue vs Risk и фильтрами включая Closed, без обязательной pagination на Demo-объёме.
+
+#### Scenario: Filter open issues in combined register
+
+- **WHEN** фильтр Тип=Issue и status=Open
+- **THEN** результат содержит только Open Issues текущего snapshot
+
+### Requirement: Snapshot C Issue fixture NC-001
+
+В Snapshot C система SHALL иметь ISS-001 status Open, linked to EQ-HVAC-01, RISK-001, и MS-PS (Issue→Milestone allowed).
+
+#### Scenario: ISS-001 open in Snapshot C
+
+- **WHEN** активен Snapshot C
+- **THEN** существует ISS-001 Open с links на EQ-HVAC-01, RISK-001 и MS-PS
+
+### Requirement: Snapshot F Issue Mitigating after PrioritizeRecovery
+
+В Snapshot F при DEC-001 PrioritizeRecovery система SHALL иметь ISS-001 Mitigating; recovery execution SHALL NOT моделироваться.
+
+#### Scenario: Mitigating means Decision recorded
+
+- **WHEN** в Snapshot F записан PrioritizeRecovery
+- **THEN** ISS-001 status равен Mitigating
+- **AND** исполнение recovery не моделируется
+
+### Requirement: Risk Red fixture and integrity on delay path
+
+В любом snapshot где ISS-001 ∈ {Open, Mitigating} для HVAC delay path система SHALL иметь RISK-001 Red linked to ISS-001, EQ-HVAC-01, MS-PS (BR-002 integrity). Включая Snapshot F и residual G/H.
+
+#### Scenario: Snapshot C RISK Red with links
+
+- **WHEN** активен Snapshot C
+- **THEN** RISK-001 Red и связан с ISS-001, EQ-HVAC-01, MS-PS
+
+#### Scenario: Snapshot G RISK remains Red while Mitigating
+
+- **WHEN** активен Snapshot G с ISS-001 Mitigating и residual HVAC delay
+- **THEN** RISK-001 rag равен Red
+
+### Requirement: AcceptDateSlip post-state is fixture-authored
+
+Для Decision type AcceptDateSlip система SHALL NOT автоматически менять Issue/Risk/Milestone/forecast. Post-state в enriched Demo SHALL задаваться fixture snapshot (DOC-PROD-021 DEC-PKG-01 / Snapshot G).
+
+#### Scenario: AcceptDateSlip does not itself close issue
+
+- **WHEN** записан DEC-PKG-01 AcceptDateSlip
+- **THEN** факт записи Decision сам по себе не определяет Issue.status / Risk.rag / Milestone.rag
+- **AND** Snapshot G может содержать fixture-authored Closed packaging Issue независимо от engine

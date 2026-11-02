@@ -1,5 +1,9 @@
 import { buildAllSnapshots } from './build-snapshot';
-import type { SnapshotFixture, SnapshotId } from './types';
+import type {
+  PopulatedSnapshotId,
+  SnapshotFixture,
+  SnapshotId,
+} from './types';
 
 export * from './types';
 export {
@@ -26,8 +30,9 @@ export {
 
 /**
  * Populated Demo snapshots A–H (E2 full DOC-PROD-021/022 fixtures).
+ * Accepted SnapshotId space is A–S; I–S overlays are R2-L1.
  */
-export const SNAPSHOTS: Record<SnapshotId, SnapshotFixture> =
+export const SNAPSHOTS: Record<PopulatedSnapshotId, SnapshotFixture> =
   buildAllSnapshots();
 
 export const SNAPSHOT_A = SNAPSHOTS.A;

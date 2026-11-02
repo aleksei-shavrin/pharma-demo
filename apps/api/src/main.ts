@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { R2_CONTRACT_EXTRA_MODELS } from './contracts/r2-extra-models';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,10 +20,14 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Pharma Project Control API')
-    .setDescription('Demo v1 NestJS API (I1 scaffold — health + project stub)')
+    .setDescription(
+      'Demo v1 NestJS API — R2 contract models (Workstream/Person/Cost/Notification) registered ahead of handlers',
+    )
     .setVersion('0.1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [...R2_CONTRACT_EXTRA_MODELS],
+  });
   SwaggerModule.setup('api', app, document);
 
   const port = Number(process.env.PORT ?? 3001);

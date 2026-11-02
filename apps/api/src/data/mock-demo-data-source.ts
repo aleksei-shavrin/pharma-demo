@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DemoDataSource } from './demo-data-source';
+import { isPopulatedSnapshotId } from '../snapshot/snapshot-id';
 import {
   DEFAULT_SNAPSHOT_ID,
   SNAPSHOTS,
@@ -12,6 +13,11 @@ import {
 @Injectable()
 export class MockDemoDataSource extends DemoDataSource {
   getSnapshot(id: SnapshotId): SnapshotFixture {
+    if (!isPopulatedSnapshotId(id)) {
+      throw new NotFoundException(
+        `Snapshot '${id}' is accepted by contract but not populated yet (R2-L1).`,
+      );
+    }
     const snapshot = SNAPSHOTS[id];
     if (!snapshot) {
       throw new NotFoundException(`Unknown snapshot: ${id}`);
@@ -28,7 +34,7 @@ export class MockDemoDataSource extends DemoDataSource {
   }
 
   listSnapshotIds(): SnapshotId[] {
-    return Object.keys(SNAPSHOTS) as SnapshotId[];
+    return Object.keys(SNAPSHOTS) as (keyof typeof SNAPSHOTS)[];
   }
 
   /** I1 default context — Snapshot A only (full A/B/C switch is I2). */

@@ -12,6 +12,8 @@ import {
 import { createPortal } from 'react-dom';
 import {
   SELECTABLE_SNAPSHOT_IDS,
+  isSelectableSnapshotId,
+  type SelectableSnapshotId,
   type SnapshotId,
 } from '@/lib/snapshot/snapshot-id';
 import {
@@ -23,6 +25,10 @@ import { formatDateRu } from '@/lib/format/ru';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 
 type PopupPos = { top: number; right: number; width: number };
+
+function toSelectable(id: SnapshotId): SelectableSnapshotId {
+  return isSelectableSnapshotId(id) ? id : 'A';
+}
 
 /**
  * Compact AppBar snapshot disclosure (E7 / E6+E7-R1).
@@ -44,20 +50,20 @@ export function SnapshotSelector() {
   const listId = useId();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
-  const optionRefs = useRef<Partial<Record<SnapshotId, HTMLLIElement | null>>>(
-    {},
-  );
+  const optionRefs = useRef<
+    Partial<Record<SelectableSnapshotId, HTMLLIElement | null>>
+  >({});
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<PopupPos | null>(null);
-  const [focusId, setFocusId] = useState<SnapshotId>(
-    settled ? active : requested ?? 'A',
+  const [focusId, setFocusId] = useState<SelectableSnapshotId>(() =>
+    toSelectable(settled ? active : (requested ?? 'A')),
   );
 
   useEffect(() => {
     if (!loading && settled) {
-      setFocusId(active);
+      setFocusId(toSelectable(active));
     } else if (loading && requested) {
-      setFocusId(requested);
+      setFocusId(toSelectable(requested));
     }
   }, [active, loading, requested, settled]);
 
@@ -126,7 +132,7 @@ export function SnapshotSelector() {
     queueMicrotask(() => triggerRef.current?.focus());
   }
 
-  function activate(id: SnapshotId) {
+  function activate(id: SelectableSnapshotId) {
     if (loading) return;
     setFocusId(id);
     void switchSnapshot(id);

@@ -1,8 +1,11 @@
-import type { SnapshotId } from '../../snapshot/snapshot-id';
+import type {
+  PopulatedSnapshotId,
+  SnapshotId,
+} from '../../snapshot/snapshot-id';
 import type { WorkstreamId } from '../workstream-ids';
 
-/** Re-export API snapshot id — fixtures are discrete A–H maps (E2: all populated). */
-export type { SnapshotId };
+/** Re-export API snapshot ids — accepted A–S; fixtures populate A–H until R2-L1. */
+export type { SnapshotId, PopulatedSnapshotId };
 export type { WorkstreamId };
 
 export type EquipmentStatus = 'OnTrack' | 'Delayed';

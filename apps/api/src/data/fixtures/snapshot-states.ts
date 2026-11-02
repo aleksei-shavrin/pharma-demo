@@ -2,7 +2,7 @@
  * DOC-PROD-021/022 per-snapshot state overlays (E2).
  * Identity lives in catalog.ts; this file is status/RAG/delta/editorial only.
  */
-import type { SnapshotId } from './types';
+import type { PopulatedSnapshotId } from './types';
 import type { IssueStatus, Rag } from './types';
 import type { EquipmentId, IssueId, MilestoneId, RiskId } from './catalog';
 import type { TopExceptionFixture, TrendFixture } from './types';
@@ -46,7 +46,7 @@ const BASE_RISKS_GREEN: Partial<Record<RiskId, Rag>> = {
   'RISK-BLD-01': 'Green',
 };
 
-export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
+export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
   A: {
     asOf: '2027-02-15',
     psForecast: '2027-09-15',

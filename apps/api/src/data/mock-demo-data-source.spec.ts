@@ -71,4 +71,9 @@ describe('MockDemoDataSource (E2 A–H fixtures)', () => {
       '2027-09-29',
     );
   });
+
+  it('accepted I–S ids are not populated yet (R2-L1)', () => {
+    expect(() => ds.getSnapshot('I')).toThrow(/not populated yet/);
+    expect(() => ds.getSnapshot('S')).toThrow(/not populated yet/);
+  });
 });

@@ -7,8 +7,8 @@ updated: 2026-11-02
 
 # Demo v1 enrichment
 
-> **Demo v1 — APPROVED / RELEASED** (`demo-v1.0.0` local annotated tag). Не Demo v2. Не I9.
-> **Enrichment E1–E8 — COMPLETE.**
+> **Enrichment E1–E8 — COMPLETE** (`demo-v1.0.0` + `demo-v1-enrichment-baseline` Git checkpoints). Не Demo v2. Не I9.
+> **Demo v1 product continues** in R2 — see `.cursor/plans/demo-v1-r2-lifecycle-controls.md` (R2-D0 design).
 > **R1 design pack APPROVED** (2026-11-01).
 > **E1 + E1-R1 APPROVED** (2026-11-01) — contracts/read models established.
 > **E2 + E2-R1 APPROVED** (full A–H fixtures + integrity).

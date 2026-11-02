@@ -32,10 +32,10 @@ import {
 } from './catalog';
 import { SNAPSHOTS, SNAPSHOT_A, SNAPSHOT_C, SNAPSHOT_F, SNAPSHOT_G, SNAPSHOT_H } from './index';
 import { SNAPSHOT_STATES } from './snapshot-states';
-import type { SnapshotFixture, SnapshotId } from './types';
+import type { PopulatedSnapshotId, SnapshotFixture } from './types';
 
-const ALL: SnapshotId[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-const TRANSITIONS: [SnapshotId, SnapshotId][] = [
+const ALL: PopulatedSnapshotId[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+const TRANSITIONS: [PopulatedSnapshotId, PopulatedSnapshotId][] = [
   ['A', 'B'],
   ['B', 'C'],
   ['C', 'D'],

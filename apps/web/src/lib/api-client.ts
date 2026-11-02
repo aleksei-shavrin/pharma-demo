@@ -76,6 +76,8 @@ export type DashboardOverview = {
     workstream: WorkstreamId;
     equipmentId: string;
     milestoneId: string | null;
+    costImpactRub?: number;
+    costImpactBasis?: 'realized' | 'forecast';
   }[];
   risks: {
     id: string;
@@ -85,6 +87,8 @@ export type DashboardOverview = {
     equipmentId: string | null;
     milestoneId: string | null;
     issueId: string | null;
+    costExposureRub?: number;
+    mitigationCostRub?: number;
   }[];
   milestones: {
     id: string;
@@ -102,6 +106,7 @@ export type DashboardOverview = {
     ownerRole: string;
     dueDate: string | null;
     note: string;
+    approvedCostImpactRub?: number;
   }[];
   workstreamRollups: { workstream: WorkstreamId; status: ProjectStatus }[];
   topExceptions: {
@@ -235,6 +240,10 @@ export type IssuesRisksRegister = {
     linkedIssueId: string | null;
     linkedRiskId: string | null;
     milestoneId: string | null;
+    costImpactRub?: number;
+    costImpactBasis?: 'realized' | 'forecast';
+    costExposureRub?: number;
+    mitigationCostRub?: number;
   }[];
 };
 
@@ -336,6 +345,10 @@ export type EquipmentDetail = DetailEnvelope<{
   baselineDelivery: string;
   forecastDelivery: string;
   deliveryVariance: RegisterVariance;
+  approvedCostRub?: number;
+  committedCostRub?: number;
+  actualCostRub?: number;
+  forecastCostRub?: number;
 }>;
 
 export type IssueDetail = DetailEnvelope<{
@@ -344,6 +357,8 @@ export type IssueDetail = DetailEnvelope<{
   status: 'Open' | 'Mitigating' | 'Closed';
   workstream: WorkstreamId;
   owner: string;
+  costImpactRub?: number;
+  costImpactBasis?: 'realized' | 'forecast';
 }>;
 
 export type RiskDetail = DetailEnvelope<{
@@ -351,6 +366,8 @@ export type RiskDetail = DetailEnvelope<{
   title: string;
   workstream: WorkstreamId;
   rag: 'Green' | 'Red';
+  costExposureRub?: number;
+  mitigationCostRub?: number;
 }>;
 
 export type MilestoneDetail = DetailEnvelope<{
@@ -448,3 +465,157 @@ export function fetchSchedule(
     `/v1/projects/${encodeURIComponent(projectId)}/schedule?${qs.toString()}`,
   );
 }
+
+/* --- R2-C1 contract types (handlers/fixtures land in later R2 stages) --- */
+
+/**
+ * Namespace-level Person id. Exact Demo form is `^PER-\d{2,}$`
+ * (runtime/OpenAPI on API); template literal is compile-time only.
+ */
+export type PersonId = `PER-${string}`;
+
+export const PERSON_ID_PATTERN_SOURCE = String.raw`^PER-\d{2,}$`;
+export const PERSON_ID_PATTERN = /^PER-\d{2,}$/;
+
+export function isPersonId(value: string): value is PersonId {
+  return PERSON_ID_PATTERN.test(value);
+}
+
+export type Person = {
+  id: PersonId;
+  fullNameRu: string;
+  roleTitleRu: string;
+  primaryWorkstreamId: WorkstreamId | null;
+  active: boolean;
+};
+
+export type PersonList = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  items: Person[];
+};
+
+export type PersonDetail = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  person: Person;
+  issueIds: string[];
+  decisionIds: string[];
+  equipmentIds: string[];
+  leadWorkstreamIds: WorkstreamId[];
+};
+
+export type WorkstreamCatalogItem = {
+  id: WorkstreamId;
+  nameRu: string;
+  leadPersonId: PersonId | null;
+  sortOrder: number;
+};
+
+export type WorkstreamList = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  items: WorkstreamCatalogItem[];
+};
+
+export type ProjectCost = {
+  approvedBudgetRub: number;
+  actualCostRub: number;
+  committedCostRub: number;
+  etcRub: number;
+  eacRub: number;
+  vacRub: number;
+  contingencyTotalRub: number;
+  contingencyConsumedRub: number;
+  contingencyRemainingRub: number;
+};
+
+export type WorkstreamCost = {
+  workstream: WorkstreamId;
+  approvedControlBudgetRub: number;
+  actualCostRub: number;
+  committedCostRub: number;
+  etcRub: number;
+  eacRub: number;
+  vacRub: number;
+};
+
+export type EquipmentCost = {
+  equipmentId: string;
+  approvedCostRub?: number;
+  committedCostRub?: number;
+  actualCostRub?: number;
+  forecastCostRub?: number;
+};
+
+export type ProjectCostsOverview = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  project: ProjectCost;
+  workstreams: WorkstreamCost[];
+  equipment: EquipmentCost[];
+};
+
+export type WorkstreamDetail = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  workstream: WorkstreamCatalogItem;
+  rag: ProjectStatus;
+  equipmentIds: string[];
+  milestoneIds: string[];
+  issueIds: string[];
+  riskIds: string[];
+  decisionIds: string[];
+  cost: WorkstreamCost | null;
+};
+
+export type NotificationTaxonomy =
+  | 'critical_risk'
+  | 'issue'
+  | 'milestone'
+  | 'cost'
+  | 'decision'
+  | 'recovery'
+  | 'readiness';
+
+export type NotificationSeverity = 'critical' | 'attention' | 'info';
+
+export type NotificationEntityRef = {
+  type:
+    | 'equipment'
+    | 'issue'
+    | 'risk'
+    | 'milestone'
+    | 'decision'
+    | 'workstream'
+    | 'person';
+  id: string;
+};
+
+export type Notification = {
+  id: string;
+  snapshotId: SnapshotId;
+  severity: NotificationSeverity;
+  taxonomy: NotificationTaxonomy;
+  titleRu: string;
+  bodyRu: string | null;
+  href: string | null;
+  entityRefs: NotificationEntityRef[];
+};
+
+export type NotificationList = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  items: Notification[];
+};
+
+/** Frozen Demo CBS constants (DOC-PROD-026 / R2-D0-R1). */
+export const DEMO_PROJECT_BAC_RUB = 6_200_000_000;
+export const DEMO_WORKSTREAM_BUDGETS_SUM_RUB = 5_850_000_000;
+export const DEMO_PROJECT_CONTINGENCY_TOTAL_RUB = 350_000_000;

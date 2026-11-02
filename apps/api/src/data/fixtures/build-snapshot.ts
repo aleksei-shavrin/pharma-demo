@@ -1,6 +1,8 @@
 /**
  * Builds discrete SnapshotFixture A–H from DOC-PROD-021 catalog + DOC-PROD-022 state.
+ * I–S overlays are R2-L1 (accepted SnapshotId space is already A–S).
  */
+import { SNAPSHOT_IDS, type PopulatedSnapshotId } from '../../snapshot/snapshot-id';
 import {
   DECISION_CATALOG,
   DECISION_IDS,
@@ -28,7 +30,8 @@ import type {
   SnapshotId,
 } from './types';
 
-const SNAPSHOT_ORDER: SnapshotId[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+/** Chronological order for A–S (catalog `first` comparisons). */
+const SNAPSHOT_ORDER: readonly SnapshotId[] = SNAPSHOT_IDS;
 
 function snapshotIndex(id: SnapshotId): number {
   return SNAPSHOT_ORDER.indexOf(id);
@@ -39,7 +42,7 @@ function isAtOrAfter(current: SnapshotId, first: SnapshotId): boolean {
 }
 
 function buildEquipment(
-  snapshotId: SnapshotId,
+  snapshotId: PopulatedSnapshotId,
 ): EquipmentFixture[] {
   const { eqDelta } = SNAPSHOT_STATES[snapshotId];
   return EQUIPMENT_IDS.map((id) => {
@@ -59,7 +62,7 @@ function buildEquipment(
   });
 }
 
-function buildMilestones(snapshotId: SnapshotId): MilestoneFixture[] {
+function buildMilestones(snapshotId: PopulatedSnapshotId): MilestoneFixture[] {
   const { msDelta, msRag } = SNAPSHOT_STATES[snapshotId];
   return MILESTONE_IDS.map((id) => {
     const cat = MILESTONE_CATALOG[id];
@@ -75,7 +78,7 @@ function buildMilestones(snapshotId: SnapshotId): MilestoneFixture[] {
   });
 }
 
-function buildIssues(snapshotId: SnapshotId): IssueFixture[] {
+function buildIssues(snapshotId: PopulatedSnapshotId): IssueFixture[] {
   const { issues } = SNAPSHOT_STATES[snapshotId];
   const result: IssueFixture[] = [];
   for (const id of Object.keys(issues) as IssueId[]) {
@@ -95,7 +98,7 @@ function buildIssues(snapshotId: SnapshotId): IssueFixture[] {
   return result;
 }
 
-function buildRisks(snapshotId: SnapshotId): RiskFixture[] {
+function buildRisks(snapshotId: PopulatedSnapshotId): RiskFixture[] {
   const { riskRag, issues } = SNAPSHOT_STATES[snapshotId];
   const result: RiskFixture[] = [];
   for (const id of RISK_IDS) {
@@ -123,7 +126,7 @@ function buildRisks(snapshotId: SnapshotId): RiskFixture[] {
   return result;
 }
 
-function buildDecisions(snapshotId: SnapshotId): DecisionFixture[] {
+function buildDecisions(snapshotId: PopulatedSnapshotId): DecisionFixture[] {
   const result: DecisionFixture[] = [];
   for (const id of DECISION_IDS) {
     const cat = DECISION_CATALOG[id];
@@ -141,7 +144,9 @@ function buildDecisions(snapshotId: SnapshotId): DecisionFixture[] {
   return result;
 }
 
-export function buildSnapshot(snapshotId: SnapshotId): SnapshotFixture {
+export function buildSnapshot(
+  snapshotId: PopulatedSnapshotId,
+): SnapshotFixture {
   const state = SNAPSHOT_STATES[snapshotId];
   return {
     id: snapshotId,
@@ -169,7 +174,10 @@ export function buildSnapshot(snapshotId: SnapshotId): SnapshotFixture {
   };
 }
 
-export function buildAllSnapshots(): Record<SnapshotId, SnapshotFixture> {
+export function buildAllSnapshots(): Record<
+  PopulatedSnapshotId,
+  SnapshotFixture
+> {
   return {
     A: buildSnapshot('A'),
     B: buildSnapshot('B'),
@@ -183,18 +191,20 @@ export function buildAllSnapshots(): Record<SnapshotId, SnapshotFixture> {
 }
 
 /** Decision IDs present at snapshot (for tests). */
-export function decisionsPresentAt(snapshotId: SnapshotId): DecisionId[] {
+export function decisionsPresentAt(
+  snapshotId: PopulatedSnapshotId,
+): DecisionId[] {
   return DECISION_IDS.filter((id) =>
     isAtOrAfter(snapshotId, DECISION_CATALOG[id].first),
   );
 }
 
 /** Issue IDs present at snapshot (for tests). */
-export function issuesPresentAt(snapshotId: SnapshotId): IssueId[] {
+export function issuesPresentAt(snapshotId: PopulatedSnapshotId): IssueId[] {
   return Object.keys(SNAPSHOT_STATES[snapshotId].issues) as IssueId[];
 }
 
 /** Risk IDs present at snapshot (for tests). */
-export function risksPresentAt(snapshotId: SnapshotId): RiskId[] {
+export function risksPresentAt(snapshotId: PopulatedSnapshotId): RiskId[] {
   return Object.keys(SNAPSHOT_STATES[snapshotId].riskRag) as RiskId[];
 }

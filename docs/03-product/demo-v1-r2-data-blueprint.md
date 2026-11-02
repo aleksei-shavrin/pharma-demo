@@ -1,0 +1,167 @@
+---
+id: DOC-PROD-025
+title: "Demo v1 R2 — data and catalogue blueprint"
+type: product
+status: draft
+version: "0.1.0"
+created: 2026-11-02
+updated: 2026-11-02
+owner: "docs-engineering"
+related:
+  - DOC-PROD-021
+  - DOC-PROD-023
+  - DOC-PROD-024
+  - DOC-PROD-026
+  - DOC-BA-018
+---
+
+# Demo v1 R2 — data and catalogue blueprint
+
+> **certainty:** hypothesis
+>
+> Target catalogues for implementation (R2-L1+). Counts are **story floors**, not quotas. A–H entity IDs from DOC-PROD-021 remain; R2 **adds** entities and I–S overlays.
+
+## 1. Target scale
+
+| Category | Enrichment (E8) | R2 target | Notes |
+|----------|----------------:|----------:|-------|
+| Workstreams | 8 | **8** | Same codes; now read-model entities |
+| Milestones | 14 | **~40** | Executive + control |
+| Equipment | 23 | **~52** | Selective cost-bearing subset |
+| Issues | 11 | **~30** | Union; per-snapshot subset |
+| Risks | 12 | **~30** | Union |
+| Decisions | 6 | **~18** | Appear from F onward + late |
+| People | 0 (SH-* only) | **~15** | `PER-*` |
+| Snapshots | 8 (A–H) | **19 (A–S)** | |
+| Notifications | 0 | story-driven | Per hot snapshot |
+
+## 2. Workstream catalogue (8)
+
+Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
+
+### WS-BLD — Строительство / оболочка
+
+- **Purpose:** shell enclosure, risers, handover to clean fit-out.
+- **EQ (~4):** structure/enclosure packages, clean riser kits (extend beyond EQ-BLD-02).
+- **MS (~4):** enclosure closed; risers ready; BLD handover; weather-tight.
+- **Story:** B Yellow early → Closed by C/D; quiet later.
+- **Cost share:** see DOC-PROD-026 CBS.
+- **People:** BLD lead + shared PM oversight.
+
+### WS-CLN — Чистые помещения
+
+- **Purpose:** cleanroom envelope ready for HVAC.
+- **EQ (~6):** panels, airlocks, pass-throughs.
+- **MS (~5):** panel complete; HVAC-ready; clean balance; CLN ready.
+- **Story:** D cascade → F decisions → G residual → closed by Installation.
+- **People:** CLN lead.
+
+### WS-HVAC — HVAC
+
+- **Purpose:** AHU critical path (BR-004) + secondary HVAC.
+- **EQ (~7):** EQ-HVAC-01 spine + AHU-2, duct modules, controls skids.
+- **MS (~5):** AHU delivered/installed; HVAC demo IQ gate; balance.
+- **Story:** C–O spine; must not remain sole drama after L.
+- **People:** HVAC lead; Director/PM on DEC-001.
+
+### WS-UTL — Инженерные системы
+
+- **Purpose:** PW/WFI/gases/power supporting process.
+- **EQ (~8):** WFI, PW, compressed air, electrical.
+- **MS (~6):** PW available; WFI available; black utilities; UTL ready.
+- **Story:** E pressure → F/G residual → I recovery.
+- **People:** UTL lead; Procurement on long-lead.
+
+### WS-PRD — Технологическое оборудование
+
+- **Purpose:** process train delivery/install readiness.
+- **EQ (~8):** mixers, vessels, process skids (fictional).
+- **MS (~5):** delivered; installed; process ready-for-commission.
+- **Story:** J install wave peak; settles before O–S.
+- **People:** PRD lead.
+
+### WS-PKG — Упаковка
+
+- **Purpose:** packaging line FAT/SAT + serialization.
+- **EQ (~7):** line, serialization, secondary modules.
+- **MS (~5):** FAT; SAT; serialization ready.
+- **Story:** B–G residual Yellow; K residual closed; quiet close-out.
+- **People:** PKG lead.
+
+### WS-QC — QC / лаборатория
+
+- **Purpose:** lab readiness, instruments.
+- **EQ (~6):** HPLC and lab support.
+- **MS (~4):** lab ready; methods ready (demo wording only).
+- **Story:** E–G; late P residual possible.
+- **People:** QC lead + QA project.
+
+### WS-AUT — Автоматизация BMS/EMS
+
+- **Purpose:** BMS/EMS + plant demo COM gates.
+- **EQ (~6):** BMS, EMS, integration cabinets.
+- **MS (~6):** BMS live; EMS live; COM IQ/OQ/PQ (демо-гейты).
+- **Story:** H–N commissioning drama; critical for M/L.
+- **People:** AUT lead; Commissioning lead.
+
+## 3. Milestone catalogue strategy (~40)
+
+**Keep existing 14** (DOC-PROD-021). **Add ~26** control/executive gates across WS (install complete, cable trays, clean balance, serialization cleared, EMS live, OQ/PQ demo gates, Go/No-Go, etc.).
+
+**Classes:**
+
+- **Executive:** fixture-authored snapshot-aware subset (8–12), always includes **MS-PS**.
+- **Control:** full Schedule + Workstream page + registers.
+
+**Forbidden:** Equipment → Milestone edge (BA-015).
+
+## 4. People catalogue (~15)
+
+Fictional RU names (not real persons/orgs).
+
+| ID | RoleTitleRu (illustrative) | Primary WS |
+|----|----------------------------|------------|
+| PER-01 | Директор проекта | — |
+| PER-02 | Руководитель проекта (PM) | — |
+| PER-03 | Project Controls / планирование | — |
+| PER-04 | Закупки / Procurement | — |
+| PER-05 | Пусконаладка / готовность | — |
+| PER-06 | Ведущий WS-BLD | WS-BLD |
+| PER-07 | Ведущий WS-CLN | WS-CLN |
+| PER-08 | Ведущий WS-HVAC | WS-HVAC |
+| PER-09 | Ведущий WS-UTL | WS-UTL |
+| PER-10 | Ведущий WS-PRD | WS-PRD |
+| PER-11 | Ведущий WS-PKG | WS-PKG |
+| PER-12 | Ведущий WS-QC | WS-QC |
+| PER-13 | Ведущий WS-AUT | WS-AUT |
+| PER-14 | Ответственный QA проекта | WS-QC |
+| PER-15 | Заместитель по готовности | — |
+
+Exact `fullNameRu` strings assigned at fixture authoring (R2-P1); R2-D0 freezes **roles and PER-* namespace**.
+
+### `SH-*` to `PER-*` cutover
+
+| Legacy | Maps to (illustrative) |
+|--------|------------------------|
+| SH-DIR-01 | PER-01 |
+| SH-PM-01 | PER-02 |
+| SH-ENG-01 | PER-08 (HVAC engineering lead for spine) |
+| SH-PKG-01 | PER-11 |
+| SH-QC-01 | PER-12 |
+
+> **certainty:** assumption
+>
+> Single cutover in R2-P1: Issue/Decision owner fields become `ownerPersonId` / `ownerPersonId`; no long dual-read. Presentation via Person RU name.
+
+## 5. Issues / Risks / Decisions depth
+
+- **~30 Issues / ~30 Risks:** each WS ≥1 non-HVAC arc across lifecycle; Closed states accumulate toward S.
+- **~18 Decisions:** keep 6 enrichment decisions; add commissioning / Go-No-Go / cost-impact recorded decisions (still no auto-reforecast).
+
+## 6. Notifications
+
+Story-driven catalogue keyed by `snapshotId`; not 1:1 with every field. Hot snaps (C, G, L, O, Q, S) get richer sets.
+
+## 7. Integrity expectations
+
+Unique IDs; refs resolve; A–S chronology; BR-004/007; BA-015; cost invariants (DOC-PROD-026); Person refs; notification soft refs; executive milestone ⊆ catalogue.

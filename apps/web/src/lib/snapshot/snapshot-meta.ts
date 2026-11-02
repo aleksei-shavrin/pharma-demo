@@ -3,9 +3,9 @@ import { SNAPSHOT_IDS } from './snapshot-id';
 import { formatDateRu } from '@/lib/format/ru';
 
 /**
- * Demo narrative as-of dates for selector option labels (DOC-PROD-022).
+ * Demo narrative as-of dates (DOC-PROD-024 / lifecycle matrix A–S).
  * Not a substitute for committed API `scenarioAsOfDate` on the active trigger.
- * Locked by contract test against the approved A–H calendar.
+ * Locked by contract test against the approved calendar.
  */
 export const SNAPSHOT_AS_OF: Record<SnapshotId, string> = {
   A: '2027-02-15',
@@ -16,6 +16,17 @@ export const SNAPSHOT_AS_OF: Record<SnapshotId, string> = {
   F: '2027-04-20',
   G: '2027-05-15',
   H: '2027-06-01',
+  I: '2027-06-20',
+  J: '2027-07-05',
+  K: '2027-07-20',
+  L: '2027-08-01',
+  M: '2027-08-12',
+  N: '2027-08-22',
+  O: '2027-09-01',
+  P: '2027-09-10',
+  Q: '2027-09-15',
+  R: '2027-09-18',
+  S: '2027-09-22',
 };
 
 /** Short RU context for selector disclosure (presentation only). */
@@ -28,6 +39,17 @@ export const SNAPSHOT_CONTEXT_RU: Record<SnapshotId, string> = {
   F: 'Управленческие решения',
   G: 'Частичное восстановление',
   H: 'Остаточный риск',
+  I: 'Восстановление utilities / AUT',
+  J: 'Волна монтажа PRD',
+  K: 'Прогресс; PS ещё +14',
+  L: 'Интеграция BMS/EMS',
+  M: 'Готовность к commissioning IQ',
+  N: 'Решения commissioning',
+  O: 'Fixture post-state +7',
+  P: 'PQ / финальная готовность',
+  Q: 'Baseline date без старта',
+  R: 'Go / No-Go',
+  S: 'Production Start achieved',
 };
 
 export function snapshotAsOfRu(id: SnapshotId): string {

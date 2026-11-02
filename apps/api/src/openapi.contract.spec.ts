@@ -3,12 +3,18 @@
 import { Test } from '@nestjs/testing';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { R2_CONTRACT_EXTRA_MODELS } from './contracts/r2-extra-models';
+import { SNAPSHOT_IDS } from './snapshot/snapshot-id';
 
 type JsonSchema = {
   $ref?: string;
   enum?: string[];
   default?: string;
+  pattern?: string;
+  nullable?: boolean;
+  type?: string | string[];
   properties?: Record<string, unknown>;
+  items?: JsonSchema;
 };
 
 type OpenApiParam = {
@@ -17,7 +23,7 @@ type OpenApiParam = {
   schema?: JsonSchema;
 };
 
-describe('OpenAPI contract (I2–I6)', () => {
+describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
   it('publishes response DTOs, snapshot query, dashboard, register, detail and schedule paths', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -29,7 +35,9 @@ describe('OpenAPI contract (I2–I6)', () => {
       .setTitle('Pharma Project Control API')
       .setVersion('0.1.0')
       .build();
-    const document = SwaggerModule.createDocument(app, config);
+    const document = SwaggerModule.createDocument(app, config, {
+      extraModels: [...R2_CONTRACT_EXTRA_MODELS],
+    });
 
     const health = document.paths['/health']?.get;
     expect(health).toBeDefined();
@@ -58,9 +66,8 @@ describe('OpenAPI contract (I2–I6)', () => {
     );
     expect(snapshotParam).toBeDefined();
     expect(snapshotParam?.required).toBe(false);
-    expect(snapshotParam?.schema?.enum).toEqual(
-      expect.arrayContaining(['A', 'B', 'C']),
-    );
+    expect(snapshotParam?.schema?.enum).toEqual([...SNAPSHOT_IDS]);
+    expect(snapshotParam?.schema?.enum).not.toContain('T');
     expect(snapshotParam?.schema?.default).toBe('A');
 
     const projectSchema = document.components?.schemas?.ProjectStubDto as
@@ -190,6 +197,66 @@ describe('OpenAPI contract (I2–I6)', () => {
     expect(
       document.components?.schemas?.ScheduleMilestoneItemDto,
     ).toBeDefined();
+
+    for (const name of [
+      'PersonDto',
+      'PersonListDto',
+      'PersonDetailDto',
+      'WorkstreamCatalogItemDto',
+      'WorkstreamListDto',
+      'WorkstreamDetailDto',
+      'ProjectCostDto',
+      'WorkstreamCostDto',
+      'EquipmentCostDto',
+      'ProjectCostsOverviewDto',
+      'NotificationDto',
+      'NotificationListDto',
+    ] as const) {
+      expect(document.components?.schemas?.[name]).toBeDefined();
+    }
+
+    const projectCost = document.components?.schemas?.ProjectCostDto as
+      | JsonSchema
+      | undefined;
+    expect(projectCost?.properties).toEqual(
+      expect.objectContaining({
+        approvedBudgetRub: expect.any(Object),
+        actualCostRub: expect.any(Object),
+        committedCostRub: expect.any(Object),
+        etcRub: expect.any(Object),
+        eacRub: expect.any(Object),
+        vacRub: expect.any(Object),
+        contingencyTotalRub: expect.any(Object),
+        contingencyConsumedRub: expect.any(Object),
+        contingencyRemainingRub: expect.any(Object),
+      }),
+    );
+
+    const personDto = document.components?.schemas?.PersonDto as
+      | JsonSchema
+      | undefined;
+    const personIdSchema = personDto?.properties?.id as JsonSchema | undefined;
+    expect(personIdSchema?.pattern).toBe('^PER-\\d{2,}$');
+
+    const wsCatalog = document.components?.schemas?.WorkstreamCatalogItemDto as
+      | JsonSchema
+      | undefined;
+    const leadPerson = wsCatalog?.properties?.leadPersonId as
+      | JsonSchema
+      | undefined;
+    expect(leadPerson?.pattern).toBe('^PER-\\d{2,}$');
+    expect(leadPerson?.nullable).toBe(true);
+
+    const personDetail = document.components?.schemas?.PersonDetailDto as
+      | JsonSchema
+      | undefined;
+    const leadWs = personDetail?.properties?.leadWorkstreamIds as
+      | JsonSchema
+      | undefined;
+    expect(leadWs?.type).toBe('array');
+    expect(leadWs?.items?.enum).toEqual(
+      expect.arrayContaining(['WS-HVAC', 'WS-BLD']),
+    );
 
     await app.close();
   });

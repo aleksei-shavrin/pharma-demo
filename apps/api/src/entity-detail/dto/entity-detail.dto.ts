@@ -125,6 +125,18 @@ export class EquipmentOverviewDto {
 
   @ApiProperty({ type: DetailVarianceDto })
   deliveryVariance!: DetailVarianceDto;
+
+  @ApiPropertyOptional({ description: 'Selective EQ cost subset (optional)' })
+  approvedCostRub?: number;
+
+  @ApiPropertyOptional()
+  committedCostRub?: number;
+
+  @ApiPropertyOptional()
+  actualCostRub?: number;
+
+  @ApiPropertyOptional()
+  forecastCostRub?: number;
 }
 
 export class IssueOverviewDto {
@@ -141,9 +153,16 @@ export class IssueOverviewDto {
   workstream!: (typeof WORKSTREAM_IDS)[number];
 
   @ApiProperty({
-    description: 'OwnerRef metadata (SH-*); not a Domain Owner entity',
+    description:
+      'OwnerRef metadata (SH-* until R2-P1 cutover to ownerPersonId PER-*)',
   })
   owner!: string;
+
+  @ApiPropertyOptional()
+  costImpactRub?: number;
+
+  @ApiPropertyOptional({ enum: ['realized', 'forecast'] })
+  costImpactBasis?: 'realized' | 'forecast';
 }
 
 export class RiskOverviewDto {
@@ -158,6 +177,12 @@ export class RiskOverviewDto {
 
   @ApiProperty({ enum: ['Green', 'Red'] })
   rag!: 'Green' | 'Red';
+
+  @ApiPropertyOptional()
+  costExposureRub?: number;
+
+  @ApiPropertyOptional()
+  mitigationCostRub?: number;
 }
 
 export class MilestoneOverviewDto {

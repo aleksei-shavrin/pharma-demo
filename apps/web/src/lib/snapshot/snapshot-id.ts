@@ -1,12 +1,42 @@
 /**
- * Machine contract A–H (enrichment). UI selector exposes full A–H (E7).
+ * Discrete Demo v1 snapshot machine ids (R2: A–S).
+ * UI selector still exposes populated A–H until R2-U1/L1.
  */
-export const SNAPSHOT_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] as const;
+export const SNAPSHOT_IDS = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+] as const;
 export type SnapshotId = (typeof SNAPSHOT_IDS)[number];
 
-/** All Demo snapshots are selectable in AppBar (E7). */
-export const SELECTABLE_SNAPSHOT_IDS = SNAPSHOT_IDS;
-export type SelectableSnapshotId = SnapshotId;
+/** Snapshots selectable in AppBar today (populated fixtures A–H). */
+export const SELECTABLE_SNAPSHOT_IDS = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+] as const;
+export type SelectableSnapshotId = (typeof SELECTABLE_SNAPSHOT_IDS)[number];
 
 export function isSnapshotId(value: string): value is SnapshotId {
   return (SNAPSHOT_IDS as readonly string[]).includes(value);
@@ -15,5 +45,5 @@ export function isSnapshotId(value: string): value is SnapshotId {
 export function isSelectableSnapshotId(
   value: string,
 ): value is SelectableSnapshotId {
-  return isSnapshotId(value);
+  return (SELECTABLE_SNAPSHOT_IDS as readonly string[]).includes(value);
 }

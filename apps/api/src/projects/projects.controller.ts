@@ -20,7 +20,7 @@ export class ProjectsController {
   @Get(':id')
   @ApiOperation({
     summary:
-      'Project stub for request-scoped snapshot (default A; discrete A|B|C)',
+      'Project stub for request-scoped snapshot (default A; discrete A–S)',
   })
   @ApiQuery({
     name: 'snapshot',

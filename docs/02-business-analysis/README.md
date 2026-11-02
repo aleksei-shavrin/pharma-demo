@@ -36,3 +36,4 @@ related:
 | [domain-model-demo-v1.md](./domain-model-demo-v1.md) | DOC-BA-015 | BA3 |
 | [traceability-matrix.md](./traceability-matrix.md) | DOC-BA-016 | PD4 |
 | [ba-pd-summary.md](./ba-pd-summary.md) | DOC-BA-017 | PD4 |
+| [demo-v1-r2-domain-and-controls.md](./demo-v1-r2-domain-and-controls.md) | DOC-BA-018 | R2-D0 |

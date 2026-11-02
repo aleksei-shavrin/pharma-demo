@@ -36,7 +36,7 @@ describe('snapshot-session A–H', () => {
     expect(resolveBootstrapSnapshot()).toBe('H');
   });
 
-  it('invalid / malformed → null / A (never treated as SnapshotId)', () => {
+  it('invalid / malformed / not-yet-selectable → null / A', () => {
     sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'Z');
     expect(readSessionSnapshot()).toBeNull();
     expect(resolveBootstrapSnapshot()).toBe('A');
@@ -46,6 +46,11 @@ describe('snapshot-session A–H', () => {
     expect(resolveBootstrapSnapshot()).toBe('A');
 
     sessionStorage.setItem(SNAPSHOT_SESSION_KEY, '');
+    expect(readSessionSnapshot()).toBeNull();
+    expect(resolveBootstrapSnapshot()).toBe('A');
+
+    // Contract accepts S, but UI session stays on populated A–H until L1/U1.
+    sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'S');
     expect(readSessionSnapshot()).toBeNull();
     expect(resolveBootstrapSnapshot()).toBe('A');
   });

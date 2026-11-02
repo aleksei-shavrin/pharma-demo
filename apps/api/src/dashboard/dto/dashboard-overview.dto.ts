@@ -85,6 +85,14 @@ export class DashboardIssueDto {
     description: 'null when Issue has no milestone (e.g. ISS-UTL-02)',
   })
   milestoneId!: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Optional integer RUB impact (not a CBS node)',
+  })
+  costImpactRub?: number;
+
+  @ApiPropertyOptional({ enum: ['realized', 'forecast'] })
+  costImpactBasis?: 'realized' | 'forecast';
 }
 
 export class DashboardRiskDto {
@@ -112,6 +120,14 @@ export class DashboardRiskDto {
 
   @ApiPropertyOptional({ nullable: true, type: String })
   issueId!: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Optional exposure integer RUB (≠ BAC line)',
+  })
+  costExposureRub?: number;
+
+  @ApiPropertyOptional()
+  mitigationCostRub?: number;
 }
 
 export class DashboardMilestoneDto {
@@ -159,6 +175,12 @@ export class DashboardDecisionDto {
 
   @ApiProperty()
   note!: string;
+
+  @ApiPropertyOptional({
+    description:
+      'Recorded cost intent; alone does not mutate project EAC (BR-006 analogue)',
+  })
+  approvedCostImpactRub?: number;
 }
 
 export class DirectEdgeDto {

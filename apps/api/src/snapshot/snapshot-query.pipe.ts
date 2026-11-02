@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { parseSnapshotQuery } from './parse-snapshot-query';
-import type { SnapshotId } from './snapshot-id';
+import {
+  SNAPSHOT_IDS_ALLOWED_MESSAGE,
+  type SnapshotId,
+} from './snapshot-id';
 
 @Injectable()
 export class SnapshotQueryPipe implements PipeTransform<unknown, SnapshotId> {
@@ -10,7 +13,7 @@ export class SnapshotQueryPipe implements PipeTransform<unknown, SnapshotId> {
     }
     if (typeof value !== 'string') {
       throw new BadRequestException(
-        `Invalid snapshot '${typeof value}'. Allowed values: A, B, C, D, E, F, G, H.`,
+        `Invalid snapshot '${typeof value}'. Allowed values: ${SNAPSHOT_IDS_ALLOWED_MESSAGE}.`,
       );
     }
     return parseSnapshotQuery(value);

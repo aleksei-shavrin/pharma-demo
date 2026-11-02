@@ -19,6 +19,7 @@ related:
   - DOC-UX-019
   - DOC-UX-020
   - DOC-UX-021
+  - DOC-UX-022
   - DOC-HANDOFF-UID-001
 ---
 
@@ -84,6 +85,12 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 | Файл | ID | Назначение |
 |------|-----|------------|
 | [demo-v1-enrichment-ux-delta.md](./demo-v1-enrichment-ux-delta.md) | DOC-UX-021 | Dashboard hierarchy, rollups, compact A–H selector, registers/schedule at scale |
+
+## Demo v1 R2 UX delta (design — R2-D0)
+
+| Файл | ID | Назначение |
+|------|-----|------------|
+| [demo-v1-r2-ux-delta.md](./demo-v1-r2-ux-delta.md) | DOC-UX-022 | A–S selector, Workstream/People/Costs pages, notifications, Dashboard cost signal |
 
 ## Связанное
 

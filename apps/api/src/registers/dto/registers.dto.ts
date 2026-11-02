@@ -120,6 +120,18 @@ export class IssuesRisksRowDto {
     description: 'Direct Issue→Milestone or Risk→Milestone when present',
   })
   milestoneId!: string | null;
+
+  @ApiPropertyOptional({ description: 'Issue optional cost impact (integer RUB)' })
+  costImpactRub?: number;
+
+  @ApiPropertyOptional({ enum: ['realized', 'forecast'] })
+  costImpactBasis?: 'realized' | 'forecast';
+
+  @ApiPropertyOptional({ description: 'Risk optional exposure (integer RUB)' })
+  costExposureRub?: number;
+
+  @ApiPropertyOptional()
+  mitigationCostRub?: number;
 }
 
 export class IssuesRisksRegisterDto {

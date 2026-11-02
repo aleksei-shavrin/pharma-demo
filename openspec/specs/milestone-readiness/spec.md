@@ -24,29 +24,47 @@
 - **WHEN** активен Snapshot A
 - **THEN** MS-PS.rag равен Green и forecastDate равен baselineDate 2027-09-15
 
-### Requirement: Snapshot B milestone after slip
+### Requirement: Multi-milestone inventory with workstream
 
-В Snapshot B система SHALL иметь MS-PS rag Red и forecastDate = 2027-10-06 (= baseline + 21d per BR-004), согласованные с mock fixture и integrity vs BR-003 expectation (REQ-MILE-001). Система SHALL NOT требовать runtime-пересчёта RAG сверх fixture/integrity.
+Система SHALL предоставлять inventory milestones (DOC-PROD-021) включая MS-PS и промежуточные gates с RU title, dates, rag, optional workstream.
 
-#### Scenario: Snapshot B Red and shifted forecast
+#### Scenario: Inventory includes intermediate gates and MS-PS
 
-- **WHEN** активен Snapshot B
+- **WHEN** запрашивается список milestones PRJ-01
+- **THEN** список содержит MS-PS и дополнительные milestones
+
+### Requirement: No Equipment to Milestone direct edge
+
+Система SHALL NOT предоставлять direct Equipment—Milestone edges. Milestone impact from equipment delay SHALL идти через Issue и/или Risk.
+
+#### Scenario: Clean-room path uses Risk not EQ-MS edge
+
+- **WHEN** активен Snapshot D с RISK-CLN-01 linked to MS-CLN-RDY and EQ-CLN-01
+- **THEN** API не предоставляет Equipment→Milestone link
+
+### Requirement: Snapshot C milestone after slip
+
+В Snapshot C система SHALL иметь MS-PS rag Red и forecastDate = 2027-10-06.
+
+#### Scenario: Snapshot C Red and shifted forecast
+
+- **WHEN** активен Snapshot C
 - **THEN** MS-PS.rag равен Red и forecastDate равен 2027-10-06
 
-### Requirement: Milestone linked to RISK-001 on B and C
+### Requirement: Milestone linked to RISK-001 on delay snapshots
 
-В Snapshot B и C система SHALL связывать MS-PS с RISK-001 для BR-003 path (REQ-MILE-001).
+В любом snapshot где RISK-001 Red на HVAC→PS path система SHALL связывать MS-PS с RISK-001 и SHALL NOT показывать MS-PS Green (BR-007 state-based).
 
-#### Scenario: MS-PS linked to RISK-001 after delay
+#### Scenario: Snapshot G residual keeps MS-PS not Green
 
-- **WHEN** активен Snapshot B или C
-- **THEN** MS-PS связан с RISK-001
+- **WHEN** активен Snapshot G с RISK-001 Red и EQ-HVAC-01 Δ=+14
+- **THEN** MS-PS связан с RISK-001 и MS-PS.rag не равен Green
 
-### Requirement: Snapshot C milestone stable after PrioritizeRecovery
+### Requirement: Snapshot F milestone stable after PrioritizeRecovery
 
-В Snapshot C система SHALL сохранять MS-PS rag и forecastDate как в Snapshot B; Decision alone SHALL NOT менять их (REQ-MILE-001; BR-006).
+В Snapshot F система SHALL сохранять MS-PS rag и forecastDate как в Snapshot C; Decision alone SHALL NOT менять их (BR-006).
 
 #### Scenario: No milestone change from Decision alone
 
-- **WHEN** записан PrioritizeRecovery в Snapshot C
-- **THEN** MS-PS.rag и forecastDate совпадают со Snapshot B
+- **WHEN** записан PrioritizeRecovery DEC-001 в Snapshot F
+- **THEN** MS-PS.rag и forecastDate совпадают со Snapshot C

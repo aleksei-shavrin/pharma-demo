@@ -5,14 +5,16 @@ type: business
 status: draft
 version: "0.5.0"
 created: 2026-10-30
-updated: 2026-11-01
+updated: 2026-11-02
 owner: "docs-engineering"
 related:
   - DOC-BA-013
   - DOC-BA-015
+  - DOC-BA-018
   - DOC-DISC-018
   - DOC-BA-010
   - DOC-PROD-012
+  - DOC-PROD-024
 ---
 
 # Business rules (Demo v1)
@@ -110,6 +112,12 @@ related:
 | **Проверяемый пример** | baselineDelivery 2027-05-15 → forecastDelivery 2027-06-05 (Δ=+21); baseline PS 2027-09-15 → forecast PS 2027-10-06 |
 
 **Ограничение применимости:** только текущий демонстрационный набор ([mock narrative](../03-product/demo-v1-mock-narrative-data.md)). Не претендует на достоверный прогноз реального строительства.
+
+### BR-004 late-stage (R2 A–S)
+
+> **certainty:** assumption
+>
+> Для lifecycle A–S (DOC-PROD-024) сохраняется единственный PS driver `EQ-HVAC-01`. Инвариант: `psDeltaDays === eqHvac01DeltaDays`. Запрещено состояние HVAC +7 при PS +14 без нового driver (R2 его не вводит). K–M: operational recovery может быть виден при authoritative +14; N: Decisions без смены forecast; O: один fixture post-state двигает HVAC **и** PS на +7. Детали: [DOC-BA-018](./demo-v1-r2-domain-and-controls.md).
 
 ---
 
