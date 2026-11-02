@@ -11,6 +11,7 @@ import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import type { WorkstreamId } from '@/lib/api-client';
+import { selectDemoSnapshot } from '@/lib/test/select-snapshot';
 
 const fetchDashboardOverview = vi.fn();
 const fetchEquipmentRegister = vi.fn();
@@ -320,7 +321,7 @@ describe('E4 Equipment register', () => {
     expect(screen.getByText('EQ-HVAC-01')).toBeInTheDocument();
     expect(screen.getAllByText('HVAC').length).toBeGreaterThan(0);
 
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getByText('+21 день')).toBeInTheDocument();
     });
@@ -377,7 +378,7 @@ describe('E4 Issues & Risks register', () => {
       expect(screen.getByText('Риск: зелёный')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await selectDemoSnapshot(user, 'B');
     await waitFor(() => {
       expect(screen.getByText('Закрыта')).toBeInTheDocument();
     });
@@ -390,7 +391,7 @@ describe('E4 Issues & Risks register', () => {
     expect(screen.queryByText('ISS-PKG-CLOSED')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Сбросить фильтры' }));
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getByText('Открыта')).toBeInTheDocument();
     });
@@ -430,7 +431,7 @@ describe('E4 Milestones register', () => {
       screen.getByRole('link', { name: 'Готовность к производству' }),
     ).toHaveAttribute('href', '/milestones/MS-PS');
 
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getAllByText('Веха: красная').length).toBeGreaterThan(0);
     });

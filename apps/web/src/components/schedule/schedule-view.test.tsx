@@ -11,6 +11,7 @@ import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import { ThemeProvider } from '@/lib/theme/theme-context';
 import { SCHEDULE_ROW_HEIGHT_PX } from '@/lib/schedule/schedule-geometry';
+import { selectDemoSnapshot } from '@/lib/test/select-snapshot';
 
 const fetchDashboardOverview = vi.fn();
 const fetchSchedule = vi.fn();
@@ -197,7 +198,7 @@ describe('E5 Schedule control board', () => {
     expect(sampleRow.getAttribute('aria-selected')).toBeNull();
     expect(document.querySelector('[data-selected="true"]')).toBeNull();
 
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getAllByText('+21 день').length).toBeGreaterThan(0);
     });
@@ -270,7 +271,7 @@ describe('E5 Schedule control board', () => {
       expect(screen.getByText('37 / 37')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getAllByText('+21 день').length).toBeGreaterThan(0);
     });

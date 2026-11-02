@@ -78,7 +78,7 @@ export function DetailImpact({ impact }: { impact: EntityImpact }) {
   );
   if (impact.decisionState === 'recorded' && impact.decision) {
     steps.push(
-      `Решение ${impact.decision.id} («${presentDecisionType(impact.decision.type)}») зарегистрировано; восстановление прогноза ещё не произошло.`,
+      `Решение ${impact.decision.id} («${presentDecisionType(impact.decision.type)}») зарегистрировано — само по себе оно не меняет прогноз и не закрывает проблему.`,
     );
   } else if (impact.decisionState === 'needed') {
     steps.push(

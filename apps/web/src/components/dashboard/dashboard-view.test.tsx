@@ -9,6 +9,7 @@ import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
 import { DashboardView } from '@/components/dashboard/dashboard-view';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { selectDemoSnapshot } from '@/lib/test/select-snapshot';
 
 const fetchDashboardOverview = vi.fn();
 
@@ -90,10 +91,10 @@ describe('E3 Project Status', () => {
     renderDashboard();
     await waitFor(() =>
       expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
+        screen.getByRole('button', { name: /Снимок A.*активный/ }),
+      ).toBeInTheDocument(),
     );
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await selectDemoSnapshot(user, 'B');
     await waitFor(() => {
       expect(
         within(projectStatusBlock()).getByText('Жёлтый'),
@@ -117,10 +118,10 @@ describe('E3 Project Status', () => {
     renderDashboard();
     await waitFor(() =>
       expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
+        screen.getByRole('button', { name: /Снимок A.*активный/ }),
+      ).toBeInTheDocument(),
     );
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(
         within(projectStatusBlock()).getByText('Красный'),
@@ -135,17 +136,31 @@ describe('E3 Project Status', () => {
     expect(block.querySelector('[data-ps-delta]')).toHaveTextContent('+21 день');
   });
 
-  it('G/H: Red, PS +14 (payload render; selector remains A–C)', () => {
-    renderView('G');
+  it('G/H: Red, PS +14 via A–H selector', async () => {
+    const user = userEvent.setup();
+    renderDashboard();
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: /Снимок A.*активный/ }),
+      ).toBeInTheDocument(),
+    );
+    await selectDemoSnapshot(user, 'G');
+    await waitFor(() => {
+      expect(
+        within(projectStatusBlock()).getByText('Красный'),
+      ).toBeInTheDocument();
+    });
     let block = projectStatusBlock();
-    expect(within(block).getByText('Красный')).toBeInTheDocument();
     expect(block.querySelector('[data-ps-dates]')).toHaveTextContent('29.09.2027');
     expect(block.querySelector('[data-ps-delta]')).toHaveTextContent('+14 дней');
 
-    cleanup();
-    renderView('H');
+    await selectDemoSnapshot(user, 'H');
+    await waitFor(() => {
+      expect(
+        within(projectStatusBlock()).getByText('Красный'),
+      ).toBeInTheDocument();
+    });
     block = projectStatusBlock();
-    expect(within(block).getByText('Красный')).toBeInTheDocument();
     expect(block.querySelector('[data-ps-delta]')).toHaveTextContent('+14 дней');
   });
 });
@@ -543,13 +558,13 @@ describe('E3 regression snapshot switch', () => {
       ).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await selectDemoSnapshot(user, 'B');
     await waitFor(() => {
-      expect(screen.getByRole('radiogroup')).toHaveAttribute('aria-busy', 'true');
+      expect(screen.getByRole('button', { name: /Снимок/ })).toHaveAttribute('aria-busy', 'true');
     });
     expect(
-      screen.getByRole('radio', { name: /Снимок A, активный/ }),
-    ).toBeChecked();
+      screen.getByRole('button', { name: /Снимок A.*активный/ }),
+    ).toBeInTheDocument();
 
     rejectB(new Error('network'));
     await waitFor(() => {
@@ -558,8 +573,8 @@ describe('E3 regression snapshot switch', () => {
       ).toBeInTheDocument();
     });
     expect(
-      screen.getByRole('radio', { name: /Снимок A, активный/ }),
-    ).toBeChecked();
+      screen.getByRole('button', { name: /Снимок A.*активный/ }),
+    ).toBeInTheDocument();
     expect(
       within(projectStatusBlock()).getByText('Зелёный'),
     ).toBeInTheDocument();

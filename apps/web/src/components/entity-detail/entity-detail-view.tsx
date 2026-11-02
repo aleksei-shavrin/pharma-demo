@@ -99,6 +99,7 @@ export function EntityDetailAbsent({
 
 export function EntityDetailShell({
   title,
+  entityId,
   statusSlot,
   asOf,
   snapshot,
@@ -106,7 +107,10 @@ export function EntityDetailShell({
   impact,
   overview,
 }: {
+  /** Director-facing primary heading (RU name/title). */
   title: string;
+  /** Secondary machine id shown under the title. */
+  entityId: string;
   statusSlot: ReactNode;
   asOf: string;
   snapshot: SnapshotId;
@@ -120,9 +124,12 @@ export function EntityDetailShell({
   return (
     <div className="flex flex-1 flex-col gap-4 p-6">
       <header className="space-y-2">
-        <h1 className="text-xl font-semibold tracking-tight text-[var(--text)]">
-          {title}
-        </h1>
+        <div className="space-y-0.5">
+          <h1 className="text-xl font-semibold tracking-tight text-[var(--text)]">
+            {title}
+          </h1>
+          <p className="text-sm text-[var(--text-muted)]">{entityId}</p>
+        </div>
         <div className="flex flex-wrap items-center gap-3 text-sm">
           {statusSlot}
           <span className="text-[var(--text-muted)]">

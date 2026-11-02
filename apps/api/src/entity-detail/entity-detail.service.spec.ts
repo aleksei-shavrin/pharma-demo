@@ -49,6 +49,8 @@ describe('EntityDetailService', () => {
 
     it('C: Delayed +21; Links Issue+Risks; no Milestone; needed; no recovery', () => {
       const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'C');
+      expect(d.entity.name).toMatch(/AHU/);
+      expect(d.entity.workstream).toBe('WS-HVAC');
       expect(d.entity.status).toBe('Delayed');
       expect(d.entity.deliveryVariance.deltaDays).toBe(21);
       expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
@@ -80,6 +82,7 @@ describe('EntityDetailService', () => {
     it('C: Open; Links Equipment+Risk+Milestone; no Decision', () => {
       const d = service.getIssue('PRJ-01', 'ISS-001', 'C');
       expect(d.entity.status).toBe('Open');
+      expect(d.entity.workstream).toBe('WS-HVAC');
       expect(d.entity.owner).toBe('SH-PM-01');
       expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
       expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
@@ -107,6 +110,8 @@ describe('EntityDetailService', () => {
 
     it('C: Red; Links Equipment+Issue+Milestone', () => {
       const d = service.getRisk('PRJ-01', 'RISK-001', 'C');
+      expect(d.entity.title.length).toBeGreaterThan(0);
+      expect(d.entity.workstream).toBe('WS-HVAC');
       expect(d.entity.rag).toBe('Red');
       expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
       expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
@@ -119,6 +124,7 @@ describe('EntityDetailService', () => {
       for (const snap of ['A', 'B'] as const) {
         const d = service.getMilestone('PRJ-01', 'MS-PS', snap);
         expect(d.entity.rag).toBe('Green');
+        expect(d.entity.workstream).toBeNull();
         expect(d.entity.dateVariance.deltaDays).toBe(0);
         expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
         expect(linkIds(d.links, 'equipment')).toEqual([]);
@@ -133,6 +139,15 @@ describe('EntityDetailService', () => {
       expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
       expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
       expect(linkIds(d.links, 'equipment')).toEqual([]);
+    });
+
+    it('G: residual +14; H residual honesty', () => {
+      const g = service.getMilestone('PRJ-01', 'MS-PS', 'G');
+      expect(g.entity.dateVariance.deltaDays).toBe(14);
+      expect(g.entity.forecastDate).toBe('2027-09-29');
+      const h = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'H');
+      expect(h.entity.deliveryVariance.deltaDays).toBe(14);
+      expect(h.impact.riskRag).toBe('Red');
     });
   });
 

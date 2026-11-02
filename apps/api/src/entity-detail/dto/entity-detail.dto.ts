@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { WORKSTREAM_IDS } from '../../data/workstream-ids';
 import { SNAPSHOT_IDS, type SnapshotId } from '../../snapshot/snapshot-id';
 
 export class EntityLinkDto {
@@ -104,6 +105,12 @@ export class EquipmentOverviewDto {
   @ApiProperty()
   id!: string;
 
+  @ApiProperty({ description: 'RU name from Domain fixture' })
+  name!: string;
+
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: (typeof WORKSTREAM_IDS)[number];
+
   @ApiProperty()
   critical!: boolean;
 
@@ -130,13 +137,24 @@ export class IssueOverviewDto {
   @ApiProperty({ enum: ['Open', 'Mitigating', 'Closed'] })
   status!: 'Open' | 'Mitigating' | 'Closed';
 
-  @ApiProperty({ description: 'Canonical Issue.owner from Domain fixture' })
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: (typeof WORKSTREAM_IDS)[number];
+
+  @ApiProperty({
+    description: 'OwnerRef metadata (SH-*); not a Domain Owner entity',
+  })
   owner!: string;
 }
 
 export class RiskOverviewDto {
   @ApiProperty()
   id!: string;
+
+  @ApiProperty({ description: 'RU title from Domain fixture' })
+  title!: string;
+
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: (typeof WORKSTREAM_IDS)[number];
 
   @ApiProperty({ enum: ['Green', 'Red'] })
   rag!: 'Green' | 'Red';
@@ -148,6 +166,13 @@ export class MilestoneOverviewDto {
 
   @ApiProperty()
   name!: string;
+
+  @ApiProperty({
+    enum: WORKSTREAM_IDS,
+    nullable: true,
+    description: 'null for project-level MS-PS',
+  })
+  workstream!: (typeof WORKSTREAM_IDS)[number] | null;
 
   @ApiProperty({ enum: ['Green', 'Red'] })
   rag!: 'Green' | 'Red';

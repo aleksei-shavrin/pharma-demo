@@ -14,7 +14,7 @@ updated: 2026-11-02
 > **E2 + E2-R1 APPROVED** (full A–H fixtures + integrity).
 > **E3 — APPROVED** (2026-11-02) after E3-R5 human visual review (A/B/C Light + C Dark).
 > **E4 — APPROVED** (2026-11-02) after human visual review (Equipment A/C Light + C Dark; Issues & Risks C; Milestones C Light/Dark).
-> **E5 + E5-R1 — APPROVED** (2026-11-02) after human visual review (bounded viewport / Split rail / month spans / no row selection). **E6+E7 FAST-TRACK next.** **E8 pending.**
+> **E5 + E5-R1 — APPROVED** (2026-11-02). **E6 + E7 + E6/E7-R1 — APPROVED** (2026-11-02) after human visual review. **E8 PENDING / NOT STARTED.**
 
 ## Context
 
@@ -101,15 +101,20 @@ Human AC (post–E3-R4) implemented as unified Schedule control board:
 
 Status: **E5 + E5-R1 — APPROVED** (2026-11-02) after human visual review.
 
-### E6 — Detail density — FAST-TRACK with E7
+### E6 — Detail density — **APPROVED** (2026-11-02)
 
-- Overview/Links/Impact; BA-015 links only
+- Overview density; RU title primary / ID secondary; Links BA-015 only; Impact Decision honesty
+- R1: remove Overview status/as-of duplication; OwnerRef label «Ответственный»
+- Human visual: EQ-HVAC-01 C Overview/Links + G Impact; ISS-001 C; RISK-001 C; MS-PS G Overview/Impact
 
-### E7 — Snapshot narrative / selector / Guide — FAST-TRACK with E6
+### E7 — Snapshot narrative / selector / Guide — **APPROVED** (2026-11-02)
 
-- Compact current-snapshot trigger + disclosure A–H (letter, asOf, RU context)
-- **One** valid ARIA pattern (listbox **or** radio popover **or** other) — **no mixed patterns**
-- Atomic switch + stale protection; Live Guide C punch + optional D–H
+- Compact AppBar trigger + **portaled** listbox A–H (avoids shell overflow clip)
+- Trigger date from committed API `scenarioAsOfDate`; option dates = narrative meta + contract test
+- **One** ARIA pattern: button + listbox; atomic switch; sessionStorage A–H; Guide C punch + F/G/H
+- Human visual: Dashboard A/C/G Light + H Dark. Selector portal/interaction accepted on implementation + automated test evidence; dedicated open-selector screenshot was not a release blocker.
+
+**E6/E7-R1 — APPROVED** (2026-11-02). Non-blocking (deferred): short detail page whitespace; some English fixture/narrative strings on Dashboard G/H.
 
 ### E8 — Acceptance — PENDING / NOT STARTED
 

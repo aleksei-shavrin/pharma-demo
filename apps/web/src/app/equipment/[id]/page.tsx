@@ -13,6 +13,7 @@ import { fetchEquipmentDetail } from '@/lib/api-client';
 import { useEntityDetailQuery } from '@/lib/entity-detail/use-entity-detail-query';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
+import { presentWorkstream } from '@/lib/ui-labels';
 
 export default function EquipmentDetailPage() {
   const params = useParams<{ id: string }>();
@@ -40,7 +41,8 @@ export default function EquipmentDetailPage() {
 
   return (
     <EntityDetailShell
-      title={data.entity.id}
+      title={data.entity.name}
+      entityId={data.entity.id}
       statusSlot={
         <StatusPill family="equipment" value={data.entity.status} />
       }
@@ -52,6 +54,11 @@ export default function EquipmentDetailPage() {
         <OverviewDl
           rows={[
             { label: 'ID', value: data.entity.id },
+            { label: 'Название', value: data.entity.name },
+            {
+              label: 'Рабочий поток',
+              value: presentWorkstream(data.entity.workstream),
+            },
             {
               label: 'Критичность',
               value: data.entity.critical ? 'Да' : 'Нет',

@@ -19,6 +19,7 @@ import {
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
+import { selectDemoSnapshot } from '@/lib/test/select-snapshot';
 
 const fetchDashboardOverview = vi.fn();
 const fetchEquipmentDetail = vi.fn();
@@ -77,31 +78,38 @@ function impact(snapshotId: SnapshotId) {
 }
 
 function eqDetail(snapshotId: SnapshotId) {
-  const delayed = snapshotId === 'C';
-  const links: EntityLink[] = delayed
-    ? [
-        {
-          targetType: 'issue',
-          targetId: 'ISS-001',
-          displayName: 'Прогноз сдвига поставки long-lead AHU',
-        },
-        { targetType: 'risk', targetId: 'RISK-001', displayName: 'RISK-001' },
-      ]
-    : [{ targetType: 'risk', targetId: 'RISK-001', displayName: 'RISK-001' }];
+  const delayed = ['C', 'D', 'E', 'F'].includes(snapshotId);
+  const residual = snapshotId === 'G' || snapshotId === 'H';
+  const delta = residual ? 14 : delayed ? 21 : 0;
+  const forecast =
+    delta === 21 ? '2027-06-05' : delta === 14 ? '2027-05-29' : '2027-05-15';
+  const links: EntityLink[] =
+    delayed || residual
+      ? [
+          {
+            targetType: 'issue',
+            targetId: 'ISS-001',
+            displayName: 'Прогноз сдвига поставки long-lead AHU',
+          },
+          { targetType: 'risk', targetId: 'RISK-001', displayName: 'RISK-001' },
+        ]
+      : [{ targetType: 'risk', targetId: 'RISK-001', displayName: 'RISK-001' }];
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
     projectId: 'PRJ-01',
     entity: {
       id: 'EQ-HVAC-01',
+      name: 'Приточная установка AHU (long-lead)',
+      workstream: 'WS-HVAC' as const,
       critical: true,
-      status: delayed ? ('Delayed' as const) : ('OnTrack' as const),
+      status: delta > 0 ? ('Delayed' as const) : ('OnTrack' as const),
       baselineDelivery: '2027-05-15',
-      forecastDelivery: delayed ? '2027-06-05' : '2027-05-15',
+      forecastDelivery: forecast,
       deliveryVariance: {
         baselineDate: '2027-05-15',
-        forecastDate: delayed ? '2027-06-05' : '2027-05-15',
-        deltaDays: delayed ? 21 : 0,
+        forecastDate: forecast,
+        deltaDays: delta,
       },
     },
     links,
@@ -121,6 +129,7 @@ function issueDetail(snapshotId: SnapshotId) {
       id: 'ISS-001',
       title: 'Прогноз сдвига поставки long-lead AHU',
       status: 'Open' as const,
+      workstream: 'WS-HVAC' as const,
       owner: 'SH-PM-01',
     },
     links: [
@@ -145,7 +154,11 @@ function issueDetail(snapshotId: SnapshotId) {
 }
 
 function msDetail(snapshotId: SnapshotId) {
-  const delayed = snapshotId === 'C';
+  const delayed = ['C', 'D', 'E', 'F'].includes(snapshotId);
+  const residual = snapshotId === 'G' || snapshotId === 'H';
+  const delta = residual ? 14 : delayed ? 21 : 0;
+  const forecast =
+    delta === 21 ? '2027-10-06' : delta === 14 ? '2027-09-29' : '2027-09-15';
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
@@ -153,35 +166,37 @@ function msDetail(snapshotId: SnapshotId) {
     entity: {
       id: 'MS-PS',
       name: 'Ready for production',
-      rag: delayed ? ('Red' as const) : ('Green' as const),
+      workstream: null,
+      rag: delta > 0 ? ('Red' as const) : ('Green' as const),
       baselineDate: '2027-09-15',
-      forecastDate: delayed ? '2027-10-06' : '2027-09-15',
+      forecastDate: forecast,
       dateVariance: {
         baselineDate: '2027-09-15',
-        forecastDate: delayed ? '2027-10-06' : '2027-09-15',
-        deltaDays: delayed ? 21 : 0,
+        forecastDate: forecast,
+        deltaDays: delta,
       },
     },
-    links: delayed
-      ? [
-          {
-            targetType: 'issue' as const,
-            targetId: 'ISS-001',
-            displayName: 'Прогноз сдвига поставки long-lead AHU',
-          },
-          {
-            targetType: 'risk' as const,
-            targetId: 'RISK-001',
-            displayName: 'RISK-001',
-          },
-        ]
-      : [
-          {
-            targetType: 'risk' as const,
-            targetId: 'RISK-001',
-            displayName: 'RISK-001',
-          },
-        ],
+    links:
+      delta > 0
+        ? [
+            {
+              targetType: 'issue' as const,
+              targetId: 'ISS-001',
+              displayName: 'Прогноз сдвига поставки long-lead AHU',
+            },
+            {
+              targetType: 'risk' as const,
+              targetId: 'RISK-001',
+              displayName: 'RISK-001',
+            },
+          ]
+        : [
+            {
+              targetType: 'risk' as const,
+              targetId: 'RISK-001',
+              displayName: 'RISK-001',
+            },
+          ],
     impact: impact(snapshotId),
   };
 }
@@ -216,17 +231,25 @@ beforeEach(() => {
   );
 });
 
-describe('Entity Detail I5 (E1-R1)', () => {
-  it('Equipment C: Links Issue+Risk, no Milestone; Impact +21; RU labels', async () => {
+describe('Entity Detail (E6 density + E7 A–H)', () => {
+  it('Equipment C: Overview density; Links Issue+Risk, no Milestone; Impact +21', async () => {
     const user = userEvent.setup();
     (globalThis as { __testParams?: Record<string, string> }).__testParams = {
       id: 'EQ-HVAC-01',
     };
     render(wrap(<EquipmentDetailPage />));
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getAllByText('Задержка').length).toBeGreaterThan(0);
     });
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Приточная установка AHU (long-lead)',
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText('EQ-HVAC-01').length).toBeGreaterThan(0);
+    expect(screen.getByText('HVAC')).toBeInTheDocument();
     await user.click(screen.getByRole('tab', { name: 'Связи' }));
     expect(screen.getByRole('link', { name: /ISS-001/ })).toHaveAttribute(
       'href',
@@ -245,17 +268,30 @@ describe('Entity Detail I5 (E1-R1)', () => {
     expect(screen.queryByText(/\bDelayed\b/)).not.toBeInTheDocument();
   });
 
+  it('Equipment G: residual +14 Overview', async () => {
+    const user = userEvent.setup();
+    (globalThis as { __testParams?: Record<string, string> }).__testParams = {
+      id: 'EQ-HVAC-01',
+    };
+    render(wrap(<EquipmentDetailPage />));
+    await selectDemoSnapshot(user, 'G');
+    await waitFor(() => {
+      expect(screen.getAllByText(/\+14 /).length).toBeGreaterThan(0);
+    });
+    expect(screen.getByText('29.05.2027')).toBeInTheDocument();
+  });
+
   it('Issue C Open; A EmptyState; B absent; no DEC honesty on C', async () => {
     const user = userEvent.setup();
     (globalThis as { __testParams?: Record<string, string> }).__testParams = {
       id: 'ISS-001',
     };
     render(wrap(<IssueDetailPage />));
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getAllByText('Открыта').length).toBeGreaterThan(0);
     });
-    await user.click(screen.getByRole('radio', { name: /Снимок A/ }));
+    await selectDemoSnapshot(user, 'A');
     await waitFor(() => {
       expect(
         screen.getByText('Проблема отсутствует в снимке A.'),
@@ -265,18 +301,25 @@ describe('Entity Detail I5 (E1-R1)', () => {
       screen.getByRole('link', { name: 'К проблемам и рискам' }),
     ).toHaveAttribute('href', '/issues-risks');
 
-    await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
+    await selectDemoSnapshot(user, 'B');
     await waitFor(() => {
       expect(
         screen.getByText('Проблема отсутствует в снимке B.'),
       ).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getAllByText('Открыта').length).toBeGreaterThan(0);
     });
     expect(screen.queryByText('DEC-001')).not.toBeInTheDocument();
+    expect(screen.queryByText(/ссылка/)).not.toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: 'Связи' }));
+    expect(screen.getByRole('link', { name: /MS-PS/ })).toHaveAttribute(
+      'href',
+      '/milestones/MS-PS',
+    );
+    expect(screen.getByRole('link', { name: /EQ-HVAC-01/ })).toBeInTheDocument();
   });
 
   it('Milestone C: Links Issue+Risk, no Equipment', async () => {
@@ -285,7 +328,7 @@ describe('Entity Detail I5 (E1-R1)', () => {
       id: 'MS-PS',
     };
     render(wrap(<MilestoneDetailPage />));
-    await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
+    await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
       expect(screen.getAllByText('Веха: красная').length).toBeGreaterThan(0);
     });

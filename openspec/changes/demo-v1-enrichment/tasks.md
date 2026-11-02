@@ -1,6 +1,6 @@
 # Tasks
 
-> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. **E3 APPROVED**. **E4 APPROVED**. **E5 + E5-R1 APPROVED** (2026-11-02). Namespace **E1…E8** (not I9).
+> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. **E3 APPROVED**. **E4 APPROVED**. **E5 + E5-R1 APPROVED** (2026-11-02). **E6 + E7 + E6/E7-R1 APPROVED** (2026-11-02). **E8 PENDING / NOT STARTED**. Namespace **E1…E8** (not I9).
 
 ## E1 — Contracts
 
@@ -49,14 +49,19 @@
 - [x] E5-R1: bounded `h-dvh` layout chain; Split Object|Status|Forecast (no Type); month cell spans; no row selection; portaled marker tooltip
 - [x] Human visual review — **APPROVED** (2026-11-02)
 
-## E6 — Details — PENDING (E6+E7 FAST-TRACK after E5 commit)
+## E6 — Details — APPROVED (2026-11-02)
 
-- [ ] Overview/Links/Impact density; BA-015 links only
+- [x] Overview density; title hierarchy RU primary / ID secondary; OwnerRef «Ответственный»
+- [x] Links BA-015 only; Issue→Milestone kept; no Equipment→Milestone; Impact Decision honesty
+- [x] Human visual — **APPROVED** (2026-11-02): EQ-HVAC-01 C Overview/Links + G Impact; ISS-001 C; RISK-001 C; MS-PS G
 
-## E7 — Selector / Guide — PENDING (E6+E7 FAST-TRACK after E5 commit)
+## E7 — Selector / Guide — APPROVED (2026-11-02)
 
-- [ ] Compact trigger + A–H disclosure; one valid ARIA pattern (no mix)
-- [ ] Atomic switch + stale protection; Guide C punch + D–H notes
+- [x] Compact trigger + portaled A–H listbox; one ARIA pattern; API date on committed trigger
+- [x] Atomic switch + stale protection; sessionStorage A–H; Guide C punch + F/G/H
+- [x] R1: meta contract test; pipe error copy A–H; test cast cleanup
+- [x] Human visual — **APPROVED** (2026-11-02): Dashboard A/C/G Light + H Dark; selector portal accepted via impl + tests
+- Status: **E6 + E7 + E6/E7-R1 — APPROVED**
 
 ## E8 — Acceptance — PENDING / NOT STARTED
 

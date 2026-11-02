@@ -52,6 +52,8 @@ export class EntityDetailService {
       projectId: snapshot.project.id,
       entity: {
         id: eq.id,
+        name: eq.name,
+        workstream: eq.workstream,
         critical: eq.critical,
         status: eq.status,
         baselineDelivery: eq.baselineDelivery,
@@ -85,6 +87,7 @@ export class EntityDetailService {
         id: issue.id,
         title: issue.title,
         status: issue.status,
+        workstream: issue.workstream,
         owner: issue.owner,
       },
       links: this.mapLinks(linksForEntity(snapshot, 'issue', issue.id)),
@@ -108,6 +111,8 @@ export class EntityDetailService {
       projectId: snapshot.project.id,
       entity: {
         id: risk.id,
+        title: risk.title,
+        workstream: risk.workstream,
         rag: risk.rag,
       },
       links: this.mapLinks(linksForEntity(snapshot, 'risk', risk.id)),
@@ -133,6 +138,7 @@ export class EntityDetailService {
       entity: {
         id: ms.id,
         name: ms.name,
+        workstream: ms.workstream,
         rag: ms.rag,
         baselineDate: ms.baselineDate,
         forecastDate: ms.forecastDate,

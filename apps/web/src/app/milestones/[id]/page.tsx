@@ -13,7 +13,7 @@ import { fetchMilestoneDetail } from '@/lib/api-client';
 import { useEntityDetailQuery } from '@/lib/entity-detail/use-entity-detail-query';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
-import { presentMilestoneName } from '@/lib/ui-labels';
+import { presentMilestoneName, presentWorkstream } from '@/lib/ui-labels';
 
 export default function MilestoneDetailPage() {
   const params = useParams<{ id: string }>();
@@ -43,7 +43,8 @@ export default function MilestoneDetailPage() {
 
   return (
     <EntityDetailShell
-      title={`${data.entity.id} · ${name}`}
+      title={name}
+      entityId={data.entity.id}
       statusSlot={
         <StatusPill family="rag" value={data.entity.rag} entity="milestone" />
       }
@@ -56,6 +57,12 @@ export default function MilestoneDetailPage() {
           rows={[
             { label: 'ID', value: data.entity.id },
             { label: 'Название', value: name },
+            {
+              label: 'Рабочий поток',
+              value: data.entity.workstream
+                ? presentWorkstream(data.entity.workstream)
+                : 'Проектный уровень',
+            },
             {
               label: 'Базовая дата',
               value: formatDateRu(data.entity.baselineDate),

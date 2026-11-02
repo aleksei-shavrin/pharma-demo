@@ -15,24 +15,25 @@ afterEach(() => {
   sessionStorage.clear();
 });
 
-describe('snapshot-session', () => {
+describe('snapshot-session A–H', () => {
   it('empty storage → read null; resolve A', () => {
     expect(readSessionSnapshot()).toBeNull();
     expect(resolveBootstrapSnapshot()).toBe('A');
   });
 
-  it('writes and reads A/B/C', () => {
+  it('writes and reads A/B/C/G/H', () => {
     writeSessionSnapshot('B');
     expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('B');
     expect(readSessionSnapshot()).toBe('B');
     expect(resolveBootstrapSnapshot()).toBe('B');
 
-    writeSessionSnapshot('C');
-    expect(readSessionSnapshot()).toBe('C');
-    expect(resolveBootstrapSnapshot()).toBe('C');
+    writeSessionSnapshot('G');
+    expect(readSessionSnapshot()).toBe('G');
+    expect(resolveBootstrapSnapshot()).toBe('G');
 
-    writeSessionSnapshot('A');
-    expect(resolveBootstrapSnapshot()).toBe('A');
+    writeSessionSnapshot('H');
+    expect(readSessionSnapshot()).toBe('H');
+    expect(resolveBootstrapSnapshot()).toBe('H');
   });
 
   it('invalid / malformed → null / A (never treated as SnapshotId)', () => {

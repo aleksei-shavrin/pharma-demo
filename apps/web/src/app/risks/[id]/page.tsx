@@ -12,6 +12,7 @@ import {
 import { fetchRiskDetail } from '@/lib/api-client';
 import { useEntityDetailQuery } from '@/lib/entity-detail/use-entity-detail-query';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
+import { presentWorkstream } from '@/lib/ui-labels';
 
 export default function RiskDetailPage() {
   const params = useParams<{ id: string }>();
@@ -35,7 +36,8 @@ export default function RiskDetailPage() {
 
   return (
     <EntityDetailShell
-      title={data.entity.id}
+      title={data.entity.title}
+      entityId={data.entity.id}
       statusSlot={
         <StatusPill family="rag" value={data.entity.rag} entity="risk" />
       }
@@ -45,7 +47,14 @@ export default function RiskDetailPage() {
       impact={data.impact}
       overview={
         <OverviewDl
-          rows={[{ label: 'ID', value: data.entity.id }]}
+          rows={[
+            { label: 'ID', value: data.entity.id },
+            { label: 'Название', value: data.entity.title },
+            {
+              label: 'Рабочий поток',
+              value: presentWorkstream(data.entity.workstream),
+            },
+          ]}
         />
       }
     />

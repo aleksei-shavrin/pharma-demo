@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { DashboardOverview, ProjectStub } from '@/lib/api-client';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
+import type { SnapshotId } from './snapshot-id';
 import { createMonotonicSeq } from './snapshot-seq';
 import { runSnapshotLoad } from './run-snapshot-load';
 import {
@@ -11,7 +12,7 @@ import {
 } from './snapshot-state';
 
 function dashboard(
-  snapshotId: 'A' | 'B' | 'C',
+  snapshotId: SnapshotId,
   forecast: string,
 ): DashboardOverview {
   const delayed = forecast !== '2027-09-15';

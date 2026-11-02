@@ -12,7 +12,7 @@ import {
 import { fetchIssueDetail } from '@/lib/api-client';
 import { useEntityDetailQuery } from '@/lib/entity-detail/use-entity-detail-query';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
-import { presentIssueTitle } from '@/lib/ui-labels';
+import { presentIssueTitle, presentWorkstream } from '@/lib/ui-labels';
 
 export default function IssueDetailPage() {
   const params = useParams<{ id: string }>();
@@ -38,7 +38,8 @@ export default function IssueDetailPage() {
 
   return (
     <EntityDetailShell
-      title={`${data.entity.id} · ${title}`}
+      title={title}
+      entityId={data.entity.id}
       statusSlot={<StatusPill family="issue" value={data.entity.status} />}
       asOf={data.scenarioAsOfDate}
       snapshot={active}
@@ -49,7 +50,14 @@ export default function IssueDetailPage() {
           rows={[
             { label: 'ID', value: data.entity.id },
             { label: 'Название', value: title },
-            { label: 'Ответственный', value: data.entity.owner },
+            {
+              label: 'Рабочий поток',
+              value: presentWorkstream(data.entity.workstream),
+            },
+            {
+              label: 'Ответственный',
+              value: data.entity.owner,
+            },
           ]}
         />
       }

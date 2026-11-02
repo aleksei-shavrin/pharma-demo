@@ -10,7 +10,7 @@ export class SnapshotQueryPipe implements PipeTransform<unknown, SnapshotId> {
     }
     if (typeof value !== 'string') {
       throw new BadRequestException(
-        `Invalid snapshot '${typeof value}'. Allowed values: A, B, C.`,
+        `Invalid snapshot '${typeof value}'. Allowed values: A, B, C, D, E, F, G, H.`,
       );
     }
     return parseSnapshotQuery(value);

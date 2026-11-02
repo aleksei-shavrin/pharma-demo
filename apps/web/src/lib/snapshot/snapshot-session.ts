@@ -1,14 +1,10 @@
-import {
-  isSelectableSnapshotId,
-  type SnapshotId,
-} from './snapshot-id';
+import { isSnapshotId, type SnapshotId } from './snapshot-id';
 
 /** Session-scoped key for last successfully committed Demo snapshot. */
 export const SNAPSHOT_SESSION_KEY = 'ppc.demo.snapshot';
 
 /**
- * Read a selectable SnapshotId from sessionStorage, or null if missing/invalid.
- * E1: only A–C are restored (D–H unfinished until E2).
+ * Read a SnapshotId (A–H) from sessionStorage, or null if missing/invalid.
  */
 export function readSessionSnapshot(): SnapshotId | null {
   try {
@@ -19,7 +15,7 @@ export function readSessionSnapshot(): SnapshotId | null {
     if (raw === null) {
       return null;
     }
-    return isSelectableSnapshotId(raw) ? raw : null;
+    return isSnapshotId(raw) ? raw : null;
   } catch {
     return null;
   }

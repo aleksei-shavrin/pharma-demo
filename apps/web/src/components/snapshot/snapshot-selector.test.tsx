@@ -4,6 +4,15 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DashboardOverview } from '@/lib/api-client';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
+import {
+  expectActiveSnapshot,
+  selectDemoSnapshot,
+} from '@/lib/test/select-snapshot';
+import {
+  SELECTABLE_SNAPSHOT_IDS,
+  type SnapshotId,
+} from '@/lib/snapshot/snapshot-id';
+import { snapshotOptionLabel } from '@/lib/snapshot/snapshot-meta';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import { SnapshotSelector } from './snapshot-selector';
 
@@ -20,7 +29,7 @@ vi.mock('@/lib/api-client', async () => {
   };
 });
 
-function dash(snapshotId: 'A' | 'B' | 'C'): DashboardOverview {
+function dash(snapshotId: SnapshotId): DashboardOverview {
   return dashboardOverviewFixture(snapshotId);
 }
 
@@ -35,7 +44,7 @@ function renderSelector() {
 beforeEach(() => {
   sessionStorage.clear();
   fetchDashboardOverview.mockImplementation(
-    async (_id: string, snapshot: 'A' | 'B' | 'C') => dash(snapshot),
+    async (_id: string, snapshot: SnapshotId) => dash(snapshot),
   );
 });
 
@@ -45,80 +54,94 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe('SnapshotSelector keyboard (R2)', () => {
-  it('uses roving tabindex after bootstrap; aria-checked tracks active', async () => {
-    renderSelector();
-    await waitFor(() => {
-      expect(fetchDashboardOverview).toHaveBeenCalled();
-    });
-    await waitFor(() => {
-      expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked();
-    });
-
-    const radios = screen.getAllByRole('radio');
-    expect(radios).toHaveLength(3);
-    const tabbable = radios.filter((r) => r.getAttribute('tabindex') === '0');
-    expect(tabbable).toHaveLength(1);
-  });
-
-  it('ArrowRight moves focus and selects; wraps C→A', async () => {
+describe('SnapshotSelector A–H disclosure (E7-R1)', () => {
+  it('trigger shows committed active; listbox exposes A–H with selected', async () => {
     const user = userEvent.setup();
     renderSelector();
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
-    );
+    await expectActiveSnapshot('A');
 
-    const group = screen.getByRole('radiogroup', { name: 'Демо-снимок' });
-    within(group).getByRole('radio', { name: /Снимок A/ }).focus();
-    await user.keyboard('{ArrowRight}');
-    await waitFor(() =>
-      expect(
-        within(group).getByRole('radio', { name: /Снимок B, активный/ }),
-      ).toBeChecked(),
+    await user.click(screen.getByRole('button', { name: /Снимок A.*активный/ }));
+    const list = screen.getByRole('listbox', { name: 'Демо-снимок' });
+    expect(list).toHaveAttribute('data-snapshot-listbox', 'true');
+    expect(within(list).getAllByRole('option')).toHaveLength(
+      SELECTABLE_SNAPSHOT_IDS.length,
     );
-    await user.keyboard('{ArrowRight}');
-    await waitFor(() =>
+    for (const id of SELECTABLE_SNAPSHOT_IDS) {
       expect(
-        within(group).getByRole('radio', { name: /Снимок C, активный/ }),
-      ).toBeChecked(),
-    );
-    await user.keyboard('{ArrowRight}');
-    await waitFor(() =>
-      expect(
-        within(group).getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
-    );
+        within(list).getByRole('option', { name: snapshotOptionLabel(id) }),
+      ).toBeInTheDocument();
+    }
+    expect(
+      within(list).getByRole('option', { name: snapshotOptionLabel('A') }),
+    ).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('Home → A and End → C', async () => {
+  it('selects G and H; trigger reflects committed API date', async () => {
     const user = userEvent.setup();
     renderSelector();
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
-    );
-    const group = screen.getByRole('radiogroup');
-    within(group).getByRole('radio', { name: /Снимок A/ }).focus();
+    await expectActiveSnapshot('A');
+    await selectDemoSnapshot(user, 'G');
+    await expectActiveSnapshot('G');
+    expect(
+      screen.getByRole('button', { name: /Снимок G, 15\.05\.2027, активный/ }),
+    ).toBeInTheDocument();
+
+    await selectDemoSnapshot(user, 'H');
+    await expectActiveSnapshot('H');
+    expect(
+      screen.getByRole('button', { name: /Снимок H, 01\.06\.2027, активный/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('keyboard: ArrowDown/Up, Home/End, Enter, Space, Escape, Tab', async () => {
+    const user = userEvent.setup();
+    renderSelector();
+    await expectActiveSnapshot('A');
+
+    const trigger = screen.getByRole('button', { name: /Снимок A.*активный/ });
+    trigger.focus();
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
+
+    const list = screen.getByRole('listbox');
+    within(list).getByRole('option', { name: snapshotOptionLabel('A') }).focus();
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+    await expectActiveSnapshot('B');
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(trigger);
+    const listH = await screen.findByRole('listbox');
+    within(listH)
+      .getByRole('option', { name: snapshotOptionLabel('B') })
+      .focus();
     await user.keyboard('{End}');
-    await waitFor(() =>
-      expect(
-        within(group).getByRole('radio', { name: /Снимок C, активный/ }),
-      ).toBeChecked(),
-    );
+    await user.keyboard(' ');
+    await expectActiveSnapshot('H');
+
+    await user.click(trigger);
+    const listHome = await screen.findByRole('listbox');
+    within(listHome)
+      .getByRole('option', { name: snapshotOptionLabel('H') })
+      .focus();
     await user.keyboard('{Home}');
-    await waitFor(() =>
-      expect(
-        within(group).getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
-    );
+    await user.keyboard('{Enter}');
+    await expectActiveSnapshot('A');
+
+    await user.click(trigger);
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+    expect(trigger).toHaveFocus();
+
+    await user.click(trigger);
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    await user.tab();
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    });
   });
 
-  it('during loading: aria-disabled; focus retained; activation blocked', async () => {
+  it('during loading: aria-busy; activation blocked; committed stays A', async () => {
     const user = userEvent.setup();
     let resolveB!: (p: DashboardOverview) => void;
     fetchDashboardOverview.mockImplementationOnce(async () => dash('A'));
@@ -130,59 +153,76 @@ describe('SnapshotSelector keyboard (R2)', () => {
     );
 
     renderSelector();
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
+    await expectActiveSnapshot('A');
+    await user.click(screen.getByRole('button', { name: /Снимок A.*активный/ }));
+    await user.click(
+      within(screen.getByRole('listbox')).getByRole('option', {
+        name: snapshotOptionLabel('B'),
+      }),
     );
-
-    const group = screen.getByRole('radiogroup');
-    within(group).getByRole('radio', { name: /Снимок A/ }).focus();
-    await user.keyboard('{ArrowRight}');
 
     await waitFor(() => {
-      expect(group).toHaveAttribute('aria-busy', 'true');
+      expect(
+        screen.getByRole('button', {
+          name: /Снимок A.*активный.*загрузка снимка B/,
+        }),
+      ).toHaveAttribute('aria-busy', 'true');
     });
 
-    const radios = within(group).getAllByRole('radio');
-    for (const r of radios) {
-      expect(r).not.toBeDisabled();
-      expect(r).toHaveAttribute('aria-disabled', 'true');
+    await user.click(
+      screen.getByRole('button', { name: /Снимок A.*загрузка снимка B/ }),
+    );
+    for (const opt of within(screen.getByRole('listbox')).getAllByRole(
+      'option',
+    )) {
+      expect(opt).toHaveAttribute('aria-disabled', 'true');
     }
-    expect(radios[0]).toBeChecked();
-
-    const callsWhileLoading = fetchDashboardOverview.mock.calls.length;
-    await user.keyboard('{ArrowRight}');
-    expect(fetchDashboardOverview.mock.calls.length).toBe(callsWhileLoading);
-    expect(radios[2]).toHaveFocus();
 
     resolveB(dash('B'));
-    await waitFor(() =>
-      expect(
-        within(group).getByRole('radio', { name: /Снимок B, активный/ }),
-      ).toBeChecked(),
-    );
+    await expectActiveSnapshot('B');
   });
 
-  it('Enter on already-active does not refetch', async () => {
+  it('failed switch keeps committed A; retry reloads last attempt', async () => {
+    const user = userEvent.setup();
+    fetchDashboardOverview.mockImplementationOnce(async () => dash('A'));
+    fetchDashboardOverview.mockImplementationOnce(async () => {
+      throw new Error('network');
+    });
+    fetchDashboardOverview.mockImplementationOnce(async () => dash('C'));
+
+    renderSelector();
+    await expectActiveSnapshot('A');
+    await selectDemoSnapshot(user, 'C');
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+    await expectActiveSnapshot('A');
+    expect(screen.getByText(/Активный снимок остаётся A/)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Повторить' }));
+    await expectActiveSnapshot('C');
+  });
+
+  it('click outside closes listbox', async () => {
     const user = userEvent.setup();
     renderSelector();
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
-    );
+    await expectActiveSnapshot('A');
+    const trigger = screen.getByRole('button', { name: /Снимок A.*активный/ });
+    await user.click(trigger);
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    await user.click(document.body);
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    });
+  });
 
-    const group = screen.getByRole('radiogroup');
-    await user.click(within(group).getByRole('radio', { name: /Снимок B/ }));
-    await waitFor(() =>
-      expect(
-        within(group).getByRole('radio', { name: /Снимок B, активный/ }),
-      ).toBeChecked(),
-    );
-    const callsAfterClick = fetchDashboardOverview.mock.calls.length;
-    within(group).getByRole('radio', { name: /Снимок B/ }).focus();
-    await user.keyboard('{Enter}');
-    expect(fetchDashboardOverview.mock.calls.length).toBe(callsAfterClick);
+  it('re-selecting active A does not refetch', async () => {
+    const user = userEvent.setup();
+    renderSelector();
+    await expectActiveSnapshot('A');
+    expect(fetchDashboardOverview).toHaveBeenCalledTimes(1);
+    await selectDemoSnapshot(user, 'A');
+    await expectActiveSnapshot('A');
+    expect(fetchDashboardOverview).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,5 +1,6 @@
 import type { DashboardOverview, WorkstreamId } from '@/lib/api-client';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { SNAPSHOT_AS_OF } from '@/lib/snapshot/snapshot-meta';
 import { WORKSTREAM_DISPLAY_ORDER } from '@/lib/ui-labels';
 
 function allWs(
@@ -19,17 +20,6 @@ export function dashboardOverviewFixture(
   snapshotId: SnapshotId,
   overrides: Partial<DashboardOverview> = {},
 ): DashboardOverview {
-  const asOf: Record<SnapshotId, string> = {
-    A: '2027-02-15',
-    B: '2027-02-28',
-    C: '2027-03-01',
-    D: '2027-03-20',
-    E: '2027-04-10',
-    F: '2027-04-20',
-    G: '2027-05-15',
-    H: '2027-06-01',
-  };
-
   const hvacDelayed = ['C', 'D', 'E', 'F'].includes(snapshotId);
   const hvacResidual = snapshotId === 'G' || snapshotId === 'H';
   const psDelta = hvacResidual ? 14 : hvacDelayed ? 21 : 0;
@@ -49,7 +39,7 @@ export function dashboardOverviewFixture(
 
   const base: DashboardOverview = {
     snapshotId,
-    scenarioAsOfDate: asOf[snapshotId],
+    scenarioAsOfDate: SNAPSHOT_AS_OF[snapshotId],
     projectStatus,
     project: {
       id: 'PRJ-01',

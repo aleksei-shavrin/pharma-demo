@@ -329,6 +329,8 @@ type DetailEnvelope<E> = {
 
 export type EquipmentDetail = DetailEnvelope<{
   id: string;
+  name: string;
+  workstream: WorkstreamId;
   critical: boolean;
   status: 'OnTrack' | 'Delayed';
   baselineDelivery: string;
@@ -340,17 +342,21 @@ export type IssueDetail = DetailEnvelope<{
   id: string;
   title: string;
   status: 'Open' | 'Mitigating' | 'Closed';
+  workstream: WorkstreamId;
   owner: string;
 }>;
 
 export type RiskDetail = DetailEnvelope<{
   id: string;
+  title: string;
+  workstream: WorkstreamId;
   rag: 'Green' | 'Red';
 }>;
 
 export type MilestoneDetail = DetailEnvelope<{
   id: string;
   name: string;
+  workstream: WorkstreamId | null;
   rag: 'Green' | 'Red';
   baselineDate: string;
   forecastDate: string;

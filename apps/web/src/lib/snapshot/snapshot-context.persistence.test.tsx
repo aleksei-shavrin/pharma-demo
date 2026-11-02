@@ -5,6 +5,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DashboardOverview } from '@/lib/api-client';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import { TopAppBar } from '@/components/shell/top-app-bar';
+import {
+  expectActiveSnapshot,
+  selectDemoSnapshot,
+} from '@/lib/test/select-snapshot';
+import type { SnapshotId } from './snapshot-id';
 import { SnapshotProvider, useSnapshot } from './snapshot-context';
 import {
   SNAPSHOT_SESSION_KEY,
@@ -36,7 +41,7 @@ vi.mock('@/components/theme/theme-toggle', () => ({
   ),
 }));
 
-function dash(snapshotId: 'A' | 'B' | 'C'): DashboardOverview {
+function dash(snapshotId: SnapshotId): DashboardOverview {
   return dashboardOverviewFixture(snapshotId);
 }
 
@@ -52,6 +57,9 @@ function Probe() {
       </button>
       <button type="button" onClick={() => void switchSnapshot('C')}>
         goto-C
+      </button>
+      <button type="button" onClick={() => void switchSnapshot('G')}>
+        goto-G
       </button>
     </div>
   );
@@ -69,7 +77,7 @@ function renderApp() {
 beforeEach(() => {
   sessionStorage.clear();
   fetchDashboardOverview.mockImplementation(
-    async (_id: string, snapshot: 'A' | 'B' | 'C') => dash(snapshot),
+    async (_id: string, snapshot: SnapshotId) => dash(snapshot),
   );
 });
 
@@ -87,34 +95,27 @@ describe('SnapshotProvider session persistence', () => {
     });
     expect(fetchDashboardOverview.mock.calls.map((c) => c[1])).toEqual(['A']);
     expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
-    expect(
-      screen.getByRole('radio', { name: /Снимок A, активный/ }),
-    ).toBeChecked();
+    await expectActiveSnapshot('A');
   });
 
-  it('storage B → bootstrap/commit B; API never sees invalid', async () => {
-    writeSessionSnapshot('B');
+  it('storage G → bootstrap/commit G', async () => {
+    writeSessionSnapshot('G');
     renderApp();
     await waitFor(() => {
-      expect(screen.getByTestId('dash-snap')).toHaveTextContent('B');
+      expect(screen.getByTestId('dash-snap')).toHaveTextContent('G');
     });
-    expect(fetchDashboardOverview.mock.calls.map((c) => c[1])).toEqual(['B']);
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('B');
-    expect(
-      screen.getByRole('radio', { name: /Снимок B, активный/ }),
-    ).toBeChecked();
+    expect(fetchDashboardOverview.mock.calls.map((c) => c[1])).toEqual(['G']);
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('G');
+    await expectActiveSnapshot('G');
   });
 
-  it('storage C → bootstrap/commit C', async () => {
-    writeSessionSnapshot('C');
+  it('storage H → bootstrap/commit H', async () => {
+    writeSessionSnapshot('H');
     renderApp();
     await waitFor(() => {
-      expect(screen.getByTestId('dash-snap')).toHaveTextContent('C');
+      expect(screen.getByTestId('dash-snap')).toHaveTextContent('H');
     });
-    expect(fetchDashboardOverview.mock.calls.map((c) => c[1])).toEqual(['C']);
-    expect(
-      screen.getByRole('radio', { name: /Снимок C, активный/ }),
-    ).toBeChecked();
+    await expectActiveSnapshot('H');
   });
 
   it('invalid storage → A; never sent to API', async () => {
@@ -132,19 +133,11 @@ describe('SnapshotProvider session persistence', () => {
   it('successful A→B writes B', async () => {
     const user = userEvent.setup();
     renderApp();
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
-    );
+    await expectActiveSnapshot('A');
     expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
 
-    await user.click(screen.getByRole('radio', { name: /^Снимок B$/ }));
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок B, активный/ }),
-      ).toBeChecked(),
-    );
+    await selectDemoSnapshot(user, 'B');
+    await expectActiveSnapshot('B');
     expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('B');
   });
 
@@ -156,22 +149,19 @@ describe('SnapshotProvider session persistence', () => {
     });
 
     renderApp();
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
-    );
+    await expectActiveSnapshot('A');
     expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
 
-    await user.click(screen.getByRole('radio', { name: /^Снимок B$/ }));
+    await selectDemoSnapshot(user, 'B');
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
     });
     expect(screen.getByTestId('dash-snap')).toHaveTextContent('A');
     expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
+    await expectActiveSnapshot('A');
   });
 
-  it('stale success does not change storage', async () => {
+  it('stale success does not change storage; rapid C→G ends on G', async () => {
     const pending: Array<(p: DashboardOverview) => void> = [];
 
     fetchDashboardOverview.mockImplementationOnce(async () => dash('A'));
@@ -184,29 +174,21 @@ describe('SnapshotProvider session persistence', () => {
 
     const user = userEvent.setup();
     renderApp();
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок A, активный/ }),
-      ).toBeChecked(),
-    );
+    await expectActiveSnapshot('A');
 
-    await user.click(screen.getByRole('button', { name: 'goto-B' }));
-    await waitFor(() => expect(pending.length).toBe(1));
     await user.click(screen.getByRole('button', { name: 'goto-C' }));
+    await waitFor(() => expect(pending.length).toBe(1));
+    await user.click(screen.getByRole('button', { name: 'goto-G' }));
     await waitFor(() => expect(pending.length).toBe(2));
 
-    pending[0](dash('B'));
+    pending[0](dash('C'));
     await Promise.resolve();
     expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
     expect(screen.getByTestId('dash-snap')).toHaveTextContent('A');
 
-    pending[1](dash('C'));
-    await waitFor(() =>
-      expect(
-        screen.getByRole('radio', { name: /Снимок C, активный/ }),
-      ).toBeChecked(),
-    );
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('C');
+    pending[1](dash('G'));
+    await expectActiveSnapshot('G');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('G');
   });
 
   it('first paint with stored B does not present A as settled', async () => {
@@ -227,27 +209,15 @@ describe('SnapshotProvider session persistence', () => {
     });
 
     expect(screen.getByTestId('settled')).toHaveTextContent('no');
-    const radios = screen.getAllByRole('radio');
-    for (const r of radios) {
-      expect(r).not.toBeChecked();
-      expect(r.getAttribute('aria-label') ?? '').not.toMatch(/активный/);
-    }
-    expect(
-      screen.queryByText((_, el) => el?.textContent === 'Снимок A'),
-    ).not.toBeInTheDocument();
+    const trigger = screen.getByRole('button', { name: /Снимок/ });
+    expect(trigger.getAttribute('aria-label') ?? '').not.toMatch(/активный/);
+    expect(trigger.getAttribute('aria-label') ?? '').toMatch(/загрузка/i);
     expect(screen.getAllByText(/Загрузка снимка B/).length).toBeGreaterThan(0);
 
     for (const resolve of pending) {
       resolve(dash('B'));
     }
-    await waitFor(() => {
-      expect(
-        screen.getByRole('radio', { name: /Снимок B, активный/ }),
-      ).toBeChecked();
-    });
-    expect(
-      screen.getByText((_, el) => el?.textContent === 'Снимок B'),
-    ).toBeInTheDocument();
+    await expectActiveSnapshot('B');
   });
 
   it('Provider remount with stored B restores B (reload semantics)', async () => {
@@ -262,8 +232,6 @@ describe('SnapshotProvider session persistence', () => {
     await waitFor(() => {
       expect(screen.getByTestId('dash-snap')).toHaveTextContent('B');
     });
-    expect(
-      screen.getByRole('radio', { name: /Снимок B, активный/ }),
-    ).toBeChecked();
+    await expectActiveSnapshot('B');
   });
 });
