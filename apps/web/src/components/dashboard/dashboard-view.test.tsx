@@ -372,6 +372,133 @@ describe('E3-R2 Executive Timeline', () => {
   });
 });
 
+describe('E3-R4 Dashboard canvas + timeline interaction', () => {
+  it('renders e3-r4 canvas modules without inventing RAG', () => {
+    renderView('C');
+    expect(document.querySelector('[data-dashboard="e3-r4"]')).toBeTruthy();
+    expect(
+      document.querySelector('[data-dashboard-block="executive-timeline"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-dashboard-block="top-exceptions"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-dashboard-block="workstream-readiness"]'),
+    ).toBeTruthy();
+  });
+
+  it('uses fixed-html marker triggers for approved subset (not SVG polygons)', () => {
+    renderView('A');
+    const subset = [
+      'MS-BLD-ENCL',
+      'MS-CLN-RDY',
+      'MS-HVAC-IQ',
+      'MS-UTL-WFI',
+      'MS-PKG-SAT',
+      'MS-PS',
+    ];
+    for (const id of subset) {
+      const trigger = document.querySelector(
+        `[data-milestone-marker="${id}"]`,
+      ) as HTMLElement | null;
+      expect(trigger).toBeTruthy();
+      expect(trigger?.tagName).toBe('BUTTON');
+      expect(
+        trigger?.closest('[data-marker-geometry="fixed-html"]'),
+      ).toBeTruthy();
+      expect(trigger?.closest('svg')).toBeNull();
+    }
+  });
+
+  it('A/B coincident PS; C baseline+forecast +21; G/H +14', () => {
+    renderView('A');
+    expect(
+      document.querySelector('[data-ps-forecast-marker="coincident"]'),
+    ).toBeTruthy();
+    expect(document.querySelector('[data-ps-variance-span]')).toBeNull();
+
+    cleanup();
+    renderView('B');
+    expect(
+      document.querySelector('[data-ps-forecast-marker="coincident"]'),
+    ).toBeTruthy();
+
+    cleanup();
+    renderView('C');
+    expect(
+      document.querySelector('[data-ps-baseline-marker="true"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-ps-forecast-marker="true"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-ps-delta-label]'),
+    ).toHaveTextContent(/\+21/);
+
+    cleanup();
+    renderView('G');
+    expect(
+      document.querySelector('[data-ps-delta-label]'),
+    ).toHaveTextContent(/\+14/);
+  });
+
+  it('focus shows tooltip; click opens popover with entity and schedule links', async () => {
+    const user = userEvent.setup();
+    renderView('C');
+    const hvac = document.querySelector(
+      '[data-milestone-marker="MS-HVAC-IQ"]',
+    ) as HTMLButtonElement;
+    expect(hvac).toBeTruthy();
+
+    hvac.focus();
+    await waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+    expect(screen.getByRole('tooltip')).toHaveTextContent(/HVAC IQ/);
+    expect(screen.getByRole('tooltip')).toHaveTextContent(/В норме/);
+
+    await user.click(hvac);
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+    expect(document.querySelector('[data-timeline-tooltip]')).toBeNull();
+    const pop = screen.getByRole('dialog');
+    expect(within(pop).getByRole('link', { name: /Открыть веху/i })).toHaveAttribute(
+      'href',
+      '/milestones/MS-HVAC-IQ',
+    );
+    expect(
+      within(pop).getByRole('link', { name: /Подробный график/i }),
+    ).toHaveAttribute('href', '/schedule');
+  });
+
+  it('keyboard Enter opens popover; Escape closes and returns focus', async () => {
+    const user = userEvent.setup();
+    renderView('C');
+    const ps = document.querySelector(
+      '[data-ps-forecast-marker="true"]',
+    ) as HTMLButtonElement;
+    ps.focus();
+    await user.keyboard('{Enter}');
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+    const pop = screen.getByRole('dialog');
+    expect(pop).toHaveTextContent(/Запуск производства/);
+    expect(pop).toHaveTextContent(/\+21/);
+    expect(within(pop).getByRole('link', { name: /Открыть веху/i })).toHaveAttribute(
+      'href',
+      '/milestones/MS-PS',
+    );
+
+    await user.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
+    expect(document.activeElement).toBe(ps);
+  });
+});
+
 describe('E3-R2 Decisions absent', () => {
   it('A does not render a large empty decisions card', () => {
     renderView('A');

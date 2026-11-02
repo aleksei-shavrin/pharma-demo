@@ -6,6 +6,7 @@ import {
   presentMilestoneName,
   presentOwnerRole,
 } from '@/lib/ui-labels';
+import { ModuleSurface } from './module-surface';
 
 /** Context-sensitive Decision / required-action — distinct governance pattern. */
 export function DecisionAction({ data }: { data: DashboardOverview }) {
@@ -23,11 +24,7 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
   const needed = data.decisionPanelState === 'needed' && decisions.length === 0;
 
   return (
-    <section
-      aria-labelledby="decision-heading"
-      className="min-w-0"
-      data-dashboard-block="decisions"
-    >
+    <ModuleSurface data-dashboard-block="decisions" className="min-w-0">
       <h2
         id="decision-heading"
         className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
@@ -113,7 +110,7 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
           {formatDateRu(data.project.forecastProductionStart)}.
         </aside>
       ) : null}
-    </section>
+    </ModuleSurface>
   );
 }
 

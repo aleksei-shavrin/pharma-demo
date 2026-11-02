@@ -7,6 +7,7 @@ import {
   presentMilestoneName,
 } from '@/lib/ui-labels';
 import { formatDeltaDays } from '@/lib/format/ru';
+import { ModuleSurface } from './module-surface';
 
 type ExceptionLink = DashboardOverview['topExceptions'][number]['links'][number];
 
@@ -104,11 +105,7 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
   const psDelta = data.project.productionStartVariance.deltaDays;
 
   return (
-    <section
-      aria-labelledby="top-exceptions-heading"
-      className="min-w-0"
-      data-dashboard-block="top-exceptions"
-    >
+    <ModuleSurface data-dashboard-block="top-exceptions" className="min-w-0">
       <h2
         id="top-exceptions-heading"
         className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
@@ -187,6 +184,6 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
           })}
         </ol>
       )}
-    </section>
+    </ModuleSurface>
   );
 }

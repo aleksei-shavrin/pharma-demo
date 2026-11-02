@@ -3,16 +3,13 @@ import {
   WORKSTREAM_DISPLAY_ORDER,
   presentWorkstream,
 } from '@/lib/ui-labels';
+import { ModuleSurface } from './module-surface';
 
-/** Stronger peripheral-vision tints (still token-based, not saturated). */
+/** Semantic cell tints — outer ModuleSurface is neutral; cells carry color. */
 function cellTint(status: ProjectStatus): string {
-  if (status === 'Green') {
-    return 'bg-[var(--status-ok-bg)] ring-1 ring-[var(--status-ok-border)]/35';
-  }
-  if (status === 'Yellow') {
-    return 'bg-[var(--status-warn-bg)] ring-1 ring-[var(--status-warn-border)]/40';
-  }
-  return 'bg-[var(--status-danger-bg)] ring-1 ring-[var(--status-danger-border)]/40';
+  if (status === 'Green') return 'bg-[var(--status-ok-bg)]';
+  if (status === 'Yellow') return 'bg-[var(--status-warn-bg)]';
+  return 'bg-[var(--status-danger-bg)]';
 }
 
 function statusWord(status: ProjectStatus): string {
@@ -49,10 +46,9 @@ export function WorkstreamStatusMatrix({
   }));
 
   return (
-    <section
-      aria-labelledby="workstream-heading"
-      className="min-w-0"
+    <ModuleSurface
       data-dashboard-block="workstream-readiness"
+      className="min-w-0"
     >
       <h2
         id="workstream-heading"
@@ -83,7 +79,7 @@ export function WorkstreamStatusMatrix({
           </li>
         ))}
       </ul>
-    </section>
+    </ModuleSurface>
   );
 }
 

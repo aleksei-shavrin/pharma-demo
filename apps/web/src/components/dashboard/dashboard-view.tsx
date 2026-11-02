@@ -10,8 +10,8 @@ import { TopExceptionsPanel } from './top-exceptions-panel';
 import { WorkstreamStatusMatrix } from './workstream-readiness';
 
 /**
- * E3-R3 Project Control Briefing — distinct visualization patterns per zone.
- * Composition unchanged from E3-R2; surface hierarchy polished.
+ * E3-R4 Dashboard canvas — independent module surfaces on application background.
+ * No enclosing Page Surface.
  */
 export function DashboardView({ data }: { data: DashboardOverview }) {
   const { status } = useSnapshot();
@@ -20,8 +20,8 @@ export function DashboardView({ data }: { data: DashboardOverview }) {
 
   return (
     <div
-      className="flex flex-1 flex-col gap-5 p-5 md:gap-6 md:p-6"
-      data-dashboard="e3-r3"
+      className="flex flex-1 flex-col gap-4 p-4 md:gap-5 md:p-5"
+      data-dashboard="e3-r4"
     >
       {status === 'loading' ? (
         <p className="text-sm text-[var(--text-muted)]" aria-live="polite">
@@ -32,20 +32,16 @@ export function DashboardView({ data }: { data: DashboardOverview }) {
       <ProjectControlSummary data={data} />
       <ExecutiveMilestoneStrip data={data} />
 
-      {/* Management region — editorial list + matrix; divider, not twin cards */}
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] xl:gap-8">
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] xl:gap-5">
         <TopExceptionsPanel data={data} />
-        <div className="xl:border-l xl:border-[var(--border-subtle)] xl:pl-8">
-          <WorkstreamStatusMatrix data={data} />
-        </div>
+        <WorkstreamStatusMatrix data={data} />
       </div>
 
-      {/* Change / governance — tiles + callout; spacing not twin cards */}
       <div
         className={
           showDecisions
-            ? 'grid items-start gap-5 border-t border-[var(--border-subtle)] pt-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.95fr)] xl:gap-8'
-            : 'border-t border-[var(--border-subtle)] pt-5'
+            ? 'grid items-start gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.95fr)] xl:gap-5'
+            : undefined
         }
       >
         <SnapshotChanges data={data} />

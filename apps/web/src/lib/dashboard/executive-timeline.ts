@@ -15,6 +15,8 @@ export const LABEL_COLLISION_RATIO = 80 / 1280;
 
 export type LabelSide = 'above' | 'below';
 
+export type LabelAlign = 'start' | 'center' | 'end';
+
 export type TimelineMilestonePoint = {
   id: ExecutiveTimelineMilestoneId;
   name: string;
@@ -24,6 +26,9 @@ export type TimelineMilestonePoint = {
   forecastDate: string;
   ratio: number;
   labelSide: LabelSide;
+  labelAlign: LabelAlign;
+  /** Bounded label-only horizontal nudge (px); marker stays on true date. */
+  labelNudgePx: number;
 };
 
 export type ProductionStartBand = {
@@ -102,6 +107,7 @@ export function resolveExecutiveMilestones(
       if (!ms) {
         throw new Error(`Dashboard missing executive timeline milestone ${id}`);
       }
+      const ratio = dateToRatio(ms.forecastDate);
       return {
         id,
         name: ms.name,
@@ -109,8 +115,14 @@ export function resolveExecutiveMilestones(
         rag: ms.rag,
         baselineDate: ms.baselineDate,
         forecastDate: ms.forecastDate,
-        ratio: dateToRatio(ms.forecastDate),
+        ratio,
         labelSide: 'above' as LabelSide,
+        labelAlign: (ratio < 0.08
+          ? 'start'
+          : ratio > 0.92
+            ? 'end'
+            : 'center') as LabelAlign,
+        labelNudgePx: 0,
       };
     },
   );
@@ -125,6 +137,13 @@ export function resolveExecutiveMilestones(
     if (gap < LABEL_COLLISION_RATIO) {
       points[i].labelSide =
         points[i - 1].labelSide === 'above' ? 'below' : 'above';
+      // Small bounded horizontal nudge for the later of a tight pair.
+      if (points[i].labelAlign === 'center') {
+        points[i].labelNudgePx = 6;
+        if (points[i - 1].labelAlign === 'center') {
+          points[i - 1].labelNudgePx = -6;
+        }
+      }
     } else {
       points[i].labelSide = i % 2 === 0 ? 'below' : 'above';
     }

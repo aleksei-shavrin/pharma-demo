@@ -1,4 +1,5 @@
 import type { DashboardOverview } from '@/lib/api-client';
+import { ModuleSurface } from './module-surface';
 
 function ChangeTile({
   tone,
@@ -15,10 +16,10 @@ function ChangeTile({
 
   const tint =
     tone === 'better'
-      ? 'bg-[var(--status-ok-bg)] ring-1 ring-[var(--status-ok-border)]/40 text-[var(--status-ok-fg)]'
+      ? 'bg-[var(--status-ok-bg)] text-[var(--status-ok-fg)]'
       : tone === 'worse'
-        ? 'bg-[var(--status-danger-bg)] ring-1 ring-[var(--status-danger-border)]/40 text-[var(--status-danger-fg)]'
-        : 'bg-[var(--status-warn-bg)] ring-1 ring-[var(--status-warn-border)]/40 text-[var(--status-warn-fg)]';
+        ? 'bg-[var(--status-danger-bg)] text-[var(--status-danger-fg)]'
+        : 'bg-[var(--status-warn-bg)] text-[var(--status-warn-fg)]';
 
   return (
     <div
@@ -49,11 +50,7 @@ export function SnapshotChanges({ data }: { data: DashboardOverview }) {
     better.length === 0 && worse.length === 0 && unchangedCritical.length === 0;
 
   return (
-    <section
-      aria-labelledby="trend-heading"
-      className="min-w-0"
-      data-dashboard-block="trend"
-    >
+    <ModuleSurface data-dashboard-block="trend" className="min-w-0">
       <h2
         id="trend-heading"
         className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
@@ -83,7 +80,7 @@ export function SnapshotChanges({ data }: { data: DashboardOverview }) {
           />
         </div>
       )}
-    </section>
+    </ModuleSurface>
   );
 }
 
