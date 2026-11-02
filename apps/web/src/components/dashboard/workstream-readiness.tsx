@@ -4,10 +4,15 @@ import {
   presentWorkstream,
 } from '@/lib/ui-labels';
 
+/** Stronger peripheral-vision tints (still token-based, not saturated). */
 function cellTint(status: ProjectStatus): string {
-  if (status === 'Green') return 'bg-[var(--status-ok-bg)]/55';
-  if (status === 'Yellow') return 'bg-[var(--status-warn-bg)]/55';
-  return 'bg-[var(--status-danger-bg)]/55';
+  if (status === 'Green') {
+    return 'bg-[var(--status-ok-bg)] ring-1 ring-[var(--status-ok-border)]/35';
+  }
+  if (status === 'Yellow') {
+    return 'bg-[var(--status-warn-bg)] ring-1 ring-[var(--status-warn-border)]/40';
+  }
+  return 'bg-[var(--status-danger-bg)] ring-1 ring-[var(--status-danger-border)]/40';
 }
 
 function statusWord(status: ProjectStatus): string {
@@ -28,7 +33,7 @@ function markerClass(status: ProjectStatus): string {
   return 'text-[var(--status-danger-fg)]';
 }
 
-/** 2×4 restrained tinted status matrix — backend rollups only. */
+/** True 2×4 status matrix — colored cells, weak/no outer card. */
 export function WorkstreamStatusMatrix({
   data,
 }: {
@@ -46,31 +51,33 @@ export function WorkstreamStatusMatrix({
   return (
     <section
       aria-labelledby="workstream-heading"
-      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-3 py-3 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="min-w-0"
       data-dashboard-block="workstream-readiness"
     >
       <h2
         id="workstream-heading"
-        className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]"
+        className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
       >
         Готовность направлений
       </h2>
 
-      <ul className="mt-2 grid grid-cols-2 gap-1.5">
+      <ul className="mt-2 grid grid-cols-2 gap-2">
         {rows.map((row) => (
           <li
             key={row.workstream}
-            className={`rounded-[var(--radius-sm)] px-2.5 py-2 ${cellTint(row.status)}`}
+            className={`rounded-[var(--radius-sm)] px-2.5 py-2.5 ${cellTint(row.status)}`}
             data-workstream={row.workstream}
             data-workstream-status={row.status}
           >
-            <p className="truncate text-sm font-medium text-[var(--text)]">
+            <p className="truncate text-sm font-medium leading-snug text-[var(--text)]">
               {presentWorkstream(row.workstream as WorkstreamId)}
             </p>
             <p
-              className={`mt-0.5 flex items-center gap-1 text-xs ${markerClass(row.status)}`}
+              className={`mt-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide ${markerClass(row.status)}`}
             >
-              <span aria-hidden>{marker(row.status)}</span>
+              <span aria-hidden className="text-sm leading-none">
+                {marker(row.status)}
+              </span>
               {statusWord(row.status)}
             </p>
           </li>

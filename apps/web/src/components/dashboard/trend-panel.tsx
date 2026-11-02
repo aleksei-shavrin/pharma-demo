@@ -15,18 +15,18 @@ function ChangeTile({
 
   const tint =
     tone === 'better'
-      ? 'bg-[var(--status-ok-bg)]/60 text-[var(--status-ok-fg)]'
+      ? 'bg-[var(--status-ok-bg)] ring-1 ring-[var(--status-ok-border)]/40 text-[var(--status-ok-fg)]'
       : tone === 'worse'
-        ? 'bg-[var(--status-danger-bg)]/60 text-[var(--status-danger-fg)]'
-        : 'bg-[var(--status-warn-bg)]/60 text-[var(--status-warn-fg)]';
+        ? 'bg-[var(--status-danger-bg)] ring-1 ring-[var(--status-danger-border)]/40 text-[var(--status-danger-fg)]'
+        : 'bg-[var(--status-warn-bg)] ring-1 ring-[var(--status-warn-border)]/40 text-[var(--status-warn-fg)]';
 
   return (
     <div
-      className={`rounded-[var(--radius-sm)] px-3 py-2 ${tint}`}
+      className={`rounded-[var(--radius-sm)] px-3 py-2.5 ${tint}`}
       data-trend-bucket={tone}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-[0.06em]">
-        <span aria-hidden className="mr-1">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em]">
+        <span aria-hidden className="mr-1.5 text-sm">
           {arrow}
         </span>
         {title}
@@ -42,7 +42,7 @@ function ChangeTile({
   );
 }
 
-/** Authored Snapshot Changes — no frontend diff engine. */
+/** Authored Snapshot Changes as distinct semantic tiles — no outer card chrome. */
 export function SnapshotChanges({ data }: { data: DashboardOverview }) {
   const { better, worse, unchangedCritical } = data.trend;
   const emptyAll =
@@ -51,12 +51,12 @@ export function SnapshotChanges({ data }: { data: DashboardOverview }) {
   return (
     <section
       aria-labelledby="trend-heading"
-      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-3 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="min-w-0"
       data-dashboard-block="trend"
     >
       <h2
         id="trend-heading"
-        className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]"
+        className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
       >
         Изменения с прошлого снимка
       </h2>

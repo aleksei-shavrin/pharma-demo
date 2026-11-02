@@ -12,7 +12,7 @@ updated: 2026-11-01
 > **R1 design pack APPROVED** (2026-11-01).
 > **E1 + E1-R1 APPROVED** (2026-11-01) — contracts/read models established.
 > **E2 + E2-R1 APPROVED** (full A–H fixtures + integrity).
-> **E3-R2 IMPLEMENTED — AWAITING HUMAN VISUAL REVIEW** (Dashboard composition redesign). Not AI-APPROVED.
+> **E3-R3 IMPLEMENTED — AWAITING HUMAN VISUAL REVIEW** (Dashboard visual language polish). Not AI-APPROVED.
 > **E4–E8 pending.**
 
 ## Context
@@ -62,9 +62,9 @@ updated: 2026-11-01
 - **Gates:** api tests; fixture coherence
 - **AC:** A calm; C=+21/RISK-001 Red; F=DEC-001 Mitigating +21; G PKG Closed + HVAC +14; H residual
 
-### E3 — Dashboard — **E3-R2 IMPLEMENTED — AWAITING HUMAN VISUAL REVIEW**
+### E3 — Dashboard — **E3-R3 IMPLEMENTED — AWAITING HUMAN VISUAL REVIEW**
 
-- E3-R2 Project Control Briefing: Summary + Executive Timeline + Exceptions/WS matrix + Changes/Decisions
+- E3-R2 composition retained; E3-R3 surface hierarchy polish (less card grid, stronger PS/timeline/matrix/tiles)
 - Fixed milestone strip (BLD/CLN/HVAC/WFI/PKG/PS); linear horizon; Decision ≠ recovery
 - Not AI-APPROVED
 

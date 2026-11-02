@@ -1,6 +1,6 @@
 # Tasks
 
-> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. E3-R2 IMPLEMENTED — awaiting human visual review. Namespace **E1…E8** (not I9). Next after E3 APPROVED: E4.
+> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. E3-R3 IMPLEMENTED — awaiting human visual review. Namespace **E1…E8** (not I9). Next after E3 APPROVED: E4.
 
 ## E1 — Contracts
 
@@ -27,7 +27,8 @@
 - [x] Decision honesty copy; RU presentation mappings
 - [x] E3-R1 visual hierarchy: PS emphasis; less nested boxes; compact Attention/WS/Trend; human exception links
 - [x] E3-R2 composition: ProjectControlSummary + ExecutiveMilestoneStrip + Management/Change grids
-- Status: **E3-R2 IMPLEMENTED — AWAITING HUMAN VISUAL REVIEW** (not APPROVED by AI)
+- [x] E3-R3 visual language: weaker outer cards; stronger PS/timeline/matrix/change tiles
+- Status: **E3-R3 IMPLEMENTED — AWAITING HUMAN VISUAL REVIEW** (not APPROVED by AI)
 
 
 ## E4 — Registers

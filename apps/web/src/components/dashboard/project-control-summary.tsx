@@ -1,10 +1,7 @@
 import Link from 'next/link';
 import type { DashboardOverview } from '@/lib/api-client';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
-import {
-  projectStatusLabel,
-  projectStatusMeaning,
-} from '@/lib/ui-labels';
+import { projectStatusMeaning } from '@/lib/ui-labels';
 import { managementAttentionItems } from './management-attention';
 import { StatusPill } from './status-pill';
 
@@ -15,14 +12,14 @@ function conditionAccent(status: DashboardOverview['projectStatus']): string {
 }
 
 function conditionTint(status: DashboardOverview['projectStatus']): string {
-  if (status === 'Green') return 'bg-[var(--status-ok-bg)]/40';
-  if (status === 'Yellow') return 'bg-[var(--status-warn-bg)]/40';
-  return 'bg-[var(--status-danger-bg)]/40';
+  if (status === 'Green') return 'bg-[var(--status-ok-bg)]/35';
+  if (status === 'Yellow') return 'bg-[var(--status-warn-bg)]/35';
+  return 'bg-[var(--status-danger-bg)]/35';
 }
 
 /**
- * Executive Project Control Summary — one surface, three semantic zones.
- * Not three KPI cards; PS typography dominates.
+ * Executive Project Control Summary — one strong surface, three semantic zones.
+ * PS forecast/delta dominate; condition/attention support.
  */
 export function ProjectControlSummary({ data }: { data: DashboardOverview }) {
   const ps = data.project.productionStartVariance;
@@ -41,24 +38,24 @@ export function ProjectControlSummary({ data }: { data: DashboardOverview }) {
         Сводка управления проектом
       </h2>
 
-      <div className="grid lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)_minmax(0,0.95fr)]">
-        {/* Project condition */}
+      <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)_minmax(0,0.9fr)]">
+        {/* Project condition ~28–30% */}
         <div
-          className={`relative flex gap-3 px-4 py-3 ${conditionTint(data.projectStatus)}`}
+          className={`relative flex gap-3 px-4 py-4 ${conditionTint(data.projectStatus)}`}
           data-summary-zone="condition"
         >
           <span
-            className={`absolute inset-y-0 left-0 w-1 ${conditionAccent(data.projectStatus)}`}
+            className={`absolute inset-y-0 left-0 w-1.5 ${conditionAccent(data.projectStatus)}`}
             aria-hidden
           />
-          <div className="min-w-0 pl-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
-              Состояние проекта
+          <div className="min-w-0 pl-1.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
+              Состояние
             </p>
-            <div className="mt-1.5">
+            <div className="mt-2">
               <StatusPill family="project" value={data.projectStatus} />
             </div>
-            <p className="mt-2 text-sm font-medium leading-snug text-[var(--text)]">
+            <p className="mt-2.5 text-sm font-medium leading-snug text-[var(--text)]">
               {data.project.name}
             </p>
             <p
@@ -67,66 +64,73 @@ export function ProjectControlSummary({ data }: { data: DashboardOverview }) {
             >
               {meaning}
             </p>
-            <p className="mt-2 text-[11px] text-[var(--text-muted)]">
-              {data.project.id} · снимок {data.snapshotId} · на дату{' '}
+            <p className="mt-2 text-[10px] text-[var(--text-muted)]">
+              {data.project.id} · снимок {data.snapshotId} ·{' '}
               {formatDateRu(data.scenarioAsOfDate)}
             </p>
           </div>
         </div>
 
-        {/* Production Start — dominant */}
+        {/* Production Start ~40–44% — dominant */}
         <div
-          className="border-t border-[var(--border-subtle)] px-4 py-3 lg:border-t-0 lg:border-l"
+          className="border-t border-[var(--border-subtle)] px-5 py-4 lg:border-t-0 lg:border-l"
           data-summary-zone="production-start"
           data-production-start
         >
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
             Запуск производства
           </p>
           {onPlan ? (
-            <p
-              className="mt-1 text-2xl font-semibold tabular-nums tracking-tight text-[var(--text)]"
-              data-ps-dates
-            >
-              {formatDateRu(ps.baselineDate)}
-            </p>
+            <>
+              <p
+                className="mt-1.5 text-3xl font-semibold tabular-nums tracking-tight text-[var(--text)]"
+                data-ps-dates
+              >
+                {formatDateRu(ps.baselineDate)}
+              </p>
+              <p
+                className="mt-1 text-sm font-semibold uppercase tracking-wide text-[var(--status-ok-fg)]"
+                data-ps-delta
+              >
+                по плану · без отклонения
+              </p>
+            </>
           ) : (
-            <p
-              className="mt-1 text-2xl font-semibold tabular-nums tracking-tight text-[var(--text)]"
-              data-ps-dates
-            >
-              <span>{formatDateRu(ps.baselineDate)}</span>
-              <span className="mx-2 text-[var(--text-muted)]" aria-hidden>
-                →
-              </span>
-              <span>{formatDateRu(ps.forecastDate)}</span>
-            </p>
+            <>
+              <p
+                className="mt-1.5 text-3xl font-semibold tabular-nums tracking-tight text-[var(--text)]"
+                data-ps-dates
+              >
+                {formatDateRu(ps.forecastDate)}
+                <span className="sr-only">
+                  {' '}
+                  (базовый план {formatDateRu(ps.baselineDate)})
+                </span>
+              </p>
+              <p
+                className="mt-1 text-2xl font-semibold tabular-nums text-[var(--status-danger-fg)]"
+                data-ps-delta
+              >
+                {formatDeltaDays(ps.deltaDays)}
+              </p>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
+                базовый план {formatDateRu(ps.baselineDate)}
+                <span className="mx-1.5 text-[var(--border)]" aria-hidden>
+                  →
+                </span>
+                прогноз {formatDateRu(ps.forecastDate)}
+              </p>
+            </>
           )}
-          <p
-            className={
-              onPlan
-                ? 'mt-1 text-base font-medium text-[var(--status-ok-fg)]'
-                : 'mt-1 text-xl font-semibold tabular-nums text-[var(--status-danger-fg)]'
-            }
-            data-ps-delta
-          >
-            {onPlan
-              ? 'по плану · без отклонения'
-              : formatDeltaDays(ps.deltaDays)}
-          </p>
-          <p className="mt-1 text-xs text-[var(--text-muted)]">
-            {projectStatusLabel(data.projectStatus)} · базовый план{' '}
-            {formatDateRu(data.project.baselineProductionStart)}
-          </p>
         </div>
 
-        {/* Attention */}
+        {/* Attention ~28–30% */}
         <div
-          className="border-t border-[var(--border-subtle)] px-4 py-3 lg:border-t-0 lg:border-l"
+          className="border-t border-[var(--border-subtle)] px-4 py-4 lg:border-t-0 lg:border-l"
           data-summary-zone="attention"
           data-dashboard-block="management-attention"
         >
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
             Внимание
           </p>
           {attention.length === 0 ? (
@@ -142,7 +146,7 @@ export function ProjectControlSummary({ data }: { data: DashboardOverview }) {
                   data-attention={item.id}
                   data-attention-count={item.count}
                 >
-                  <span className="font-semibold tabular-nums text-[var(--text)]">
+                  <span className="text-base font-semibold tabular-nums text-[var(--text)]">
                     {item.count}
                   </span>
                   <Link

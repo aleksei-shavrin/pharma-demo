@@ -6,6 +6,7 @@ import {
   presentIssueTitle,
   presentMilestoneName,
 } from '@/lib/ui-labels';
+import { formatDeltaDays } from '@/lib/format/ru';
 
 type ExceptionLink = DashboardOverview['topExceptions'][number]['links'][number];
 
@@ -20,7 +21,10 @@ function resolveLinkLabel(
   if (link.type === 'issue') {
     const issue = data.issues.find((i) => i.id === link.id);
     return {
-      primary: presentIssueTitle(link.id, issue?.title ?? entityTypeLabel(link.type)),
+      primary: presentIssueTitle(
+        link.id,
+        issue?.title ?? entityTypeLabel(link.type),
+      ),
       id: link.id,
     };
   }
@@ -30,12 +34,15 @@ function resolveLinkLabel(
   }
   const ms = data.milestones.find((m) => m.id === link.id);
   return {
-    primary: presentMilestoneName(link.id, ms?.name ?? entityTypeLabel(link.type)),
+    primary: presentMilestoneName(
+      link.id,
+      ms?.name ?? entityTypeLabel(link.type),
+    ),
     id: link.id,
   };
 }
 
-/** Compact causal chain only from authored links order — no inferred edges. */
+/** Compact causal chain only from authored links — no inferred edges. */
 function CausalFragment({
   links,
   data,
@@ -60,7 +67,10 @@ function CausalFragment({
       {links.map((link, i) => {
         const label = resolveLinkLabel(link, data);
         return (
-          <li key={`${link.type}:${link.id}`} className="inline-flex items-center gap-1">
+          <li
+            key={`${link.type}:${link.id}`}
+            className="inline-flex items-center gap-1"
+          >
             {i > 0 ? (
               <span className="text-[var(--text-muted)]" aria-hidden>
                 →
@@ -79,22 +89,29 @@ function CausalFragment({
   );
 }
 
+function impactAccent(causeImpact: string, psDelta: number): string | null {
+  if (psDelta > 0 && /запуск|производств|\+\d+/i.test(causeImpact)) {
+    return formatDeltaDays(psDelta);
+  }
+  return null;
+}
+
 /**
- * Curated Top Exceptions — backend array order.
- * FE must not re-score or re-sort.
+ * Editorial Top Exceptions — backend order; weak outer chrome.
  */
 export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
   const items = data.topExceptions;
+  const psDelta = data.project.productionStartVariance.deltaDays;
 
   return (
     <section
       aria-labelledby="top-exceptions-heading"
-      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-3 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="min-w-0"
       data-dashboard-block="top-exceptions"
     >
       <h2
         id="top-exceptions-heading"
-        className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]"
+        className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
       >
         Ключевые исключения
       </h2>
@@ -107,54 +124,67 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
           На текущую дату критических исключений нет — спокойный базовый план.
         </p>
       ) : (
-        <ol className="mt-2 divide-y divide-[var(--border-subtle)]" data-top-exceptions="list">
-          {items.map((ex, index) => (
-            <li
-              key={ex.id}
-              className="flex gap-3 py-3 first:pt-1 last:pb-0"
-              data-exception-id={ex.id}
-              data-exception-order={index + 1}
-            >
-              <span
-                className="mt-0.5 flex size-6 shrink-0 items-center justify-center text-sm font-semibold tabular-nums text-[var(--text-muted)]"
-                aria-hidden
+        <ol className="mt-2" data-top-exceptions="list">
+          {items.map((ex, index) => {
+            const accent =
+              index === 0 ? impactAccent(ex.causeImpact, psDelta) : null;
+            return (
+              <li
+                key={ex.id}
+                className="border-b border-[var(--border-subtle)] py-3 first:pt-1 last:border-b-0 last:pb-0"
+                data-exception-id={ex.id}
+                data-exception-order={index + 1}
               >
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <div className="min-w-0 space-y-1">
-                <p className="text-[15px] font-semibold leading-snug text-[var(--text)]">
-                  {ex.title}
-                </p>
-                <p className="text-sm font-medium leading-relaxed text-[var(--text-secondary)]">
-                  {ex.causeImpact}
-                </p>
-                {index === 0 ? (
-                  <CausalFragment links={ex.links} data={data} />
-                ) : null}
-                {ex.links.length > 0 ? (
-                  <ul className="flex flex-wrap gap-x-3 gap-y-0.5 pt-0.5 text-xs">
-                    {ex.links.map((link) => {
-                      const label = resolveLinkLabel(link, data);
-                      return (
-                        <li key={`${link.type}:${link.id}`}>
-                          <Link
-                            href={entityDetailHref(link.type, link.id)}
-                            title={`${entityTypeLabel(link.type)} · ${label.id}`}
-                            className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-                          >
-                            <span>{label.primary}</span>
-                            <span className="ml-1 text-[var(--text-muted)]">
-                              {label.id}
-                            </span>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : null}
-              </div>
-            </li>
-          ))}
+                <div className="flex gap-3">
+                  <span
+                    className="mt-0.5 w-7 shrink-0 text-lg font-semibold tabular-nums leading-none text-[var(--text-muted)]"
+                    aria-hidden
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                      <p className="text-[15px] font-semibold leading-snug text-[var(--text)]">
+                        {ex.title}
+                      </p>
+                      {accent ? (
+                        <span className="shrink-0 text-sm font-semibold tabular-nums text-[var(--status-danger-fg)]">
+                          {accent}
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
+                      {ex.causeImpact}
+                    </p>
+                    {index === 0 ? (
+                      <CausalFragment links={ex.links} data={data} />
+                    ) : null}
+                    {ex.links.length > 0 ? (
+                      <ul className="flex flex-wrap gap-x-2.5 gap-y-0.5 pt-0.5 text-[11px]">
+                        {ex.links.map((link) => {
+                          const label = resolveLinkLabel(link, data);
+                          return (
+                            <li key={`${link.type}:${link.id}`}>
+                              <Link
+                                href={entityDetailHref(link.type, link.id)}
+                                title={`${entityTypeLabel(link.type)} · ${label.id}`}
+                                className="text-[var(--text-muted)] underline-offset-2 hover:text-[var(--link)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                              >
+                                <span className="text-[var(--text-secondary)]">
+                                  {label.primary}
+                                </span>
+                                <span className="ml-1 opacity-70">{label.id}</span>
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    ) : null}
+                  </div>
+                </div>
+              </li>
+            );
+          })}
         </ol>
       )}
     </section>

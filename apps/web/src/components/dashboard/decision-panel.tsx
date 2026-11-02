@@ -7,7 +7,7 @@ import {
   presentOwnerRole,
 } from '@/lib/ui-labels';
 
-/** Context-sensitive Decision / required-action presentation. */
+/** Context-sensitive Decision / required-action — distinct governance pattern. */
 export function DecisionAction({ data }: { data: DashboardOverview }) {
   const decisions = data.decisions;
   const milestoneName = (id: string | null) => {
@@ -20,28 +20,30 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
     return null;
   }
 
+  const needed = data.decisionPanelState === 'needed' && decisions.length === 0;
+
   return (
     <section
       aria-labelledby="decision-heading"
-      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-3 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="min-w-0"
       data-dashboard-block="decisions"
     >
       <h2
         id="decision-heading"
-        className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]"
+        className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
       >
         Управленческие решения
       </h2>
 
-      {data.decisionPanelState === 'needed' && decisions.length === 0 ? (
+      {needed ? (
         <div
-          className="mt-2 rounded-[var(--radius-sm)] border border-[var(--status-danger-border)] bg-[var(--status-danger-bg)]/50 px-3 py-2.5"
+          className="mt-2 rounded-[var(--radius-sm)] border-2 border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-3.5 py-3"
           data-decision-callout="needed"
         >
-          <p className="text-sm font-semibold uppercase tracking-wide text-[var(--status-danger-fg)]">
+          <p className="text-sm font-bold uppercase tracking-wide text-[var(--status-danger-fg)]">
             Требуется управленческое решение
           </p>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1.5 text-sm leading-snug text-[var(--text-secondary)]">
             Есть отклонение по поставке и запуску производства. Решение ещё не
             зарегистрировано. Запись решения не устранит прогноз автоматически.
           </p>
@@ -50,7 +52,7 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
 
       {decisions.length > 0 ? (
         <>
-          <p className="mt-1 text-[11px] text-[var(--text-muted)]">
+          <p className="mt-1.5 text-[11px] text-[var(--text-muted)]">
             Запись решения не означает автоматическое устранение отклонения.
           </p>
           <ul

@@ -12,7 +12,8 @@ import {
 } from '@/lib/dashboard/executive-timeline';
 
 /**
- * Compact executive milestone strip — linear Demo horizon, not Schedule/Gantt.
+ * Graphical executive milestone strip — weak chrome, strong axis/markers.
+ * Linear Demo horizon; not Schedule/Gantt.
  */
 export function ExecutiveMilestoneStrip({
   data,
@@ -28,19 +29,18 @@ export function ExecutiveMilestoneStrip({
   const psRag = msPs?.rag ?? 'Green';
 
   const bandLeft = Math.min(band.baselineRatio, band.forecastRatio) * 100;
-  const bandWidth =
-    Math.abs(band.forecastRatio - band.baselineRatio) * 100;
+  const bandWidth = Math.abs(band.forecastRatio - band.baselineRatio) * 100;
 
   return (
     <section
       aria-labelledby="executive-timeline-heading"
-      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-3 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="px-1 py-1"
       data-dashboard-block="executive-timeline"
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 px-1">
         <h2
           id="executive-timeline-heading"
-          className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]"
+          className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
         >
           Контрольные вехи проекта
         </h2>
@@ -55,16 +55,15 @@ export function ExecutiveMilestoneStrip({
       <p className="sr-only">{summary}</p>
 
       <div
-        className="relative mt-2 h-[7.5rem] w-full"
+        className="relative mt-1 h-[8.25rem] w-full rounded-[var(--radius-sm)] bg-[var(--surface-sunken)]/45 px-1"
         data-timeline-track
-        aria-hidden={false}
       >
         {/* Month labels */}
-        <div className="absolute inset-x-0 bottom-0 h-4">
+        <div className="absolute inset-x-1 bottom-0.5 h-4">
           {monthTicks.map((tick) => (
             <span
               key={tick.date}
-              className="absolute -translate-x-1/2 text-[10px] tabular-nums text-[var(--text-muted)]"
+              className="absolute -translate-x-1/2 text-[10px] font-medium tabular-nums text-[var(--text-muted)]"
               style={{ left: `${tick.ratio * 100}%` }}
             >
               {tick.label}
@@ -73,77 +72,73 @@ export function ExecutiveMilestoneStrip({
         </div>
 
         <svg
-          className="absolute inset-x-0 top-6 h-16 w-full overflow-visible"
-          viewBox="0 0 1000 64"
+          className="absolute inset-x-1 top-7 h-[4.25rem] w-[calc(100%-0.5rem)] overflow-visible"
+          viewBox="0 0 1000 68"
           preserveAspectRatio="none"
           role="img"
           aria-label="Шкала контрольных вех"
         >
-          {/* Axis */}
           <line
             x1="0"
-            y1="32"
+            y1="34"
             x2="1000"
-            y2="32"
+            y2="34"
             stroke="var(--border)"
-            strokeWidth="2"
+            strokeWidth="2.5"
           />
           {monthTicks.map((tick) => (
             <line
               key={tick.date}
               x1={tick.ratio * 1000}
-              y1="26"
+              y1="24"
               x2={tick.ratio * 1000}
-              y2="38"
-              stroke="var(--border-subtle)"
-              strokeWidth="1.5"
+              y2="44"
+              stroke="var(--border)"
+              strokeWidth="1.75"
+              opacity="0.55"
             />
           ))}
 
-          {/* Variance span */}
           {!band.coincident ? (
             <rect
               x={bandLeft * 10}
-              y="26"
+              y="24"
               width={Math.max(bandWidth * 10, 2)}
-              height="12"
+              height="20"
               fill="var(--status-danger-bg)"
               stroke="var(--status-danger-border)"
-              strokeWidth="1"
-              opacity="0.85"
+              strokeWidth="1.5"
+              opacity="0.95"
               data-ps-variance-span="true"
             />
           ) : null}
 
-          {/* Snapshot date */}
           <line
             x1={asOfRatio * 1000}
-            y1="8"
+            y1="4"
             x2={asOfRatio * 1000}
-            y2="56"
+            y2="64"
             stroke="var(--primary)"
-            strokeWidth="2"
-            strokeDasharray="4 3"
+            strokeWidth="2.5"
+            strokeDasharray="5 3"
             data-snapshot-marker="true"
           />
 
-          {/* PS baseline outlined */}
           <circle
             cx={band.baselineRatio * 1000}
-            cy="32"
-            r="7"
-            fill="var(--surface-raised)"
-            stroke="var(--text-muted)"
-            strokeWidth="2"
+            cy="34"
+            r={band.coincident ? 8 : 7}
+            fill="var(--surface)"
+            stroke="var(--text-secondary)"
+            strokeWidth="2.25"
             data-ps-baseline-marker="true"
           />
 
-          {/* PS forecast semantic (when not coincident — drawn separately; coincident uses baseline circle only + RAG fill below) */}
           {!band.coincident ? (
             <circle
               cx={band.forecastRatio * 1000}
-              cy="32"
-              r="7"
+              cy="34"
+              r="8"
               fill={
                 psRag === 'Red'
                   ? 'var(--status-danger-border)'
@@ -154,14 +149,14 @@ export function ExecutiveMilestoneStrip({
                   ? 'var(--status-danger-fg)'
                   : 'var(--status-ok-fg)'
               }
-              strokeWidth="1.5"
+              strokeWidth="1.75"
               data-ps-forecast-marker="true"
             />
           ) : (
             <circle
               cx={band.baselineRatio * 1000}
-              cy="32"
-              r="4"
+              cy="34"
+              r="4.5"
               fill={
                 psRag === 'Red'
                   ? 'var(--status-danger-border)'
@@ -171,7 +166,6 @@ export function ExecutiveMilestoneStrip({
             />
           )}
 
-          {/* Other milestones (exclude MS-PS diamond; PS handled above) */}
           {milestones
             .filter((m) => m.id !== 'MS-PS')
             .map((m) => {
@@ -183,10 +177,10 @@ export function ExecutiveMilestoneStrip({
               return (
                 <polygon
                   key={m.id}
-                  points={`${x},22 ${x + 7},32 ${x},42 ${x - 7},32`}
+                  points={`${x},20 ${x + 9},34 ${x},48 ${x - 9},34`}
                   fill={fill}
-                  stroke="var(--surface-raised)"
-                  strokeWidth="1"
+                  stroke="var(--surface)"
+                  strokeWidth="1.25"
                   data-milestone-marker={m.id}
                   data-milestone-rag={m.rag}
                 />
@@ -194,25 +188,29 @@ export function ExecutiveMilestoneStrip({
             })}
         </svg>
 
-        {/* Snapshot caption */}
         <div
-          className="absolute top-0 max-w-[7rem] -translate-x-1/2 text-center text-[10px] leading-tight text-[var(--primary)]"
+          className="absolute top-0.5 max-w-[7rem] -translate-x-1/2 text-center text-[10px] leading-tight text-[var(--primary)]"
           style={{ left: `${asOfRatio * 100}%` }}
           data-snapshot-label
         >
-          <span className="font-medium">Дата снимка</span>
+          <span className="font-semibold">Дата снимка</span>
           <br />
           {formatDateRu(data.scenarioAsOfDate)}
         </div>
 
-        {/* Milestone labels */}
         {milestones.map((m) => {
           const isPs = m.id === 'MS-PS';
-          const top = m.labelSide === 'above' ? '1.65rem' : '4.85rem';
+          // Coincident PS: keep label below axis to avoid stacking on marker.
+          const top =
+            isPs && band.coincident
+              ? '5.35rem'
+              : m.labelSide === 'above'
+                ? '1.85rem'
+                : '5.35rem';
           return (
             <div
               key={m.id}
-              className="absolute max-w-[4.5rem] -translate-x-1/2 text-center text-[10px] leading-tight text-[var(--text-secondary)]"
+              className="absolute max-w-[4.75rem] -translate-x-1/2 text-center text-[10px] leading-tight text-[var(--text-secondary)]"
               style={{ left: `${m.ratio * 100}%`, top }}
               data-milestone-label={m.id}
             >
@@ -226,10 +224,9 @@ export function ExecutiveMilestoneStrip({
           );
         })}
 
-        {/* Variance delta on span */}
         {!band.coincident ? (
           <div
-            className="absolute top-[3.35rem] -translate-x-1/2 rounded bg-[var(--status-danger-bg)] px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-[var(--status-danger-fg)]"
+            className="absolute top-[3.55rem] -translate-x-1/2 rounded px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-[var(--status-danger-fg)] ring-1 ring-[var(--status-danger-border)] bg-[var(--status-danger-bg)]"
             style={{
               left: `${((band.baselineRatio + band.forecastRatio) / 2) * 100}%`,
             }}
@@ -239,7 +236,7 @@ export function ExecutiveMilestoneStrip({
           </div>
         ) : (
           <div
-            className="absolute top-[3.35rem] -translate-x-1/2 text-[10px] text-[var(--status-ok-fg)]"
+            className="absolute top-[3.55rem] -translate-x-1/2 text-[10px] font-medium text-[var(--status-ok-fg)]"
             style={{ left: `${band.baselineRatio * 100}%` }}
             data-ps-delta-label
           >
@@ -247,10 +244,9 @@ export function ExecutiveMilestoneStrip({
           </div>
         )}
 
-        {/* Baseline caption when band open */}
         {!band.coincident ? (
           <div
-            className="absolute top-[4.85rem] max-w-[4.5rem] -translate-x-1/2 text-center text-[10px] text-[var(--text-muted)]"
+            className="absolute top-[5.35rem] max-w-[4.5rem] -translate-x-1/2 text-center text-[10px] text-[var(--text-muted)]"
             style={{ left: `${band.baselineRatio * 100}%` }}
             data-ps-baseline-label
           >

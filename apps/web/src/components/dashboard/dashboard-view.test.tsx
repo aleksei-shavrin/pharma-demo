@@ -127,9 +127,11 @@ describe('E3 Project Status', () => {
       ).toBeInTheDocument();
     });
     const block = projectStatusBlock();
-    const dates = block.querySelector('[data-ps-dates]');
-    expect(dates).toHaveTextContent('15.09.2027');
-    expect(dates).toHaveTextContent('06.10.2027');
+    // Forecast is the dominant PS signal; baseline remains visible as secondary.
+    expect(block.querySelector('[data-ps-dates]')).toHaveTextContent(
+      '06.10.2027',
+    );
+    expect(block).toHaveTextContent('15.09.2027');
     expect(block.querySelector('[data-ps-delta]')).toHaveTextContent('+21 день');
   });
 
