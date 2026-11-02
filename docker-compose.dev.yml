@@ -74,6 +74,8 @@ services:
       - ./apps/api:/app
       - ppc_dev_api_node_modules:/app/node_modules
       # Keep Nest emit off the bind mount (avoids root-owned host dist/).
+      # Named volume makes /app/dist a mount point — Nest deleteOutDir:true
+      # fails with EBUSY; apps/api/nest-cli.json keeps deleteOutDir:false.
       - ppc_dev_api_dist:/app/dist
     expose:
       - "3000"

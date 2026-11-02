@@ -12,7 +12,11 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-export type TimelineMarkerKind = 'milestone' | 'ps-baseline' | 'ps-forecast' | 'ps-coincident';
+export type TimelineMarkerKind =
+  | 'milestone'
+  | 'ps-baseline'
+  | 'ps-forecast'
+  | 'ps-coincident';
 
 type PopoverLink = { href: string; label: string };
 
@@ -20,30 +24,48 @@ type Props = {
   kind: TimelineMarkerKind;
   ratio: number;
   labelSide: 'above' | 'below';
-  /** Compact track label */
   shortLabel: string;
   dateLabel: string;
   statusLabel: string;
   rag: 'Green' | 'Red';
-  /** Popover / tooltip title (defaults to shortLabel) */
   title?: string;
-  /** Optional popover subtitle (e.g. full milestone name) */
   subtitle?: string;
+  /** Muted technical id shown in popover only */
+  entityId?: string;
   labelAlign?: 'start' | 'center' | 'end';
-  /** Bounded horizontal nudge for label only (px); marker stays on date */
   labelNudgePx?: number;
-  /** Accessible name for the trigger */
   ariaLabel: string;
-  /** Richer popover rows — only existing contract fields */
   detailRows: { label: string; value: string }[];
   links: PopoverLink[];
   'data-testid'?: string;
   markerDataAttrs?: Record<string, string>;
 };
 
+function placeNearTrigger(
+  el: HTMLButtonElement | null,
+  opts: { width: number; preferAbove: boolean; estimatedHeight: number },
+): CSSProperties {
+  if (!el || typeof window === 'undefined') return { top: 0, left: 0 };
+  const r = el.getBoundingClientRect();
+  const { width, preferAbove, estimatedHeight } = opts;
+  let left = r.left + r.width / 2 - width / 2;
+  left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
+  let top = preferAbove
+    ? r.top - 8 - estimatedHeight
+    : r.bottom + 8;
+  if (preferAbove && top < 8) {
+    top = r.bottom + 8;
+  }
+  if (!preferAbove && top + estimatedHeight > window.innerHeight - 8) {
+    top = Math.max(8, r.top - 8 - estimatedHeight);
+  }
+  top = Math.max(8, Math.min(top, window.innerHeight - estimatedHeight - 8));
+  return { top, left, width };
+}
+
 /**
  * Fixed-geometry interactive timeline marker (HTML, not SVG-scaled).
- * Hover/focus → compact tooltip; click/Enter → popover.
+ * Hover/focus → tooltip; click/Enter/Space → non-modal disclosure popover.
  */
 export function TimelineMarker({
   kind,
@@ -55,6 +77,7 @@ export function TimelineMarker({
   rag,
   title,
   subtitle,
+  entityId,
   labelAlign = 'center',
   labelNudgePx = 0,
   ariaLabel,
@@ -69,38 +92,57 @@ export function TimelineMarker({
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [open, setOpen] = useState(false);
-  const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(
-    null,
-  );
+  const [tipPos, setTipPos] = useState<CSSProperties | null>(null);
+  const [popoverPos, setPopoverPos] = useState<CSSProperties | null>(null);
   const tipId = useId();
   const popId = useId();
 
   const showTip = !open && (hovered || focused);
 
-  const placePopover = useCallback(() => {
-    const el = triggerRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const width = 260;
-    let left = r.left + r.width / 2 - width / 2;
-    left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
-    let top = r.bottom + 8;
-    if (top + 220 > window.innerHeight) {
-      top = Math.max(8, r.top - 8 - 180);
-    }
-    setPopoverPos({ top, left });
+  const updateTipPos = useCallback(() => {
+    setTipPos(
+      placeNearTrigger(triggerRef.current, {
+        width: 168,
+        preferAbove: true,
+        estimatedHeight: 64,
+      }),
+    );
+  }, []);
+
+  const updatePopoverPos = useCallback(() => {
+    setPopoverPos(
+      placeNearTrigger(triggerRef.current, {
+        width: 260,
+        preferAbove: false,
+        estimatedHeight: 200,
+      }),
+    );
   }, []);
 
   const openPopover = useCallback(() => {
-    placePopover();
+    updatePopoverPos();
     setOpen(true);
-  }, [placePopover]);
+  }, [updatePopoverPos]);
 
   const closePopover = useCallback(() => {
     setOpen(false);
     setPopoverPos(null);
     triggerRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (!showTip) {
+      setTipPos(null);
+      return;
+    }
+    updateTipPos();
+    window.addEventListener('scroll', updateTipPos, true);
+    window.addEventListener('resize', updateTipPos);
+    return () => {
+      window.removeEventListener('scroll', updateTipPos, true);
+      window.removeEventListener('resize', updateTipPos);
+    };
+  }, [showTip, updateTipPos]);
 
   useEffect(() => {
     if (!open) return;
@@ -121,15 +163,18 @@ export function TimelineMarker({
       setOpen(false);
       setPopoverPos(null);
     };
+    updatePopoverPos();
     window.addEventListener('keydown', onKey);
     window.addEventListener('mousedown', onDown);
-    window.addEventListener('resize', placePopover);
+    window.addEventListener('scroll', updatePopoverPos, true);
+    window.addEventListener('resize', updatePopoverPos);
     return () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('mousedown', onDown);
-      window.removeEventListener('resize', placePopover);
+      window.removeEventListener('scroll', updatePopoverPos, true);
+      window.removeEventListener('resize', updatePopoverPos);
     };
-  }, [open, closePopover, placePopover]);
+  }, [open, closePopover, updatePopoverPos]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -141,8 +186,8 @@ export function TimelineMarker({
 
   const diamond =
     kind === 'milestone'
-      ? 'size-3 rotate-45 rounded-[1px]'
-      : 'size-3.5 rounded-full';
+      ? 'size-2.5 rotate-45 rounded-[1px]'
+      : 'size-3 rounded-full';
 
   const fill =
     kind === 'ps-baseline'
@@ -175,10 +220,9 @@ export function TimelineMarker({
       data-marker-geometry="fixed-html"
       {...(testId ? { 'data-testid': testId } : {})}
     >
-      {/* Label + stem — separated from fixed marker geometry */}
       <div
-        className={`pointer-events-none absolute flex w-max max-w-[5rem] flex-col ${alignClass} ${labelX} ${
-          stemAbove ? 'bottom-[calc(100%+2px)]' : 'top-[calc(100%+2px)]'
+        className={`pointer-events-none absolute flex w-max max-w-[5.25rem] flex-col ${alignClass} ${labelX} ${
+          stemAbove ? 'bottom-[calc(100%+4px)]' : 'top-[calc(100%+4px)]'
         }`}
         style={
           labelNudgePx !== 0 && labelAlign === 'center'
@@ -197,17 +241,11 @@ export function TimelineMarker({
             <span className="text-[10px] tabular-nums text-[var(--text-muted)]">
               {dateLabel}
             </span>
-            <span
-              className="mt-0.5 h-1.5 w-px bg-[var(--border)]"
-              aria-hidden
-            />
+            <span className="mt-0.5 h-1.5 w-px bg-[var(--border)]" aria-hidden />
           </>
         ) : (
           <>
-            <span
-              className="mb-0.5 h-1.5 w-px bg-[var(--border)]"
-              aria-hidden
-            />
+            <span className="mb-0.5 h-1.5 w-px bg-[var(--border)]" aria-hidden />
             <span className="text-[10px] font-medium leading-tight text-[var(--text)]">
               {shortLabel}
             </span>
@@ -226,6 +264,7 @@ export function TimelineMarker({
         aria-describedby={showTip ? tipId : undefined}
         aria-expanded={open}
         aria-controls={open ? popId : undefined}
+        aria-haspopup="true"
         data-marker-trigger="true"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -236,22 +275,20 @@ export function TimelineMarker({
         {...markerDataAttrs}
       />
 
-      {showTip
+      {showTip && tipPos
         ? createPortal(
             <div
               id={tipId}
               role="tooltip"
-              className="pointer-events-none fixed z-50 max-w-[12rem] rounded-[var(--radius-sm)] bg-[var(--surface-raised)] px-2.5 py-1.5 text-xs shadow-[var(--elevation-1)] ring-1 ring-[var(--border)]"
-              style={tooltipStyle(triggerRef.current)}
+              className="pointer-events-none fixed z-50 max-w-[12rem] rounded-[var(--radius-sm)] bg-[var(--surface-raised)] px-2.5 py-1.5 text-xs shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+              style={tipPos}
               data-timeline-tooltip
             >
               <p className="font-semibold text-[var(--text)]">{tipTitle}</p>
               <p className="tabular-nums text-[var(--text-secondary)]">
                 {dateLabel}
               </p>
-              <p className="text-[var(--text-muted)]">
-                ● {statusLabel}
-              </p>
+              <p className="text-[var(--text-muted)]">● {statusLabel}</p>
             </div>,
             document.body,
           )
@@ -262,16 +299,19 @@ export function TimelineMarker({
             <div
               ref={popoverRef}
               id={popId}
-              role="dialog"
-              aria-label={ariaLabel}
               className="fixed z-50 w-[260px] rounded-[var(--radius-md)] bg-[var(--surface-raised)] p-3 text-sm shadow-[var(--elevation-1)] ring-1 ring-[var(--border)]"
-              style={{ top: popoverPos.top, left: popoverPos.left }}
+              style={popoverPos}
               data-timeline-popover={kind}
             >
               <p className="font-semibold text-[var(--text)]">{tipTitle}</p>
               {subtitle ? (
                 <p className="mt-0.5 text-xs leading-snug text-[var(--text-secondary)]">
                   {subtitle}
+                </p>
+              ) : null}
+              {entityId ? (
+                <p className="mt-0.5 text-[10px] tabular-nums text-[var(--text-muted)]">
+                  {entityId}
                 </p>
               ) : null}
               <dl className="mt-2 space-y-1 text-xs">
@@ -304,14 +344,4 @@ export function TimelineMarker({
         : null}
     </div>
   );
-}
-
-function tooltipStyle(el: HTMLButtonElement | null): CSSProperties {
-  if (!el || typeof window === 'undefined') return { top: 0, left: 0 };
-  const r = el.getBoundingClientRect();
-  const width = 160;
-  let left = r.left + r.width / 2 - width / 2;
-  left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
-  const top = Math.max(8, r.top - 8 - 56);
-  return { top, left, width };
 }

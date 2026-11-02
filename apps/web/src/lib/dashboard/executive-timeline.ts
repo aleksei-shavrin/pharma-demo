@@ -127,25 +127,23 @@ export function resolveExecutiveMilestones(
     },
   );
 
-  // Alternate labels when neighbours are closer than collision threshold.
+  // Deterministic alternate above/below; flip + bounded nudge on tight gaps.
+  // Marker ratios stay on true forecast dates — only label chrome moves.
   for (let i = 0; i < points.length; i += 1) {
-    if (i === 0) {
-      points[i].labelSide = 'below';
-      continue;
-    }
+    points[i].labelSide = i % 2 === 0 ? 'below' : 'above';
+  }
+  for (let i = 1; i < points.length; i += 1) {
     const gap = points[i].ratio - points[i - 1].ratio;
-    if (gap < LABEL_COLLISION_RATIO) {
+    if (gap >= LABEL_COLLISION_RATIO) continue;
+    if (points[i].labelSide === points[i - 1].labelSide) {
       points[i].labelSide =
         points[i - 1].labelSide === 'above' ? 'below' : 'above';
-      // Small bounded horizontal nudge for the later of a tight pair.
-      if (points[i].labelAlign === 'center') {
-        points[i].labelNudgePx = 6;
-        if (points[i - 1].labelAlign === 'center') {
-          points[i - 1].labelNudgePx = -6;
-        }
-      }
-    } else {
-      points[i].labelSide = i % 2 === 0 ? 'below' : 'above';
+    }
+    if (points[i].labelAlign === 'center') {
+      points[i].labelNudgePx = 8;
+    }
+    if (points[i - 1].labelAlign === 'center') {
+      points[i - 1].labelNudgePx = -8;
     }
   }
 

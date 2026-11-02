@@ -71,7 +71,7 @@ export function ExecutiveMilestoneStrip({
       <p className="sr-only">{summary}</p>
 
       <div
-        className="relative mt-3 h-[9rem] w-full min-w-0 overflow-x-auto"
+        className="relative mt-3 h-[9.5rem] w-full min-w-0 overflow-x-auto"
         data-timeline-track
       >
         <div className="relative h-full min-w-[40rem]">
@@ -90,7 +90,7 @@ export function ExecutiveMilestoneStrip({
 
           {/* Scalable axis layer only — no markers inside SVG */}
           <svg
-            className="pointer-events-none absolute inset-x-0 top-[2.75rem] h-10 w-full overflow-visible"
+            className="pointer-events-none absolute inset-x-0 top-[2.85rem] h-10 w-full overflow-visible"
             viewBox="0 0 1000 40"
             preserveAspectRatio="none"
             role="presentation"
@@ -103,32 +103,32 @@ export function ExecutiveMilestoneStrip({
               x2="1000"
               y2="20"
               stroke="var(--border)"
-              strokeWidth="2.5"
+              strokeWidth="2"
               vectorEffect="non-scaling-stroke"
             />
             {monthTicks.map((tick) => (
               <line
                 key={tick.date}
                 x1={tick.ratio * 1000}
-                y1="10"
+                y1="12"
                 x2={tick.ratio * 1000}
-                y2="30"
+                y2="28"
                 stroke="var(--border)"
-                strokeWidth="1.5"
-                opacity="0.55"
+                strokeWidth="1.25"
+                opacity="0.5"
                 vectorEffect="non-scaling-stroke"
               />
             ))}
             {!band.coincident ? (
               <rect
                 x={bandLeft * 10}
-                y="16"
+                y="17"
                 width={Math.max(bandWidth * 10, 2)}
-                height="8"
+                height="6"
                 fill="var(--status-danger-bg)"
                 stroke="var(--status-danger-border)"
                 strokeWidth="1"
-                opacity="0.95"
+                opacity="0.9"
                 vectorEffect="non-scaling-stroke"
                 data-ps-variance-span="true"
               />
@@ -139,8 +139,8 @@ export function ExecutiveMilestoneStrip({
               x2={asOfRatio * 1000}
               y2="40"
               stroke="var(--primary)"
-              strokeWidth="2"
-              strokeDasharray="5 3"
+              strokeWidth="1.75"
+              strokeDasharray="4 3"
               vectorEffect="non-scaling-stroke"
               data-snapshot-marker="true"
             />
@@ -158,7 +158,7 @@ export function ExecutiveMilestoneStrip({
           </div>
 
           {/* Fixed-geometry interactive markers */}
-          <div className="absolute inset-x-0 top-[2.75rem] h-10">
+          <div className="absolute inset-x-0 top-[2.85rem] h-10">
             {milestones
               .filter((m) => m.id !== 'MS-PS')
               .map((m) => {
@@ -182,6 +182,7 @@ export function ExecutiveMilestoneStrip({
                     shortLabel={m.shortLabel}
                     title={m.shortLabel}
                     subtitle={m.name}
+                    entityId={m.id}
                     dateLabel={formatDateRu(m.forecastDate)}
                     statusLabel={statusWord(m.rag)}
                     rag={m.rag}
@@ -206,6 +207,7 @@ export function ExecutiveMilestoneStrip({
                 shortLabel="Старт пр-ва"
                 title="Запуск производства"
                 subtitle={msPs?.name}
+                entityId="MS-PS"
                 dateLabel={formatDateRu(band.baselineDate)}
                 statusLabel={statusWord(psRag)}
                 rag={psRag}
@@ -234,9 +236,11 @@ export function ExecutiveMilestoneStrip({
                   ratio={band.baselineRatio}
                   labelSide="below"
                   labelAlign="end"
-                  shortLabel="База PS"
+                  labelNudgePx={-10}
+                  shortLabel="База"
                   title="Запуск производства"
                   subtitle="Базовый план"
+                  entityId="MS-PS"
                   dateLabel={formatDateRu(band.baselineDate)}
                   statusLabel="Базовый план"
                   rag="Green"
@@ -264,9 +268,11 @@ export function ExecutiveMilestoneStrip({
                   ratio={band.forecastRatio}
                   labelSide="above"
                   labelAlign="end"
-                  shortLabel="Прогноз PS"
+                  labelNudgePx={10}
+                  shortLabel="Прогноз"
                   title="Запуск производства"
                   subtitle={msPs?.name}
+                  entityId="MS-PS"
                   dateLabel={formatDateRu(band.forecastDate)}
                   statusLabel={statusWord(psRag)}
                   rag={psRag}
@@ -295,9 +301,10 @@ export function ExecutiveMilestoneStrip({
             )}
           </div>
 
+          {/* Delta cue: above axis for slip; below labels for on-plan (avoids marker overlap) */}
           {!band.coincident ? (
             <div
-              className="absolute top-[3.15rem] z-20 -translate-x-1/2 rounded px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-[var(--status-danger-fg)] ring-1 ring-[var(--status-danger-border)] bg-[var(--status-danger-bg)]"
+              className="pointer-events-none absolute top-[2.15rem] z-20 -translate-x-1/2 text-[10px] font-semibold tabular-nums text-[var(--status-danger-fg)]"
               style={{
                 left: `${((band.baselineRatio + band.forecastRatio) / 2) * 100}%`,
               }}
@@ -307,7 +314,7 @@ export function ExecutiveMilestoneStrip({
             </div>
           ) : (
             <div
-              className="absolute top-[3.15rem] -translate-x-1/2 text-[10px] font-medium text-[var(--status-ok-fg)]"
+              className="pointer-events-none absolute top-[6.35rem] -translate-x-1/2 text-[10px] font-medium text-[var(--status-ok-fg)]"
               style={{ left: `${band.baselineRatio * 100}%` }}
               data-ps-delta-label
             >

@@ -10,7 +10,7 @@ import { TopExceptionsPanel } from './top-exceptions-panel';
 import { WorkstreamStatusMatrix } from './workstream-readiness';
 
 /**
- * E3-R4 Dashboard canvas — independent module surfaces on application background.
+ * E3-R5 Dashboard canvas — independent module surfaces on application background.
  * No enclosing Page Surface.
  */
 export function DashboardView({ data }: { data: DashboardOverview }) {
@@ -21,7 +21,7 @@ export function DashboardView({ data }: { data: DashboardOverview }) {
   return (
     <div
       className="flex flex-1 flex-col gap-4 p-4 md:gap-5 md:p-5"
-      data-dashboard="e3-r4"
+      data-dashboard="e3-r5"
     >
       {status === 'loading' ? (
         <p className="text-sm text-[var(--text-muted)]" aria-live="polite">

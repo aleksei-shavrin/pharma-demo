@@ -88,4 +88,16 @@ describe('executive timeline helpers', () => {
     const ps = c.find((p) => p.id === 'MS-PS');
     expect(ps?.rag).toBe('Red');
   });
+
+  it('keeps marker ratios on forecast dates while alternating label sides', () => {
+    const points = resolveExecutiveMilestones(dashboardOverviewFixture('C'));
+    for (const p of points) {
+      expect(p.ratio).toBe(dateToRatio(p.forecastDate));
+    }
+    expect(points[0]?.labelSide).toBe('below');
+    expect(points[1]?.labelSide).toBe('above');
+    const hvac = points.find((p) => p.id === 'MS-HVAC-IQ');
+    const wfi = points.find((p) => p.id === 'MS-UTL-WFI');
+    expect(hvac?.labelSide).not.toBe(wfi?.labelSide);
+  });
 });

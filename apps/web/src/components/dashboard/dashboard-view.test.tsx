@@ -372,10 +372,10 @@ describe('E3-R2 Executive Timeline', () => {
   });
 });
 
-describe('E3-R4 Dashboard canvas + timeline interaction', () => {
-  it('renders e3-r4 canvas modules without inventing RAG', () => {
+describe('E3-R5 Dashboard canvas + timeline interaction', () => {
+  it('renders e3-r5 canvas modules without inventing RAG', () => {
     renderView('C');
-    expect(document.querySelector('[data-dashboard="e3-r4"]')).toBeTruthy();
+    expect(document.querySelector('[data-dashboard="e3-r5"]')).toBeTruthy();
     expect(
       document.querySelector('[data-dashboard-block="executive-timeline"]'),
     ).toBeTruthy();
@@ -459,10 +459,13 @@ describe('E3-R4 Dashboard canvas + timeline interaction', () => {
 
     await user.click(hvac);
     await waitFor(() => {
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(document.querySelector('[data-timeline-popover]')).toBeTruthy();
     });
     expect(document.querySelector('[data-timeline-tooltip]')).toBeNull();
-    const pop = screen.getByRole('dialog');
+    const pop = document.querySelector(
+      '[data-timeline-popover]',
+    ) as HTMLElement;
+    expect(pop.getAttribute('role')).not.toBe('dialog');
     expect(within(pop).getByRole('link', { name: /Открыть веху/i })).toHaveAttribute(
       'href',
       '/milestones/MS-HVAC-IQ',
@@ -470,9 +473,10 @@ describe('E3-R4 Dashboard canvas + timeline interaction', () => {
     expect(
       within(pop).getByRole('link', { name: /Подробный график/i }),
     ).toHaveAttribute('href', '/schedule');
+    expect(hvac).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('keyboard Enter opens popover; Escape closes and returns focus', async () => {
+  it('keyboard Enter/Space open popover; Escape closes and returns focus; outside closes', async () => {
     const user = userEvent.setup();
     renderView('C');
     const ps = document.querySelector(
@@ -481,9 +485,9 @@ describe('E3-R4 Dashboard canvas + timeline interaction', () => {
     ps.focus();
     await user.keyboard('{Enter}');
     await waitFor(() => {
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(document.querySelector('[data-timeline-popover]')).toBeTruthy();
     });
-    const pop = screen.getByRole('dialog');
+    let pop = document.querySelector('[data-timeline-popover]') as HTMLElement;
     expect(pop).toHaveTextContent(/Запуск производства/);
     expect(pop).toHaveTextContent(/\+21/);
     expect(within(pop).getByRole('link', { name: /Открыть веху/i })).toHaveAttribute(
@@ -493,9 +497,21 @@ describe('E3-R4 Dashboard canvas + timeline interaction', () => {
 
     await user.keyboard('{Escape}');
     await waitFor(() => {
-      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(document.querySelector('[data-timeline-popover]')).toBeNull();
     });
     expect(document.activeElement).toBe(ps);
+
+    await user.keyboard(' ');
+    await waitFor(() => {
+      expect(document.querySelector('[data-timeline-popover]')).toBeTruthy();
+    });
+    pop = document.querySelector('[data-timeline-popover]') as HTMLElement;
+    expect(pop).toBeTruthy();
+
+    await user.click(document.body);
+    await waitFor(() => {
+      expect(document.querySelector('[data-timeline-popover]')).toBeNull();
+    });
   });
 });
 

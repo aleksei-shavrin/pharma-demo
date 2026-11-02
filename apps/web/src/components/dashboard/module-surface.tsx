@@ -13,7 +13,7 @@ export function ModuleSurface({
   return (
     <section
       data-dashboard-block={block}
-      className={`rounded-[var(--radius-md)] bg-[var(--surface-raised)] p-4 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)] ${className}`}
+      className={`rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 shadow-[var(--elevation-1)] ${className}`}
     >
       {children}
     </section>

@@ -57,11 +57,11 @@ export function WorkstreamStatusMatrix({
         Готовность направлений
       </h2>
 
-      <ul className="mt-2 grid grid-cols-2 gap-2">
+      <ul className="mt-2 grid grid-cols-2 gap-1.5">
         {rows.map((row) => (
           <li
             key={row.workstream}
-            className={`rounded-[var(--radius-sm)] px-2.5 py-2.5 ${cellTint(row.status)}`}
+            className={`rounded-[var(--radius-sm)] px-2.5 py-2 ${cellTint(row.status)}`}
             data-workstream={row.workstream}
             data-workstream-status={row.status}
           >

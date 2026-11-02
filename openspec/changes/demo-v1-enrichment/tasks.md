@@ -1,6 +1,6 @@
 # Tasks
 
-> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. E3-R4 IMPLEMENTED — awaiting human visual review. Namespace **E1…E8** (not I9). Next after E3 APPROVED: E4.
+> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. **E3 APPROVED** (2026-11-02, after E3-R5). Namespace **E1…E8** (not I9). Next: E4.
 
 ## E1 — Contracts
 
@@ -29,16 +29,18 @@
 - [x] E3-R2 composition: ProjectControlSummary + ExecutiveMilestoneStrip + Management/Change grids
 - [x] E3-R3 visual language: weaker outer cards; stronger PS/timeline/matrix/change tiles
 - [x] E3-R4 dashboard canvas (no Page Surface) + module surfaces + interactive fixed-geometry timeline
-- Status: **E3-R4 IMPLEMENTED — AWAITING HUMAN VISUAL REVIEW** (not APPROVED by AI)
+- [x] E3-R5 targeted polish: surfaces, timeline collision/overlays a11y, Schedule AC recorded (not implemented)
+- Status: **E3 — APPROVED** (human visual: A/B/C Light + C Dark). Tooltip/popover accepted on implementation/test evidence; dedicated overlay screenshots were not an E3 release blocker.
 
 
-## E4 — Registers
+## E4 — Registers — PENDING / NOT STARTED
 
 - [ ] Search/filter/sort/counts incl. Closed; no pagination
 
-## E5 — Schedule
+## E5 — Schedule — PENDING / NOT STARTED
 
 - [ ] Group/filter/compact/fit; no Activity; visual checkpoint
+- [ ] Split View: shared row model + sticky headers + viewport-bounded vertical scroll (see plan E5 notes; not started)
 
 ## E6 — Details
 

@@ -30,7 +30,7 @@ export function ProjectControlSummary({ data }: { data: DashboardOverview }) {
   return (
     <section
       aria-labelledby="project-control-summary-heading"
-      className="overflow-hidden rounded-[var(--radius-md)] bg-[var(--surface-raised)] shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--elevation-1)]"
       data-dashboard-block="project-status"
       data-dashboard-summary="project-control"
     >
