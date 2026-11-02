@@ -1,6 +1,6 @@
 # Tasks
 
-> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. **E3 APPROVED**. **E4 APPROVED**. **E5 + E5-R1 APPROVED** (2026-11-02). **E6 + E7 + E6/E7-R1 APPROVED** (2026-11-02). **E8 PENDING / NOT STARTED**. Namespace **E1…E8** (not I9).
+> R1 design APPROVED. **E1–E8 APPROVED** (2026-11-02). **Demo v1 — APPROVED / RELEASED** (`demo-v1.0.0`). Enrichment COMPLETE. Namespace **E1…E8** (not I9).
 
 ## E1 — Contracts
 
@@ -63,6 +63,10 @@
 - [x] Human visual — **APPROVED** (2026-11-02): Dashboard A/C/G Light + H Dark; selector portal accepted via impl + tests
 - Status: **E6 + E7 + E6/E7-R1 — APPROVED**
 
-## E8 — Acceptance — PENDING / NOT STARTED
+## E8 — Final acceptance — APPROVED (2026-11-02)
 
-- [ ] Walkthrough + regression; apps/e2e/docs gates; no Demo v2 / I9
+- [x] Contract audit: scale, BA-015, BR-004/007, A–H, selector atomicity, screens
+- [x] Director-facing RU polish for G/H Top Exceptions / Trend (retain HVAC/WFI/BMS/EMS/IQ)
+- [x] Current-state docs sync; full gates + smoke
+- [x] Final human acceptance — **APPROVED** (2026-11-02): Dashboard G Light; H Dark; selector OPEN A–H Light
+- Status: **E8 — APPROVED**. **Demo v1 enrichment E1–E8 COMPLETE**. Local tag `demo-v1.0.0`. No Demo v2 / no I9.

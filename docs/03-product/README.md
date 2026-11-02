@@ -3,9 +3,9 @@ id: DOC-PROD-README-001
 title: "Продукт"
 type: index
 status: draft
-version: "0.3.0"
+version: "0.3.1"
 created: 2026-10-30
-updated: 2026-11-01
+updated: 2026-11-02
 owner: "docs-engineering"
 related:
   - DOC-PROD-001
@@ -34,9 +34,9 @@ related:
 - [demo-v1-mock-narrative-data.md](./demo-v1-mock-narrative-data.md)
 - [demo-v1-acceptance-walkthrough.md](./demo-v1-acceptance-walkthrough.md)
 
-## Demo v1 enrichment (R1 + E1 APPROVED; next E2)
+## Demo v1 enrichment (E1–E8 COMPLETE; Demo v1 APPROVED / RELEASED)
 
-> **certainty:** hypothesis — R1 design APPROVED; E1 + E1-R1 contracts/read models APPROVED; full A–H fixtures still E2; E3–E7 UI pending.
+> **certainty:** fact — R1 design APPROVED; E1–E8 implementation APPROVED (2026-11-02). Demo v1 enrichment COMPLETE; local release tag `demo-v1.0.0`.
 
 - [demo-v1-enrichment-current-state-audit.md](./demo-v1-enrichment-current-state-audit.md) (DOC-PROD-019)
 - [demo-v1-enrichment-scope.md](./demo-v1-enrichment-scope.md) (DOC-PROD-020)

@@ -7,14 +7,14 @@ updated: 2026-11-02
 
 # Demo v1 enrichment
 
-> **Demo v1 continues.** Не Demo v2. Не tag `demo-v1.0.0`.
-> **Не I9** — iterations **E1…E8**.
+> **Demo v1 — APPROVED / RELEASED** (`demo-v1.0.0` local annotated tag). Не Demo v2. Не I9.
+> **Enrichment E1–E8 — COMPLETE.**
 > **R1 design pack APPROVED** (2026-11-01).
 > **E1 + E1-R1 APPROVED** (2026-11-01) — contracts/read models established.
 > **E2 + E2-R1 APPROVED** (full A–H fixtures + integrity).
 > **E3 — APPROVED** (2026-11-02) after E3-R5 human visual review (A/B/C Light + C Dark).
 > **E4 — APPROVED** (2026-11-02) after human visual review (Equipment A/C Light + C Dark; Issues & Risks C; Milestones C Light/Dark).
-> **E5 + E5-R1 — APPROVED** (2026-11-02). **E6 + E7 + E6/E7-R1 — APPROVED** (2026-11-02) after human visual review. **E8 PENDING / NOT STARTED.**
+> **E5 + E5-R1 — APPROVED** (2026-11-02). **E6 + E7 + E6/E7-R1 — APPROVED** (2026-11-02). **E8 — APPROVED** (2026-11-02).
 
 ## Context
 
@@ -114,12 +114,15 @@ Status: **E5 + E5-R1 — APPROVED** (2026-11-02) after human visual review.
 - **One** ARIA pattern: button + listbox; atomic switch; sessionStorage A–H; Guide C punch + F/G/H
 - Human visual: Dashboard A/C/G Light + H Dark. Selector portal/interaction accepted on implementation + automated test evidence; dedicated open-selector screenshot was not a release blocker.
 
-**E6/E7-R1 — APPROVED** (2026-11-02). Non-blocking (deferred): short detail page whitespace; some English fixture/narrative strings on Dashboard G/H.
+**E6/E7-R1 — APPROVED** (2026-11-02). Non-blocking (deferred at E6/E7): short detail page whitespace; some English fixture/narrative strings on Dashboard G/H (director-facing EN closed in E8).
 
-### E8 — Acceptance — PENDING / NOT STARTED
+### E8 — Final acceptance / release — **APPROVED** (2026-11-02)
 
-- Walkthrough + regression; `test:apps` / e2e / docs gates
-- No Demo v2 / I9
+- Integrity / BA-015 / BR-004 / BR-007 / A–H / selector / screen regression audit
+- Director-facing G/H Top Exceptions + Trend RU polish (acronyms retained)
+- Current-state docs sync (product README enrichment status)
+- Full quality gates + runtime smoke; human visual: Dashboard G Light, H Dark, selector OPEN A–H Light
+- Status: **E8 — APPROVED** (2026-11-02). **Demo v1 enrichment E1–E8 COMPLETE.** Local tag `demo-v1.0.0`. No Demo v2 / no I9.
 
 ## Order
 

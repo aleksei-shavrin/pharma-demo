@@ -3,9 +3,9 @@ id: DOC-PROD-022
 title: "Demo v1 enrichment — snapshot and causal matrix"
 type: product
 status: draft
-version: "0.3.1"
+version: "0.3.2"
 created: 2026-11-01
-updated: 2026-11-01
+updated: 2026-11-02
 owner: "docs-engineering"
 related:
   - DOC-PROD-012
@@ -138,8 +138,8 @@ Backend serves per snapshot compact arrays (RU strings). Not a diff engine.
 | D | — | Чистые зоны; гейт HVAC (IQ) | HVAC / PS критичен |
 | E | — | WFI; QC; автоматизация; эскалация упаковки | HVAC / PS критичен |
 | F | Зафиксированы решения (HVAC, WFI, чистые зоны) | — | HVAC / PS без изменения прогноза |
-| G | **Упаковка стабилизирована**; HVAC Δ снижен до +14 | — | HVAC / PS остаётся критичным; WFI residual |
-| H | Зафиксирован freeze BMS/EMS | — | HVAC / PS residual |
+| G | **Упаковка стабилизирована**; HVAC Δ снижен до +14 | — | HVAC / PS остаётся критичным; остаточное отклонение WFI |
+| H | Зафиксирована заморозка точек BMS/EMS | — | Остаточный HVAC / старт производства |
 
 ## 6. Top Exceptions ordering (Dashboard read model only)
 

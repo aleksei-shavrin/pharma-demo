@@ -427,8 +427,9 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
       },
       {
         id: 'TEX-F-WFI',
-        title: 'WFI residual',
-        causeImpact: 'DEC-UTL-01 intent; прогноз WFI без авто-heal',
+        title: 'Остаточное отклонение WFI',
+        causeImpact:
+          'DEC-UTL-01 зафиксирован; прогноз WFI без автоматического восстановления',
         links: [
           { type: 'risk', id: 'RISK-UTL-01' },
           { type: 'milestone', id: 'MS-UTL-WFI' },
@@ -437,8 +438,9 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
       },
       {
         id: 'TEX-F-CLN',
-        title: 'Чистые зоны residual',
-        causeImpact: 'DEC-CLN-01 intent; residual CLN',
+        title: 'Остаточное отклонение чистых зон',
+        causeImpact:
+          'DEC-CLN-01 зафиксирован; остаточное отклонение чистых зон',
         links: [
           { type: 'risk', id: 'RISK-CLN-01' },
           { type: 'milestone', id: 'MS-CLN-RDY' },
@@ -512,8 +514,9 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
     topExceptions: [
       {
         id: 'TEX-G-HVAC-PS',
-        title: 'HVAC residual +14',
-        causeImpact: 'Прогресс fixture-authored; RISK-001 / MS-PS остаются Red',
+        title: 'Остаточный HVAC +14',
+        causeImpact:
+          'Прогресс по сценарию; RISK-001 и MS-PS остаются красными',
         links: [
           { type: 'equipment', id: 'EQ-HVAC-01' },
           { type: 'risk', id: 'RISK-001' },
@@ -523,8 +526,9 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
       },
       {
         id: 'TEX-G-WFI',
-        title: 'WFI residual',
-        causeImpact: 'WFI +12; Mitigating без полного снятия Red',
+        title: 'Остаточное отклонение WFI',
+        causeImpact:
+          'WFI +12; меры выполняются, красный риск не снят полностью',
         links: [
           { type: 'risk', id: 'RISK-UTL-01' },
           { type: 'milestone', id: 'MS-UTL-WFI' },
@@ -533,8 +537,8 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
       },
       {
         id: 'TEX-G-QC',
-        title: 'QC workaround',
-        causeImpact: 'DEC-QC-01 intent; HPLC всё ещё Delayed',
+        title: 'Временный обход для QC',
+        causeImpact: 'DEC-QC-01 зафиксирован; HPLC всё ещё с задержкой',
         links: [
           { type: 'issue', id: 'ISS-QC-01' },
           { type: 'equipment', id: 'EQ-QC-01' },
@@ -547,7 +551,7 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
       worse: [],
       unchangedCritical: [
         'HVAC / PS остаётся критичным',
-        'WFI residual',
+        'Остаточное отклонение WFI',
       ],
     },
   },
@@ -611,8 +615,8 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
     topExceptions: [
       {
         id: 'TEX-H-HVAC-PS',
-        title: 'HVAC / PS residual',
-        causeImpact: 'Остаточный +14; Decisions не завершили исполнение',
+        title: 'Остаточный HVAC / старт производства',
+        causeImpact: 'Остаточный +14; решения не завершили исполнение',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -621,8 +625,9 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
       },
       {
         id: 'TEX-H-AUT',
-        title: 'Freeze BMS/EMS',
-        causeImpact: 'DEC-AUT-01 зафиксирован; интеграционный attention остаётся',
+        title: 'Заморозка точек BMS/EMS',
+        causeImpact:
+          'DEC-AUT-01 зафиксирован; внимание по интеграции сохраняется',
         links: [
           { type: 'issue', id: 'ISS-AUT-01' },
           { type: 'risk', id: 'RISK-AUT-01' },
@@ -632,8 +637,8 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
       },
       {
         id: 'TEX-H-COM',
-        title: 'Накопительный риск общего IQ',
-        causeImpact: 'RISK-COM-01 (approved orphan Red)',
+        title: 'Накопительный риск общего демо-гейта (IQ)',
+        causeImpact: 'RISK-COM-01 (красный без связанной проблемы)',
         links: [
           { type: 'risk', id: 'RISK-COM-01' },
           { type: 'milestone', id: 'MS-COM-IQ' },
@@ -642,9 +647,9 @@ export const SNAPSHOT_STATES: Record<SnapshotId, SnapshotState> = {
       },
     ],
     trend: {
-      better: ['Зафиксирован freeze BMS/EMS'],
+      better: ['Зафиксирована заморозка точек BMS/EMS'],
       worse: [],
-      unchangedCritical: ['HVAC / PS residual'],
+      unchangedCritical: ['Остаточный HVAC / старт производства'],
     },
   },
 };

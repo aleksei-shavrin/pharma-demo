@@ -435,7 +435,9 @@ describe('fixture integrity — Top Exceptions + Trend', () => {
         'HVAC Δ снижен до +14',
       ]),
     );
-    expect(SNAPSHOT_H.trend.better).toContain('Зафиксирован freeze BMS/EMS');
+    expect(SNAPSHOT_H.trend.better).toContain(
+      'Зафиксирована заморозка точек BMS/EMS',
+    );
   });
 });
 

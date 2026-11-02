@@ -382,9 +382,9 @@ export function dashboardOverviewFixture(
                 ? [
                     {
                       id: 'TEX-G-HVAC-PS',
-                      title: 'HVAC residual +14',
+                      title: 'Остаточный HVAC +14',
                       causeImpact:
-                        'Прогресс fixture-authored; RISK-001 / MS-PS остаются Red',
+                        'Прогресс по сценарию; RISK-001 и MS-PS остаются красными',
                       links: [
                         { type: 'equipment', id: 'EQ-HVAC-01' },
                         { type: 'risk', id: 'RISK-001' },
@@ -396,9 +396,9 @@ export function dashboardOverviewFixture(
                   ? [
                       {
                         id: 'TEX-H-HVAC-PS',
-                        title: 'HVAC / PS residual',
+                        title: 'Остаточный HVAC / старт производства',
                         causeImpact:
-                          'Остаточный +14; Decisions не завершили исполнение',
+                          'Остаточный +14; решения не завершили исполнение',
                         links: [{ type: 'risk', id: 'RISK-001' }],
                         priority: 1,
                       },
@@ -439,14 +439,16 @@ export function dashboardOverviewFixture(
                     worse: [],
                     unchangedCritical: [
                       'HVAC / PS остаётся критичным',
-                      'WFI residual',
+                      'Остаточное отклонение WFI',
                     ],
                   }
                 : snapshotId === 'H'
                   ? {
-                      better: ['Зафиксирован freeze BMS/EMS'],
+                      better: ['Зафиксирована заморозка точек BMS/EMS'],
                       worse: [],
-                      unchangedCritical: ['HVAC / PS residual'],
+                      unchangedCritical: [
+                        'Остаточный HVAC / старт производства',
+                      ],
                     }
                   : { better: [], worse: [], unchangedCritical: [] },
     decisionPanelState:
