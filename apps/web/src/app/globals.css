@@ -31,6 +31,9 @@
   --status-info-fg: #1e3558;
   --status-info-bg: #e6eef7;
   --status-info-border: #3a5f8a;
+  --status-warn-fg: #7a4b0f;
+  --status-warn-bg: #fdf3e3;
+  --status-warn-border: #c48a2a;
   --sidebar-width: 240px;
   --topbar-height: 52px;
   --radius-sm: 6px;
@@ -65,6 +68,9 @@
   --status-info-fg: #b4cde6;
   --status-info-bg: #1a2434;
   --status-info-border: #6b9bc4;
+  --status-warn-fg: #f0d09a;
+  --status-warn-bg: #3a2a14;
+  --status-warn-border: #d4a04a;
   --elevation-1: 0 1px 2px rgb(0 0 0 / 35%);
   color-scheme: dark;
 }

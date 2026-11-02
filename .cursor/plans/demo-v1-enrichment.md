@@ -11,8 +11,9 @@ updated: 2026-11-01
 > **Не I9** — iterations **E1…E8**.
 > **R1 design pack APPROVED** (2026-11-01).
 > **E1 + E1-R1 APPROVED** (2026-11-01) — contracts/read models established.
-> **E2 implemented / awaiting human review** (full A–H fixtures + integrity; E2-R1 corrections). Not AI-APPROVED.
-> **E3–E8 pending.**
+> **E2 + E2-R1 APPROVED** (full A–H fixtures + integrity).
+> **E3-R1 implemented / awaiting human visual review** (Dashboard visual hierarchy). Not AI-APPROVED.
+> **E4–E8 pending.**
 
 ## Context
 
@@ -54,17 +55,17 @@ updated: 2026-11-01
 - **Exclusions:** full A–H fixtures; UI polish
 - **Gates:** api unit + e2e; web contract-compat tests; OpenSpec validate
 
-### E2 — Fixture expansion — **implemented / awaiting human review**
+### E2 — Fixture expansion — **APPROVED** (E2 + E2-R1)
 
 - Full A–H per DOC-PROD-021/022; remove E1 stubs
 - Integrity: BR-004/006/007 state-based; Closed; Decision links; G/H residual
 - **Gates:** api tests; fixture coherence
 - **AC:** A calm; C=+21/RISK-001 Red; F=DEC-001 Mitigating +21; G PKG Closed + HVAC +14; H residual
 
-### E3 — Dashboard
+### E3 — Dashboard — **E3-R1 implemented / awaiting human visual review**
 
 - Hierarchy: above-fold Status + Top Exceptions; secondary Attention; below WS / Trend / Decisions
-- Visual A vs E vs G
+- E3-R1: Production Start executive emphasis; less nested boxes; compact Attention/WS/Trend; human exception links
 - Honesty: Decision ≠ recovery
 
 ### E4 — Registers

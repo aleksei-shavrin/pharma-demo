@@ -1,12 +1,14 @@
 /** @vitest-environment jsdom */
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DashboardOverview } from '@/lib/api-client';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import DashboardPage from '@/app/page';
 import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
+import { DashboardView } from '@/components/dashboard/dashboard-view';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
+import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 
 const fetchDashboardOverview = vi.fn();
 
@@ -22,7 +24,7 @@ vi.mock('@/lib/api-client', async () => {
 });
 
 function overview(
-  snapshotId: 'A' | 'B' | 'C',
+  snapshotId: SnapshotId,
   overrides: Partial<DashboardOverview> = {},
 ): DashboardOverview {
   return dashboardOverviewFixture(snapshotId, overrides);
@@ -37,6 +39,14 @@ function renderDashboard() {
   );
 }
 
+function renderView(snapshotId: SnapshotId) {
+  return render(
+    <SnapshotProvider>
+      <DashboardView data={overview(snapshotId)} />
+    </SnapshotProvider>,
+  );
+}
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
@@ -45,30 +55,37 @@ afterEach(() => {
 beforeEach(() => {
   sessionStorage.clear();
   fetchDashboardOverview.mockImplementation(
-    async (_id: string, snapshot: 'A' | 'B' | 'C') => overview(snapshot),
+    async (_id: string, snapshot: SnapshotId) => overview(snapshot),
   );
 });
 
-describe('Dashboard narratives (E1-R1 A/B/C)', () => {
-  it('A: по плану, без DEC, без exception-chain', async () => {
+function projectStatusBlock() {
+  return document.querySelector(
+    '[data-dashboard-block="project-status"]',
+  ) as HTMLElement;
+}
+
+describe('E3 Project Status', () => {
+  it('A: Green, PS baseline, delta 0', async () => {
     renderDashboard();
     await waitFor(() => {
-      expect(
-        screen.getByText(/Поставка оборудования: без отклонения/i),
-      ).toBeInTheDocument();
+      expect(projectStatusBlock()).toBeTruthy();
     });
+    const block = projectStatusBlock();
+    expect(within(block).getByText('Зелёный')).toBeInTheDocument();
+    expect(within(block).getByText('Запуск производства')).toBeInTheDocument();
+    expect(within(block).getByText('15.09.2027')).toBeInTheDocument();
     expect(
-      screen.getByText(/Запуск производства: без отклонения/i),
+      within(block).getByText(/по плану · без отклонения/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/решение не требуется/i)).toBeInTheDocument();
-    expect(screen.queryByText('DEC-001')).not.toBeInTheDocument();
-    expect(screen.getByText('По плану')).toBeInTheDocument();
     expect(
-      screen.getAllByText(/Готовность к производству/).length,
-    ).toBeGreaterThan(0);
+      within(block).getByText(
+        /в базовом плане без управленческих отклонений/i,
+      ),
+    ).toBeInTheDocument();
   });
 
-  it('B: локальное внимание; PS без сдвига; HVAC по плану; без DEC', async () => {
+  it('B: Yellow, PS baseline, HVAC calm', async () => {
     const user = userEvent.setup();
     renderDashboard();
     await waitFor(() =>
@@ -79,20 +96,23 @@ describe('Dashboard narratives (E1-R1 A/B/C)', () => {
     await user.click(screen.getByRole('radio', { name: /Снимок B/ }));
     await waitFor(() => {
       expect(
-        screen.getByText(/Поставка оборудования: без отклонения/i),
+        within(projectStatusBlock()).getByText('Жёлтый'),
       ).toBeInTheDocument();
     });
+    const block = projectStatusBlock();
+    expect(within(block).getByText('15.09.2027')).toBeInTheDocument();
     expect(
-      screen.getByText(/Запуск производства: без отклонения/i),
+      within(block).getByText(/по плану · без отклонения/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/решение не требуется/i)).toBeInTheDocument();
-    expect(screen.queryByText('ISS-001')).not.toBeInTheDocument();
-    expect(screen.queryByText('DEC-001')).not.toBeInTheDocument();
-    expect(screen.getByText('Риск: зелёный')).toBeInTheDocument();
-    expect(screen.getByText('Веха: зелёная')).toBeInTheDocument();
+    expect(
+      within(block).getByText(/прогноз старта производства без сдвига/i),
+    ).toBeInTheDocument();
+    expect(
+      document.querySelector('[data-workstream="WS-HVAC"]'),
+    ).toHaveAttribute('data-workstream-status', 'Green');
   });
 
-  it('C: +21 день, открыта, красный, решение требуется; без DEC-001', async () => {
+  it('C: Red, PS +21 with baseline→forecast hierarchy', async () => {
     const user = userEvent.setup();
     renderDashboard();
     await waitFor(() =>
@@ -103,25 +123,208 @@ describe('Dashboard narratives (E1-R1 A/B/C)', () => {
     await user.click(screen.getByRole('radio', { name: /^Снимок C$/ }));
     await waitFor(() => {
       expect(
-        screen.getByText(/Поставка оборудования: \+21 день/i),
+        within(projectStatusBlock()).getByText('Красный'),
       ).toBeInTheDocument();
     });
+    const block = projectStatusBlock();
+    const dates = block.querySelector('[data-ps-dates]');
+    expect(dates).toHaveTextContent('15.09.2027');
+    expect(dates).toHaveTextContent('06.10.2027');
+    expect(block.querySelector('[data-ps-delta]')).toHaveTextContent('+21 день');
+  });
+
+  it('G/H: Red, PS +14 (payload render; selector remains A–C)', () => {
+    renderView('G');
+    let block = projectStatusBlock();
+    expect(within(block).getByText('Красный')).toBeInTheDocument();
+    expect(block.querySelector('[data-ps-dates]')).toHaveTextContent('29.09.2027');
+    expect(block.querySelector('[data-ps-delta]')).toHaveTextContent('+14 дней');
+
+    cleanup();
+    renderView('H');
+    block = projectStatusBlock();
+    expect(within(block).getByText('Красный')).toBeInTheDocument();
+    expect(block.querySelector('[data-ps-delta]')).toHaveTextContent('+14 дней');
+  });
+});
+
+describe('E3 Top Exceptions', () => {
+  it('A empty/calm; C HVAC/PS first; backend order preserved; human link labels', async () => {
+    renderView('A');
+    expect(screen.getByText(/критических исключений нет/i)).toBeInTheDocument();
+
+    cleanup();
+    renderView('C');
+    const exceptions = document.querySelectorAll('[data-exception-id]');
+    expect(exceptions[0]).toHaveAttribute('data-exception-id', 'TEX-C-HVAC-PS');
+    expect(exceptions[0]).toHaveAttribute('data-exception-order', '1');
     expect(
-      screen.getByText(/Запуск производства: \+21 день/i),
+      within(exceptions[0] as HTMLElement).getByText(
+        /Критический прогноз сдвига AHU/,
+      ),
     ).toBeInTheDocument();
-    expect(screen.getByText('Открыта')).toBeInTheDocument();
+    expect(screen.queryByText(/priority\s*:/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Оборудование · EQ-HVAC-01/)).not.toBeInTheDocument();
     expect(
-      screen.getAllByText(/Прогноз сдвига поставки long-lead AHU/).length,
-    ).toBeGreaterThan(0);
-    expect(screen.getByText('Риск: красный')).toBeInTheDocument();
-    expect(screen.getByText('Веха: красная')).toBeInTheDocument();
+      document.querySelector('[data-top-exceptions="list"]'),
+    ).toBeTruthy();
+  });
+
+  it('does not reorder when fixture priority order is non-title-sorted', () => {
+    render(
+      <SnapshotProvider>
+        <DashboardView
+          data={overview('B', {
+            topExceptions: [
+              {
+                id: 'TEX-SECOND',
+                title: 'Якорь второй',
+                causeImpact: 'второй',
+                links: [],
+                priority: 2,
+              },
+              {
+                id: 'TEX-FIRST',
+                title: 'Абзац первый',
+                causeImpact: 'первый',
+                links: [],
+                priority: 1,
+              },
+            ],
+          })}
+        />
+      </SnapshotProvider>,
+    );
+    // Backend array order must be preserved (no FE sort by title/priority).
+    const ids = [...document.querySelectorAll('[data-exception-id]')].map((el) =>
+      el.getAttribute('data-exception-id'),
+    );
+    expect(ids).toEqual(['TEX-SECOND', 'TEX-FIRST']);
+  });
+});
+
+describe('E3 Workstreams', () => {
+  it('A all Green; B PKG+BLD Yellow HVAC Green; C HVAC Red; G/H HVAC Red PKG Yellow', () => {
+    renderView('A');
+    for (const el of document.querySelectorAll('[data-workstream-status]')) {
+      expect(el).toHaveAttribute('data-workstream-status', 'Green');
+    }
+    expect(screen.getByText('Здание и оболочка')).toBeInTheDocument();
+    expect(screen.getByText('Упаковка')).toBeInTheDocument();
+
+    cleanup();
+    renderView('B');
+    expect(
+      document.querySelector('[data-workstream="WS-PKG"]'),
+    ).toHaveAttribute('data-workstream-status', 'Yellow');
+    expect(
+      document.querySelector('[data-workstream="WS-BLD"]'),
+    ).toHaveAttribute('data-workstream-status', 'Yellow');
+    expect(
+      document.querySelector('[data-workstream="WS-HVAC"]'),
+    ).toHaveAttribute('data-workstream-status', 'Green');
+
+    cleanup();
+    renderView('C');
+    expect(
+      document.querySelector('[data-workstream="WS-HVAC"]'),
+    ).toHaveAttribute('data-workstream-status', 'Red');
+
+    cleanup();
+    renderView('G');
+    expect(
+      document.querySelector('[data-workstream="WS-HVAC"]'),
+    ).toHaveAttribute('data-workstream-status', 'Red');
+    expect(
+      document.querySelector('[data-workstream="WS-PKG"]'),
+    ).toHaveAttribute('data-workstream-status', 'Yellow');
+
+    cleanup();
+    renderView('H');
+    expect(
+      document.querySelector('[data-workstream="WS-PKG"]'),
+    ).toHaveAttribute('data-workstream-status', 'Yellow');
+  });
+});
+
+describe('E3 Trend', () => {
+  it('A empty; B/C/F/G authored values; no diff engine cues', () => {
+    renderView('A');
+    expect(
+      screen.getByText(/изменений к предыдущему состоянию нет/i),
+    ).toBeInTheDocument();
+
+    cleanup();
+    renderView('B');
+    expect(screen.getByText(/Упаковка: прогноз срыва FAT/)).toBeInTheDocument();
+
+    cleanup();
+    renderView('C');
+    expect(
+      screen.getByText(/HVAC \/ старт производства: \+21/),
+    ).toBeInTheDocument();
+
+    cleanup();
+    renderView('F');
+    expect(
+      screen.getByText(/HVAC \/ PS без изменения прогноза/),
+    ).toBeInTheDocument();
+
+    cleanup();
+    renderView('G');
+    expect(screen.getByText(/HVAC Δ снижен до \+14/)).toBeInTheDocument();
+    expect(screen.getByText(/Упаковка стабилизирована/)).toBeInTheDocument();
+  });
+});
+
+describe('E3 Decisions', () => {
+  it('pre-F empty; F renders RU mapping + honesty; G AcceptDateSlip', () => {
+    renderView('C');
     expect(
       screen.getByText(/Требуется управленческое решение/i),
     ).toBeInTheDocument();
     expect(screen.queryByText('DEC-001')).not.toBeInTheDocument();
-    expect(screen.queryByText(/\bPending\b/)).not.toBeInTheDocument();
-  });
 
+    cleanup();
+    renderView('F');
+    expect(
+      screen.getByText('Приоритизировать восстановление сроков'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Директор проекта')).toBeInTheDocument();
+    expect(
+      screen.getByText(/не означает автоматическое устранение/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/ещё не устранение задержки/i)).toBeInTheDocument();
+    expect(
+      within(projectStatusBlock()).getByText('Красный'),
+    ).toBeInTheDocument();
+    expect(
+      projectStatusBlock().querySelector('[data-ps-delta]'),
+    ).toHaveTextContent('+21 день');
+
+    cleanup();
+    renderView('G');
+    expect(screen.getByText('Принять сдвиг даты')).toBeInTheDocument();
+    expect(screen.getByText('Руководитель упаковки')).toBeInTheDocument();
+    expect(screen.getByText(/не задан/)).toBeInTheDocument();
+  });
+});
+
+describe('E3 Management Attention', () => {
+  it('Closed alone does not create active issue attention on calm path; C counts Open', () => {
+    renderView('A');
+    expect(screen.getByText(/Активных сигналов внимания нет/i)).toBeInTheDocument();
+
+    cleanup();
+    renderView('C');
+    const issues = document.querySelector('[data-attention="issues"]');
+    expect(issues).toHaveAttribute('data-attention-count', '1');
+    const risks = document.querySelector('[data-attention="risks"]');
+    expect(risks).toHaveAttribute('data-attention-count', '1');
+  });
+});
+
+describe('E3 regression snapshot switch', () => {
   it('failed switch keeps previous Dashboard (no mixed state)', async () => {
     const user = userEvent.setup();
     fetchDashboardOverview.mockImplementationOnce(async () => overview('A'));
@@ -136,7 +339,7 @@ describe('Dashboard narratives (E1-R1 A/B/C)', () => {
     renderDashboard();
     await waitFor(() => {
       expect(
-        screen.getByText(/Поставка оборудования: без отклонения/i),
+        within(projectStatusBlock()).getByText('Зелёный'),
       ).toBeInTheDocument();
     });
 
@@ -158,7 +361,7 @@ describe('Dashboard narratives (E1-R1 A/B/C)', () => {
       screen.getByRole('radio', { name: /Снимок A, активный/ }),
     ).toBeChecked();
     expect(
-      screen.getByText(/Поставка оборудования: без отклонения/i),
+      within(projectStatusBlock()).getByText('Зелёный'),
     ).toBeInTheDocument();
   });
 });

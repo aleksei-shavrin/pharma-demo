@@ -1,36 +1,47 @@
+import type { ProjectStatus } from '@/lib/api-client';
 import {
   equipmentStatusLabel,
   issueStatusLabel,
+  projectStatusLabel,
   ragLabel,
 } from '@/lib/ui-labels';
 
 type Props =
   | { family: 'equipment'; value: 'OnTrack' | 'Delayed' }
   | { family: 'issue'; value: 'Open' | 'Mitigating' | 'Closed' }
-  | { family: 'rag'; value: 'Green' | 'Red'; entity: 'risk' | 'milestone' };
+  | { family: 'rag'; value: 'Green' | 'Red'; entity: 'risk' | 'milestone' }
+  | { family: 'project'; value: ProjectStatus };
 
 export function StatusPill(props: Props) {
   const text =
-    props.family === 'rag'
-      ? ragLabel(props.entity, props.value)
-      : props.family === 'equipment'
-        ? equipmentStatusLabel(props.value)
-        : issueStatusLabel(props.value);
+    props.family === 'project'
+      ? projectStatusLabel(props.value)
+      : props.family === 'rag'
+        ? ragLabel(props.entity, props.value)
+        : props.family === 'equipment'
+          ? equipmentStatusLabel(props.value)
+          : issueStatusLabel(props.value);
 
   const tone =
-    props.family === 'equipment'
-      ? props.value === 'OnTrack'
+    props.family === 'project'
+      ? props.value === 'Green'
         ? 'ok'
-        : 'danger'
-      : props.family === 'issue'
-        ? props.value === 'Open'
-          ? 'open'
-          : props.value === 'Closed'
-            ? 'ok'
-            : 'info'
-        : props.value === 'Green'
+        : props.value === 'Yellow'
+          ? 'warn'
+          : 'danger'
+      : props.family === 'equipment'
+        ? props.value === 'OnTrack'
           ? 'ok'
-          : 'danger';
+          : 'danger'
+        : props.family === 'issue'
+          ? props.value === 'Open'
+            ? 'open'
+            : props.value === 'Closed'
+              ? 'ok'
+              : 'info'
+          : props.value === 'Green'
+            ? 'ok'
+            : 'danger';
 
   const marker =
     props.family === 'equipment' && props.value === 'Delayed'
@@ -41,16 +52,20 @@ export function StatusPill(props: Props) {
           ? '◐'
           : props.family === 'issue' && props.value === 'Closed'
             ? '●'
-            : '●';
+            : props.family === 'project' && props.value === 'Yellow'
+              ? '▲'
+              : '●';
 
   const cls =
     tone === 'ok'
-      ? 'border-[var(--status-ok-border,#2f6b4f)] bg-[var(--status-ok-bg,#e3f2e9)] text-[var(--status-ok-fg,#1a4d36)]'
+      ? 'border-[var(--status-ok-border)] bg-[var(--status-ok-bg)] text-[var(--status-ok-fg)]'
       : tone === 'danger'
-        ? 'border-[var(--status-danger-border,#b42318)] bg-[var(--status-danger-bg,#fcebea)] text-[var(--status-danger-fg,#7a1710)]'
-        : tone === 'info'
-          ? 'border-[var(--status-info-border,#3a5f8a)] bg-[var(--status-info-bg,#e6eef7)] text-[var(--status-info-fg,#1e3558)]'
-          : 'border-[var(--border)] bg-[var(--surface-sunken)] text-[var(--text-secondary)]';
+        ? 'border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] text-[var(--status-danger-fg)]'
+        : tone === 'warn'
+          ? 'border-[var(--status-warn-border)] bg-[var(--status-warn-bg)] text-[var(--status-warn-fg)]'
+          : tone === 'info'
+            ? 'border-[var(--status-info-border)] bg-[var(--status-info-bg)] text-[var(--status-info-fg)]'
+            : 'border-[var(--border)] bg-[var(--surface-sunken)] text-[var(--text-secondary)]';
 
   return (
     <span
