@@ -63,6 +63,10 @@ export class EntityDetailService {
           forecastDate: eq.forecastDelivery,
           deltaDays,
         },
+        responsiblePersonId: eq.responsiblePersonId ?? null,
+        responsibleFullNameRu: eq.responsiblePersonId
+          ? this.dataSource.personFullNameRu(eq.responsiblePersonId)
+          : null,
       },
       links: this.mapLinks(linksForEntity(snapshot, 'equipment', eq.id)),
       impact: this.mapImpact(snapshot),
@@ -88,7 +92,8 @@ export class EntityDetailService {
         title: issue.title,
         status: issue.status,
         workstream: issue.workstream,
-        owner: issue.owner,
+        ownerPersonId: issue.ownerPersonId,
+        ownerFullNameRu: this.dataSource.personFullNameRu(issue.ownerPersonId),
       },
       links: this.mapLinks(linksForEntity(snapshot, 'issue', issue.id)),
       impact: this.mapImpact(snapshot),

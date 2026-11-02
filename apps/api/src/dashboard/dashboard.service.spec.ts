@@ -1,4 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
+import type { PersonId } from '../contracts/person-id';
 import { DemoDataSource } from '../data/demo-data-source';
 import {
   SNAPSHOT_A,
@@ -7,7 +8,16 @@ import {
   SNAPSHOT_F,
 } from '../data/fixtures';
 import { snapshotWithDec001 } from '../data/fixtures/decision-test-fixture';
+import {
+  leadPersonIdForWorkstream,
+  leadWorkstreamIdsForPerson,
+  PERSON_BY_ID,
+  PERSON_CATALOG,
+  personFullNameRu,
+  type PersonFixture,
+} from '../data/fixtures/person-catalog';
 import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
+import type { WorkstreamId } from '../data/workstream-ids';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import { DashboardService } from './dashboard.service';
 
@@ -39,6 +49,26 @@ class FakeDataSource extends DemoDataSource {
 
   getCosts(): never {
     throw new Error('getCosts not used by DashboardService');
+  }
+
+  listPeople(): readonly PersonFixture[] {
+    return PERSON_CATALOG;
+  }
+
+  getPerson(id: PersonId): PersonFixture | null {
+    return PERSON_BY_ID.get(id) ?? null;
+  }
+
+  personFullNameRu(id: PersonId): string {
+    return personFullNameRu(id);
+  }
+
+  leadPersonIdForWorkstream(ws: WorkstreamId): PersonId {
+    return leadPersonIdForWorkstream(ws);
+  }
+
+  leadWorkstreamIdsForPerson(id: PersonId): WorkstreamId[] {
+    return leadWorkstreamIdsForPerson(id);
   }
 }
 

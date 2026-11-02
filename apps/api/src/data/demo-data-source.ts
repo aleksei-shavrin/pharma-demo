@@ -1,9 +1,12 @@
+import type { PersonId } from '../contracts/person-id';
 import type { BuiltProjectCosts } from './fixtures/build-costs';
+import type { PersonFixture } from './fixtures/person-catalog';
 import type {
   ProjectFixture,
   SnapshotFixture,
   SnapshotId,
 } from './fixtures/types';
+import type { WorkstreamId } from './workstream-ids';
 
 /**
  * Minimal Demo v1 data-access boundary.
@@ -21,6 +24,12 @@ export abstract class DemoDataSource {
   abstract getDefaultSnapshot(): SnapshotFixture;
   /** Project / Workstream / selective Equipment cost overview (R2-M1). */
   abstract getCosts(snapshotId: SnapshotId): BuiltProjectCosts;
+  /** Person catalogue (R2-P1). */
+  abstract listPeople(): readonly PersonFixture[];
+  abstract getPerson(id: PersonId): PersonFixture | null;
+  abstract personFullNameRu(id: PersonId): string;
+  abstract leadPersonIdForWorkstream(ws: WorkstreamId): PersonId;
+  abstract leadWorkstreamIdsForPerson(id: PersonId): WorkstreamId[];
 }
 
 export const DEMO_DATA_SOURCE = Symbol('DEMO_DATA_SOURCE');

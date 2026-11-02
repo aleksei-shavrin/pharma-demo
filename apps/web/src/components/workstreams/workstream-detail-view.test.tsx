@@ -13,9 +13,10 @@ function detail(overrides: Partial<WorkstreamDetail> = {}): WorkstreamDetail {
     workstream: {
       id: 'WS-HVAC',
       nameRu: 'HVAC',
-      leadPersonId: null,
+      leadPersonId: 'PER-08',
       sortOrder: 3,
     },
+    leadFullNameRu: 'Смирнов Павел Андреевич',
     rag: 'Red',
     attention: {
       redRiskCount: 1,
@@ -197,5 +198,12 @@ describe('WorkstreamDetailView (R2-W1 / W1-R1)', () => {
       true,
     );
     expect(content.querySelector('[data-workstream-block="summary"]')).toBeTruthy();
+  });
+
+  it('shows Workstream lead as Person link (R2-P1)', () => {
+    render(<WorkstreamDetailView data={detail()} />);
+    expect(
+      screen.getByRole('link', { name: 'Смирнов Павел Андреевич' }),
+    ).toHaveAttribute('href', '/people/PER-08');
   });
 });

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import {
@@ -75,6 +76,22 @@ export default function EquipmentDetailPage() {
               label: 'Отклонение',
               value: formatDeltaDays(data.entity.deliveryVariance.deltaDays),
             },
+            ...(data.entity.responsiblePersonId &&
+            data.entity.responsibleFullNameRu
+              ? [
+                  {
+                    label: 'Ответственный',
+                    value: (
+                      <Link
+                        href={`/people/${encodeURIComponent(data.entity.responsiblePersonId)}`}
+                        className="underline-offset-2 hover:underline"
+                      >
+                        {data.entity.responsibleFullNameRu}
+                      </Link>
+                    ),
+                  },
+                ]
+              : []),
           ]}
         />
       }

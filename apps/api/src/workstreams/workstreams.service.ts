@@ -25,25 +25,25 @@ function isWorkstreamId(id: string): id is WorkstreamId {
   return (WORKSTREAM_IDS as readonly string[]).includes(id);
 }
 
-function catalogItem(id: WorkstreamId): WorkstreamCatalogItemDto {
-  return {
-    id,
-    nameRu: WORKSTREAM_NAME_RU[id],
-    leadPersonId: null,
-    sortOrder: WORKSTREAM_SORT_ORDER[id],
-  };
-}
-
 @Injectable()
 export class WorkstreamsService {
   constructor(
     @Inject(DEMO_DATA_SOURCE) private readonly dataSource: DemoDataSource,
   ) {}
 
+  private catalogItem(id: WorkstreamId): WorkstreamCatalogItemDto {
+    return {
+      id,
+      nameRu: WORKSTREAM_NAME_RU[id],
+      leadPersonId: this.dataSource.leadPersonIdForWorkstream(id),
+      sortOrder: WORKSTREAM_SORT_ORDER[id],
+    };
+  }
+
   list(projectId: string, snapshotId: SnapshotId): WorkstreamListDto {
     const snapshot = this.requireProjectSnapshot(projectId, snapshotId);
     const items = WORKSTREAM_IDS.map((id) => ({
-      ...catalogItem(id),
+      ...this.catalogItem(id),
       rag: workstreamStatus(snapshot, id),
     }));
     return {
@@ -72,11 +72,15 @@ export class WorkstreamsService {
     const cost =
       costs.workstreams.find((w) => w.workstream === workstreamId) ?? null;
 
+    const workstream = this.catalogItem(workstreamId);
     return {
       snapshotId: snapshot.id,
       scenarioAsOfDate: snapshot.scenarioAsOfDate,
       projectId: snapshot.project.id,
-      workstream: catalogItem(workstreamId),
+      workstream,
+      leadFullNameRu: workstream.leadPersonId
+        ? this.dataSource.personFullNameRu(workstream.leadPersonId)
+        : null,
       rag: workstreamStatus(snapshot, workstreamId),
       attention: {
         redRiskCount: risks.filter((r) => r.rag === 'Red').length,

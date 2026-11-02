@@ -68,7 +68,7 @@ function impact(snapshotId: SnapshotId) {
       ? {
           id: decision.id,
           type: decision.type,
-          ownerRole: decision.ownerRole,
+          ownerPersonId: decision.ownerPersonId,
           dueDate: decision.dueDate,
           note: decision.note,
         }
@@ -130,7 +130,8 @@ function issueDetail(snapshotId: SnapshotId) {
       title: 'Прогноз сдвига поставки long-lead AHU',
       status: 'Open' as const,
       workstream: 'WS-HVAC' as const,
-      owner: 'SH-PM-01',
+      ownerPersonId: 'PER-02',
+      ownerFullNameRu: 'Морозова Елена Сергеевна',
     },
     links: [
       {

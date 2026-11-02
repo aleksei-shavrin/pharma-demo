@@ -63,16 +63,28 @@ describe('R2-C1 contract shapes', () => {
         leadPersonId: 'PER-08' as const,
         sortOrder: 3,
       },
+      leadFullNameRu: 'Смирнов Павел Андреевич',
       rag: 'Red',
+      attention: {
+        redRiskCount: 1,
+        delayedCriticalEquipmentCount: 1,
+        openOrMitigatingIssueCount: 1,
+      },
       equipmentIds: ['EQ-HVAC-01'],
       milestoneIds: [],
       issueIds: ['ISS-001'],
       riskIds: ['RISK-001'],
       decisionIds: [],
+      equipment: [],
+      milestones: [],
+      issues: [],
+      risks: [],
+      decisions: [],
       cost: null,
     };
     expect(detail.equipmentIds).toContain('EQ-HVAC-01');
     expect(detail.milestoneIds).not.toContain('MS-PS');
+    expect(detail.workstream.leadPersonId).toBe('PER-08');
   });
 
   it('Person contract shape uses PersonId + WorkstreamId[] leads', () => {

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import {
@@ -56,7 +57,14 @@ export default function IssueDetailPage() {
             },
             {
               label: 'Ответственный',
-              value: data.entity.owner,
+              value: (
+                <Link
+                  href={`/people/${encodeURIComponent(data.entity.ownerPersonId)}`}
+                  className="underline-offset-2 hover:underline"
+                >
+                  {data.entity.ownerFullNameRu}
+                </Link>
+              ),
             },
           ]}
         />

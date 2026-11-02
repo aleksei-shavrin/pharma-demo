@@ -43,10 +43,16 @@ export const PERSON_ID_API_PROPERTY = {
     'Person id (PER-*). Compile-time: PER-${string}; runtime/OpenAPI: ^PER-\\d{2,}$',
 } as const;
 
-/** Legacy OwnerRef SH-* → PER-* (single cutover map; no permanent dual-read). */
+/**
+ * Legacy OwnerRef SH-* → illustrative PER-* (migration aid only).
+ * Does NOT author Issue/Decision semantic ownership — that lives in
+ * ISSUE_CATALOG / DECISION_CATALOG `ownerPersonId` (story-driven; R2-P1-R1).
+ * No permanent dual-read: public runtime identity is PER-* only.
+ */
 export const SH_TO_PER: Readonly<Record<string, PersonId>> = {
   'SH-DIR-01': 'PER-01',
   'SH-PM-01': 'PER-02',
+  /** Historical ENG bucket → HVAC lead namespace example; not bulk ownership. */
   'SH-ENG-01': 'PER-08',
   'SH-PKG-01': 'PER-11',
   'SH-QC-01': 'PER-12',

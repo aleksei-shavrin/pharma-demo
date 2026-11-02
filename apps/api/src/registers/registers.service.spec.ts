@@ -39,6 +39,22 @@ class FakeDataSource extends DemoDataSource {
   getCosts(): never {
     throw new Error('getCosts not used by RegistersService');
   }
+
+  listPeople(): never {
+    throw new Error('listPeople not used by RegistersService');
+  }
+  getPerson(): never {
+    throw new Error('getPerson not used by RegistersService');
+  }
+  personFullNameRu(): never {
+    throw new Error('personFullNameRu not used by RegistersService');
+  }
+  leadPersonIdForWorkstream(): never {
+    throw new Error('leadPersonIdForWorkstream not used by RegistersService');
+  }
+  leadWorkstreamIdsForPerson(): never {
+    throw new Error('leadWorkstreamIdsForPerson not used by RegistersService');
+  }
 }
 
 describe('RegistersService', () => {

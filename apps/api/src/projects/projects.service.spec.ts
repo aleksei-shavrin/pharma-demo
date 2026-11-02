@@ -29,6 +29,22 @@ class FakeDataSource extends DemoDataSource {
   getCosts(): never {
     throw new Error('getCosts not used by ProjectsService');
   }
+
+  listPeople(): never {
+    throw new Error('listPeople not used by ProjectsService');
+  }
+  getPerson(): never {
+    throw new Error('getPerson not used by ProjectsService');
+  }
+  personFullNameRu(): never {
+    throw new Error('personFullNameRu not used by ProjectsService');
+  }
+  leadPersonIdForWorkstream(): never {
+    throw new Error('leadPersonIdForWorkstream not used by ProjectsService');
+  }
+  leadWorkstreamIdsForPerson(): never {
+    throw new Error('leadWorkstreamIdsForPerson not used by ProjectsService');
+  }
 }
 
 function stub(id: SnapshotId, forecast: string, asOf: string): SnapshotFixture {

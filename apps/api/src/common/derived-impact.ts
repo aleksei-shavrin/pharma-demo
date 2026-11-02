@@ -34,7 +34,7 @@ export type DerivedImpact = {
     type: 'PrioritizeRecovery' | 'AcceptDateSlip';
     projectId: string;
     milestoneId: string | null;
-    ownerRole: string;
+    ownerPersonId: string;
     dueDate: string | null;
     note: string;
   } | null;
@@ -97,7 +97,7 @@ export function computeDerivedImpact(snapshot: SnapshotFixture): DerivedImpact {
           type: decision.type,
           projectId: decision.projectId,
           milestoneId: decision.milestoneId,
-          ownerRole: decision.ownerRole,
+          ownerPersonId: decision.ownerPersonId,
           dueDate: decision.dueDate,
           note: decision.note,
         }

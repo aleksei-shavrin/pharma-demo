@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DemoDataSource } from './demo-data-source';
+import type { PersonId } from '../contracts/person-id';
 import { isPopulatedSnapshotId } from '../snapshot/snapshot-id';
+import { DemoDataSource } from './demo-data-source';
 import {
   DEFAULT_SNAPSHOT_ID,
   SNAPSHOTS,
@@ -12,6 +13,15 @@ import {
   COST_SNAPSHOTS,
   type BuiltProjectCosts,
 } from './fixtures/build-costs';
+import {
+  leadPersonIdForWorkstream as leadFromCatalog,
+  leadWorkstreamIdsForPerson as leadsFromCatalog,
+  PERSON_BY_ID,
+  PERSON_CATALOG,
+  personFullNameRu as nameFromCatalog,
+  type PersonFixture,
+} from './fixtures/person-catalog';
+import type { WorkstreamId } from './workstream-ids';
 
 /** Deterministic in-memory adapter over DOC-PROD-012 / R2 fixtures. */
 @Injectable()
@@ -45,5 +55,25 @@ export class MockDemoDataSource extends DemoDataSource {
       throw new NotFoundException(`Unknown snapshot: ${snapshotId}`);
     }
     return COST_SNAPSHOTS[snapshotId];
+  }
+
+  listPeople(): readonly PersonFixture[] {
+    return PERSON_CATALOG;
+  }
+
+  getPerson(id: PersonId): PersonFixture | null {
+    return PERSON_BY_ID.get(id) ?? null;
+  }
+
+  personFullNameRu(id: PersonId): string {
+    return nameFromCatalog(id);
+  }
+
+  leadPersonIdForWorkstream(ws: WorkstreamId): PersonId {
+    return leadFromCatalog(ws);
+  }
+
+  leadWorkstreamIdsForPerson(id: PersonId): WorkstreamId[] {
+    return leadsFromCatalog(id);
   }
 }

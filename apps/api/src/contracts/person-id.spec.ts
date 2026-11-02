@@ -25,7 +25,7 @@ describe('R2-C1-R1 Person id contract', () => {
     expect(() => assertPersonId('PER-1')).toThrow(/PER-/);
   });
 
-  it('exposes single SH→PER cutover map (no permanent dual-read API)', () => {
+  it('exposes SH→PER migration map only (not semantic ownership of records)', () => {
     expect(mapShToPer('SH-DIR-01')).toBe('PER-01');
     expect(mapShToPer('SH-ENG-01')).toBe('PER-08');
     expect(mapShToPer('SH-UNKNOWN')).toBeUndefined();

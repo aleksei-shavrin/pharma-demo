@@ -41,8 +41,10 @@
 
 ## R2-P1 — People
 
-- [ ] PER-* catalog; SH→PER cutover
-- [ ] `/people`, `/people/:id`
+- [x] PER-* catalog; SH→PER cutover
+- [x] `/people`, `/people/:id`
+- [x] Workstream leads; Issue/Decision ownerPersonId; optional EQ responsible; integrity — human visual review pending; not human-approved yet
+- [x] R2-P1-R1: semantic ownership correction (WS-led Issue/Decision owners; RU-only roleTitleRu; SH_TO_PER = migration aid only) — awaiting human visual re-review; not human-approved yet
 
 ## R2-N1 — Notifications
 

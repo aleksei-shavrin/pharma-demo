@@ -1,10 +1,10 @@
+import Link from 'next/link';
 import type { DashboardOverview } from '@/lib/api-client';
 import { formatDateRu } from '@/lib/format/ru';
 import {
   presentDecisionNote,
   presentDecisionType,
   presentMilestoneName,
-  presentOwnerRole,
 } from '@/lib/ui-labels';
 import { ModuleSurface } from './module-surface';
 
@@ -72,7 +72,12 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
                   <div>
                     <dt className="inline">Владелец: </dt>
                     <dd className="inline text-[var(--text-secondary)]">
-                      {presentOwnerRole(decision.ownerRole)}
+                      <Link
+                        href={`/people/${encodeURIComponent(decision.ownerPersonId)}`}
+                        className="underline-offset-2 hover:underline"
+                      >
+                        {decision.ownerFullNameRu}
+                      </Link>
                     </dd>
                   </div>
                   <div>

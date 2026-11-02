@@ -1,3 +1,4 @@
+import type { PersonId } from '../../contracts/person-id';
 import type {
   PopulatedSnapshotId,
   SnapshotId,
@@ -40,6 +41,8 @@ export interface EquipmentFixture {
   forecastDelivery: string;
   status: EquipmentStatus;
   workstream: WorkstreamId;
+  /** Optional director-facing responsibility (R2-P1); not causal. */
+  responsiblePersonId?: PersonId | null;
 }
 
 export interface RiskFixture {
@@ -57,7 +60,8 @@ export interface IssueFixture {
   id: string;
   title: string;
   status: IssueStatus;
-  owner: string;
+  /** Person reference after R2-P1 SH→PER cutover. */
+  ownerPersonId: PersonId;
   equipmentId: string;
   /** null for approved non-milestone issues (e.g. ISS-UTL-02). */
   milestoneId: string | null;
@@ -69,7 +73,8 @@ export interface DecisionFixture {
   projectId: string;
   milestoneId: string | null;
   type: DecisionType;
-  ownerRole: string;
+  /** Person reference after R2-P1 SH→PER cutover. */
+  ownerPersonId: PersonId;
   dueDate: string | null;
   note: string;
 }

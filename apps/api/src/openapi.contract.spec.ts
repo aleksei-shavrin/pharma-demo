@@ -246,6 +246,24 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
       expect.arrayContaining(['A', 'S']),
     );
 
+    const peopleList = document.paths['/v1/projects/{id}/people']?.get;
+    expect(peopleList).toBeDefined();
+    const peopleListSchema = peopleList?.responses?.['200']?.content?.[
+      'application/json'
+    ]?.schema as JsonSchema | undefined;
+    expect(peopleListSchema).toEqual({
+      $ref: '#/components/schemas/PersonListDto',
+    });
+    const peopleDetail =
+      document.paths['/v1/projects/{id}/people/{personId}']?.get;
+    expect(peopleDetail).toBeDefined();
+    const peopleDetailSchema = peopleDetail?.responses?.['200']?.content?.[
+      'application/json'
+    ]?.schema as JsonSchema | undefined;
+    expect(peopleDetailSchema).toEqual({
+      $ref: '#/components/schemas/PersonDetailDto',
+    });
+
     for (const name of [
       'PersonDto',
       'PersonListDto',

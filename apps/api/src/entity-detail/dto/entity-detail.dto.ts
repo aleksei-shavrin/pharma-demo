@@ -77,7 +77,7 @@ export class EntityImpactDto {
     type: 'PrioritizeRecovery' | 'AcceptDateSlip';
     projectId: string;
     milestoneId: string | null;
-    ownerRole: string;
+    ownerPersonId: string;
     dueDate: string | null;
     note: string;
   } | null;
@@ -137,6 +137,19 @@ export class EquipmentOverviewDto {
 
   @ApiPropertyOptional()
   forecastCostRub?: number;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Optional responsible Person (PER-*)',
+    pattern: String.raw`^PER-\d{2,}$`,
+  })
+  responsiblePersonId?: string | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Director-facing responsible name when assigned',
+  })
+  responsibleFullNameRu?: string | null;
 }
 
 export class IssueOverviewDto {
@@ -153,10 +166,17 @@ export class IssueOverviewDto {
   workstream!: (typeof WORKSTREAM_IDS)[number];
 
   @ApiProperty({
-    description:
-      'OwnerRef metadata (SH-* until R2-P1 cutover to ownerPersonId PER-*)',
+    description: 'Person owner id (PER-*) after R2-P1 cutover',
+    pattern: String.raw`^PER-\d{2,}$`,
+    example: 'PER-02',
   })
-  owner!: string;
+  ownerPersonId!: string;
+
+  @ApiProperty({
+    description: 'Director-facing owner name from Person catalogue',
+    example: 'Морозова Елена Сергеевна',
+  })
+  ownerFullNameRu!: string;
 
   @ApiPropertyOptional()
   costImpactRub?: number;

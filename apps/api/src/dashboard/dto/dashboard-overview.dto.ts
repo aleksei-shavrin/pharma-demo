@@ -167,8 +167,17 @@ export class DashboardDecisionDto {
   @ApiProperty({ enum: ['PrioritizeRecovery', 'AcceptDateSlip'] })
   type!: 'PrioritizeRecovery' | 'AcceptDateSlip';
 
-  @ApiProperty()
-  ownerRole!: string;
+  @ApiProperty({
+    description: 'Person owner id (PER-*)',
+    pattern: String.raw`^PER-\d{2,}$`,
+    example: 'PER-01',
+  })
+  ownerPersonId!: string;
+
+  @ApiProperty({
+    description: 'Director-facing owner name from Person catalogue',
+  })
+  ownerFullNameRu!: string;
 
   @ApiPropertyOptional({ nullable: true, type: String })
   dueDate!: string | null;

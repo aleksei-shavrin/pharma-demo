@@ -123,9 +123,9 @@ Fictional RU names (not real persons/orgs).
 |----|----------------------------|------------|
 | PER-01 | Директор проекта | — |
 | PER-02 | Руководитель проекта (PM) | — |
-| PER-03 | Project Controls / планирование | — |
-| PER-04 | Закупки / Procurement | — |
-| PER-05 | Пусконаладка / готовность | — |
+| PER-03 | Планирование и контроль проекта | — |
+| PER-04 | Закупки | — |
+| PER-05 | Пусконаладка и готовность | — |
 | PER-06 | Ведущий WS-BLD | WS-BLD |
 | PER-07 | Ведущий WS-CLN | WS-CLN |
 | PER-08 | Ведущий WS-HVAC | WS-HVAC |
@@ -137,7 +137,7 @@ Fictional RU names (not real persons/orgs).
 | PER-14 | Ответственный QA проекта | WS-QC |
 | PER-15 | Заместитель по готовности | — |
 
-Exact `fullNameRu` strings assigned at fixture authoring (R2-P1); R2-D0 freezes **roles and PER-* namespace**.
+Exact `fullNameRu` strings authored in R2-P1 (`apps/api/src/data/fixtures/person-catalog.ts`); R2-D0 froze **roles and PER-* namespace**.
 
 ### `SH-*` to `PER-*` cutover
 
@@ -145,13 +145,14 @@ Exact `fullNameRu` strings assigned at fixture authoring (R2-P1); R2-D0 freezes 
 |--------|------------------------|
 | SH-DIR-01 | PER-01 |
 | SH-PM-01 | PER-02 |
-| SH-ENG-01 | PER-08 (HVAC engineering lead for spine) |
+| SH-ENG-01 | PER-08 (illustrative HVAC lead namespace; not bulk ownership of all former ENG records) |
 | SH-PKG-01 | PER-11 |
 | SH-QC-01 | PER-12 |
 
 > **certainty:** assumption
 >
-> Single cutover in R2-P1: Issue/Decision owner fields become `ownerPersonId` / `ownerPersonId`; no long dual-read. Presentation via Person RU name.
+> Single cutover in R2-P1: Issue/Decision owner fields become `ownerPersonId`; no long dual-read. Presentation via Person RU name.
+> `SH_TO_PER` is a legacy identity migration aid only. Authoritative Issue/Decision responsibility is fixture-authored in catalogues (story-driven; Workstream lead as default authoring rule — R2-P1-R1).
 
 ## 5. Issues / Risks / Decisions depth
 

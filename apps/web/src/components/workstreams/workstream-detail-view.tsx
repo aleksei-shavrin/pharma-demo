@@ -153,6 +153,17 @@ export function WorkstreamDetailView({ data }: { data: WorkstreamDetail }) {
             <h1 className="mt-1 text-xl font-semibold tracking-tight text-[var(--text)]">
               {title}
             </h1>
+            {data.workstream.leadPersonId && data.leadFullNameRu ? (
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                Руководитель направления:{' '}
+                <Link
+                  href={`/people/${encodeURIComponent(data.workstream.leadPersonId)}`}
+                  className="font-medium text-[var(--text)] underline-offset-2 hover:underline"
+                >
+                  {data.leadFullNameRu}
+                </Link>
+              </p>
+            ) : null}
           </div>
           <StatusPill family="project" value={data.rag} />
         </div>

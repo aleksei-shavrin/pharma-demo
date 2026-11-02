@@ -83,7 +83,8 @@ describe('EntityDetailService', () => {
       const d = service.getIssue('PRJ-01', 'ISS-001', 'C');
       expect(d.entity.status).toBe('Open');
       expect(d.entity.workstream).toBe('WS-HVAC');
-      expect(d.entity.owner).toBe('SH-PM-01');
+      expect(d.entity.ownerPersonId).toBe('PER-02');
+      expect(d.entity.ownerFullNameRu).toContain('Морозова');
       expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
       expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
       expect(linkIds(d.links, 'milestone')).toEqual(['MS-PS']);

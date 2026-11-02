@@ -105,7 +105,8 @@ export type DashboardOverview = {
     projectId: string;
     milestoneId: string | null;
     type: 'PrioritizeRecovery' | 'AcceptDateSlip';
-    ownerRole: string;
+    ownerPersonId: PersonId;
+    ownerFullNameRu: string;
     dueDate: string | null;
     note: string;
     approvedCostImpactRub?: number;
@@ -208,6 +209,27 @@ export function fetchWorkstreamDetail(
   const qs = new URLSearchParams({ snapshot });
   return getJson<WorkstreamDetail>(
     `/v1/projects/${encodeURIComponent(projectId)}/workstreams/${encodeURIComponent(workstreamId)}?${qs.toString()}`,
+  );
+}
+
+export function fetchPeopleList(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<PersonList> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<PersonList>(
+    `/v1/projects/${encodeURIComponent(projectId)}/people?${qs.toString()}`,
+  );
+}
+
+export function fetchPersonDetail(
+  projectId: string,
+  personId: string,
+  snapshot: SnapshotId,
+): Promise<PersonDetail> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<PersonDetail>(
+    `/v1/projects/${encodeURIComponent(projectId)}/people/${encodeURIComponent(personId)}?${qs.toString()}`,
   );
 }
 
@@ -343,7 +365,7 @@ export type EntityImpact = {
   decision: {
     id: string;
     type: 'PrioritizeRecovery' | 'AcceptDateSlip';
-    ownerRole: string;
+    ownerPersonId: PersonId;
     dueDate: string | null;
     note: string;
   } | null;
@@ -372,6 +394,8 @@ export type EquipmentDetail = DetailEnvelope<{
   committedCostRub?: number;
   actualCostRub?: number;
   forecastCostRub?: number;
+  responsiblePersonId?: PersonId | null;
+  responsibleFullNameRu?: string | null;
 }>;
 
 export type IssueDetail = DetailEnvelope<{
@@ -379,7 +403,8 @@ export type IssueDetail = DetailEnvelope<{
   title: string;
   status: 'Open' | 'Mitigating' | 'Closed';
   workstream: WorkstreamId;
-  owner: string;
+  ownerPersonId: PersonId;
+  ownerFullNameRu: string;
   costImpactRub?: number;
   costImpactBasis?: 'realized' | 'forecast';
 }>;
@@ -604,6 +629,7 @@ export type WorkstreamDetail = {
   scenarioAsOfDate: string;
   projectId: string;
   workstream: WorkstreamCatalogItem;
+  leadFullNameRu: string | null;
   rag: ProjectStatus;
   attention: WorkstreamAttention;
   equipmentIds: string[];

@@ -27,6 +27,16 @@ describe('WorkstreamsService (R2-W1)', () => {
     expect(list.scenarioAsOfDate).toBe(SNAPSHOTS.A.scenarioAsOfDate);
   });
 
+  it('assigns a resolving leadPersonId for every Workstream (R2-P1)', () => {
+    const list = service.list('PRJ-01', 'C');
+    expect(list.items.every((i) => i.leadPersonId?.startsWith('PER-'))).toBe(
+      true,
+    );
+    expect(list.items.find((i) => i.id === 'WS-HVAC')?.leadPersonId).toBe(
+      'PER-08',
+    );
+  });
+
   it('resolves detail for every Workstream on A', () => {
     for (const id of WORKSTREAM_IDS) {
       const d = service.getDetail('PRJ-01', id, 'A');

@@ -18,6 +18,7 @@ import {
   type RiskId,
 } from './catalog';
 import { addDays } from './dates';
+import { EQUIPMENT_RESPONSIBLE_PERSON } from './person-catalog';
 import { SNAPSHOT_STATES } from './snapshot-states';
 import type {
   DecisionFixture,
@@ -62,6 +63,7 @@ function buildEquipment(
       forecastDelivery,
       status,
       workstream: cat.workstream,
+      responsiblePersonId: EQUIPMENT_RESPONSIBLE_PERSON[id] ?? null,
     };
   });
 }
@@ -93,7 +95,7 @@ function buildIssues(snapshotId: PopulatedSnapshotId): IssueFixture[] {
       id,
       title: cat.title,
       status,
-      owner: cat.owner,
+      ownerPersonId: cat.ownerPersonId,
       equipmentId: cat.equipmentId,
       milestoneId: cat.milestoneId,
       workstream: cat.workstream,
@@ -139,7 +141,7 @@ function buildDecisions(snapshotId: PopulatedSnapshotId): DecisionFixture[] {
       projectId: cat.projectId,
       milestoneId: cat.milestoneId,
       type: cat.type,
-      ownerRole: cat.ownerRole,
+      ownerPersonId: cat.ownerPersonId,
       dueDate: cat.dueDate,
       note: cat.note,
     });

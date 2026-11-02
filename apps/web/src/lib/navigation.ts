@@ -4,6 +4,7 @@ import {
   CalendarRange,
   Flag,
   LayoutDashboard,
+  Users,
   Wrench,
 } from 'lucide-react';
 
@@ -14,7 +15,7 @@ export type NavItem = {
   crumb: string;
 };
 
-/** Approved IA (DOC-UX-002 / Implementation Plan I2) — exactly five sections. */
+/** Demo IA: Overview, Schedule, registers, People (R2-P1). No Workstreams top-level. */
 export const NAV_ITEMS: NavItem[] = [
   { href: '/', label: 'Обзор', icon: LayoutDashboard, crumb: 'Обзор' },
   {
@@ -41,6 +42,12 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Flag,
     crumb: 'Вехи',
   },
+  {
+    href: '/people',
+    label: 'Люди',
+    icon: Users,
+    crumb: 'Люди',
+  },
 ];
 
 export function crumbForPath(pathname: string): string {
@@ -57,6 +64,7 @@ export function crumbForPath(pathname: string): string {
   if (pathname.startsWith('/milestones')) return 'Вехи';
   if (pathname.startsWith('/schedule')) return 'График';
   if (pathname.startsWith('/workstreams')) return 'Направление';
+  if (pathname.startsWith('/people')) return 'Люди';
   return 'Обзор';
 }
 
@@ -70,7 +78,8 @@ export function entityIdFromPath(pathname: string): string | null {
       section === 'issues' ||
       section === 'risks' ||
       section === 'milestones' ||
-      section === 'workstreams') &&
+      section === 'workstreams' ||
+      section === 'people') &&
     id
   ) {
     return decodeURIComponent(id);

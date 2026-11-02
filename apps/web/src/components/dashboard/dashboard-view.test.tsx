@@ -305,9 +305,12 @@ describe('E3 Decisions', () => {
     cleanup();
     renderView('F');
     expect(
-      screen.getByText('Приоритизировать восстановление сроков'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Директор проекта')).toBeInTheDocument();
+      screen.getAllByText('Приоритизировать восстановление сроков').length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Соколов Андрей Викторович')).toBeInTheDocument();
+    // WFI recovery decision → UTL lead (not mechanical HVAC/SH-ENG).
+    expect(screen.getByText('Фёдоров Сергей Михайлович')).toBeInTheDocument();
+    expect(screen.queryByText('Смирнов Павел Андреевич')).not.toBeInTheDocument();
     expect(
       screen.getByText(/не означает автоматическое устранение/i),
     ).toBeInTheDocument();
@@ -322,8 +325,10 @@ describe('E3 Decisions', () => {
     cleanup();
     renderView('G');
     expect(screen.getByText('Принять сдвиг даты')).toBeInTheDocument();
-    expect(screen.getByText('Руководитель упаковки')).toBeInTheDocument();
-    expect(screen.getByText(/не задан/)).toBeInTheDocument();
+    expect(screen.getByText('Попов Алексей Дмитриевич')).toBeInTheDocument();
+    expect(screen.getByText('Фёдоров Сергей Михайлович')).toBeInTheDocument();
+    expect(screen.queryByText('Смирнов Павел Андреевич')).not.toBeInTheDocument();
+    expect(screen.getAllByText(/не задан/).length).toBeGreaterThanOrEqual(1);
   });
 });
 

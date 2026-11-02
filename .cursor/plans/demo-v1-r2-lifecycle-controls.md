@@ -10,7 +10,7 @@ updated: 2026-11-02
 > **Same Demo v1.** Not Demo v2. Not I9.
 > Baseline tags: `demo-v1.0.0`, `demo-v1-enrichment-baseline` (historical checkpoints).
 > Enrichment E1–E8 COMPLETE; OpenSpec `demo-v1-enrichment` archived `2026-11-02-demo-v1-enrichment` (specs synced).
-> **R2-D0 / C1 / L1(+R1) / M1(+R1) APPROVED.** **R2-W1** + **W1-R1** (presentation) + **W1-R2** (page scroll contract: fixed PageHeader + PageContent scroll; Schedule workspace exception) — awaiting final human scroll/visual review. Not human-approved yet. R2-P1 not started.
+> **R2-D0 / C1 / L1(+R1) / M1(+R1) / W1(+R1/R2) APPROVED** (checkpoint). **R2-P1 People** implemented (PER catalogue, SH→PER cutover, `/people`) — awaiting human visual review. R2-N1 not started.
 
 ## Normative docs
 

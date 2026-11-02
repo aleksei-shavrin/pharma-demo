@@ -150,6 +150,12 @@ export class WorkstreamDetailDto {
   @ApiProperty({ type: WorkstreamCatalogItemDto })
   workstream!: WorkstreamCatalogItemDto;
 
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Lead full name from Person catalogue (R2-P1)',
+  })
+  leadFullNameRu!: string | null;
+
   @ApiProperty({ enum: ['Green', 'Yellow', 'Red'] })
   rag!: 'Green' | 'Yellow' | 'Red';
 
