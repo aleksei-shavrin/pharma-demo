@@ -16,6 +16,11 @@ import {
 import { formatDateRu } from '@/lib/format/ru';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { entityTypeLabel } from '@/lib/ui-labels';
+import {
+  PageContent,
+  PageFrame,
+  PageHeader,
+} from '@/components/shell/page-frame';
 
 type TabId = 'overview' | 'links' | 'impact';
 
@@ -27,11 +32,13 @@ const TABS: { id: TabId; label: string }[] = [
 
 export function EntityDetailLoading() {
   return (
-    <div className="flex flex-1 flex-col p-6">
-      <p className="text-sm text-[var(--text-muted)]" role="status">
-        Загрузка…
-      </p>
-    </div>
+    <PageFrame className="p-6">
+      <PageContent mode="page">
+        <p className="text-sm text-[var(--text-muted)]" role="status">
+          Загрузка…
+        </p>
+      </PageContent>
+    </PageFrame>
   );
 }
 
@@ -43,24 +50,26 @@ export function EntityDetailError({
   onRetry: () => void;
 }) {
   return (
-    <div className="flex flex-1 flex-col p-6">
-    <div
-      role="alert"
-      className="rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] p-4"
-    >
-      <p className="text-sm text-[var(--text)]">
-        Не удалось загрузить карточку. Повторите попытку.
-      </p>
-      <p className="mt-1 text-xs text-[var(--text-muted)]">{message}</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mt-3 rounded-[var(--radius-sm)] border border-[var(--border)] px-3 py-1.5 text-sm text-[var(--text)] hover:bg-[var(--interactive)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-      >
-        Повторить
-      </button>
-    </div>
-    </div>
+    <PageFrame className="p-6">
+      <PageContent mode="page">
+        <div
+          role="alert"
+          className="rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] p-4"
+        >
+          <p className="text-sm text-[var(--text)]">
+            Не удалось загрузить карточку. Повторите попытку.
+          </p>
+          <p className="mt-1 text-xs text-[var(--text-muted)]">{message}</p>
+          <button
+            type="button"
+            onClick={onRetry}
+            className="mt-3 rounded-[var(--radius-sm)] border border-[var(--border)] px-3 py-1.5 text-sm text-[var(--text)] hover:bg-[var(--interactive)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+          >
+            Повторить
+          </button>
+        </div>
+      </PageContent>
+    </PageFrame>
   );
 }
 
@@ -77,23 +86,25 @@ export function EntityDetailAbsent({
   const cta = registerCtaLabel(entityType);
   const typeName = entityTypeLabel(entityType);
   return (
-    <div className="flex flex-1 flex-col p-6">
-      <div
-        role="status"
-        className="max-w-xl rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] p-6"
-      >
-        <h1 className="text-lg font-semibold text-[var(--text)]">{entityId}</h1>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">
-          {typeName} отсутствует в снимке {snapshot}.
-        </p>
-        <Link
-          href={href}
-          className="mt-4 inline-flex rounded-[var(--radius-sm)] border border-[var(--border)] px-3 py-1.5 text-sm font-medium text-[var(--text)] hover:bg-[var(--interactive)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+    <PageFrame className="p-6">
+      <PageContent mode="page">
+        <div
+          role="status"
+          className="max-w-xl rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] p-6"
         >
-          {cta}
-        </Link>
-      </div>
-    </div>
+          <h1 className="text-lg font-semibold text-[var(--text)]">{entityId}</h1>
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+            {typeName} отсутствует в снимке {snapshot}.
+          </p>
+          <Link
+            href={href}
+            className="mt-4 inline-flex rounded-[var(--radius-sm)] border border-[var(--border)] px-3 py-1.5 text-sm font-medium text-[var(--text)] hover:bg-[var(--interactive)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+          >
+            {cta}
+          </Link>
+        </div>
+      </PageContent>
+    </PageFrame>
   );
 }
 
@@ -122,8 +133,8 @@ export function EntityDetailShell({
   const [tab, setTab] = useState<TabId>('overview');
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-6">
-      <header className="space-y-2">
+    <PageFrame className="p-6">
+      <PageHeader className="space-y-2">
         <div className="space-y-0.5">
           <h1 className="text-xl font-semibold tracking-tight text-[var(--text)]">
             {title}
@@ -136,73 +147,74 @@ export function EntityDetailShell({
             Снимок {snapshot} · на {formatDateRu(asOf)}
           </span>
         </div>
-      </header>
+        <div
+          role="tablist"
+          aria-label="Разделы карточки"
+          className="flex gap-1 border-b border-[var(--border)]"
+        >
+          {TABS.map((t) => {
+            const selected = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                id={`${baseId}-${t.id}`}
+                aria-selected={selected}
+                aria-controls={`${baseId}-panel-${t.id}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setTab(t.id)}
+                onKeyDown={(e) => {
+                  const idx = TABS.findIndex((x) => x.id === t.id);
+                  if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    setTab(TABS[(idx + 1) % TABS.length].id);
+                  } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    setTab(TABS[(idx - 1 + TABS.length) % TABS.length].id);
+                  }
+                }}
+                className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)] ${
+                  selected
+                    ? 'border-[var(--text)] text-[var(--text)]'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                }`}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+      </PageHeader>
 
-      <div
-        role="tablist"
-        aria-label="Разделы карточки"
-        className="flex gap-1 border-b border-[var(--border)]"
-      >
-        {TABS.map((t) => {
-          const selected = tab === t.id;
-          return (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              id={`${baseId}-${t.id}`}
-              aria-selected={selected}
-              aria-controls={`${baseId}-panel-${t.id}`}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => setTab(t.id)}
-              onKeyDown={(e) => {
-                const idx = TABS.findIndex((x) => x.id === t.id);
-                if (e.key === 'ArrowRight') {
-                  e.preventDefault();
-                  setTab(TABS[(idx + 1) % TABS.length].id);
-                } else if (e.key === 'ArrowLeft') {
-                  e.preventDefault();
-                  setTab(TABS[(idx - 1 + TABS.length) % TABS.length].id);
-                }
-              }}
-              className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)] ${
-                selected
-                  ? 'border-[var(--text)] text-[var(--text)]'
-                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
-              }`}
-            >
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
-
-      <div
-        role="tabpanel"
-        id={`${baseId}-panel-overview`}
-        aria-labelledby={`${baseId}-overview`}
-        hidden={tab !== 'overview'}
-        className="space-y-3"
-      >
-        {tab === 'overview' ? overview : null}
-      </div>
-      <div
-        role="tabpanel"
-        id={`${baseId}-panel-links`}
-        aria-labelledby={`${baseId}-links`}
-        hidden={tab !== 'links'}
-      >
-        {tab === 'links' ? <DetailLinks links={links} /> : null}
-      </div>
-      <div
-        role="tabpanel"
-        id={`${baseId}-panel-impact`}
-        aria-labelledby={`${baseId}-impact`}
-        hidden={tab !== 'impact'}
-      >
-        {tab === 'impact' ? <DetailImpact impact={impact} /> : null}
-      </div>
-    </div>
+      <PageContent mode="page" className="mt-4">
+        <div
+          role="tabpanel"
+          id={`${baseId}-panel-overview`}
+          aria-labelledby={`${baseId}-overview`}
+          hidden={tab !== 'overview'}
+          className="space-y-3"
+        >
+          {tab === 'overview' ? overview : null}
+        </div>
+        <div
+          role="tabpanel"
+          id={`${baseId}-panel-links`}
+          aria-labelledby={`${baseId}-links`}
+          hidden={tab !== 'links'}
+        >
+          {tab === 'links' ? <DetailLinks links={links} /> : null}
+        </div>
+        <div
+          role="tabpanel"
+          id={`${baseId}-panel-impact`}
+          aria-labelledby={`${baseId}-impact`}
+          hidden={tab !== 'impact'}
+        >
+          {tab === 'impact' ? <DetailImpact impact={impact} /> : null}
+        </div>
+      </PageContent>
+    </PageFrame>
   );
 }
 

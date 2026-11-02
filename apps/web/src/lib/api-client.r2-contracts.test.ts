@@ -46,6 +46,7 @@ describe('FE R2-C1-R1 api-client contract types', () => {
           nameRu: 'HVAC',
           leadPersonId: lead,
           sortOrder: 3,
+          rag: 'Green',
         },
       ],
     };
@@ -53,13 +54,28 @@ describe('FE R2-C1-R1 api-client contract types', () => {
       snapshotId: 'C',
       scenarioAsOfDate: '2027-03-01',
       projectId: 'PRJ-01',
-      workstream: workstreams.items[0],
+      workstream: {
+        id: 'WS-HVAC',
+        nameRu: 'HVAC',
+        leadPersonId: lead,
+        sortOrder: 3,
+      },
       rag: 'Red',
+      attention: {
+        redRiskCount: 1,
+        delayedCriticalEquipmentCount: 1,
+        openOrMitigatingIssueCount: 1,
+      },
       equipmentIds: ['EQ-HVAC-01'],
       milestoneIds: [],
       issueIds: ['ISS-001'],
       riskIds: ['RISK-001'],
       decisionIds: [],
+      equipment: [],
+      milestones: [],
+      issues: [],
+      risks: [],
+      decisions: [],
       cost: null,
     };
     const people: PersonList = {
@@ -103,6 +119,10 @@ describe('FE R2-C1-R1 api-client contract types', () => {
       },
       workstreams: [],
       equipment: [],
+      reconciliation: {
+        workstreamEacSumRub: 5_850_000_000,
+        projectLevelForecastRub: DEMO_PROJECT_CONTINGENCY_TOTAL_RUB,
+      },
     };
     const notifications: NotificationList = {
       snapshotId: 'C',
@@ -110,6 +130,7 @@ describe('FE R2-C1-R1 api-client contract types', () => {
       projectId: 'PRJ-01',
       items: [],
     };
+    expect(workstreams.items).toHaveLength(1);
     expect(detail.workstream.leadPersonId).toBe('PER-08');
     expect(personDetail.leadWorkstreamIds).toEqual(['WS-HVAC']);
     expect(isPersonId(people.items[0].id)).toBe(true);

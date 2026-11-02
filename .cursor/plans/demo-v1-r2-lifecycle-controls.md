@@ -10,7 +10,7 @@ updated: 2026-11-02
 > **Same Demo v1.** Not Demo v2. Not I9.
 > Baseline tags: `demo-v1.0.0`, `demo-v1-enrichment-baseline` (historical checkpoints).
 > Enrichment E1–E8 COMPLETE; OpenSpec `demo-v1-enrichment` archived `2026-11-02-demo-v1-enrichment` (specs synced).
-> **R2-D0 / C1 / L1(+R1) / M1(+R1) APPROVED.** Next: **R2-W1** Workstream API + detail page.
+> **R2-D0 / C1 / L1(+R1) / M1(+R1) APPROVED.** **R2-W1** + **W1-R1** (presentation) + **W1-R2** (page scroll contract: fixed PageHeader + PageContent scroll; Schedule workspace exception) — awaiting final human scroll/visual review. Not human-approved yet. R2-P1 not started.
 
 ## Normative docs
 
@@ -46,7 +46,7 @@ updated: 2026-11-02
 | **R2-C1** | Contracts/DTOs A–S, WS, Person, Cost ints, Notif | api+web types |
 | **R2-L1** | Catalogues + I–S fixtures (schedule entities) | fixtures |
 | **R2-M1** | Cost model + invariants + `/costs` API | money |
-| **R2-W1** | Workstream API + page | workstream ← **next** |
+| **R2-W1** | Workstream API + page | workstream ← **current** |
 | **R2-P1** | People + SH→PER cutover | people |
 | **R2-N1** | Notifications + AppBar | notifications |
 | **R2-U1** | Dashboard IA + selector phases + horizon | dashboard |

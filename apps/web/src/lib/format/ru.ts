@@ -24,3 +24,12 @@ export function formatDeltaDays(deltaDays: number): string {
   const n = Math.abs(deltaDays);
   return `${sign}${n} ${daysWord(n)}`;
 }
+
+/** Integer RUB for director tables, e.g. «6 200 000 000 ₽». */
+export function formatRubRu(value: number): string {
+  if (!Number.isInteger(value)) return String(value);
+  const sign = value < 0 ? '−' : '';
+  const abs = Math.abs(value);
+  const grouped = String(abs).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return `${sign}${grouped} ₽`;
+}

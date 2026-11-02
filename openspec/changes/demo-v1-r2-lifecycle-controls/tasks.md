@@ -34,8 +34,10 @@
 
 ## R2-W1 — Workstream
 
-- [ ] Workstream catalog + detail API
-- [ ] `/workstreams/:id` page; Dashboard links
+- [x] Workstream catalog + detail API
+- [x] `/workstreams/:id` page; Dashboard links
+- [x] R2-W1-R1: Workstream Detail visual correction (preview sections, RU summary/contingency, compact cost, no duplicate title) — final human screenshot review pending; not marked human-approved yet
+- [x] R2-W1-R2: Page scroll ownership — PageFrame/PageHeader/PageContent (`page` vs `workspace`); Workstream scrolls in PageContent; Schedule keeps internal board scroll; root cause was `overflow-hidden` shell without page scroll owner; awaiting human scroll review; not human-approved yet
 
 ## R2-P1 — People
 

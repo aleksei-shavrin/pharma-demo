@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { DashboardOverview, ProjectStatus, WorkstreamId } from '@/lib/api-client';
 import {
   WORKSTREAM_DISPLAY_ORDER,
@@ -59,23 +60,25 @@ export function WorkstreamStatusMatrix({
 
       <ul className="mt-2 grid grid-cols-2 gap-1.5">
         {rows.map((row) => (
-          <li
-            key={row.workstream}
-            className={`rounded-[var(--radius-sm)] px-2.5 py-2 ${cellTint(row.status)}`}
-            data-workstream={row.workstream}
-            data-workstream-status={row.status}
-          >
-            <p className="truncate text-sm font-medium leading-snug text-[var(--text)]">
-              {presentWorkstream(row.workstream as WorkstreamId)}
-            </p>
-            <p
-              className={`mt-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide ${markerClass(row.status)}`}
+          <li key={row.workstream} className="min-w-0">
+            <Link
+              href={`/workstreams/${encodeURIComponent(row.workstream)}`}
+              className={`block rounded-[var(--radius-sm)] px-2.5 py-2 ${cellTint(row.status)} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]`}
+              data-workstream={row.workstream}
+              data-workstream-status={row.status}
             >
-              <span aria-hidden className="text-sm leading-none">
-                {marker(row.status)}
-              </span>
-              {statusWord(row.status)}
-            </p>
+              <p className="truncate text-sm font-medium leading-snug text-[var(--text)]">
+                {presentWorkstream(row.workstream as WorkstreamId)}
+              </p>
+              <p
+                className={`mt-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide ${markerClass(row.status)}`}
+              >
+                <span aria-hidden className="text-sm leading-none">
+                  {marker(row.status)}
+                </span>
+                {statusWord(row.status)}
+              </p>
+            </Link>
           </li>
         ))}
       </ul>

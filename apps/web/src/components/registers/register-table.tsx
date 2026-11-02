@@ -1,5 +1,10 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import {
+  PageContent,
+  PageFrame,
+  PageHeader,
+} from '@/components/shell/page-frame';
 
 export function RegisterTable({
   caption,
@@ -129,8 +134,8 @@ export function RegisterShell({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-6">
-      <header className="shrink-0 space-y-1">
+    <PageFrame className="gap-4 p-6">
+      <PageHeader className="space-y-1">
         <h1 className="text-xl font-semibold tracking-tight text-[var(--text)]">
           {title}
         </h1>
@@ -139,9 +144,12 @@ export function RegisterShell({
           снимок{' '}
           <span className="font-semibold text-[var(--text)]">{snapshot}</span>
         </p>
-      </header>
-      {children}
-    </div>
+      </PageHeader>
+      {/* Workspace: Schedule / registers own internal scroll; no page-level scroll. */}
+      <PageContent mode="workspace" className="gap-4">
+        {children}
+      </PageContent>
+    </PageFrame>
   );
 }
 

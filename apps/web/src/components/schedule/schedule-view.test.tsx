@@ -172,6 +172,16 @@ describe('E5 Schedule control board', () => {
     expect(
       document.querySelector('[data-schedule-bounded="true"]'),
     ).toBeTruthy();
+    // R2-W1-R2: Schedule stays in workspace mode — no page-level scroll owner.
+    const pageContent = document.querySelector('[data-page-content="true"]');
+    expect(pageContent?.getAttribute('data-page-scroll-mode')).toBe(
+      'workspace',
+    );
+    expect(pageContent?.className).toMatch(/overflow-hidden/);
+    expect(pageContent?.className).not.toMatch(/overflow-y-auto/);
+    expect(
+      document.querySelector('[data-schedule-viewport="true"]')?.className,
+    ).toMatch(/overflow-auto/);
     expect(
       document.querySelectorAll('[data-schedule-row]').length,
     ).toBe(37);

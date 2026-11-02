@@ -190,6 +190,27 @@ export function fetchDashboardOverview(
   );
 }
 
+export function fetchWorkstreamList(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<WorkstreamList> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<WorkstreamList>(
+    `/v1/projects/${encodeURIComponent(projectId)}/workstreams?${qs.toString()}`,
+  );
+}
+
+export function fetchWorkstreamDetail(
+  projectId: string,
+  workstreamId: string,
+  snapshot: SnapshotId,
+): Promise<WorkstreamDetail> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<WorkstreamDetail>(
+    `/v1/projects/${encodeURIComponent(projectId)}/workstreams/${encodeURIComponent(workstreamId)}?${qs.toString()}`,
+  );
+}
+
 export function projectStubFromDashboard(
   dashboard: DashboardOverview,
 ): ProjectStub {
@@ -516,11 +537,15 @@ export type WorkstreamCatalogItem = {
   sortOrder: number;
 };
 
+export type WorkstreamListItem = WorkstreamCatalogItem & {
+  rag: ProjectStatus;
+};
+
 export type WorkstreamList = {
   snapshotId: SnapshotId;
   scenarioAsOfDate: string;
   projectId: string;
-  items: WorkstreamCatalogItem[];
+  items: WorkstreamListItem[];
 };
 
 export type ProjectCost = {
@@ -568,17 +593,56 @@ export type ProjectCostsOverview = {
   reconciliation: CostReconciliation;
 };
 
+export type WorkstreamAttention = {
+  redRiskCount: number;
+  delayedCriticalEquipmentCount: number;
+  openOrMitigatingIssueCount: number;
+};
+
 export type WorkstreamDetail = {
   snapshotId: SnapshotId;
   scenarioAsOfDate: string;
   projectId: string;
   workstream: WorkstreamCatalogItem;
   rag: ProjectStatus;
+  attention: WorkstreamAttention;
   equipmentIds: string[];
   milestoneIds: string[];
   issueIds: string[];
   riskIds: string[];
   decisionIds: string[];
+  equipment: {
+    id: string;
+    name: string;
+    critical: boolean;
+    status: 'OnTrack' | 'Delayed';
+    baselineDelivery: string;
+    forecastDelivery: string;
+  }[];
+  milestones: {
+    id: string;
+    name: string;
+    rag: 'Green' | 'Red';
+    baselineDate: string;
+    forecastDate: string;
+  }[];
+  issues: {
+    id: string;
+    title: string;
+    status: 'Open' | 'Mitigating' | 'Closed';
+  }[];
+  risks: {
+    id: string;
+    title: string;
+    rag: 'Green' | 'Red';
+  }[];
+  decisions: {
+    id: string;
+    type: 'PrioritizeRecovery' | 'AcceptDateSlip';
+    note: string;
+    dueDate: string | null;
+    milestoneId: string | null;
+  }[];
   cost: WorkstreamCost | null;
 };
 

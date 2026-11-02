@@ -218,6 +218,34 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     );
     expect(costsSnap?.schema?.default).toBe('A');
 
+    const wsList = document.paths['/v1/projects/{id}/workstreams']?.get;
+    expect(wsList).toBeDefined();
+    const wsListSchema = wsList?.responses?.['200']?.content?.[
+      'application/json'
+    ]?.schema as JsonSchema | undefined;
+    expect(wsListSchema).toEqual({
+      $ref: '#/components/schemas/WorkstreamListDto',
+    });
+    const wsDetail =
+      document.paths['/v1/projects/{id}/workstreams/{workstreamId}']?.get;
+    expect(wsDetail).toBeDefined();
+    const wsDetailSchema = wsDetail?.responses?.['200']?.content?.[
+      'application/json'
+    ]?.schema as JsonSchema | undefined;
+    expect(wsDetailSchema).toEqual({
+      $ref: '#/components/schemas/WorkstreamDetailDto',
+    });
+    const wsSnap = (wsDetail?.parameters ?? []).find(
+      (p): p is OpenApiParam =>
+        typeof p === 'object' &&
+        p !== null &&
+        'name' in p &&
+        p.name === 'snapshot',
+    );
+    expect(wsSnap?.schema?.enum).toEqual(
+      expect.arrayContaining(['A', 'S']),
+    );
+
     for (const name of [
       'PersonDto',
       'PersonListDto',

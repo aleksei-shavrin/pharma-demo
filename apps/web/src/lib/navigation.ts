@@ -56,6 +56,7 @@ export function crumbForPath(pathname: string): string {
   }
   if (pathname.startsWith('/milestones')) return 'Вехи';
   if (pathname.startsWith('/schedule')) return 'График';
+  if (pathname.startsWith('/workstreams')) return 'Направление';
   return 'Обзор';
 }
 
@@ -68,7 +69,8 @@ export function entityIdFromPath(pathname: string): string | null {
     (section === 'equipment' ||
       section === 'issues' ||
       section === 'risks' ||
-      section === 'milestones') &&
+      section === 'milestones' ||
+      section === 'workstreams') &&
     id
   ) {
     return decodeURIComponent(id);
