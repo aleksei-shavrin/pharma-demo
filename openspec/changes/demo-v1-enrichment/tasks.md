@@ -1,6 +1,6 @@
 # Tasks
 
-> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. **E3 APPROVED** (2026-11-02, after E3-R5). Namespace **E1…E8** (not I9). Next: E4.
+> R1 design APPROVED. E1 + E1-R1 APPROVED. E2 + E2-R1 APPROVED. **E3 APPROVED** (2026-11-02, after E3-R5). **E4 APPROVED** (2026-11-02). Namespace **E1…E8** (not I9). Next: E5.
 
 ## E1 — Contracts
 
@@ -33,9 +33,13 @@
 - Status: **E3 — APPROVED** (human visual: A/B/C Light + C Dark). Tooltip/popover accepted on implementation/test evidence; dedicated overlay screenshots were not an E3 release blocker.
 
 
-## E4 — Registers — PENDING / NOT STARTED
+## E4 — Registers — APPROVED
 
-- [ ] Search/filter/sort/counts incl. Closed; no pagination
+- [x] Dense Equipment / Issues & Risks / Milestones with search, attention, workstream, counts
+- [x] Issues & Risks: single typed table (BA-OQ-006); Closed; Issue→Milestone; RISK-COM-01 without Issue
+- [x] Additive register DTO fields (workstream / links / related active Issue & Red Risk)
+- [x] Human visual review — APPROVED (2026-11-02): Equipment A/C Light + C Dark; Issues & Risks C; Milestones C Light/Dark. No E4-R1.
+- Status: **E4 — APPROVED**
 
 ## E5 — Schedule — PENDING / NOT STARTED
 

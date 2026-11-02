@@ -37,4 +37,7 @@ Desktop.ini
 openspec/.openspec-cache/
 openspec/**/.tmp/
 
+# Repo-root scratch only (AI/review diffs, screenshots) — not OS /tmp
+/tmp/
+
 # Do NOT ignore .cursor/plans/

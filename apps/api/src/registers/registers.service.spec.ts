@@ -1,6 +1,11 @@
 import { NotFoundException } from '@nestjs/common';
 import { DemoDataSource } from '../data/demo-data-source';
-import { SNAPSHOT_A, SNAPSHOT_B, SNAPSHOT_C } from '../data/fixtures';
+import {
+  SNAPSHOT_A,
+  SNAPSHOT_B,
+  SNAPSHOT_C,
+  SNAPSHOT_E,
+} from '../data/fixtures';
 import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import { RegistersService } from './registers.service';
@@ -56,21 +61,25 @@ describe('RegistersService', () => {
       expect(pkg?.deliveryVariance.deltaDays).toBe(10);
     });
 
-    it('C: HVAC Delayed +21', () => {
+    it('C: HVAC Delayed +21 with related active Issue/Risk', () => {
       const r = service.listEquipment('PRJ-01', 'C');
       const hvac = r.items.find((i) => i.id === 'EQ-HVAC-01');
       expect(hvac?.status).toBe('Delayed');
       expect(hvac?.deliveryVariance.deltaDays).toBe(21);
+      expect(hvac?.relatedActiveIssueIds).toContain('ISS-001');
+      expect(hvac?.relatedRedRiskIds).toContain('RISK-001');
     });
   });
 
   describe('issues-risks', () => {
-    it('A: Risk only', () => {
+    it('A: Risk only; RISK-COM-01 may omit Issue', () => {
       const r = service.listIssuesRisks('PRJ-01', 'A');
       expect(r.rows.filter((x) => x.type === 'Issue')).toHaveLength(0);
-      expect(r.rows.some((x) => x.type === 'Risk' && x.id === 'RISK-001')).toBe(
-        true,
+      const risk001 = r.rows.find(
+        (x) => x.type === 'Risk' && x.id === 'RISK-001',
       );
+      expect(risk001?.workstream).toBeTruthy();
+      expect(risk001?.rag).toBe('Green');
     });
 
     it('B: Open PKG/BLD issues; no ISS-001; RISK Green', () => {
@@ -91,28 +100,45 @@ describe('RegistersService', () => {
       ).toBe(true);
     });
 
-    it('C: Issue Open + Risk Red', () => {
+    it('C: Issue Open + Risk Red with BA-015 links', () => {
       const r = service.listIssuesRisks('PRJ-01', 'C');
-      expect(
-        r.rows.some(
-          (x) =>
-            x.type === 'Issue' &&
-            x.id === 'ISS-001' &&
-            x.issueStatus === 'Open',
-        ),
-      ).toBe(true);
-      expect(
-        r.rows.some((x) => x.type === 'Risk' && x.rag === 'Red'),
-      ).toBe(true);
+      const iss = r.rows.find((x) => x.type === 'Issue' && x.id === 'ISS-001');
+      expect(iss?.issueStatus).toBe('Open');
+      expect(iss?.equipmentId).toBe('EQ-HVAC-01');
+      expect(iss?.milestoneId).toBe('MS-PS');
+      expect(iss?.linkedRiskId).toBe('RISK-001');
+      expect(iss?.workstream).toBe('WS-HVAC');
+      const risk = r.rows.find((x) => x.type === 'Risk' && x.id === 'RISK-001');
+      expect(risk?.rag).toBe('Red');
+      expect(risk?.linkedIssueId).toBe('ISS-001');
+      expect(risk?.milestoneId).toBe('MS-PS');
+    });
+
+    it('E: RISK-COM-01 Red without Issue is allowed', () => {
+      const svc = new RegistersService(
+        new FakeDataSource({
+          A: SNAPSHOT_A,
+          B: SNAPSHOT_B,
+          C: SNAPSHOT_C,
+          E: SNAPSHOT_E,
+        }),
+      );
+      const r = svc.listIssuesRisks('PRJ-01', 'E');
+      const com = r.rows.find((x) => x.id === 'RISK-COM-01');
+      expect(com?.type).toBe('Risk');
+      expect(com?.rag).toBe('Red');
+      expect(com?.linkedIssueId).toBeNull();
     });
   });
 
   describe('milestones', () => {
-    it('A: Green MS-PS', () => {
+    it('A: Green MS-PS; workstream null', () => {
       const r = service.listMilestones('PRJ-01', 'A');
       const ms = r.items.find((i) => i.id === 'MS-PS');
       expect(ms?.rag).toBe('Green');
       expect(ms?.dateVariance.deltaDays).toBe(0);
+      expect(ms?.workstream).toBeNull();
+      expect(r.items).toHaveLength(14);
     });
 
     it('B: MS-PS still Green', () => {
@@ -122,11 +148,13 @@ describe('RegistersService', () => {
       expect(ms?.dateVariance.deltaDays).toBe(0);
     });
 
-    it('C: Red +21 on MS-PS', () => {
+    it('C: Red +21 on MS-PS with related RISK-001', () => {
       const r = service.listMilestones('PRJ-01', 'C');
       const ms = r.items.find((i) => i.id === 'MS-PS');
       expect(ms?.rag).toBe('Red');
       expect(ms?.dateVariance.deltaDays).toBe(21);
+      expect(ms?.relatedRedRiskIds).toContain('RISK-001');
+      expect(ms?.relatedActiveIssueIds).toContain('ISS-001');
     });
   });
 

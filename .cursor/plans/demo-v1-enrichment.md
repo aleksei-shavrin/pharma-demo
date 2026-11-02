@@ -13,7 +13,8 @@ updated: 2026-11-02
 > **E1 + E1-R1 APPROVED** (2026-11-01) — contracts/read models established.
 > **E2 + E2-R1 APPROVED** (full A–H fixtures + integrity).
 > **E3 — APPROVED** (2026-11-02) after E3-R5 human visual review (A/B/C Light + C Dark).
-> **E4 — PENDING / NOT STARTED.** **E5–E8 pending.**
+> **E4 — APPROVED** (2026-11-02) after human visual review (Equipment A/C Light + C Dark; Issues & Risks C; Milestones C Light/Dark).
+> **E5 — PENDING / NOT STARTED.** **E6–E8 pending.**
 
 ## Context
 
@@ -32,6 +33,7 @@ updated: 2026-11-02
 - Dev: `docker-compose.dev.yml` + `npm run dev` / `dev:down`
 - Prod-like: `docker compose --profile app`
 - **Nest `deleteOutDir: false`:** required with named volume `ppc_dev_api_dist` mounted at `/app/dist` (mount point cannot be `rmdir`'d; Nest `deleteOutDir:true` → EBUSY). Documented on the compose volume comment. Not a product/API semantics change.
+- **`/tmp/`** (repo root): ignored project-local scratch for AI/review artifacts (diffs, screenshots). Not source of truth; not required for build/test/runtime.
 
 ## Design artifacts
 
@@ -72,9 +74,13 @@ updated: 2026-11-02
 - Fixed-geometry timeline; baseline → variance → forecast; backend-owned statuses/rollups/exception order
 - E3 visual acceptance completed for A/B/C Light and C Dark. Timeline tooltip/popover interaction is accepted on implementation/test evidence; dedicated overlay screenshots were not required as an E3 release blocker.
 
-### E4 — Registers — **PENDING / NOT STARTED**
+### E4 — Registers — **APPROVED** (after human visual review)
 
-- Search/filter/sort/counts incl. Closed; no pagination
+- Dense Equipment / Issues & Risks / Milestones registers with PageSurface
+- Client-side search + attention + workstream (+ type for Issues & Risks); compact counters; no pagination
+- Additive register read-model fields: workstream, BA-015 link ids, related active Issue / Red Risk indicators
+- Single Issues & Risks table + Тип (BA-OQ-006); Closed visible but not active attention
+- Human visual: Equipment A/C Light + C Dark; Issues & Risks C Light (+ Risks filter); Milestones C Light/Dark — **APPROVED** (2026-11-02). No E4-R1.
 
 ### E5 — Schedule — **PENDING / NOT STARTED**
 

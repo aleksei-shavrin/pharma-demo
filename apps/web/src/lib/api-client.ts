@@ -210,11 +210,13 @@ export type EquipmentRegister = {
     id: string;
     name: string;
     critical: boolean;
-    workstream: string;
+    workstream: WorkstreamId;
     status: 'OnTrack' | 'Delayed';
     baselineDelivery: string;
     forecastDelivery: string;
     deliveryVariance: RegisterVariance;
+    relatedActiveIssueIds: string[];
+    relatedRedRiskIds: string[];
   }[];
 };
 
@@ -226,8 +228,13 @@ export type IssuesRisksRegister = {
     type: 'Issue' | 'Risk';
     id: string;
     title: string;
+    workstream: WorkstreamId;
     issueStatus: 'Open' | 'Mitigating' | 'Closed' | null;
     rag: 'Green' | 'Red' | null;
+    equipmentId: string | null;
+    linkedIssueId: string | null;
+    linkedRiskId: string | null;
+    milestoneId: string | null;
   }[];
 };
 
@@ -238,10 +245,13 @@ export type MilestonesRegister = {
   items: {
     id: string;
     name: string;
+    workstream: WorkstreamId | null;
     rag: 'Green' | 'Red';
     baselineDate: string;
     forecastDate: string;
     dateVariance: RegisterVariance;
+    relatedActiveIssueIds: string[];
+    relatedRedRiskIds: string[];
   }[];
 };
 

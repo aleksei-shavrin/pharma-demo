@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { SNAPSHOT_IDS, type SnapshotId } from '../../snapshot/snapshot-id';
+import { WORKSTREAM_IDS } from '../../data/workstream-ids';
 
 export class RegisterVarianceDto {
   @ApiProperty({ description: 'forecast − baseline in calendar days' })
@@ -22,18 +23,7 @@ export class EquipmentRegisterItemDto {
   @ApiProperty()
   critical!: boolean;
 
-  @ApiProperty({
-    enum: [
-      'WS-BLD',
-      'WS-CLN',
-      'WS-HVAC',
-      'WS-UTL',
-      'WS-PRD',
-      'WS-PKG',
-      'WS-QC',
-      'WS-AUT',
-    ],
-  })
+  @ApiProperty({ enum: WORKSTREAM_IDS })
   workstream!: string;
 
   @ApiProperty({ enum: ['OnTrack', 'Delayed'] })
@@ -47,6 +37,14 @@ export class EquipmentRegisterItemDto {
 
   @ApiProperty({ type: RegisterVarianceDto })
   deliveryVariance!: RegisterVarianceDto;
+
+  /** Active (Open|Mitigating) Issues linked to this equipment — backend-authored. */
+  @ApiProperty({ type: [String] })
+  relatedActiveIssueIds!: string[];
+
+  /** Red Risks linked to this equipment — backend-authored. */
+  @ApiProperty({ type: [String] })
+  relatedRedRiskIds!: string[];
 }
 
 export class EquipmentRegisterDto {
@@ -80,6 +78,9 @@ export class IssuesRisksRowDto {
   })
   title!: string;
 
+  @ApiProperty({ enum: WORKSTREAM_IDS })
+  workstream!: string;
+
   @ApiPropertyOptional({
     enum: ['Open', 'Mitigating', 'Closed'],
     nullable: true,
@@ -93,6 +94,32 @@ export class IssuesRisksRowDto {
     description: 'Risk RAG only; null for Issue rows',
   })
   rag!: 'Green' | 'Red' | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Linked Equipment id when present on the fixture',
+  })
+  equipmentId!: string | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description:
+      'Issue→Risk via Risk.issueId reverse link; Risk→Issue via Risk.issueId',
+  })
+  linkedIssueId!: string | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description:
+      'Issue→Risk via Risk.issueId reverse link; null when Risk has no Issue (e.g. RISK-COM-01)',
+  })
+  linkedRiskId!: string | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Direct Issue→Milestone or Risk→Milestone when present',
+  })
+  milestoneId!: string | null;
 }
 
 export class IssuesRisksRegisterDto {
@@ -118,6 +145,13 @@ export class MilestoneRegisterItemDto {
   })
   name!: string;
 
+  @ApiProperty({
+    enum: WORKSTREAM_IDS,
+    nullable: true,
+    description: 'null for project-level MS-PS (no fake workstream)',
+  })
+  workstream!: string | null;
+
   @ApiProperty({ enum: ['Green', 'Red'] })
   rag!: 'Green' | 'Red';
 
@@ -129,6 +163,14 @@ export class MilestoneRegisterItemDto {
 
   @ApiProperty({ type: RegisterVarianceDto })
   dateVariance!: RegisterVarianceDto;
+
+  /** Active Issues with direct Issue→Milestone — backend-authored. */
+  @ApiProperty({ type: [String] })
+  relatedActiveIssueIds!: string[];
+
+  /** Red Risks with Risk→Milestone — backend-authored. */
+  @ApiProperty({ type: [String] })
+  relatedRedRiskIds!: string[];
 }
 
 export class MilestonesRegisterDto {
