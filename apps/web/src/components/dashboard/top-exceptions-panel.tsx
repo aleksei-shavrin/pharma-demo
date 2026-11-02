@@ -35,8 +35,52 @@ function resolveLinkLabel(
   };
 }
 
+/** Compact causal chain only from authored links order — no inferred edges. */
+function CausalFragment({
+  links,
+  data,
+}: {
+  links: ExceptionLink[];
+  data: DashboardOverview;
+}) {
+  if (links.length < 2) return null;
+  const types = new Set(links.map((l) => l.type));
+  const hasSpineShape =
+    types.has('equipment') &&
+    types.has('issue') &&
+    types.has('risk') &&
+    types.has('milestone');
+  if (!hasSpineShape) return null;
+
+  return (
+    <ol
+      className="mt-1.5 flex flex-wrap items-center gap-x-1 gap-y-1 text-xs text-[var(--text-secondary)]"
+      data-exception-causal="authored"
+    >
+      {links.map((link, i) => {
+        const label = resolveLinkLabel(link, data);
+        return (
+          <li key={`${link.type}:${link.id}`} className="inline-flex items-center gap-1">
+            {i > 0 ? (
+              <span className="text-[var(--text-muted)]" aria-hidden>
+                →
+              </span>
+            ) : null}
+            <Link
+              href={entityDetailHref(link.type, link.id)}
+              className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+            >
+              {label.primary}
+            </Link>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 /**
- * Curated Top Exceptions — backend order by `priority` as given.
+ * Curated Top Exceptions — backend array order.
  * FE must not re-score or re-sort.
  */
 export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
@@ -45,7 +89,7 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
   return (
     <section
       aria-labelledby="top-exceptions-heading"
-      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] p-4 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-3 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
       data-dashboard-block="top-exceptions"
     >
       <h2
@@ -63,27 +107,30 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
           На текущую дату критических исключений нет — спокойный базовый план.
         </p>
       ) : (
-        <ol className="mt-3 divide-y divide-[var(--border-subtle)]" data-top-exceptions="list">
+        <ol className="mt-2 divide-y divide-[var(--border-subtle)]" data-top-exceptions="list">
           {items.map((ex, index) => (
             <li
               key={ex.id}
-              className="flex gap-3 py-3 first:pt-0 last:pb-0"
+              className="flex gap-3 py-3 first:pt-1 last:pb-0"
               data-exception-id={ex.id}
               data-exception-order={index + 1}
             >
               <span
-                className="mt-0.5 flex size-5 shrink-0 items-center justify-center text-xs font-semibold tabular-nums text-[var(--text-muted)]"
+                className="mt-0.5 flex size-6 shrink-0 items-center justify-center text-sm font-semibold tabular-nums text-[var(--text-muted)]"
                 aria-hidden
               >
-                {index + 1}
+                {String(index + 1).padStart(2, '0')}
               </span>
               <div className="min-w-0 space-y-1">
-                <p className="text-[15px] font-medium leading-snug text-[var(--text)]">
+                <p className="text-[15px] font-semibold leading-snug text-[var(--text)]">
                   {ex.title}
                 </p>
-                <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
+                <p className="text-sm font-medium leading-relaxed text-[var(--text-secondary)]">
                   {ex.causeImpact}
                 </p>
+                {index === 0 ? (
+                  <CausalFragment links={ex.links} data={data} />
+                ) : null}
                 {ex.links.length > 0 ? (
                   <ul className="flex flex-wrap gap-x-3 gap-y-0.5 pt-0.5 text-xs">
                     {ex.links.map((link) => {

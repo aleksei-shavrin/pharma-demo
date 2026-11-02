@@ -310,10 +310,12 @@ describe('E3 Decisions', () => {
   });
 });
 
-describe('E3 Management Attention', () => {
+describe('E3-R2 Management Attention (in Summary)', () => {
   it('Closed alone does not create active issue attention on calm path; C counts Open', () => {
     renderView('A');
-    expect(screen.getByText(/Активных сигналов внимания нет/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Нет активных управленческих сигналов/i),
+    ).toBeInTheDocument();
 
     cleanup();
     renderView('C');
@@ -321,6 +323,59 @@ describe('E3 Management Attention', () => {
     expect(issues).toHaveAttribute('data-attention-count', '1');
     const risks = document.querySelector('[data-attention="risks"]');
     expect(risks).toHaveAttribute('data-attention-count', '1');
+  });
+});
+
+describe('E3-R2 Executive Timeline', () => {
+  it('renders fixed subset with WFI, excludes AUT-BMS; asOf + PS bands', () => {
+    renderView('A');
+    const strip = document.querySelector(
+      '[data-dashboard-block="executive-timeline"]',
+    ) as HTMLElement;
+    expect(strip).toBeTruthy();
+    expect(strip.querySelector('[data-snapshot-label]')).toBeTruthy();
+    expect(strip.querySelector('[data-snapshot-marker]')).toBeTruthy();
+    expect(strip.querySelector('[data-milestone-label="MS-UTL-WFI"]')).toBeTruthy();
+
+    expect(strip.querySelector('[data-milestone-label="MS-PS"]')).toBeTruthy();
+    expect(
+      strip.querySelector('[data-milestone-label="MS-AUT-BMS"]'),
+    ).toBeNull();
+    expect(strip.querySelector('[data-ps-delta-label]')).toHaveTextContent(
+      /по плану/i,
+    );
+    expect(strip.querySelector('[data-ps-variance-span]')).toBeNull();
+
+    cleanup();
+    renderView('C');
+    const stripC = document.querySelector(
+      '[data-dashboard-block="executive-timeline"]',
+    ) as HTMLElement;
+    expect(stripC.querySelector('[data-ps-variance-span]')).toBeTruthy();
+    expect(stripC.querySelector('[data-ps-delta-label]')).toHaveTextContent(
+      /\+21/,
+    );
+    expect(
+      stripC.querySelector('[data-milestone-marker="MS-BLD-ENCL"]'),
+    ).toHaveAttribute('data-milestone-rag', 'Green');
+
+    cleanup();
+    renderView('G');
+    const stripG = document.querySelector(
+      '[data-dashboard-block="executive-timeline"]',
+    ) as HTMLElement;
+    expect(stripG.querySelector('[data-ps-delta-label]')).toHaveTextContent(
+      /\+14/,
+    );
+  });
+});
+
+describe('E3-R2 Decisions absent', () => {
+  it('A does not render a large empty decisions card', () => {
+    renderView('A');
+    expect(
+      document.querySelector('[data-dashboard-block="decisions"]'),
+    ).toBeNull();
   });
 });
 

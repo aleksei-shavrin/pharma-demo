@@ -233,6 +233,49 @@ export function dashboardOverviewFixture(
     ],
     milestones: [
       {
+        id: 'MS-BLD-ENCL',
+        name: 'Оболочка здания закрыта',
+        rag: 'Green' as const,
+        workstream: 'WS-BLD' as const,
+        baselineDate: '2027-02-28',
+        forecastDate: '2027-02-28',
+      },
+      {
+        id: 'MS-CLN-RDY',
+        name: 'Чистые помещения готовы к HVAC',
+        rag: 'Green' as const,
+        workstream: 'WS-CLN' as const,
+        baselineDate: '2027-04-30',
+        forecastDate: '2027-04-30',
+      },
+      {
+        id: 'MS-HVAC-IQ',
+        name: 'Демо-гейт готовности HVAC (IQ)',
+        rag: 'Green' as const,
+        workstream: 'WS-HVAC' as const,
+        baselineDate: '2027-06-15',
+        forecastDate: '2027-06-15',
+      },
+      {
+        id: 'MS-UTL-WFI',
+        name: 'WFI доступна для использования',
+        rag: 'Green' as const,
+        workstream: 'WS-UTL' as const,
+        baselineDate: '2027-07-01',
+        forecastDate: '2027-07-01',
+      },
+      {
+        id: 'MS-PKG-SAT',
+        name: 'SAT упаковочной линии принят',
+        rag: 'Green' as const,
+        workstream: 'WS-PKG' as const,
+        baselineDate: '2027-08-10',
+        forecastDate:
+          snapshotId === 'C' || snapshotId === 'D' || snapshotId === 'E'
+            ? '2027-08-20'
+            : '2027-08-10',
+      },
+      {
         id: 'MS-PS',
         name: 'Готовность к старту производства',
         rag: snapshotId === 'A' || snapshotId === 'B' ? 'Green' : 'Red',

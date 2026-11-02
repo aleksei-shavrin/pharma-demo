@@ -1,31 +1,39 @@
 import type { DashboardOverview } from '@/lib/api-client';
 
-function TrendGroup({
+function ChangeTile({
+  tone,
+  arrow,
   title,
   items,
-  tone,
 }: {
+  tone: 'better' | 'worse' | 'critical';
+  arrow: string;
   title: string;
   items: string[];
-  tone: 'better' | 'worse' | 'critical';
 }) {
   if (items.length === 0) return null;
 
-  const accent =
+  const tint =
     tone === 'better'
-      ? 'border-[var(--status-ok-border)] text-[var(--status-ok-fg)]'
+      ? 'bg-[var(--status-ok-bg)]/60 text-[var(--status-ok-fg)]'
       : tone === 'worse'
-        ? 'border-[var(--status-danger-border)] text-[var(--status-danger-fg)]'
-        : 'border-[var(--status-warn-border)] text-[var(--status-warn-fg)]';
+        ? 'bg-[var(--status-danger-bg)]/60 text-[var(--status-danger-fg)]'
+        : 'bg-[var(--status-warn-bg)]/60 text-[var(--status-warn-fg)]';
 
   return (
-    <div className={`border-l-2 pl-3 ${accent}`} data-trend-bucket={tone}>
-      <h3 className="text-[11px] font-semibold uppercase tracking-[0.06em]">
+    <div
+      className={`rounded-[var(--radius-sm)] px-3 py-2 ${tint}`}
+      data-trend-bucket={tone}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-[0.06em]">
+        <span aria-hidden className="mr-1">
+          {arrow}
+        </span>
         {title}
-      </h3>
-      <ul className="mt-1.5 space-y-1 text-sm text-[var(--text-secondary)]">
+      </p>
+      <ul className="mt-1.5 space-y-1 text-sm text-[var(--text)]">
         {items.map((line) => (
-          <li key={line} className="leading-snug text-[var(--text)]">
+          <li key={line} className="leading-snug">
             {line}
           </li>
         ))}
@@ -34,8 +42,8 @@ function TrendGroup({
   );
 }
 
-/** Fixture-authored trend only — no frontend snapshot diff. */
-export function TrendPanel({ data }: { data: DashboardOverview }) {
+/** Authored Snapshot Changes — no frontend diff engine. */
+export function SnapshotChanges({ data }: { data: DashboardOverview }) {
   const { better, worse, unchangedCritical } = data.trend;
   const emptyAll =
     better.length === 0 && worse.length === 0 && unchangedCritical.length === 0;
@@ -50,7 +58,7 @@ export function TrendPanel({ data }: { data: DashboardOverview }) {
         id="trend-heading"
         className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]"
       >
-        Тренд к предыдущему снимку
+        Изменения с прошлого снимка
       </h2>
 
       {emptyAll ? (
@@ -59,16 +67,25 @@ export function TrendPanel({ data }: { data: DashboardOverview }) {
           план).
         </p>
       ) : (
-        <div className="mt-2 grid gap-3 lg:grid-cols-3">
-          <TrendGroup title="Улучшилось" items={better} tone="better" />
-          <TrendGroup title="Ухудшилось" items={worse} tone="worse" />
-          <TrendGroup
+        <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <ChangeTile
+            tone="better"
+            arrow="↑"
+            title="Улучшилось"
+            items={better}
+          />
+          <ChangeTile tone="worse" arrow="↓" title="Ухудшилось" items={worse} />
+          <ChangeTile
+            tone="critical"
+            arrow="→"
             title="Критичное без изменения"
             items={unchangedCritical}
-            tone="critical"
           />
         </div>
       )}
     </section>
   );
 }
+
+/** @deprecated name — use SnapshotChanges */
+export const TrendPanel = SnapshotChanges;
