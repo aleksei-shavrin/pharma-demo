@@ -1,6 +1,6 @@
 /**
  * Discrete Demo v1 snapshot machine ids (R2: A–S).
- * UI selector still exposes populated A–H until R2-U1/L1.
+ * R2-U1: AppBar selector exposes full A–S (19).
  */
 export const SNAPSHOT_IDS = [
   'A',
@@ -25,18 +25,9 @@ export const SNAPSHOT_IDS = [
 ] as const;
 export type SnapshotId = (typeof SNAPSHOT_IDS)[number];
 
-/** Snapshots selectable in AppBar today (populated fixtures A–H). */
-export const SELECTABLE_SNAPSHOT_IDS = [
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-] as const;
-export type SelectableSnapshotId = (typeof SELECTABLE_SNAPSHOT_IDS)[number];
+/** Snapshots selectable in AppBar (R2-U1: full populated A–S). */
+export const SELECTABLE_SNAPSHOT_IDS = SNAPSHOT_IDS;
+export type SelectableSnapshotId = SnapshotId;
 
 export function isSnapshotId(value: string): value is SnapshotId {
   return (SNAPSHOT_IDS as readonly string[]).includes(value);
@@ -45,5 +36,5 @@ export function isSnapshotId(value: string): value is SnapshotId {
 export function isSelectableSnapshotId(
   value: string,
 ): value is SelectableSnapshotId {
-  return (SELECTABLE_SNAPSHOT_IDS as readonly string[]).includes(value);
+  return isSnapshotId(value);
 }

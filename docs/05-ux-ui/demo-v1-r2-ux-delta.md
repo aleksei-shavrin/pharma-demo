@@ -3,7 +3,7 @@ id: DOC-UX-022
 title: "Demo v1 R2 — UX delta (lifecycle, cost, people, notifications)"
 type: product
 status: draft
-version: "0.1.1"
+version: "0.1.4"
 created: 2026-11-02
 updated: 2026-11-02
 owner: "docs-engineering"
@@ -13,6 +13,7 @@ related:
   - DOC-UX-004
   - DOC-PROD-023
   - DOC-PROD-024
+  - DOC-PROD-025
   - DOC-PROD-026
   - DOC-BA-018
 ---
@@ -45,16 +46,22 @@ AppBar: Notification bell (not a nav section).
 
 ## 2. Dashboard (executive)
 
-Hierarchy:
+> **certainty:** assumption
+>
+> R2-U1-R4 corrective UX pass (awaiting human visual approval; **not** APPROVED). R2/R3 composition base preserved; R4 fixes overview stretch, readiness RAG surfaces, Exceptions|Attention row, **stable** executive milestone map.
 
-1. **Project Status + Production Start + Cost signal** (BAC / EAC / VAC / contingency health — compact)
-2. Top Exceptions
-3. Management Attention
-4. Workstream readiness (**clickable** → `/workstreams/:id`)
-5. Executive Milestones (**snapshot-aware** subset from API; always includes MS-PS)
-6. Trend / Decisions
+Hierarchy (desktop):
 
-**Not** a KPI wall or finance dashboard. Notifications do not duplicate Dashboard content.
+1. **Executive overview row** (~55/45):
+   - LEFT: Project Status + Production Start + Cost — inner zones **stretch to full card height** (dividers full height)
+   - RIGHT: Workstream readiness — dense clickable rows; soft RAG-tinted surfaces; hover/focus; Red → Yellow → Green + catalog `sortOrder`; optional internal scroll → `/workstreams/:id`
+2. **Контрольные вехи проекта** — **stable curated executive map** (exactly **12** IDs, identical A–S). Snapshot switching changes state/RAG/chrome accents, **not** set membership. Always includes MS-PS. Deliberate RU short labels. Horizon `01.02.2027–30.09.2027`. Multi-lane collision policy; no horizontal timeline scroll.
+3. **Key Exceptions | Management Attention** — one desktop row (~1.5fr / 1fr); stacks vertically on narrow viewports
+4. Trend / Decisions — director-facing narrative RU-only (tech terms HVAC/WFI/IQ/OQ/PQ/BMS/EMS/QC/EAC/VAC/BAC allowed)
+
+**Stable executive set (normative):** MS-BLD-EXC, MS-BLD-FND, MS-BLD-STR, MS-BLD-ENCL, MS-CLN-RDY, MS-HVAC-IQ, MS-UTL-WFI, MS-PRD-INST, MS-PKG-SAT, MS-COM-OQ, MS-COM-GO, MS-PS.
+
+**Not** a KPI wall or finance dashboard. Notifications do not duplicate Dashboard content. Selector phase groups remain navigation-only (not a second Dashboard timeline).
 
 ### Snapshot personality (design checks)
 
@@ -117,14 +124,13 @@ No GL, invoices, or contractor ledgers.
 
 ## 7. Snapshot selector A–S
 
-Replace flat A–H-only assumption with:
+**Implemented in R2-U1** — phase-grouped scrollable listbox (portal preserved):
 
-**Phase-grouped scrollable listbox** (portal preserved):
-
-- Phases: Early · Disruption · Management · Installation · Commissioning · Close-out
+- Phases (RU): Ранний этап · Срыв и давление · Управленческие меры · Монтаж · Пусконаладка · Готовность и старт
 - Sticky phase headers; max-height ~60vh; keyboard (arrows, Home/End, Enter/Space, Escape, Tab)
-- Trigger: id + asOf + short context
-- Atomic switch + stale protection + sessionStorage snapshot id unchanged
+- Trigger: id + asOf + phase hint
+- Atomic switch + stale protection; sessionStorage `ppc.demo.snapshot` persists A–S
+- Timeline horizon: 01.02.2027–30.09.2027
 - **No** second Gantt/timeline inside AppBar
 
 ## 8. Light / Dark / a11y

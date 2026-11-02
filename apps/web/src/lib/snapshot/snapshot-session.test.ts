@@ -15,13 +15,13 @@ afterEach(() => {
   sessionStorage.clear();
 });
 
-describe('snapshot-session A–H', () => {
+describe('snapshot-session A–S (R2-U1)', () => {
   it('empty storage → read null; resolve A', () => {
     expect(readSessionSnapshot()).toBeNull();
     expect(resolveBootstrapSnapshot()).toBe('A');
   });
 
-  it('writes and reads A/B/C/G/H', () => {
+  it('writes and reads A/B/C/G/H/I/O/S', () => {
     writeSessionSnapshot('B');
     expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('B');
     expect(readSessionSnapshot()).toBe('B');
@@ -29,14 +29,13 @@ describe('snapshot-session A–H', () => {
 
     writeSessionSnapshot('G');
     expect(readSessionSnapshot()).toBe('G');
-    expect(resolveBootstrapSnapshot()).toBe('G');
 
-    writeSessionSnapshot('H');
-    expect(readSessionSnapshot()).toBe('H');
-    expect(resolveBootstrapSnapshot()).toBe('H');
+    writeSessionSnapshot('S');
+    expect(readSessionSnapshot()).toBe('S');
+    expect(resolveBootstrapSnapshot()).toBe('S');
   });
 
-  it('invalid / malformed / not-yet-selectable → null / A', () => {
+  it('invalid / malformed → null / A', () => {
     sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'Z');
     expect(readSessionSnapshot()).toBeNull();
     expect(resolveBootstrapSnapshot()).toBe('A');
@@ -46,11 +45,6 @@ describe('snapshot-session A–H', () => {
     expect(resolveBootstrapSnapshot()).toBe('A');
 
     sessionStorage.setItem(SNAPSHOT_SESSION_KEY, '');
-    expect(readSessionSnapshot()).toBeNull();
-    expect(resolveBootstrapSnapshot()).toBe('A');
-
-    // Contract accepts S, but UI session stays on populated A–H until L1/U1.
-    sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'S');
     expect(readSessionSnapshot()).toBeNull();
     expect(resolveBootstrapSnapshot()).toBe('A');
   });

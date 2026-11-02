@@ -1,8 +1,7 @@
-import Link from 'next/link';
-import type { DashboardOverview } from '@/lib/api-client';
+import type { DashboardOverview, ProjectCost } from '@/lib/api-client';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import { projectStatusMeaning } from '@/lib/ui-labels';
-import { managementAttentionItems } from './management-attention';
+import { CostSignal } from './cost-signal';
 import { StatusPill } from './status-pill';
 
 function conditionAccent(status: DashboardOverview['projectStatus']): string {
@@ -18,37 +17,50 @@ function conditionTint(status: DashboardOverview['projectStatus']): string {
 }
 
 /**
- * Executive Project Control Summary — one strong surface, three semantic zones.
- * PS forecast/delta dominate; condition/attention support.
+ * Executive Project Control Summary (R2-U1 / R4):
+ * Project RAG + Production Start + Cost signal.
+ * Inner zones stretch to full overview-row height.
  */
-export function ProjectControlSummary({ data }: { data: DashboardOverview }) {
+export function ProjectControlSummary({
+  data,
+  projectCost,
+}: {
+  data: DashboardOverview;
+  projectCost?: ProjectCost | null;
+}) {
   const ps = data.project.productionStartVariance;
   const meaning = projectStatusMeaning(data.projectStatus, ps.deltaDays);
   const onPlan = ps.deltaDays === 0;
-  const attention = managementAttentionItems(data).filter((i) => i.count > 0);
+  const achieved =
+    data.snapshotId === 'S' &&
+    data.projectStatus === 'Green' &&
+    ps.forecastDate === '2027-09-22';
 
   return (
     <section
       aria-labelledby="project-control-summary-heading"
-      className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--elevation-1)]"
+      className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--elevation-1)]"
       data-dashboard-block="project-status"
       data-dashboard-summary="project-control"
+      data-overview-stretch="full-height"
     >
       <h2 id="project-control-summary-heading" className="sr-only">
         Сводка управления проектом
       </h2>
 
-      <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)_minmax(0,0.9fr)]">
-        {/* Project condition ~28–30% */}
+      <div
+        className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.35fr)_minmax(0,0.95fr)] lg:items-stretch"
+        data-summary-grid="stretch"
+      >
         <div
-          className={`relative flex gap-3 px-4 py-4 ${conditionTint(data.projectStatus)}`}
+          className={`relative flex h-full min-h-0 flex-col gap-3 px-4 py-4 ${conditionTint(data.projectStatus)}`}
           data-summary-zone="condition"
         >
           <span
             className={`absolute inset-y-0 left-0 w-1.5 ${conditionAccent(data.projectStatus)}`}
             aria-hidden
           />
-          <div className="min-w-0 pl-1.5">
+          <div className="flex min-h-0 flex-1 flex-col pl-1.5">
             <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
               Состояние
             </p>
@@ -64,23 +76,38 @@ export function ProjectControlSummary({ data }: { data: DashboardOverview }) {
             >
               {meaning}
             </p>
-            <p className="mt-2 text-[10px] text-[var(--text-muted)]">
+            <p className="mt-auto pt-3 text-[10px] text-[var(--text-muted)]">
               {data.project.id} · снимок {data.snapshotId} ·{' '}
               {formatDateRu(data.scenarioAsOfDate)}
             </p>
           </div>
         </div>
 
-        {/* Production Start ~40–44% — dominant */}
         <div
-          className="border-t border-[var(--border-subtle)] px-5 py-4 lg:border-t-0 lg:border-l"
+          className="flex h-full min-h-0 flex-col border-t border-[var(--border-subtle)] px-5 py-4 lg:border-t-0 lg:border-l"
           data-summary-zone="production-start"
           data-production-start
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
             Запуск производства
           </p>
-          {onPlan ? (
+          {achieved ? (
+            <>
+              <p
+                className="mt-1.5 text-3xl font-semibold tabular-nums tracking-tight text-[var(--text)]"
+                data-ps-dates
+              >
+                {formatDateRu(ps.forecastDate)}
+              </p>
+              <p
+                className="mt-1 text-sm font-semibold uppercase tracking-wide text-[var(--status-ok-fg)]"
+                data-ps-delta
+                data-ps-achieved
+              >
+                достигнут · {formatDeltaDays(ps.deltaDays)} к базовому плану
+              </p>
+            </>
+          ) : onPlan ? (
             <>
               <p
                 className="mt-1.5 text-3xl font-semibold tabular-nums tracking-tight text-[var(--text)]"
@@ -120,46 +147,23 @@ export function ProjectControlSummary({ data }: { data: DashboardOverview }) {
                 </span>
                 прогноз {formatDateRu(ps.forecastDate)}
               </p>
+              {data.snapshotId === 'Q' ? (
+                <p
+                  className="mt-1.5 text-xs text-[var(--status-warn-fg)]"
+                  data-ps-baseline-passed
+                >
+                  Базовая дата пройдена без фактического старта
+                </p>
+              ) : null}
             </>
           )}
         </div>
 
-        {/* Attention ~28–30% */}
         <div
-          className="border-t border-[var(--border-subtle)] px-4 py-4 lg:border-t-0 lg:border-l"
-          data-summary-zone="attention"
-          data-dashboard-block="management-attention"
+          className="flex h-full min-h-0 flex-col border-t border-[var(--border-subtle)] px-4 py-4 lg:border-t-0 lg:border-l"
+          data-summary-zone="cost"
         >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
-            Внимание
-          </p>
-          {attention.length === 0 ? (
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              Нет активных управленческих сигналов.
-            </p>
-          ) : (
-            <ul className="mt-2 space-y-1.5 text-sm">
-              {attention.map((item) => (
-                <li
-                  key={item.id}
-                  className="flex items-baseline gap-2"
-                  data-attention={item.id}
-                  data-attention-count={item.count}
-                >
-                  <span className="text-base font-semibold tabular-nums text-[var(--text)]">
-                    {item.count}
-                  </span>
-                  <Link
-                    href={item.href}
-                    className="text-[var(--text-secondary)] underline-offset-2 hover:text-[var(--link)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-                  >
-                    {item.label}
-                    <span className="sr-only"> — {item.hrefLabel}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          <CostSignal snapshotId={data.snapshotId} projectCost={projectCost} />
         </div>
       </div>
     </section>

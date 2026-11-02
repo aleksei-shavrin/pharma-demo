@@ -13,9 +13,10 @@ describe('web SnapshotId contract A–S (R2-C1)', () => {
     expect(isSnapshotId('T')).toBe(false);
   });
 
-  it('keeps selectable UI set at A–H', () => {
-    expect(SELECTABLE_SNAPSHOT_IDS).toHaveLength(8);
+  it('selectable UI set is full A–S (R2-U1)', () => {
+    expect(SELECTABLE_SNAPSHOT_IDS).toHaveLength(19);
     expect(isSelectableSnapshotId('H')).toBe(true);
-    expect(isSelectableSnapshotId('S')).toBe(false);
+    expect(isSelectableSnapshotId('S')).toBe(true);
+    expect(isSelectableSnapshotId('T')).toBe(false);
   });
 });

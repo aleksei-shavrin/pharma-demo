@@ -243,6 +243,16 @@ export function fetchNotifications(
   );
 }
 
+export function fetchProjectCosts(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<ProjectCostsOverview> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<ProjectCostsOverview>(
+    `/v1/projects/${encodeURIComponent(projectId)}/costs?${qs.toString()}`,
+  );
+}
+
 export function projectStubFromDashboard(
   dashboard: DashboardOverview,
 ): ProjectStub {

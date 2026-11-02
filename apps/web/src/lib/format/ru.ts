@@ -33,3 +33,26 @@ export function formatRubRu(value: number): string {
   const grouped = String(abs).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   return `${sign}${grouped} ₽`;
 }
+
+/**
+ * Compact executive RUB (Dashboard cost signal).
+ * ≥1e9 → «6,20 млрд ₽»; ≥1e6 → «80 млн ₽»; else full formatRubRu.
+ */
+export function formatRubCompactRu(value: number): string {
+  if (!Number.isInteger(value)) return String(value);
+  const sign = value < 0 ? '−' : '';
+  const abs = Math.abs(value);
+  if (abs >= 1_000_000_000) {
+    const billions = abs / 1_000_000_000;
+    const text =
+      Number.isInteger(billions) || billions >= 100
+        ? String(Math.round(billions))
+        : billions.toFixed(2).replace('.', ',');
+    return `${sign}${text} млрд ₽`;
+  }
+  if (abs >= 1_000_000) {
+    const millions = Math.round(abs / 1_000_000);
+    return `${sign}${millions} млн ₽`;
+  }
+  return formatRubRu(value);
+}

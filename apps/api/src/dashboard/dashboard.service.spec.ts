@@ -113,7 +113,7 @@ describe('DashboardService (E1-R1 collection contracts)', () => {
   it('A inventory scale and F decisions without heal', () => {
     const a = service.getOverview('PRJ-01', 'A');
     expect(a.equipment).toHaveLength(52);
-    expect(a.milestones).toHaveLength(40);
+    expect(a.milestones).toHaveLength(43);
     expect(a.executiveMilestoneIds).toContain('MS-PS');
 
     const svc = new DashboardService(

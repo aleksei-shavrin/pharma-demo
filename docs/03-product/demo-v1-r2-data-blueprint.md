@@ -104,13 +104,23 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Story:** H–N commissioning drama; critical for M/L.
 - **People:** AUT lead; Commissioning lead.
 
-## 3. Milestone catalogue strategy (~40)
+## 3. Milestone catalogue strategy (~40 → 43)
 
 **Keep existing 14** (DOC-PROD-021). **Add ~26** control/executive gates across WS (install complete, cable trays, clean balance, serialization cleared, EMS live, OQ/PQ demo gates, Go/No-Go, etc.).
 
+R2-U1-R2 additive early BLD story (distinct Domain events; not renames of `MS-BLD-ENCL`):
+
+| ID | Name | Baseline |
+|----|------|----------|
+| MS-BLD-EXC | Котлован завершён | 2027-02-05 |
+| MS-BLD-FND | Фундамент принят | 2027-02-12 |
+| MS-BLD-STR | Каркас здания готов | 2027-02-20 |
+
+Catalogue count after U1-R2: **43** milestones (still in ~40 class).
+
 **Classes:**
 
-- **Executive:** fixture-authored snapshot-aware subset (8–12), always includes **MS-PS**.
+- **Executive:** fixture-authored **stable curated set of 12** across A–S (R2-U1-R4), always includes **MS-PS**. Membership does **not** change by snapshot; state/RAG/chrome do. Set: EXC→FND→STR→ENCL→CLN-RDY→HVAC-IQ→WFI→PRD-INST→PKG-SAT→COM-OQ→COM-GO→MS-PS.
 - **Control:** full Schedule + Workstream page + registers.
 
 **Forbidden:** Equipment → Milestone edge (BA-015).

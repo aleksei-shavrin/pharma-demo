@@ -54,8 +54,8 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe('SnapshotSelector A–H disclosure (E7-R1)', () => {
-  it('trigger shows committed active; listbox exposes A–H with selected', async () => {
+describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
+  it('trigger shows committed active; listbox exposes 19 A–S with phases', async () => {
     const user = userEvent.setup();
     renderSelector();
     await expectActiveSnapshot('A');
@@ -63,8 +63,11 @@ describe('SnapshotSelector A–H disclosure (E7-R1)', () => {
     await user.click(screen.getByRole('button', { name: /Снимок A.*активный/ }));
     const list = screen.getByRole('listbox', { name: 'Демо-снимок' });
     expect(list).toHaveAttribute('data-snapshot-listbox', 'true');
-    expect(within(list).getAllByRole('option')).toHaveLength(
-      SELECTABLE_SNAPSHOT_IDS.length,
+    expect(list).toHaveAttribute('data-snapshot-count', '19');
+    expect(SELECTABLE_SNAPSHOT_IDS).toHaveLength(19);
+    expect(within(list).getAllByRole('option')).toHaveLength(19);
+    expect(list.querySelectorAll('[data-snapshot-phase-header]').length).toBe(
+      6,
     );
     for (const id of SELECTABLE_SNAPSHOT_IDS) {
       expect(
@@ -83,13 +86,17 @@ describe('SnapshotSelector A–H disclosure (E7-R1)', () => {
     await selectDemoSnapshot(user, 'G');
     await expectActiveSnapshot('G');
     expect(
-      screen.getByRole('button', { name: /Снимок G, 15\.05\.2027, активный/ }),
+      screen.getByRole('button', {
+        name: /Снимок G, 15\.05\.2027.*активный/,
+      }),
     ).toBeInTheDocument();
 
     await selectDemoSnapshot(user, 'H');
     await expectActiveSnapshot('H');
     expect(
-      screen.getByRole('button', { name: /Снимок H, 01\.06\.2027, активный/ }),
+      screen.getByRole('button', {
+        name: /Снимок H, 01\.06\.2027.*активный/,
+      }),
     ).toBeInTheDocument();
   });
 
@@ -111,18 +118,18 @@ describe('SnapshotSelector A–H disclosure (E7-R1)', () => {
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
     await user.click(trigger);
-    const listH = await screen.findByRole('listbox');
-    within(listH)
+    const listEnd = await screen.findByRole('listbox');
+    within(listEnd)
       .getByRole('option', { name: snapshotOptionLabel('B') })
       .focus();
     await user.keyboard('{End}');
     await user.keyboard(' ');
-    await expectActiveSnapshot('H');
+    await expectActiveSnapshot('S');
 
     await user.click(trigger);
     const listHome = await screen.findByRole('listbox');
     within(listHome)
-      .getByRole('option', { name: snapshotOptionLabel('H') })
+      .getByRole('option', { name: snapshotOptionLabel('S') })
       .focus();
     await user.keyboard('{Home}');
     await user.keyboard('{Enter}');

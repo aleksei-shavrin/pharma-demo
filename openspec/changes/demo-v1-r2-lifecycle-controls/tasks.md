@@ -49,13 +49,17 @@
 ## R2-N1 — Notifications
 
 - [x] Notification fixtures + API (`GET …/notifications?snapshot=`) — authored A–S; not SoT
-- [x] AppBar bell/popover/toasts; read=`sessionStorage` (`ppc.demo.notificationRead`); popup pref=`localStorage` (`ppc.demo.notificationPopup`, default on); ≤3 toasts only after successful atomic commit — awaiting human visual review; not human-approved yet
-- [x] R2-N1-R1: RU-only director notification copy + taxonomy «Проблема»; full soft entityRef integrity (7 types); Decision remains unroutable — awaiting human visual re-review; not human-approved yet
+- [x] AppBar bell/popover/toasts; read=`sessionStorage` (`ppc.demo.notificationRead`); popup pref=`localStorage` (`ppc.demo.notificationPopup`, default on); ≤3 toasts only after successful atomic commit — **APPROVED / CLOSED**
+- [x] R2-N1-R1: RU-only director notification copy + taxonomy «Проблема»; full soft entityRef integrity (7 types); Decision remains unroutable — **APPROVED / CLOSED**
 
 ## R2-U1 — Dashboard / selector
 
-- [ ] Cost signal; phase-grouped A–S selector; timeline horizon
-- [ ] Snapshot-aware executive milestones
+- [x] Cost signal; phase-grouped A–S selector (19); timeline horizon → 30.09.2027
+- [x] Snapshot-aware executive milestones (`executiveMilestoneIds`); Dashboard IA reorder — awaiting human visual review; not human-approved yet
+- [x] R2-U1-R1: authoritative `executiveMilestoneIds` integrity (no silent skip/MS-PS inject); cost signal invalidate-on-switch + stale/mismatch guard; FE `projectCostFixture` ↔ DOC-PROD-026 parity — awaiting human visual review; not human-approved yet
+- [x] R2-U1-R2: executive overview row (Status+Cost | compact RAG-sorted readiness); timeline raised; early BLD story EXC/FND/STR + deliberate short labels; catalogue 43 — awaiting human visual review; not human-approved yet
+- [x] R2-U1-R3: late-stage multi-lane timeline label/chrome policy (no horizon/scroll change); RU-only director Trend/Exceptions narrative; composition R2 preserved — awaiting human visual review; not human-approved yet
+- [x] R2-U1-R4: overview full-height stretch; compact RAG-tinted clickable readiness; Exceptions|Attention desktop row; **stable** executive milestone map (12) A–S — awaiting human visual review; not human-approved yet
 
 ## R2-I1 — Integration
 

@@ -8,10 +8,13 @@ import DashboardPage from '@/app/page';
 import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
 import { DashboardView } from '@/components/dashboard/dashboard-view';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
+import { projectCostFixture } from '@/lib/test/project-cost-fixture';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { selectDemoSnapshot } from '@/lib/test/select-snapshot';
 
 const fetchDashboardOverview = vi.fn();
+const fetchProjectCosts = vi.fn();
+const fetchNotifications = vi.fn();
 
 vi.mock('@/lib/api-client', async () => {
   const actual =
@@ -20,6 +23,8 @@ vi.mock('@/lib/api-client', async () => {
     ...actual,
     fetchDashboardOverview: (...args: unknown[]) =>
       fetchDashboardOverview(...args),
+    fetchProjectCosts: (...args: unknown[]) => fetchProjectCosts(...args),
+    fetchNotifications: (...args: unknown[]) => fetchNotifications(...args),
     fetchHealth: vi.fn(),
   };
 });
@@ -43,7 +48,10 @@ function renderDashboard() {
 function renderView(snapshotId: SnapshotId) {
   return render(
     <SnapshotProvider>
-      <DashboardView data={overview(snapshotId)} />
+      <DashboardView
+        data={overview(snapshotId)}
+        projectCost={projectCostFixture(snapshotId)}
+      />
     </SnapshotProvider>,
   );
 }
@@ -57,6 +65,28 @@ beforeEach(() => {
   sessionStorage.clear();
   fetchDashboardOverview.mockImplementation(
     async (_id: string, snapshot: SnapshotId) => overview(snapshot),
+  );
+  fetchProjectCosts.mockImplementation(
+    async (_id: string, snapshot: SnapshotId) => ({
+      snapshotId: snapshot,
+      scenarioAsOfDate: '2027-02-15',
+      projectId: 'PRJ-01',
+      project: projectCostFixture(snapshot),
+      workstreams: [],
+      equipment: [],
+      reconciliation: {
+        workstreamEacSumRub: 0,
+        projectLevelForecastRub: 0,
+      },
+    }),
+  );
+  fetchNotifications.mockImplementation(
+    async (_id: string, snapshot: SnapshotId) => ({
+      snapshotId: snapshot,
+      scenarioAsOfDate: '2027-02-15',
+      projectId: 'PRJ-01',
+      items: [],
+    }),
   );
 });
 
@@ -395,26 +425,38 @@ describe('E3-R2 Executive Timeline', () => {
 describe('E3-R5 Dashboard canvas + timeline interaction', () => {
   it('renders e3-r5 canvas modules without inventing RAG', () => {
     renderView('C');
-    expect(document.querySelector('[data-dashboard="e3-r5"]')).toBeTruthy();
+    expect(document.querySelector('[data-dashboard="r2-u1"]')).toBeTruthy();
     expect(
-      document.querySelector('[data-dashboard-block="executive-timeline"]'),
+      document.querySelector('[data-dashboard-block="project-status"]'),
     ).toBeTruthy();
     expect(
       document.querySelector('[data-dashboard-block="top-exceptions"]'),
     ).toBeTruthy();
     expect(
+      document.querySelector('[data-dashboard-block="management-attention"]'),
+    ).toBeTruthy();
+    expect(
       document.querySelector('[data-dashboard-block="workstream-readiness"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-dashboard-block="executive-timeline"]'),
     ).toBeTruthy();
   });
 
   it('uses fixed-html marker triggers for approved subset (not SVG polygons)', () => {
     renderView('A');
     const subset = [
+      'MS-BLD-EXC',
+      'MS-BLD-FND',
+      'MS-BLD-STR',
       'MS-BLD-ENCL',
       'MS-CLN-RDY',
       'MS-HVAC-IQ',
       'MS-UTL-WFI',
+      'MS-PRD-INST',
       'MS-PKG-SAT',
+      'MS-COM-OQ',
+      'MS-COM-GO',
       'MS-PS',
     ];
     for (const id of subset) {

@@ -1,13 +1,10 @@
-import {
-  isSelectableSnapshotId,
-  type SnapshotId,
-} from './snapshot-id';
+import { isSnapshotId, type SnapshotId } from './snapshot-id';
 
 export const SNAPSHOT_SESSION_KEY = 'ppc.demo.snapshot';
 
 /**
- * Read a selectable SnapshotId (A–H) from sessionStorage, or null if missing/invalid.
- * Contract accepts A–S, but UI bootstrap stays on populated selectable set until R2-L1/U1.
+ * Read a SnapshotId (A–S) from sessionStorage, or null if missing/invalid.
+ * Invalid legacy values fall back safely (bootstrap → A).
  */
 export function readSessionSnapshot(): SnapshotId | null {
   try {
@@ -18,22 +15,21 @@ export function readSessionSnapshot(): SnapshotId | null {
     if (raw === null) {
       return null;
     }
-    return isSelectableSnapshotId(raw) ? raw : null;
+    return isSnapshotId(raw) ? raw : null;
   } catch {
     return null;
   }
 }
 
 /**
- * Persist last successfully committed snapshot.
- * Non-selectable ids (I–S until L1/U1) are ignored — presentation restore is A–H only.
+ * Persist last successfully committed snapshot (A–S after R2-U1).
  */
 export function writeSessionSnapshot(snapshot: SnapshotId): void {
   try {
     if (typeof sessionStorage === 'undefined') {
       return;
     }
-    if (!isSelectableSnapshotId(snapshot)) {
+    if (!isSnapshotId(snapshot)) {
       return;
     }
     sessionStorage.setItem(SNAPSHOT_SESSION_KEY, snapshot);

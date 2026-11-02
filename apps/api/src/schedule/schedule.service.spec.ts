@@ -36,11 +36,11 @@ describe('ScheduleService', () => {
       workstream: 'WS-HVAC',
     });
     expect(eq && 'name' in eq && eq.name.length).toBeGreaterThan(0);
-    expect(s.items).toHaveLength(92);
+    expect(s.items).toHaveLength(95);
     expect(
       s.items.filter((i) => i.kind === 'equipment_delivery'),
     ).toHaveLength(52);
-    expect(s.items.filter((i) => i.kind === 'milestone')).toHaveLength(40);
+    expect(s.items.filter((i) => i.kind === 'milestone')).toHaveLength(43);
     expect(ms).toMatchObject({
       rag: 'Green',
       baselineDate: '2027-09-15',

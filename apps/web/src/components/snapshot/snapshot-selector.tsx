@@ -21,6 +21,10 @@ import {
   snapshotAsOfRu,
   snapshotOptionLabel,
 } from '@/lib/snapshot/snapshot-meta';
+import {
+  SNAPSHOT_PHASE_GROUPS,
+  phaseTitleForSnapshot,
+} from '@/lib/snapshot/snapshot-phases';
 import { formatDateRu } from '@/lib/format/ru';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 
@@ -31,9 +35,8 @@ function toSelectable(id: SnapshotId): SelectableSnapshotId {
 }
 
 /**
- * Compact AppBar snapshot disclosure (E7 / E6+E7-R1).
- * Single ARIA pattern: button trigger + portaled listbox (no radiogroup/menu/tabs).
- * Portal avoids AppShell `overflow-hidden` clipping.
+ * Compact AppBar snapshot disclosure (R2-U1: A–S phase-grouped).
+ * Single ARIA pattern: button trigger + portaled listbox.
  */
 export function SnapshotSelector() {
   const {
@@ -49,7 +52,7 @@ export function SnapshotSelector() {
   const settled = dashboard !== null;
   const listId = useId();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const listRef = useRef<HTMLUListElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
   const optionRefs = useRef<
     Partial<Record<SelectableSnapshotId, HTMLLIElement | null>>
   >({});
@@ -74,7 +77,7 @@ export function SnapshotSelector() {
     setPos({
       top: r.bottom + 4,
       right: Math.max(window.innerWidth - r.right, 8),
-      width: Math.min(22 * 16, window.innerWidth - 16),
+      width: Math.min(24 * 16, window.innerWidth - 16),
     });
   }
 
@@ -145,7 +148,7 @@ export function SnapshotSelector() {
       SELECTABLE_SNAPSHOT_IDS[
         (idx + delta + SELECTABLE_SNAPSHOT_IDS.length) %
           SELECTABLE_SNAPSHOT_IDS.length
-      ];
+      ]!;
     setFocusId(next);
     queueMicrotask(() => optionRefs.current[next]?.focus());
   }
@@ -167,8 +170,8 @@ export function SnapshotSelector() {
         break;
       case 'End':
         event.preventDefault();
-        setFocusId('H');
-        queueMicrotask(() => optionRefs.current.H?.focus());
+        setFocusId('S');
+        queueMicrotask(() => optionRefs.current.S?.focus());
         break;
       case 'Enter':
       case ' ':
@@ -199,15 +202,15 @@ export function SnapshotSelector() {
     }
   }
 
-  /** Committed API date when settled; narrative meta only for unsettled bootstrap. */
   const committedAsOfRu = settled
     ? formatDateRu(dashboard.scenarioAsOfDate)
     : snapshotAsOfRu(requested ?? active);
   const displayId = settled ? active : requested ?? active;
+  const phaseHint = phaseTitleForSnapshot(toSelectable(displayId));
   const triggerLabel = settled
     ? loading && requested && requested !== active
-      ? `Снимок ${active}, ${committedAsOfRu}, активный, загрузка снимка ${requested}`
-      : `Снимок ${active}, ${committedAsOfRu}, активный`
+      ? `Снимок ${active}, ${committedAsOfRu}, ${phaseHint}, активный, загрузка снимка ${requested}`
+      : `Снимок ${active}, ${committedAsOfRu}, ${phaseHint}, активный`
     : loading && requested
       ? `Снимок ${requested}, загрузка`
       : 'Демо-снимок, загрузка';
@@ -218,7 +221,7 @@ export function SnapshotSelector() {
         top: pos.top,
         right: pos.right,
         width: pos.width,
-        maxHeight: 'min(22rem, 70vh)',
+        maxHeight: 'min(60vh, 28rem)',
         zIndex: 80,
       }
     : undefined;
@@ -226,69 +229,86 @@ export function SnapshotSelector() {
   const listbox =
     open && pos && typeof document !== 'undefined'
       ? createPortal(
-          <ul
+          <div
             ref={listRef}
             id={listId}
             role="listbox"
             aria-label="Демо-снимок"
             aria-busy={loading || undefined}
             style={listStyle}
-            className="overflow-auto rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] py-1 shadow-[var(--elevation-1)]"
+            className="overflow-auto rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] shadow-[var(--elevation-1)]"
             data-snapshot-listbox="true"
+            data-snapshot-count={SELECTABLE_SNAPSHOT_IDS.length}
           >
-            {SELECTABLE_SNAPSHOT_IDS.map((id) => {
-              const selected = settled && active === id;
-              const pending = loading && requested === id;
-              return (
-                <li
-                  key={id}
-                  role="option"
-                  aria-selected={selected}
-                  aria-disabled={loading || undefined}
-                  tabIndex={focusId === id ? 0 : -1}
-                  aria-label={snapshotOptionLabel(id)}
-                  ref={(el) => {
-                    optionRefs.current[id] = el;
-                  }}
-                  onClick={() => {
-                    if (!loading) activate(id);
-                  }}
-                  onKeyDown={onOptionKeyDown}
-                  className={[
-                    'cursor-pointer px-3 py-1.5 outline-none',
-                    'focus-visible:bg-[var(--interactive)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--focus-ring)]',
-                    selected
-                      ? 'bg-[var(--interactive)]'
-                      : 'hover:bg-[var(--interactive)]',
-                    pending ? 'ring-1 ring-inset ring-[var(--focus-ring)]' : '',
-                    loading && !pending ? 'opacity-60' : '',
-                  ].join(' ')}
+            {SNAPSHOT_PHASE_GROUPS.map((group) => (
+              <div key={group.id} data-snapshot-phase={group.id}>
+                <div
+                  className="sticky top-0 z-10 border-b border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-1.5"
+                  data-snapshot-phase-header={group.id}
                 >
-                  <div className="flex items-baseline gap-2">
-                    <span className="w-4 shrink-0 text-xs font-semibold text-[var(--text)]">
-                      {id}
-                    </span>
-                    <span className="text-xs text-[var(--text-secondary)]">
-                      {snapshotAsOfRu(id)}
-                    </span>
-                    {selected ? (
-                      <span className="ml-auto text-[10px] font-medium text-[var(--text-muted)]">
-                        активный
-                      </span>
-                    ) : null}
-                    {pending ? (
-                      <span className="ml-auto text-[10px] text-[var(--text-muted)]">
-                        загрузка
-                      </span>
-                    ) : null}
-                  </div>
-                  <p className="pl-6 text-[11px] leading-snug text-[var(--text-muted)]">
-                    {SNAPSHOT_CONTEXT_RU[id]}
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                    {group.titleRu}
                   </p>
-                </li>
-              );
-            })}
-          </ul>,
+                </div>
+                <ul className="py-0.5" role="presentation">
+                  {group.ids.map((id) => {
+                    const selected = settled && active === id;
+                    const pending = loading && requested === id;
+                    return (
+                      <li
+                        key={id}
+                        role="option"
+                        aria-selected={selected}
+                        aria-disabled={loading || undefined}
+                        tabIndex={focusId === id ? 0 : -1}
+                        aria-label={snapshotOptionLabel(id)}
+                        ref={(el) => {
+                          optionRefs.current[id] = el;
+                        }}
+                        onClick={() => {
+                          if (!loading) activate(id);
+                        }}
+                        onKeyDown={onOptionKeyDown}
+                        className={[
+                          'cursor-pointer px-3 py-1.5 outline-none',
+                          'focus-visible:bg-[var(--interactive)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--focus-ring)]',
+                          selected
+                            ? 'bg-[var(--interactive)]'
+                            : 'hover:bg-[var(--interactive)]',
+                          pending
+                            ? 'ring-1 ring-inset ring-[var(--focus-ring)]'
+                            : '',
+                          loading && !pending ? 'opacity-60' : '',
+                        ].join(' ')}
+                      >
+                        <div className="flex items-baseline gap-2">
+                          <span className="w-4 shrink-0 text-xs font-semibold text-[var(--text)]">
+                            {id}
+                          </span>
+                          <span className="text-xs text-[var(--text-secondary)]">
+                            {snapshotAsOfRu(id)}
+                          </span>
+                          {selected ? (
+                            <span className="ml-auto text-[10px] font-medium text-[var(--text-muted)]">
+                              активный
+                            </span>
+                          ) : null}
+                          {pending ? (
+                            <span className="ml-auto text-[10px] text-[var(--text-muted)]">
+                              загрузка
+                            </span>
+                          ) : null}
+                        </div>
+                        <p className="pl-6 text-[11px] leading-snug text-[var(--text-muted)]">
+                          {SNAPSHOT_CONTEXT_RU[id]}
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>,
           document.body,
         )
       : null;
@@ -312,6 +332,7 @@ export function SnapshotSelector() {
           'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]',
           loading ? 'opacity-80' : '',
         ].join(' ')}
+        data-snapshot-trigger
       >
         <span className="text-xs font-semibold text-[var(--text)]">
           Снимок {displayId}
@@ -321,6 +342,7 @@ export function SnapshotSelector() {
         </span>
         <span className="text-[10px] leading-tight text-[var(--text-muted)]">
           {settled ? committedAsOfRu : snapshotAsOfRu(displayId)}
+          {phaseHint ? ` · ${phaseHint}` : ''}
         </span>
       </button>
 

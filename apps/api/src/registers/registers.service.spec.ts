@@ -158,7 +158,7 @@ describe('RegistersService', () => {
       expect(ms?.rag).toBe('Green');
       expect(ms?.dateVariance.deltaDays).toBe(0);
       expect(ms?.workstream).toBeNull();
-      expect(r.items).toHaveLength(40);
+      expect(r.items).toHaveLength(43);
     });
 
     it('B: MS-PS still Green', () => {

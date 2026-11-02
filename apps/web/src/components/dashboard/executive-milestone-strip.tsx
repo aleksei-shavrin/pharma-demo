@@ -9,6 +9,7 @@ import {
   dateToRatio,
   resolveExecutiveMilestones,
   resolveProductionStartBand,
+  resolveTimelineChromeLayout,
   timelineMonthTicks,
 } from '@/lib/dashboard/executive-timeline';
 import { presentWorkstream } from '@/lib/ui-labels';
@@ -17,6 +18,7 @@ import { TimelineMarker } from './timeline-marker';
 
 /**
  * Executive timeline — SVG axis (scalable) + fixed-geometry HTML markers.
+ * R2-U1-R3: multi-lane label policy; no horizontal timeline scroll.
  */
 export function ExecutiveMilestoneStrip({
   data,
@@ -25,6 +27,7 @@ export function ExecutiveMilestoneStrip({
 }) {
   const milestones = resolveExecutiveMilestones(data);
   const band = resolveProductionStartBand(data);
+  const chrome = resolveTimelineChromeLayout(data, band);
   const asOfRatio = dateToRatio(data.scenarioAsOfDate);
   const monthTicks = timelineMonthTicks();
   const summary = buildTimelineTextSummary(data);
@@ -51,6 +54,8 @@ export function ExecutiveMilestoneStrip({
     { href: '/schedule', label: 'Подробный график' },
   ];
 
+  const snapshotTopPx = chrome.snapshot.lane === 1 ? 0 : 4;
+
   return (
     <ModuleSurface data-dashboard-block="executive-timeline">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -71,10 +76,11 @@ export function ExecutiveMilestoneStrip({
       <p className="sr-only">{summary}</p>
 
       <div
-        className="relative mt-3 h-[9.5rem] w-full min-w-0 overflow-x-auto"
+        className="relative mt-3 h-[12.5rem] w-full min-w-0 overflow-x-hidden"
         data-timeline-track
+        data-timeline-layout="r2-u1-r3"
       >
-        <div className="relative h-full min-w-[40rem]">
+        <div className="relative h-full w-full min-w-0">
           {/* Month labels */}
           <div className="absolute inset-x-0 bottom-0 h-4">
             {monthTicks.map((tick) => (
@@ -90,7 +96,7 @@ export function ExecutiveMilestoneStrip({
 
           {/* Scalable axis layer only — no markers inside SVG */}
           <svg
-            className="pointer-events-none absolute inset-x-0 top-[2.85rem] h-10 w-full overflow-visible"
+            className="pointer-events-none absolute inset-x-0 top-[4.25rem] h-10 w-full overflow-visible"
             viewBox="0 0 1000 40"
             preserveAspectRatio="none"
             role="presentation"
@@ -146,11 +152,22 @@ export function ExecutiveMilestoneStrip({
             />
           </svg>
 
-          {/* Snapshot caption (HTML) */}
+          {/* Snapshot caption — dedicated chrome lane */}
           <div
-            className="absolute top-0 max-w-[7rem] -translate-x-1/2 text-center text-[10px] leading-tight text-[var(--primary)]"
-            style={{ left: `${asOfRatio * 100}%` }}
+            className={`absolute max-w-[6.5rem] text-[10px] leading-tight text-[var(--primary)] ${
+              chrome.snapshot.align === 'end'
+                ? 'translate-x-[-100%] text-right'
+                : chrome.snapshot.align === 'start'
+                  ? 'text-left'
+                  : '-translate-x-1/2 text-center'
+            }`}
+            style={{
+              left: `calc(${asOfRatio * 100}% + ${chrome.snapshot.nudgePx}px)`,
+              top: snapshotTopPx,
+            }}
             data-snapshot-label
+            data-label-side={chrome.snapshot.side}
+            data-label-lane={chrome.snapshot.lane}
           >
             <span className="font-semibold">Дата снимка</span>
             <br />
@@ -158,7 +175,7 @@ export function ExecutiveMilestoneStrip({
           </div>
 
           {/* Fixed-geometry interactive markers */}
-          <div className="absolute inset-x-0 top-[2.85rem] h-10">
+          <div className="absolute inset-x-0 top-[4.25rem] h-10">
             {milestones
               .filter((m) => m.id !== 'MS-PS')
               .map((m) => {
@@ -179,6 +196,7 @@ export function ExecutiveMilestoneStrip({
                     labelSide={m.labelSide}
                     labelAlign={m.labelAlign}
                     labelNudgePx={m.labelNudgePx}
+                    labelLane={m.labelLane}
                     shortLabel={m.shortLabel}
                     title={m.shortLabel}
                     subtitle={m.name}
@@ -198,12 +216,14 @@ export function ExecutiveMilestoneStrip({
                 );
               })}
 
-            {band.coincident ? (
+            {band.coincident && chrome.coincident ? (
               <TimelineMarker
                 kind="ps-coincident"
                 ratio={band.baselineRatio}
-                labelSide="below"
-                labelAlign={band.baselineRatio > 0.92 ? 'end' : 'center'}
+                labelSide={chrome.coincident.side}
+                labelAlign={chrome.coincident.align}
+                labelNudgePx={chrome.coincident.nudgePx}
+                labelLane={chrome.coincident.lane}
                 shortLabel="Старт пр-ва"
                 title="Запуск производства"
                 subtitle={msPs?.name}
@@ -229,14 +249,17 @@ export function ExecutiveMilestoneStrip({
                   'data-milestone-rag': psRag,
                 }}
               />
-            ) : (
+            ) : null}
+
+            {!band.coincident && chrome.baseline && chrome.forecast ? (
               <>
                 <TimelineMarker
                   kind="ps-baseline"
                   ratio={band.baselineRatio}
-                  labelSide="below"
-                  labelAlign="end"
-                  labelNudgePx={-10}
+                  labelSide={chrome.baseline.side}
+                  labelAlign={chrome.baseline.align}
+                  labelNudgePx={chrome.baseline.nudgePx}
+                  labelLane={chrome.baseline.lane}
                   shortLabel="База"
                   title="Запуск производства"
                   subtitle="Базовый план"
@@ -266,10 +289,15 @@ export function ExecutiveMilestoneStrip({
                 <TimelineMarker
                   kind="ps-forecast"
                   ratio={band.forecastRatio}
-                  labelSide="above"
-                  labelAlign="end"
-                  labelNudgePx={10}
-                  shortLabel="Прогноз"
+                  labelSide={chrome.forecast.side}
+                  labelAlign={chrome.forecast.align}
+                  labelNudgePx={chrome.forecast.nudgePx}
+                  labelLane={chrome.forecast.lane}
+                  shortLabel={
+                    data.snapshotId === 'S' && psRag === 'Green'
+                      ? 'Старт'
+                      : 'Прогноз'
+                  }
                   title="Запуск производства"
                   subtitle={msPs?.name}
                   entityId="MS-PS"
@@ -298,13 +326,12 @@ export function ExecutiveMilestoneStrip({
                   }}
                 />
               </>
-            )}
+            ) : null}
           </div>
 
-          {/* Delta cue: above axis for slip; below labels for on-plan (avoids marker overlap) */}
           {!band.coincident ? (
             <div
-              className="pointer-events-none absolute top-[2.15rem] z-20 -translate-x-1/2 text-[10px] font-semibold tabular-nums text-[var(--status-danger-fg)]"
+              className="pointer-events-none absolute top-[3.55rem] z-20 -translate-x-1/2 text-[10px] font-semibold tabular-nums text-[var(--status-danger-fg)]"
               style={{
                 left: `${((band.baselineRatio + band.forecastRatio) / 2) * 100}%`,
               }}
@@ -314,7 +341,7 @@ export function ExecutiveMilestoneStrip({
             </div>
           ) : (
             <div
-              className="pointer-events-none absolute top-[6.35rem] -translate-x-1/2 text-[10px] font-medium text-[var(--status-ok-fg)]"
+              className="pointer-events-none absolute top-[8.1rem] -translate-x-1/2 text-[10px] font-medium text-[var(--status-ok-fg)]"
               style={{ left: `${band.baselineRatio * 100}%` }}
               data-ps-delta-label
             >

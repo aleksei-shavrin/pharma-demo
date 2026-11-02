@@ -2,7 +2,7 @@
 
 ### Requirement: Expanded milestone catalogue
 
-Система SHALL поддерживать расширенный milestone catalogue порядка ~40 control points (DOC-PROD-025), включая enrichment set и additive install/commissioning/readiness gates. IQ/OQ/PQ labels SHALL оставаться формулировкой «демо-гейт готовности» без GMP/CSV claims.
+Система SHALL поддерживать расширенный milestone catalogue порядка ~40 control points (DOC-PROD-025; Demo v1 authored count **43** after R2-U1-R2 early BLD EXC/FND/STR), включая enrichment set и additive install/commissioning/readiness gates. IQ/OQ/PQ labels SHALL оставаться формулировкой «демо-гейт готовности» без GMP/CSV claims. Early executive storytelling MAY include distinct Domain milestones `MS-BLD-EXC` / `MS-BLD-FND` / `MS-BLD-STR` (not renames of `MS-BLD-ENCL`).
 
 #### Scenario: Schedule returns full catalogue
 

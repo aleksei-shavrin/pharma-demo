@@ -9,6 +9,7 @@ import { AppShell } from './app-shell';
 
 const fetchDashboardOverview = vi.fn();
 const fetchNotifications = vi.fn();
+const fetchProjectCosts = vi.fn();
 
 vi.mock('@/lib/api-client', async () => {
   const actual =
@@ -18,6 +19,7 @@ vi.mock('@/lib/api-client', async () => {
     fetchDashboardOverview: (...args: unknown[]) =>
       fetchDashboardOverview(...args),
     fetchNotifications: (...args: unknown[]) => fetchNotifications(...args),
+    fetchProjectCosts: (...args: unknown[]) => fetchProjectCosts(...args),
   };
 });
 
@@ -32,6 +34,28 @@ beforeEach(() => {
     scenarioAsOfDate: '2027-02-15',
     projectId: 'PRJ-01',
     items: [],
+  });
+  fetchProjectCosts.mockResolvedValue({
+    snapshotId: 'A',
+    scenarioAsOfDate: '2027-02-15',
+    projectId: 'PRJ-01',
+    project: {
+      approvedBudgetRub: 6_200_000_000,
+      actualCostRub: 0,
+      committedCostRub: 0,
+      etcRub: 6_200_000_000,
+      eacRub: 6_200_000_000,
+      vacRub: 0,
+      contingencyTotalRub: 350_000_000,
+      contingencyConsumedRub: 0,
+      contingencyRemainingRub: 350_000_000,
+    },
+    workstreams: [],
+    equipment: [],
+    reconciliation: {
+      workstreamEacSumRub: 0,
+      projectLevelForecastRub: 0,
+    },
   });
 });
 

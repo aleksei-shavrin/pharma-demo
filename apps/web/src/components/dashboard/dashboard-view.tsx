@@ -1,19 +1,29 @@
 'use client';
 
-import type { DashboardOverview } from '@/lib/api-client';
+import type { DashboardOverview, ProjectCost } from '@/lib/api-client';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 import { DecisionAction } from './decision-panel';
 import { ExecutiveMilestoneStrip } from './executive-milestone-strip';
+import { ManagementAttention } from './management-attention';
 import { ProjectControlSummary } from './project-control-summary';
 import { SnapshotChanges } from './trend-panel';
 import { TopExceptionsPanel } from './top-exceptions-panel';
 import { WorkstreamStatusMatrix } from './workstream-readiness';
 
 /**
- * E3-R5 Dashboard canvas — independent module surfaces on application background.
- * No enclosing Page Surface.
+ * R2-U1-R4 executive Dashboard IA:
+ * 1 Executive overview (Status+PS+Cost | Workstream readiness)
+ * 2 Control milestones timeline (stable curated map A–S)
+ * 3 Key Exceptions | Management Attention
+ * 4 Trend + Decisions
  */
-export function DashboardView({ data }: { data: DashboardOverview }) {
+export function DashboardView({
+  data,
+  projectCost,
+}: {
+  data: DashboardOverview;
+  projectCost?: ProjectCost | null;
+}) {
   const { status } = useSnapshot();
   const showDecisions =
     !(data.decisionPanelState === 'absent' && data.decisions.length === 0);
@@ -21,7 +31,8 @@ export function DashboardView({ data }: { data: DashboardOverview }) {
   return (
     <div
       className="flex flex-1 flex-col gap-4 p-4 md:gap-5 md:p-5"
-      data-dashboard="e3-r5"
+      data-dashboard="r2-u1"
+      data-dashboard-ia="r2-u1-r4"
     >
       {status === 'loading' ? (
         <p className="text-sm text-[var(--text-muted)]" aria-live="polite">
@@ -29,12 +40,22 @@ export function DashboardView({ data }: { data: DashboardOverview }) {
         </p>
       ) : null}
 
-      <ProjectControlSummary data={data} />
+      <div
+        className="grid items-stretch gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] xl:gap-5"
+        data-dashboard-block="executive-overview"
+      >
+        <ProjectControlSummary data={data} projectCost={projectCost} />
+        <WorkstreamStatusMatrix data={data} />
+      </div>
+
       <ExecutiveMilestoneStrip data={data} />
 
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] xl:gap-5">
+      <div
+        className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] xl:gap-5"
+        data-dashboard-block="exceptions-attention"
+      >
         <TopExceptionsPanel data={data} />
-        <WorkstreamStatusMatrix data={data} />
+        <ManagementAttention data={data} />
       </div>
 
       <div

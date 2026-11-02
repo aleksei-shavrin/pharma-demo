@@ -44,14 +44,19 @@ Dashboard overview SHALL включать compact project cost signal (BAC, EAC,
 - **WHEN** активен Snapshot C
 - **THEN** overview содержит integer RUB BAC/EAC/VAC fields
 
-### Requirement: Snapshot-aware executive milestones
+### Requirement: Stable curated executive milestones (A–S)
 
-Dashboard SHALL получать fixture-authored `executiveMilestoneIds` (8–12) для активного snapshot, всегда включая `MS-PS`. FE SHALL NOT использовать hardcoded enrichment-only six IDs как SoT.
+Dashboard SHALL получать fixture-authored `executiveMilestoneIds` as a **stable curated project-lifecycle map** (exactly **12** IDs, identical membership for every snapshot A–S), always including `MS-PS`. Snapshot switching SHALL change project state / RAG / chrome accents, **not** membership of the executive set. FE SHALL NOT invent a competing membership as SoT.
 
-#### Scenario: Late snapshot includes readiness milestones
+#### Scenario: Membership unchanged across snapshots
 
-- **WHEN** активен Snapshot M или S
-- **THEN** executive subset включает MS-PS и релевантные commissioning/readiness milestones из каталога
+- **WHEN** активен Snapshot A и Snapshot S
+- **THEN** `executiveMilestoneIds` совпадает по membership с нормативным stable set (включая early BLD EXC/FND/STR/ENCL и late COM-OQ / COM-GO / MS-PS)
+
+#### Scenario: Late snapshot still shows early construction points
+
+- **WHEN** активен Snapshot O или S
+- **THEN** executive strip всё ещё включает early BLD points и MS-PS; меняется state/RAG/chrome, не состав точек
 
 ### Requirement: Navigable workstream readiness
 

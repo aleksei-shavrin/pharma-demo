@@ -21,26 +21,56 @@ export function dashboardOverviewFixture(
   overrides: Partial<DashboardOverview> = {},
 ): DashboardOverview {
   const hvacDelayed = ['C', 'D', 'E', 'F'].includes(snapshotId);
-  const hvacResidual = snapshotId === 'G' || snapshotId === 'H';
-  const psDelta = hvacResidual ? 14 : hvacDelayed ? 21 : 0;
+  const hvacResidual = (
+    ['G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'] as SnapshotId[]
+  ).includes(snapshotId);
+  const hvacRecovered = (
+    ['O', 'P', 'Q', 'R', 'S'] as SnapshotId[]
+  ).includes(snapshotId);
+  const psDelta = hvacRecovered ? 7 : hvacResidual ? 14 : hvacDelayed ? 21 : 0;
   const psForecast =
     psDelta === 21
       ? '2027-10-06'
       : psDelta === 14
         ? '2027-09-29'
-        : '2027-09-15';
+        : psDelta === 7
+          ? '2027-09-22'
+          : '2027-09-15';
 
   const projectStatus: DashboardOverview['projectStatus'] =
-    snapshotId === 'A'
+    snapshotId === 'A' || snapshotId === 'S'
       ? 'Green'
-      : snapshotId === 'B'
+      : snapshotId === 'B' ||
+          snapshotId === 'Q' ||
+          snapshotId === 'R'
         ? 'Yellow'
         : 'Red';
+
+  const risk001Green = (
+    ['A', 'B', 'Q', 'R', 'S'] as SnapshotId[]
+  ).includes(snapshotId);
+
+  /** R2-U1-R4: stable curated executive map — same membership A–S. */
+  const executiveMilestoneIds = [
+    'MS-BLD-EXC',
+    'MS-BLD-FND',
+    'MS-BLD-STR',
+    'MS-BLD-ENCL',
+    'MS-CLN-RDY',
+    'MS-HVAC-IQ',
+    'MS-UTL-WFI',
+    'MS-PRD-INST',
+    'MS-PKG-SAT',
+    'MS-COM-OQ',
+    'MS-COM-GO',
+    'MS-PS',
+  ];
 
   const base: DashboardOverview = {
     snapshotId,
     scenarioAsOfDate: SNAPSHOT_AS_OF[snapshotId],
     projectStatus,
+    executiveMilestoneIds,
     project: {
       id: 'PRJ-01',
       name: 'Строительство фармацевтического завода',
@@ -58,7 +88,10 @@ export function dashboardOverviewFixture(
         id: 'EQ-HVAC-01',
         name: 'Приточная установка AHU (long-lead)',
         critical: true,
-        status: hvacDelayed || hvacResidual ? 'Delayed' : 'OnTrack',
+        status:
+          hvacDelayed || hvacResidual
+            ? 'Delayed'
+            : 'OnTrack',
         workstream: 'WS-HVAC',
         baselineDelivery: '2027-05-15',
         forecastDelivery:
@@ -66,7 +99,9 @@ export function dashboardOverviewFixture(
             ? '2027-06-05'
             : psDelta === 14
               ? '2027-05-29'
-              : '2027-05-15',
+              : psDelta === 7
+                ? '2027-05-22'
+                : '2027-05-15',
         deliveryVariance: {
           subject: 'equipment_delivery',
           baselineDate: '2027-05-15',
@@ -75,7 +110,9 @@ export function dashboardOverviewFixture(
               ? '2027-06-05'
               : psDelta === 14
                 ? '2027-05-29'
-                : '2027-05-15',
+                : psDelta === 7
+                  ? '2027-05-22'
+                  : '2027-05-15',
           deltaDays: psDelta,
         },
       },
@@ -214,7 +251,7 @@ export function dashboardOverviewFixture(
       {
         id: 'RISK-001',
         title: 'Срыв окна монтажа HVAC → сдвиг старта производства',
-        rag: snapshotId === 'A' || snapshotId === 'B' ? 'Green' : 'Red',
+        rag: risk001Green ? 'Green' : 'Red',
         workstream: 'WS-HVAC',
         equipmentId: 'EQ-HVAC-01',
         milestoneId: 'MS-PS',
@@ -222,6 +259,30 @@ export function dashboardOverviewFixture(
       },
     ],
     milestones: [
+      {
+        id: 'MS-BLD-EXC',
+        name: 'Котлован завершён',
+        rag: 'Green' as const,
+        workstream: 'WS-BLD' as const,
+        baselineDate: '2027-02-05',
+        forecastDate: '2027-02-05',
+      },
+      {
+        id: 'MS-BLD-FND',
+        name: 'Фундамент принят',
+        rag: 'Green' as const,
+        workstream: 'WS-BLD' as const,
+        baselineDate: '2027-02-12',
+        forecastDate: '2027-02-12',
+      },
+      {
+        id: 'MS-BLD-STR',
+        name: 'Каркас здания готов',
+        rag: 'Green' as const,
+        workstream: 'WS-BLD' as const,
+        baselineDate: '2027-02-20',
+        forecastDate: '2027-02-20',
+      },
       {
         id: 'MS-BLD-ENCL',
         name: 'Оболочка здания закрыта',
@@ -247,12 +308,36 @@ export function dashboardOverviewFixture(
         forecastDate: '2027-06-15',
       },
       {
+        id: 'MS-HVAC-INST',
+        name: 'AHU смонтирована',
+        rag: 'Green' as const,
+        workstream: 'WS-HVAC' as const,
+        baselineDate: '2027-06-01',
+        forecastDate: '2027-06-01',
+      },
+      {
+        id: 'MS-HVAC-BAL',
+        name: 'Балансировка HVAC завершена',
+        rag: 'Green' as const,
+        workstream: 'WS-HVAC' as const,
+        baselineDate: '2027-08-20',
+        forecastDate: '2027-08-20',
+      },
+      {
         id: 'MS-UTL-WFI',
         name: 'WFI доступна для использования',
         rag: 'Green' as const,
         workstream: 'WS-UTL' as const,
         baselineDate: '2027-07-01',
         forecastDate: '2027-07-01',
+      },
+      {
+        id: 'MS-PRD-INST',
+        name: 'Технологическое оборудование смонтировано',
+        rag: 'Green' as const,
+        workstream: 'WS-PRD' as const,
+        baselineDate: '2027-07-15',
+        forecastDate: '2027-07-15',
       },
       {
         id: 'MS-PKG-SAT',
@@ -266,9 +351,81 @@ export function dashboardOverviewFixture(
             : '2027-08-10',
       },
       {
+        id: 'MS-PKG-RDY',
+        name: 'Упаковка готова к старту',
+        rag: 'Green' as const,
+        workstream: 'WS-PKG' as const,
+        baselineDate: '2027-09-05',
+        forecastDate: '2027-09-05',
+      },
+      {
+        id: 'MS-QC-RDY',
+        name: 'QC-лаборатория готова к работе',
+        rag: 'Green' as const,
+        workstream: 'WS-QC' as const,
+        baselineDate: '2027-07-10',
+        forecastDate: '2027-07-10',
+      },
+      {
+        id: 'MS-QC-METH',
+        name: 'Методы QC готовы',
+        rag: 'Green' as const,
+        workstream: 'WS-QC' as const,
+        baselineDate: '2027-09-08',
+        forecastDate: '2027-09-08',
+      },
+      {
+        id: 'MS-AUT-BMS',
+        name: 'BMS введён в эксплуатацию',
+        rag: 'Green' as const,
+        workstream: 'WS-AUT' as const,
+        baselineDate: '2027-07-25',
+        forecastDate: '2027-07-25',
+      },
+      {
+        id: 'MS-COM-IQ',
+        name: 'Общий демо-гейт готовности (IQ)',
+        rag: 'Green' as const,
+        workstream: 'WS-AUT' as const,
+        baselineDate: '2027-08-05',
+        forecastDate: '2027-08-05',
+      },
+      {
+        id: 'MS-COM-OQ',
+        name: 'Демо-гейт OQ',
+        rag: 'Green' as const,
+        workstream: 'WS-AUT' as const,
+        baselineDate: '2027-09-01',
+        forecastDate: '2027-09-01',
+      },
+      {
+        id: 'MS-COM-PQ',
+        name: 'Демо-гейт PQ',
+        rag: snapshotId === 'P' ? ('Red' as const) : ('Green' as const),
+        workstream: 'WS-AUT' as const,
+        baselineDate: '2027-09-10',
+        forecastDate: '2027-09-10',
+      },
+      {
+        id: 'MS-COM-RDY',
+        name: 'Готовность к старту',
+        rag: 'Green' as const,
+        workstream: null,
+        baselineDate: '2027-09-12',
+        forecastDate: '2027-09-12',
+      },
+      {
+        id: 'MS-COM-GO',
+        name: 'Решение Go/No-Go',
+        rag: 'Green' as const,
+        workstream: null,
+        baselineDate: '2027-09-18',
+        forecastDate: '2027-09-18',
+      },
+      {
         id: 'MS-PS',
         name: 'Готовность к старту производства',
-        rag: snapshotId === 'A' || snapshotId === 'B' ? 'Green' : 'Red',
+        rag: risk001Green ? 'Green' : 'Red',
         workstream: null,
         baselineDate: '2027-09-15',
         forecastDate: psForecast,

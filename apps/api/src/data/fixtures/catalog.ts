@@ -330,6 +330,22 @@ export const EQUIPMENT_CATALOG = {
 export type EquipmentId = keyof typeof EQUIPMENT_CATALOG;
 
 export const MILESTONE_CATALOG = {
+  /** Early BLD lifecycle story (R2-U1-R2) — distinct from envelope (MS-BLD-ENCL). */
+  'MS-BLD-EXC': {
+    name: 'Котлован завершён',
+    workstream: 'WS-BLD' as WorkstreamId,
+    baselineDate: '2027-02-05',
+  },
+  'MS-BLD-FND': {
+    name: 'Фундамент принят',
+    workstream: 'WS-BLD' as WorkstreamId,
+    baselineDate: '2027-02-12',
+  },
+  'MS-BLD-STR': {
+    name: 'Каркас здания готов',
+    workstream: 'WS-BLD' as WorkstreamId,
+    baselineDate: '2027-02-20',
+  },
   'MS-BLD-ENCL': {
     name: 'Оболочка здания закрыта',
     workstream: 'WS-BLD' as WorkstreamId,

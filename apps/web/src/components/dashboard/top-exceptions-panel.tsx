@@ -115,7 +115,7 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
 
       {items.length === 0 ? (
         <p
-          className="mt-3 text-sm text-[var(--text-secondary)]"
+          className="mt-1.5 text-sm leading-snug text-[var(--text-secondary)]"
           data-top-exceptions="empty"
         >
           На текущую дату критических исключений нет — спокойный базовый план.

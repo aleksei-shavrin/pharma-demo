@@ -4,7 +4,7 @@ import { expect } from 'vitest';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { snapshotOptionLabel } from '@/lib/snapshot/snapshot-meta';
 
-/** Open compact A–H disclosure and choose a snapshot (E7 listbox pattern). */
+/** Open compact A–S disclosure and choose a snapshot (R2-U1 listbox). */
 export async function selectDemoSnapshot(
   user: UserEvent,
   id: SnapshotId,

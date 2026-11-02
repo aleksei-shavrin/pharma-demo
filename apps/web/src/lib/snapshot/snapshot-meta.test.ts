@@ -49,17 +49,8 @@ describe('snapshot-meta A–S contract (R2-C1)', () => {
     }
   });
 
-  it('UI selectable set remains A–H until R2-U1', () => {
-    expect([...SELECTABLE_SNAPSHOT_IDS]).toEqual([
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F',
-      'G',
-      'H',
-    ]);
+  it('UI selectable set is full A–S after R2-U1', () => {
+    expect([...SELECTABLE_SNAPSHOT_IDS]).toEqual([...SNAPSHOT_IDS]);
   });
 
   it('formats option labels with date + context', () => {
@@ -67,6 +58,6 @@ describe('snapshot-meta A–S contract (R2-C1)', () => {
     expect(snapshotOptionLabel('C')).toContain('Срыв HVAC');
     expect(snapshotOptionLabel('G')).toContain('15.05.2027');
     expect(snapshotOptionLabel('S')).toContain('22.09.2027');
-    expect(snapshotOptionLabel('S')).toContain('Production Start achieved');
+    expect(snapshotOptionLabel('S')).toContain('Production Start достигнут');
   });
 });

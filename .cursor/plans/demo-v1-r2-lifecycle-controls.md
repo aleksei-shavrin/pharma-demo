@@ -10,7 +10,7 @@ updated: 2026-11-02
 > **Same Demo v1.** Not Demo v2. Not I9.
 > Baseline tags: `demo-v1.0.0`, `demo-v1-enrichment-baseline` (historical checkpoints).
 > Enrichment E1–E8 COMPLETE; OpenSpec `demo-v1-enrichment` archived `2026-11-02-demo-v1-enrichment` (specs synced).
-> **R2-D0 / C1 / L1(+R1) / M1(+R1) / W1(+R1/R2) / P1(+R1) APPROVED** (checkpoint `feat(demo): add people ownership model`). **R2-N1 (+N1-R1)** Notifications implemented (authored A–S, RU-only director copy, soft entityRef integrity, AppBar bell/popover, sessionStorage read, localStorage popup pref, ≤3 toasts after atomic commit) — awaiting human visual review. R2-U1 not started.
+> **R2-D0 / C1 / L1(+R1) / M1(+R1) / W1(+R1/R2) / P1(+R1) / N1(+R1) APPROVED** (checkpoint `feat(demo): add management notifications`). **R2-U1 … U1-R4** (overview stretch; RAG readiness; Exceptions|Attention row; stable executive map 12 A–S) — awaiting human visual review; **not APPROVED**. R2-I1 not started.
 
 ## Normative docs
 

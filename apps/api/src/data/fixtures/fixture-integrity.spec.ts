@@ -31,7 +31,10 @@ import {
   RISK_IDS,
 } from './catalog';
 import { SNAPSHOTS, SNAPSHOT_A, SNAPSHOT_C, SNAPSHOT_F, SNAPSHOT_G, SNAPSHOT_H } from './index';
-import { SNAPSHOT_STATES } from './snapshot-states';
+import {
+  EXECUTIVE_MILESTONE_SET_STABLE,
+  SNAPSHOT_STATES,
+} from './snapshot-states';
 import type { PopulatedSnapshotId, SnapshotFixture } from './types';
 
 const ALL: PopulatedSnapshotId[] = [
@@ -96,7 +99,7 @@ describe('fixture integrity — inventory / counts', () => {
       s.decisions.forEach((d) => dec.add(d.id));
     }
     expect(eq.size).toBe(52);
-    expect(ms.size).toBe(40);
+    expect(ms.size).toBe(43);
     expect(iss.size).toBe(30);
     expect(risk.size).toBe(30);
     expect(dec.size).toBe(18);
@@ -107,10 +110,10 @@ describe('fixture integrity — inventory / counts', () => {
     expect([...dec].sort()).toEqual([...DECISION_IDS].sort());
   });
 
-  it('every snapshot has 52 Equipment and 40 Milestones', () => {
+  it('every snapshot has 52 Equipment and 43 Milestones', () => {
     for (const id of ALL) {
       expect(SNAPSHOTS[id].equipment).toHaveLength(52);
-      expect(SNAPSHOTS[id].milestones).toHaveLength(40);
+      expect(SNAPSHOTS[id].milestones).toHaveLength(43);
     }
   });
 
@@ -589,12 +592,14 @@ describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
     );
   });
 
-  it('executiveMilestoneIds always include MS-PS and resolve', () => {
+  it('executiveMilestoneIds stable curated set A–S (12) with MS-PS', () => {
+    expect(EXECUTIVE_MILESTONE_SET_STABLE).toHaveLength(12);
+    expect(EXECUTIVE_MILESTONE_SET_STABLE).toContain('MS-PS');
     for (const id of ALL) {
       const s = SNAPSHOTS[id];
-      expect(s.executiveMilestoneIds).toContain('MS-PS');
-      expect(s.executiveMilestoneIds.length).toBeGreaterThanOrEqual(8);
-      expect(s.executiveMilestoneIds.length).toBeLessThanOrEqual(12);
+      expect(s.executiveMilestoneIds).toEqual([
+        ...EXECUTIVE_MILESTONE_SET_STABLE,
+      ]);
       const ms = new Set(s.milestones.map((m) => m.id));
       for (const mid of s.executiveMilestoneIds) {
         expect(ms.has(mid)).toBe(true);

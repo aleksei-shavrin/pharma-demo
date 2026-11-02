@@ -165,7 +165,7 @@ related:
 
 ## 5. Executive milestone subset (snapshot-aware)
 
-Backend/fixture-authored `executiveMilestoneIds[]` per snapshot (8–12). Always includes **MS-PS**. Early snaps emphasize BLD/CLN/HVAC/WFI/PKG; late snaps emphasize AUT/COM OQ/PQ/PS. FE must **not** hardcode the enrichment six IDs as SoT.
+Backend/fixture-authored `executiveMilestoneIds[]` is a **stable curated project-lifecycle map** (exactly 12 IDs, identical for every snapshot A–S; R2-U1-R4). Always includes **MS-PS**. Snapshot switching changes project state and timeline accents, **not** membership of the executive set. FE must not invent a competing membership. Deliberate RU short labels required for executive-visible points.
 
 ## 6. Cost / notification columns
 

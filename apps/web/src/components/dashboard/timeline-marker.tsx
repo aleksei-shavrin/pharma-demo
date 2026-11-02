@@ -34,6 +34,8 @@ type Props = {
   entityId?: string;
   labelAlign?: 'start' | 'center' | 'end';
   labelNudgePx?: number;
+  /** 0 near axis; 1 outer (R2-U1-R3 collision lanes). */
+  labelLane?: 0 | 1;
   ariaLabel: string;
   detailRows: { label: string; value: string }[];
   links: PopoverLink[];
@@ -80,6 +82,7 @@ export function TimelineMarker({
   entityId,
   labelAlign = 'center',
   labelNudgePx = 0,
+  labelLane = 0,
   ariaLabel,
   detailRows,
   links,
@@ -197,6 +200,7 @@ export function TimelineMarker({
         : 'bg-[var(--status-ok-border)] ring-2 ring-[var(--status-ok-fg)]';
 
   const stemAbove = labelSide === 'above';
+  const laneOffsetPx = labelLane === 1 ? 26 : 0;
   const alignClass =
     labelAlign === 'start'
       ? 'items-start text-left'
@@ -218,20 +222,25 @@ export function TimelineMarker({
       style={{ left: `${ratio * 100}%` }}
       data-timeline-marker={kind}
       data-marker-geometry="fixed-html"
+      data-label-side={labelSide}
+      data-label-lane={labelLane}
       {...(testId ? { 'data-testid': testId } : {})}
     >
       <div
-        className={`pointer-events-none absolute flex w-max max-w-[5.25rem] flex-col ${alignClass} ${labelX} ${
-          stemAbove ? 'bottom-[calc(100%+4px)]' : 'top-[calc(100%+4px)]'
-        }`}
-        style={
-          labelNudgePx !== 0 && labelAlign === 'center'
+        className={`pointer-events-none absolute flex w-max max-w-[5.25rem] flex-col ${alignClass} ${labelX}`}
+        style={{
+          ...(stemAbove
+            ? { bottom: `calc(100% + 4px + ${laneOffsetPx}px)` }
+            : { top: `calc(100% + 4px + ${laneOffsetPx}px)` }),
+          ...(labelNudgePx !== 0 && labelAlign === 'center'
             ? { transform: `translateX(calc(-50% + ${labelNudgePx}px))` }
             : labelNudgePx !== 0
               ? { marginInlineStart: labelNudgePx }
-              : undefined
-        }
+              : null),
+        }}
         data-milestone-label={markerDataAttrs?.['data-milestone-id']}
+        data-label-side={labelSide}
+        data-label-lane={labelLane}
       >
         {stemAbove ? (
           <>

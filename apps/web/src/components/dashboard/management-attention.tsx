@@ -64,7 +64,7 @@ export function ManagementAttention({ data }: { data: DashboardOverview }) {
   return (
     <section
       aria-labelledby="attention-heading"
-      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-3 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-2.5 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
       data-dashboard-block="management-attention"
     >
       <h2
@@ -75,8 +75,8 @@ export function ManagementAttention({ data }: { data: DashboardOverview }) {
       </h2>
 
       {active.length === 0 ? (
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">
-          Активных сигналов внимания нет.
+        <p className="mt-1 text-sm leading-snug text-[var(--text-secondary)]">
+          Нет активных управленческих сигналов.
         </p>
       ) : (
         <ul className="mt-2 flex flex-wrap items-baseline gap-x-1 gap-y-1.5 text-sm">

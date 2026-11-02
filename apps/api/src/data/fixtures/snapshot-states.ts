@@ -27,7 +27,11 @@ export type SnapshotState = {
   msDelta: Partial<Record<MilestoneId, number>>;
   /** Milestone RAG. Omitted = Green. */
   msRag: Partial<Record<MilestoneId, Rag>>;
-  /** Fixture-authored executive milestone subset (8–12; always includes MS-PS). */
+  /**
+   * Fixture-authored executive milestone set (R2-U1-R4):
+   * stable curated project-lifecycle map — same membership A–S.
+   * Snapshot switching changes state/RAG/chrome, not set membership.
+   */
   executiveMilestoneIds: MilestoneId[];
   topExceptions: TopExceptionFixture[];
   trend: TrendFixture;
@@ -39,38 +43,22 @@ const emptyTrend = (): TrendFixture => ({
   unchangedCritical: [],
 });
 
-/** Early executive strip (DOC-PROD-024). */
-const EXEC_EARLY: MilestoneId[] = [
+/**
+ * Stable executive map (12) across A–S — construction → systems → COM → PS.
+ * R2-U1-R4: not snapshot-phase-varying.
+ */
+export const EXECUTIVE_MILESTONE_SET_STABLE: MilestoneId[] = [
+  'MS-BLD-EXC',
+  'MS-BLD-FND',
+  'MS-BLD-STR',
   'MS-BLD-ENCL',
-  'MS-BLD-WT',
   'MS-CLN-RDY',
   'MS-HVAC-IQ',
   'MS-UTL-WFI',
-  'MS-PKG-SAT',
-  'MS-QC-RDY',
-  'MS-PS',
-];
-
-const EXEC_DISRUPTION: MilestoneId[] = [
-  'MS-CLN-RDY',
-  'MS-HVAC-IQ',
-  'MS-HVAC-INST',
-  'MS-UTL-PW',
-  'MS-UTL-WFI',
-  'MS-PKG-SAT',
   'MS-PRD-INST',
-  'MS-COM-IQ',
-  'MS-PS',
-];
-
-const EXEC_MANAGEMENT: MilestoneId[] = [
-  'MS-HVAC-IQ',
-  'MS-UTL-WFI',
-  'MS-CLN-RDY',
   'MS-PKG-SAT',
-  'MS-QC-RDY',
-  'MS-AUT-BMS',
-  'MS-COM-IQ',
+  'MS-COM-OQ',
+  'MS-COM-GO',
   'MS-PS',
 ];
 
@@ -100,7 +88,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
     riskRag: { ...BASE_RISKS_GREEN },
     msDelta: {},
     msRag: {},
-    executiveMilestoneIds: [...EXEC_EARLY],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [],
     trend: emptyTrend(),
   },
@@ -122,7 +110,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-PKG-SAT': 10,
     },
     msRag: {},
-    executiveMilestoneIds: [...EXEC_EARLY],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-B-PKG',
@@ -180,7 +168,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
     msRag: {
       'MS-PS': 'Red',
     },
-    executiveMilestoneIds: [...EXEC_DISRUPTION],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-C-HVAC-PS',
@@ -197,7 +185,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-C-PKG',
         title: 'Упаковка всё ещё в отклонении',
-        causeImpact: 'Фоновый Delayed PKG при критичном HVAC',
+        causeImpact: 'Фоновое отклонение упаковки при критичном HVAC',
         links: [
           { type: 'equipment', id: 'EQ-PKG-01' },
           { type: 'issue', id: 'ISS-PKG-01' },
@@ -246,7 +234,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-HVAC-IQ': 'Red',
       'MS-CLN-RDY': 'Red',
     },
-    executiveMilestoneIds: [...EXEC_DISRUPTION],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-D-HVAC-PS',
@@ -347,7 +335,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-PKG-SAT': 'Red',
       'MS-COM-IQ': 'Red',
     },
-    executiveMilestoneIds: [...EXEC_DISRUPTION],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-E-HVAC-PS',
@@ -469,7 +457,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-PKG-SAT': 'Red',
       'MS-COM-IQ': 'Red',
     },
-    executiveMilestoneIds: [...EXEC_MANAGEMENT],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-F-HVAC-PS',
@@ -568,7 +556,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-PKG-SAT': 'Green',
       'MS-COM-IQ': 'Red',
     },
-    executiveMilestoneIds: [...EXEC_MANAGEMENT],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-G-HVAC-PS',
@@ -671,7 +659,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-PKG-SAT': 'Green',
       'MS-COM-IQ': 'Red',
     },
-    executiveMilestoneIds: [...EXEC_MANAGEMENT],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-H-HVAC-PS',
@@ -773,12 +761,12 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-AUT-INT': 'Red',
       'MS-COM-IQ': 'Red',
     },
-    executiveMilestoneIds: ['MS-UTL-RDY','MS-UTL-WFI','MS-PRD-INST','MS-PRD-CIP','MS-PKG-SER','MS-HVAC-BAL','MS-AUT-BMS','MS-COM-IQ','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-I-HVAC-PS',
         title: 'Остаточный HVAC / PS +14',
-        causeImpact: 'Authoritative HVACΔ и PS остаются +14',
+        causeImpact: 'Авторитетные отклонения HVAC и старта производства остаются +14',
         links: [
           { type: 'equipment', id: 'EQ-HVAC-01' },
           { type: 'risk', id: 'RISK-001' },
@@ -788,8 +776,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       },
       {
         id: 'TEX-I-UTL',
-        title: 'Восстановление utilities под давлением',
-        causeImpact: 'Охлаждённая вода / газы; UTL issues Open',
+        title: 'Восстановление инженерных систем под давлением',
+        causeImpact: 'Охлаждённая вода / газы; проблемы UTL открыты',
         links: [
           { type: 'issue', id: 'ISS-UTL-03' },
           { type: 'risk', id: 'RISK-UTL-03' },
@@ -877,7 +865,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-PRD-CIP': 'Red',
       'MS-COM-IQ': 'Red',
     },
-    executiveMilestoneIds: ['MS-UTL-RDY','MS-UTL-WFI','MS-PRD-INST','MS-PRD-CIP','MS-PKG-SER','MS-HVAC-BAL','MS-AUT-BMS','MS-COM-IQ','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-J-PRD',
@@ -894,7 +882,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-J-HVAC-PS',
         title: 'HVAC / PS всё ещё +14',
-        causeImpact: 'Монтажный прогресс не меняет authoritative PS',
+        causeImpact: 'Монтажный прогресс не меняет авторитетный прогноз старта',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -972,12 +960,13 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-HVAC-BAL': 'Red',
       'MS-COM-IQ': 'Red',
     },
-    executiveMilestoneIds: ['MS-UTL-RDY','MS-UTL-WFI','MS-PRD-INST','MS-PRD-CIP','MS-PKG-SER','MS-HVAC-BAL','MS-AUT-BMS','MS-COM-IQ','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-K-PS',
         title: 'Операционный прогресс; PS всё ещё +14',
-        causeImpact: 'PKG residual closed path; authoritative HVAC/PS +14',
+        causeImpact:
+          'Основное отклонение упаковки закрыто; HVAC/старт производства по-прежнему +14',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -997,7 +986,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       },
     ],
     trend: {
-      better: ['PKG primary residual closed', 'PRD смягчение'],
+      better: ['Основное отклонение упаковки закрыто', 'PRD смягчение'],
       worse: ['HEPA / сериализация'],
       unchangedCritical: ['HVAC / PS +14'],
     },
@@ -1065,7 +1054,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-AUT-INT': 'Red',
       'MS-COM-IQ': 'Red',
     },
-    executiveMilestoneIds: ['MS-AUT-EMS','MS-AUT-INT','MS-COM-IQ','MS-COM-OQ','MS-COM-PQ','MS-HVAC-BAL','MS-PRD-COM','MS-QC-METH','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-L-AUT',
@@ -1081,7 +1070,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-L-PS',
         title: 'PS всё ещё +14',
-        causeImpact: 'Drama сместилась на AUT; HVAC driver без изменения',
+        causeImpact: 'Фокус сместился на AUT; драйвер HVAC без изменения',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -1090,7 +1079,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       },
     ],
     trend: {
-      better: ['PKG serialization closed'],
+      better: ['Сериализация упаковки закрыта'],
       worse: ['AUT BMS/EMS'],
       unchangedCritical: ['HVAC / PS +14'],
     },
@@ -1160,12 +1149,12 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-COM-OQ': 'Red',
       'MS-QC-LAB': 'Red',
     },
-    executiveMilestoneIds: ['MS-AUT-EMS','MS-AUT-INT','MS-COM-IQ','MS-COM-OQ','MS-COM-PQ','MS-HVAC-BAL','MS-PRD-COM','MS-QC-METH','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-M-COM',
         title: 'Демо-гейты готовности IQ/OQ',
-        causeImpact: 'Commissioning pressure; multi-WS Yellow/Red',
+        causeImpact: 'Давление на пусконаладку; несколько направлений Yellow/Red',
         links: [
           { type: 'issue', id: 'ISS-COM-01' },
           { type: 'risk', id: 'RISK-COM-01' },
@@ -1176,7 +1165,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-M-PS',
         title: 'PS всё ещё +14',
-        causeImpact: 'Драма смещена с sole HVAC narrative',
+        causeImpact: 'Фокус смещён с единственного HVAC-нарратива',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -1185,8 +1174,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       },
     ],
     trend: {
-      better: ['AUT infrastructure mitigating'],
-      worse: ['Commissioning demo gates', 'QC lab'],
+      better: ['Инфраструктура AUT смягчается'],
+      worse: ['Демо-гейты пусконаладки', 'Лаборатория QC'],
       unchangedCritical: ['HVAC / PS +14'],
     },
   },
@@ -1248,12 +1237,12 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-COM-IQ': 'Red',
       'MS-COM-OQ': 'Red',
     },
-    executiveMilestoneIds: ['MS-AUT-EMS','MS-AUT-INT','MS-COM-IQ','MS-COM-OQ','MS-COM-PQ','MS-HVAC-BAL','MS-PRD-COM','MS-QC-METH','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-N-DEC',
-        title: 'Решения commissioning зафиксированы',
-        causeImpact: 'DEC-COM-*; прогнозы HVAC/PS без авто-изменения (BR-006)',
+        title: 'Решения по пусконаладке зафиксированы',
+        causeImpact: 'DEC-COM-*; прогнозы HVAC/старта без автоизменения (BR-006)',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -1263,7 +1252,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-N-COM',
         title: 'Остаточное давление демо-гейтов',
-        causeImpact: 'Issues Mitigating; Red risks до fixture post-state',
+        causeImpact:
+          'Проблемы в Mitigating; красные риски до авторского пост-состояния',
         links: [
           { type: 'issue', id: 'ISS-COM-01' },
           { type: 'milestone', id: 'MS-COM-IQ' },
@@ -1272,9 +1262,9 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       },
     ],
     trend: {
-      better: ['Зафиксированы commissioning decisions'],
+      better: ['Зафиксированы решения по пусконаладке'],
       worse: [],
-      unchangedCritical: ['HVAC / PS +14 без авто-reforecast'],
+      unchangedCritical: ['HVAC / старт производства +14 без автопересчёта'],
     },
   },
 
@@ -1339,12 +1329,12 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-COM-PQ': 'Red',
       'MS-HVAC-BAL': 'Red',
     },
-    executiveMilestoneIds: ['MS-COM-OQ','MS-COM-PQ','MS-COM-RDY','MS-COM-GO','MS-HVAC-BAL','MS-PKG-RDY','MS-QC-METH','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-O-PS',
-        title: 'Fixture recovery HVAC+PS → +7',
-        causeImpact: 'Атомарный post-state; RISK-001 всё ещё Red (BR-007)',
+        title: 'Восстановление прогноза HVAC и старта → +7',
+        causeImpact: 'Атомарное пост-состояние; RISK-001 всё ещё Red (BR-007)',
         links: [
           { type: 'equipment', id: 'EQ-HVAC-01' },
           { type: 'risk', id: 'RISK-001' },
@@ -1364,8 +1354,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       },
     ],
     trend: {
-      better: ['HVAC/PS fixture +7'],
-      worse: ['OQ/PQ pressure'],
+      better: ['Прогноз HVAC/старта восстановлен до +7 дней'],
+      worse: ['Давление на OQ/PQ'],
       unchangedCritical: ['RISK-001 Red'],
     },
   },
@@ -1429,11 +1419,11 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-COM-PQ': 'Red',
       'MS-COM-RDY': 'Red',
     },
-    executiveMilestoneIds: ['MS-COM-OQ','MS-COM-PQ','MS-COM-RDY','MS-COM-GO','MS-HVAC-BAL','MS-PKG-RDY','MS-QC-METH','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-P-PS',
-        title: 'PQ / финальная готовность — overall Red',
+        title: 'PQ / финальная готовность — общий статус Red',
         causeImpact: 'RISK-001 Red ⇒ MS-PS не Green (BR-007)',
         links: [
           { type: 'risk', id: 'RISK-001' },
@@ -1454,8 +1444,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       },
     ],
     trend: {
-      better: ['Ранние Issues Closed'],
-      worse: ['PQ / residual QC'],
+      better: ['Ранние проблемы закрыты'],
+      worse: ['PQ / остаточное давление на QC'],
       unchangedCritical: ['RISK-001 Red'],
     },
   },
@@ -1515,12 +1505,13 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-PS': 'Green',
       'MS-COM-RDY': 'Red',
     },
-    executiveMilestoneIds: ['MS-COM-OQ','MS-COM-PQ','MS-COM-RDY','MS-COM-GO','MS-HVAC-BAL','MS-PKG-RDY','MS-QC-METH','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-Q-BASELINE',
-        title: 'Baseline PS date без actual start',
-        causeImpact: 'asOf=2027-09-15; прогноз 2027-09-22; spine cleared of Red',
+        title: 'Базовая дата старта пройдена без фактического запуска',
+        causeImpact:
+          'Дата снимка 15.09.2027; прогноз 22.09.2027; критичный путь без Red',
         links: [
           { type: 'milestone', id: 'MS-PS' },
           { type: 'issue', id: 'ISS-RDY-01' },
@@ -1530,7 +1521,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-Q-RDY',
         title: 'Финальная готовность',
-        causeImpact: 'Контрольный перечень; overall Yellow',
+        causeImpact: 'Контрольный перечень; общий статус Yellow',
         links: [
           { type: 'risk', id: 'RISK-RDY-01' },
           { type: 'milestone', id: 'MS-COM-RDY' },
@@ -1539,8 +1530,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       },
     ],
     trend: {
-      better: ['RISK-001 / MS-PS cleared of Red'],
-      worse: ['Baseline date honesty'],
+      better: ['RISK-001 / MS-PS сняты с Red'],
+      worse: ['Честность базовой даты без фактического старта'],
       unchangedCritical: [],
     },
   },
@@ -1598,12 +1589,13 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       'MS-PS': 'Green',
       'MS-COM-GO': 'Red',
     },
-    executiveMilestoneIds: ['MS-COM-OQ','MS-COM-PQ','MS-COM-RDY','MS-COM-GO','MS-HVAC-BAL','MS-PKG-RDY','MS-QC-METH','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
         id: 'TEX-R-GO',
         title: 'Go / No-Go',
-        causeImpact: 'DEC-GO-01; spine non-Red; overall Yellow до actual start',
+        causeImpact:
+          'DEC-GO-01; критичный путь не Red; общий статус Yellow до фактического старта',
         links: [
           { type: 'issue', id: 'ISS-GO-01' },
           { type: 'risk', id: 'RISK-GO-01' },
@@ -1615,7 +1607,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
     trend: {
       better: ['ISS-001 Closed'],
       worse: [],
-      unchangedCritical: ['Ожидание actual Production Start'],
+      unchangedCritical: ['Ожидание фактического старта производства'],
     },
   },
 
@@ -1675,10 +1667,10 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
     msRag: {
       'MS-PS': 'Green',
     },
-    executiveMilestoneIds: ['MS-COM-OQ','MS-COM-PQ','MS-COM-RDY','MS-COM-GO','MS-HVAC-BAL','MS-PKG-RDY','MS-QC-METH','MS-PS'],
+    executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [],
     trend: {
-      better: ['Production Start achieved'],
+      better: ['Старт производства достигнут'],
       worse: [],
       unchangedCritical: [],
     },
