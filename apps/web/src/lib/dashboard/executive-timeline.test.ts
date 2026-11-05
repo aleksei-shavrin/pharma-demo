@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import {
+  assertNoSlotCollisions,
   dateToRatio,
   ExecutiveMilestoneIntegrityError,
   resolveExecutiveMilestones,
+  resolveExecutiveTimelinePresentation,
   resolveProductionStartBand,
   resolveTimelineChromeLayout,
   timelineMonthTicks,
@@ -175,29 +177,66 @@ describe('executive timeline helpers', () => {
     expect(hvac?.labelSide).not.toBe(wfi?.labelSide);
   });
 
-  it('R2-U1-R3 late O/S layout: true ratios + multi-lane chrome/policy', () => {
-    const o = resolveExecutiveMilestones(dashboardOverviewFixture('O'));
-    expect(o.some((p) => p.id === 'MS-PS')).toBe(true);
-    for (const p of o) {
-      expect(p.ratio).toBe(dateToRatio(p.forecastDate));
-      expect(p.labelLane === 0 || p.labelLane === 1).toBe(true);
-    }
-    const lateCluster = o.filter((p) => p.ratio >= 0.7);
-    if (lateCluster.length >= 2) {
-      const slots = new Set(
-        lateCluster.map((p) => `${p.labelSide}:${p.labelLane}`),
+  it('R2-U1-R8 late O/S: PS cluster zone reserved; milestones avoid below 0/1', () => {
+    for (const snap of ['O', 'S'] as const) {
+      const presentation = resolveExecutiveTimelinePresentation(
+        dashboardOverviewFixture(snap),
       );
-      expect(slots.size).toBeGreaterThan(1);
+      expect(() => assertNoSlotCollisions(presentation.slots)).not.toThrow();
+
+      for (const p of presentation.points) {
+        expect(p.ratio).toBe(dateToRatio(p.forecastDate));
+      }
+
+      const { chrome } = presentation;
+      expect(chrome.snapshot.side).toBe('above');
+      expect(chrome.snapshot.lane).toBe(2);
+      expect(chrome.psCluster.side).toBe('below');
+      expect(chrome.psCluster.reservesSlot).toBe(true);
+      expect(chrome.baseline).toBeNull();
+      expect(chrome.forecast).toBeNull();
+      expect(chrome.coincident).toBeNull();
+
+      const lateVisible = presentation.points.filter(
+        (p) => p.id !== 'MS-PS' && p.ratio >= 0.7,
+      );
+      for (const p of lateVisible) {
+        const conflictsPs =
+          p.labelSide === 'below' && (p.labelLane === 0 || p.labelLane === 1);
+        expect(conflictsPs).toBe(false);
+      }
+
+      const go = presentation.points.find((p) => p.id === 'MS-COM-GO');
+      expect(go?.labelSide).toBe('above');
     }
 
-    const sData = dashboardOverviewFixture('S');
-    const band = resolveProductionStartBand(sData);
-    const chrome = resolveTimelineChromeLayout(sData, band);
-    expect(chrome.snapshot.side).toBe('above');
-    expect(chrome.snapshot.lane).toBe(1);
-    expect(chrome.forecast?.lane).toBe(1);
-    expect(chrome.forecast?.side).toBe('below');
-    expect(chrome.baseline?.side).toBe('below');
-    expect(chrome.baseline?.lane).toBe(0);
+    const oData = dashboardOverviewFixture('O');
+    const oChrome = resolveTimelineChromeLayout(
+      oData,
+      resolveProductionStartBand(oData),
+    );
+    expect(oChrome.psCluster.lane).toBe(0);
+  });
+
+  it('R2-U1-R5 RU-first executive short labels for stable 12', () => {
+    const points = resolveExecutiveMilestones(dashboardOverviewFixture('S'));
+    const byId = Object.fromEntries(points.map((p) => [p.id, p.shortLabel]));
+    expect(byId['MS-BLD-EXC']).toBe('Котлован');
+    expect(byId['MS-BLD-FND']).toBe('Фундамент');
+    expect(byId['MS-BLD-STR']).toBe('Каркас');
+    expect(byId['MS-BLD-ENCL']).toBe('Контур здания');
+    expect(byId['MS-CLN-RDY']).toBe('Чистые помещения');
+    expect(byId['MS-HVAC-IQ']).toBe('Готовность HVAC');
+    expect(byId['MS-UTL-WFI']).toBe('Вода WFI');
+    expect(byId['MS-PRD-INST']).toBe('Тех. монтаж');
+    expect(byId['MS-PKG-SAT']).toBe('SAT упаковки');
+    expect(byId['MS-COM-OQ']).toBe('Квалификация OQ');
+    expect(byId['MS-COM-GO']).toBe('Решение о запуске');
+    expect(byId['MS-PS']).toBe('Старт производства');
+    for (const label of Object.values(byId)) {
+      expect(label).not.toMatch(/Go\/No-Go/);
+      expect(label).not.toMatch(/^HVAC IQ$/);
+      expect(label).not.toMatch(/^PKG SAT$/);
+    }
   });
 });

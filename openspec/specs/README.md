@@ -1,6 +1,6 @@
 # OpenSpec — living specs
 
-Living specifications (живая спецификация) для **Pharma Project Control**.
+Living specifications (живая спецификация) для **Pharma Demo**.
 
 ## Что публикуется
 

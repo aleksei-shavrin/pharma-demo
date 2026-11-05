@@ -1,16 +1,15 @@
 ---
 id: DOC-TPL-UC-001
-title: "Шаблон: Use case"
+title: 'Шаблон: Use case'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-TPL-REQ-001
 ---
-
 # Шаблон: Use case
 
 ```yaml

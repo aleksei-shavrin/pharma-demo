@@ -1,19 +1,19 @@
 ---
 id: DOC-BA-012
-title: "Stakeholder needs (Demo v1)"
+title: Потребности заинтересованных сторон (Demo v1)
 type: business
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-015
   - DOC-BA-011
   - DOC-DISC-011
+sidebar_label: Потребности стейкхолдеров
 ---
-
-# Stakeholder needs (Demo v1)
+# Потребности заинтересованных сторон (Demo v1)
 
 Needs для ролей в narrative **SCN-001 → SCN-007**. Кандидаты SH-* из [stakeholders](../01-discovery/stakeholders.md) — не org chart заказчика.
 

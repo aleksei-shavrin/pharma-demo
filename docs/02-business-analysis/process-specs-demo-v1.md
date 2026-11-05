@@ -1,21 +1,21 @@
 ---
 id: DOC-BA-013
-title: "Process specs (Demo v1 narrative)"
+title: Спецификации процессов (narrative Demo v1)
 type: business
 status: draft
-version: "0.3.0"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-016
   - DOC-DISC-018
   - DOC-BA-011
   - DOC-BA-010
   - DOC-BA-014
+sidebar_label: Спецификации процессов
 ---
-
-# Process specs (Demo v1 narrative)
+# Спецификации процессов (narrative Demo v1)
 
 Демонстрационная модель процессов для **SCN-001 → SCN-007**. Не SOP предприятия.
 
@@ -43,7 +43,7 @@ related:
 
 ---
 
-## PROC-007 — Equipment / supply (demo)
+## PROC-007 — Оборудование / поставки (demo) {#proc-007}
 
 > **certainty:** hypothesis
 
@@ -66,7 +66,7 @@ related:
 
 ---
 
-## PROC-001 — Schedule dates (demo, без сущности Activity)
+## PROC-001 — Даты Schedule (demo, без сущности Activity) {#proc-001}
 
 > **certainty:** hypothesis
 
@@ -84,7 +84,7 @@ related:
 
 ---
 
-## PROC-005 — Issue management (demo)
+## PROC-005 — Управление Issue (demo) {#proc-005}
 
 > **certainty:** hypothesis
 
@@ -113,7 +113,7 @@ related:
 
 ---
 
-## PROC-004 — Risk management (demo)
+## PROC-004 — Управление Risk (demo) {#proc-004}
 
 > **certainty:** hypothesis
 
@@ -131,7 +131,7 @@ related:
 
 ---
 
-## PROC-010 — Milestones / gates (demo)
+## PROC-010 — Вехи / gates (demo) {#proc-010}
 
 > **certainty:** hypothesis
 
@@ -157,7 +157,7 @@ related:
 
 ---
 
-## PROC-011 — Management reporting (demo)
+## PROC-011 — Управленческая отчётность (demo) {#proc-011}
 
 > **certainty:** hypothesis
 

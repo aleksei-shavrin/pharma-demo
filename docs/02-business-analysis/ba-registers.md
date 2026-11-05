@@ -1,12 +1,12 @@
 ---
 id: DOC-BA-010
-title: "BA registers"
+title: Реестры BA
 type: business
 status: draft
-version: "0.5.0"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.5.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-010
   - DOC-PHASE-BAPD-001
@@ -16,9 +16,9 @@ related:
   - DOC-PROD-020
   - DOC-PROD-001
   - DOC-UX-017
+sidebar_label: Реестры BA
 ---
-
-# BA registers
+# Реестры BA
 
 Реестр фазы BA & Product Definition. Не дублирует Discovery Evidence; ссылается на [registers Discovery](../01-discovery/registers.md).
 

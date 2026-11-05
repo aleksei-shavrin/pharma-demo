@@ -1,19 +1,18 @@
 ---
 id: DOC-QA-003
-title: "Архитектурные тесты"
+title: Архитектурные тесты
 type: quality
 status: draft
-version: "0.2.0"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-01'
+owner: docs-engineering
 related:
   - DOC-QA-001
   - DOC-PROD-003
   - DOC-ADR-0002
   - DOC-ADR-0004
 ---
-
 # Архитектурные тесты
 
 ## Цель

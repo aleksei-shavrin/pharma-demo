@@ -1,22 +1,21 @@
 ---
 id: DOC-DISC-013
-title: "Domain overview: pharma facility project lifecycle"
+title: 'Обзор домена: жизненный цикл проекта фармацевтического объекта'
 type: discovery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-010
   - DOC-DISC-014
   - DOC-DISC-011
   - DOC-STD-002
 ---
-
 # Domain overview: pharma facility project lifecycle
 
-Отраслевой desk research для Discovery. Документ описывает **типовую** модель проекта создания / реконструкции фармацевтического производственного объекта (facility), а не требования конкретного заказчика или продукта Pharma Project Control.
+Отраслевой desk research для Discovery. Документ описывает **типовую** модель проекта создания / реконструкции фармацевтического производственного объекта (facility), а не требования конкретного заказчика или продукта Pharma Demo.
 
 Термины — в [domain-glossary.md](./domain-glossary.md). Инженерный глоссарий репозитория — отдельно: [`terminology.md`](../standards/terminology.md). Evidence — в [registers.md](./registers.md).
 
@@ -178,7 +177,7 @@ flowchart LR
 
 > **certainty:** hypothesis
 >
-> На pharma facility-проектах ценность project controls для директора / PM — ранняя видимость сдвига даты запуска из-за пересечения construction, equipment supply, CQV и documentation/TOP, а не «отчёт ради отчёта». Применимость к Pharma Project Control — см. product-context (другой агент) и последующие волны D2–D4.
+> На pharma facility-проектах ценность project controls для директора / PM — ранняя видимость сдвига даты запуска из-за пересечения construction, equipment supply, CQV и documentation/TOP, а не «отчёт ради отчёта». Применимость к Pharma Demo — см. product-context (другой агент) и последующие волны D2–D4.
 
 ## Что этот документ намеренно не фиксирует
 

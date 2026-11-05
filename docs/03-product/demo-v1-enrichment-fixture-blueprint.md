@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-021
-title: "Demo v1 enrichment — exact fixture blueprint"
+title: Demo v1 enrichment — точный blueprint фикстур
 type: product
 status: draft
-version: "0.3.0"
-created: 2026-11-01
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-012
   - DOC-PROD-019
@@ -15,7 +15,6 @@ related:
   - DOC-BA-014
   - DOC-BA-015
 ---
-
 # Demo v1 enrichment — exact fixture blueprint
 
 > **certainty:** hypothesis

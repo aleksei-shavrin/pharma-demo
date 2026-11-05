@@ -1,16 +1,15 @@
 ---
 id: DOC-TPL-REQ-001
-title: "Шаблон: Доменное требование"
+title: 'Шаблон: Доменное требование'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-REQ-README-001
 ---
-
 # Шаблон: Доменное требование
 
 ID: `REQ-<AREA>-NNN`. Не создавать фиктивных требований «для заполнения».

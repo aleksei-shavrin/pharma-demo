@@ -134,7 +134,7 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
     expect(localStorage.getItem(NOTIFICATION_POPUP_PREF_KEY)).toBe('false');
   });
 
-  it('shows ≤3 toasts after successful B→C commit; not on bootstrap', async () => {
+  it('shows ≤3 top-right semantic toasts after successful B→C commit; not on bootstrap', async () => {
     const user = userEvent.setup();
     await renderBar();
     expect(document.querySelector('[data-notification-toasts]')).toBeNull();
@@ -144,9 +144,15 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
         3,
       ),
     );
+    const host = document.querySelector('[data-notification-toasts]');
+    expect(host).toHaveAttribute('data-toast-placement', 'top-right');
+    expect(host?.className).not.toMatch(/bottom-/);
     expect(
       document.querySelectorAll('[data-notification-toast]').length,
     ).toBeLessThanOrEqual(3);
+    expect(
+      document.querySelector('[data-toast-tone]'),
+    ).toBeTruthy();
     // toast does not auto-mark read
     expect(isNotificationRead('NTF-C-001')).toBe(false);
   });

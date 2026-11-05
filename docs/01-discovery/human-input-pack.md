@@ -1,19 +1,18 @@
 ---
 id: DOC-DISC-011
-title: "Human Input Pack (HIP)"
+title: Пакет входных данных (HIP)
 type: discovery
 status: draft
-version: "0.3.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-010
   - DOC-DISC-015
   - DOC-DISC-021
   - DOC-PHASE-DISC-001
 ---
-
 # Human Input Pack (HIP)
 
 Структурированные вопросы человеку. AI не заполняет ответы как `fact` применимости к предприятию.

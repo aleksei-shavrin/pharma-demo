@@ -1,16 +1,15 @@
 ---
 id: DOC-TPL-HANDOFF-001
-title: "Шаблон: Handoff"
+title: 'Шаблон: Handoff'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-STD-001
 ---
-
 # Шаблон: Handoff
 
 Скопируйте в `07-delivery/handoffs/YYYY-MM-DD-<slug>.md`.

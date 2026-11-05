@@ -516,7 +516,7 @@ describe('E3-R5 Dashboard canvas + timeline interaction', () => {
     await waitFor(() => {
       expect(screen.getByRole('tooltip')).toBeInTheDocument();
     });
-    expect(screen.getByRole('tooltip')).toHaveTextContent(/HVAC IQ/);
+    expect(screen.getByRole('tooltip')).toHaveTextContent(/Готовность HVAC/);
     expect(screen.getByRole('tooltip')).toHaveTextContent(/В норме/);
 
     await user.click(hvac);

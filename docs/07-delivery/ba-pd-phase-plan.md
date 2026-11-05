@@ -1,21 +1,20 @@
 ---
 id: DOC-PHASE-BAPD-001
-title: "Фаза: Business Analysis & Product Definition"
+title: План фазы BA & Product Definition
 type: delivery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-BA-README-001
   - DOC-HANDOFF-DISC-001
   - DOC-PROD-001
 ---
-
 # Фаза: Business Analysis & Product Definition
 
-План исполнения фазы BA & Product Definition для **Pharma Project Control**. Методология: `.cursor/plans/business-analysis-product-definition.md` (вне портала docs).
+План исполнения фазы BA & Product Definition для **Pharma Demo**. Методология: `.cursor/plans/business-analysis-product-definition.md` (вне портала docs).
 
 ## Цель фазы
 

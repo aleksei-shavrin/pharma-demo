@@ -1,23 +1,22 @@
 ---
 id: DOC-STD-002
-title: "Глоссарий терминов"
+title: Глоссарий терминов
 type: standard
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-STD-001
 ---
-
 # Глоссарий терминов
 
 Краткие определения. Не утверждает доменные pharma/GMP требования — только язык проекта.
 
 | Термин | Определение |
 |--------|-------------|
-| **Pharma Project Control** | Рабочее имя продукта/проекта (контекст уточняется в discovery/product). |
+| **Pharma Demo** | Рабочее имя продукта/проекта (контекст уточняется в discovery/product). |
 | **OpenSpec** | Подход/инструментарий спецификаций изменений рядом с кодом. |
 | **ADR** | Architecture Decision Record — запись архитектурного решения (формат MADR). |
 | **MADR** | Markdown Architectural Decision Records (bare-шаблон). |

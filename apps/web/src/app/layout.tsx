@@ -4,7 +4,7 @@ import { AppShell } from '@/components/shell/app-shell';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Pharma Project Control — Demo v1',
+  title: 'Pharma Demo — Demo v1',
   description: 'Demo v1: оболочка приложения и обзор проекта',
 };
 

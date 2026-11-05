@@ -1,12 +1,12 @@
 ---
 id: DOC-DISC-010
-title: "Discovery registers"
+title: Реестры Discovery
 type: discovery
 status: draft
-version: "0.6.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.6.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-011
   - DOC-DISC-013
@@ -17,7 +17,6 @@ related:
   - DOC-DISC-021
   - DOC-PHASE-DISC-001
 ---
-
 # Discovery registers
 
 Единый реестр проблем, гипотез, открытых вопросов и доказательств. Certainty: source-`fact` ≠ применимость к предприятию.

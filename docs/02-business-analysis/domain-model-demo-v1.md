@@ -1,20 +1,20 @@
 ---
 id: DOC-BA-015
-title: "Domain model (Demo v1)"
+title: Доменная модель (Demo v1)
 type: business
 status: draft
-version: "0.4.0"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.4.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-017
   - DOC-BA-014
   - DOC-BA-013
   - DOC-PROD-010
+sidebar_label: Доменная модель
 ---
-
-# Domain model (Demo v1)
+# Доменная модель (Demo v1)
 
 Концептуальная модель для mock narrative SCN-001→SCN-007. **Не** ER, **не** схема PostgreSQL. База: [information-concepts](../01-discovery/information-concepts.md) — суженная до Must.
 

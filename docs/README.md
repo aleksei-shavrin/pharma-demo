@@ -1,19 +1,18 @@
 ---
 id: DOC-PORTAL-001
-title: "Портал документации Pharma Project Control"
+title: Портал документации Pharma Demo
 type: portal
 status: draft
-version: "0.1.1"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-10-30'
+updated: '2026-11-01'
+owner: docs-engineering
 related:
   - DOC-PORTAL-HOME-001
   - DOC-STD-001
   - DOC-GUIDE-001
 ---
-
-# Портал документации Pharma Project Control
+# Портал документации Pharma Demo
 
 Карта разделов `docs/**`. Источник истины для продуктовых, архитектурных и delivery-артефактов. Технические термины (OpenSpec, ADR, Mermaid, Docusaurus, NestJS и др.) сохраняются на английском.
 

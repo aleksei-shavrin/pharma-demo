@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-011
-title: "Demo v1 functional scope"
+title: Функциональный scope Demo v1
 type: product
 status: draft
-version: "0.2.0"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-010
   - DOC-PROD-012
@@ -15,7 +15,6 @@ related:
   - DOC-BA-010
   - DOC-PROD-001
 ---
-
 # Demo v1 functional scope
 
 Согласованный **freeze** функционального объёма Demo v1. Tech SoT: [demo-v1-architecture](./demo-v1-architecture.md). Mock data: [demo-v1-mock-narrative-data](./demo-v1-mock-narrative-data.md). Реестр: [ba-registers](../02-business-analysis/ba-registers.md).

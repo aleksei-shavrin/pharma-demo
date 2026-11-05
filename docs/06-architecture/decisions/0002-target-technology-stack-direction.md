@@ -1,19 +1,18 @@
 ---
 id: DOC-ADR-0002
-title: "ADR-0002: Target technology stack direction"
+title: 'ADR-0002: Направление целевого технологического стека'
 type: adr
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-002
   - DOC-PROD-003
   - DOC-ADR-0001
 ---
-
-# ADR-0002: Target technology stack direction
+# ADR-0002: Направление целевого технологического стека
 
 - **Статус решения:** accepted (направление)
 - **Дата:** 2026-10-30

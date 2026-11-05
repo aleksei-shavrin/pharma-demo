@@ -1,12 +1,12 @@
 ---
 id: DOC-DISC-016
-title: "Business process inventory"
+title: Инвентарь бизнес-процессов
 type: discovery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-010
   - DOC-DISC-012
@@ -15,10 +15,9 @@ related:
   - DOC-DISC-015
   - DOC-PHASE-DISC-001
 ---
-
 # Business process inventory
 
-Инвентарь **кандидатных** бизнес-процессов project controls для Discovery Pharma Project Control. Это **не** BPMN, **не** SOP заказчика и **не** нормативный перечень GMP-процедур.
+Инвентарь **кандидатных** бизнес-процессов project controls для Discovery Pharma Demo. Это **не** BPMN, **не** SOP заказчика и **не** нормативный перечень GMP-процедур.
 
 Отраслевой lifecycle: [domain-overview.md](./domain-overview.md). Термины: [domain-glossary.md](./domain-glossary.md). Проблемы / Evidence: [registers.md](./registers.md). Роли-кандидаты: [stakeholders.md](./stakeholders.md) (параллельный D2; здесь — только ссылки на уже зафиксированные в product-context гипотезы ролей).
 
@@ -37,7 +36,7 @@ related:
 | Утверждение | Certainty |
 |-------------|-----------|
 | Парафраз EV-* (определения schedule, change control, milestone, C&Q, TOP, project control PDCA…) | `fact` относительно источника |
-| Процесс как кандидат в контуре Pharma Project Control / демо | `hypothesis` |
+| Процесс как кандидат в контуре Pharma Demo / демо | `hypothesis` |
 | Связь процесс ↔ стадия lifecycle / роль / проблема | `hypothesis` только если обоснована D1/product-context; иначе `open_question` |
 | Customer SOP / site GMP procedure | **не** фиксируется как `fact` |
 

@@ -1,16 +1,15 @@
 ---
 id: DOC-TPL-README-001
-title: "Шаблоны артефактов"
+title: Шаблоны артефактов
 type: index
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-STD-001
 ---
-
 # Шаблоны артефактов
 
 Копируйте шаблон в целевой раздел, заполняйте frontmatter (`id`, даты, `related`) и тело. Плейсхолдеры `<...>` обязательны к замене.

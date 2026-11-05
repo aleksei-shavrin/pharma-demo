@@ -1,20 +1,20 @@
 ---
 id: DOC-BA-011
-title: "Business context and problems (Demo v1)"
+title: Бизнес-контекст и проблемы (Demo v1)
 type: business
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-012
   - DOC-DISC-021
   - DOC-DISC-010
   - DOC-BA-010
+sidebar_label: Контекст и проблемы
 ---
-
-# Business context and problems (Demo v1)
+# Бизнес-контекст и проблемы (Demo v1)
 
 Синтез контекста **только** для narrative **SCN-001 → SCN-007**. Не клон [product-context](../01-discovery/product-context.md); детали Discovery — по ссылкам.
 

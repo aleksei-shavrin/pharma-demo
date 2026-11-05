@@ -7,6 +7,11 @@ import {
   presentMilestoneName,
 } from '@/lib/ui-labels';
 import { formatDeltaDays } from '@/lib/format/ru';
+import {
+  DASHBOARD_PAIR_LIST_MAX_HEIGHT,
+  DASHBOARD_PAIR_LIST_SCROLL_CLASS,
+  DASHBOARD_PAIR_SURFACE_CLASS,
+} from '@/lib/dashboard/dashboard-layout';
 import { ModuleSurface } from './module-surface';
 
 type ExceptionLink = DashboardOverview['topExceptions'][number]['links'][number];
@@ -98,17 +103,20 @@ function impactAccent(causeImpact: string, psDelta: number): string | null {
 }
 
 /**
- * Editorial Top Exceptions — backend order; weak outer chrome.
+ * Editorial Top Exceptions — backend order; paired height with Decisions (R2-U1-R6).
  */
 export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
   const items = data.topExceptions;
   const psDelta = data.project.productionStartVariance.deltaDays;
 
   return (
-    <ModuleSurface data-dashboard-block="top-exceptions" className="min-w-0">
+    <ModuleSurface
+      data-dashboard-block="top-exceptions"
+      className={DASHBOARD_PAIR_SURFACE_CLASS}
+    >
       <h2
         id="top-exceptions-heading"
-        className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
+        className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
       >
         Ключевые исключения
       </h2>
@@ -121,7 +129,12 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
           На текущую дату критических исключений нет — спокойный базовый план.
         </p>
       ) : (
-        <ol className="mt-2" data-top-exceptions="list">
+        <ol
+          className={DASHBOARD_PAIR_LIST_SCROLL_CLASS}
+          data-top-exceptions="list"
+          data-exceptions-scroll="bounded"
+          style={{ maxHeight: DASHBOARD_PAIR_LIST_MAX_HEIGHT }}
+        >
           {items.map((ex, index) => {
             const accent =
               index === 0 ? impactAccent(ex.causeImpact, psDelta) : null;

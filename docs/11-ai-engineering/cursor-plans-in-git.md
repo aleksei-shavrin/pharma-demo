@@ -1,17 +1,16 @@
 ---
 id: DOC-AI-004
-title: "Cursor plans в git"
+title: Cursor plans в git
 type: ai-policy
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-AI-001
   - DOC-ADR-README-001
 ---
-
 # Cursor plans в git
 
 ## Политика

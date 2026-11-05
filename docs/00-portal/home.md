@@ -1,21 +1,20 @@
 ---
 id: DOC-PORTAL-HOME-001
-title: "Домашняя страница портала"
+title: Домашняя страница портала
 type: portal
 status: draft
-version: "0.1.1"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-10-30'
+updated: '2026-11-01'
+owner: docs-engineering
 related:
   - DOC-PORTAL-001
   - DOC-PORTAL-002
   - DOC-GUIDE-001
 ---
-
 # Домашняя страница портала
 
-Добро пожаловать в документацию **Pharma Project Control**.
+Добро пожаловать в документацию **Pharma Demo**.
 
 ## Куда идти
 

@@ -1,16 +1,15 @@
 ---
 id: DOC-TPL-EPIC-001
-title: "Шаблон: Epic / Feature"
+title: 'Шаблон: Epic / Feature'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-PROD-README-001
 ---
-
 # Шаблон: Epic / Feature
 
 ```yaml

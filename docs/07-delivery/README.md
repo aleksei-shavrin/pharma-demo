@@ -1,17 +1,16 @@
 ---
 id: DOC-DEL-README-001
-title: "Delivery"
+title: Поставка
 type: index
 status: draft
-version: "0.1.2"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.1.2
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DEL-001
   - DOC-HANDOFF-README-001
 ---
-
 # 07-delivery
 
 Поставка: quality gates, handoffs между волнами, планы фаз.

@@ -1,12 +1,12 @@
 ---
 id: DOC-DISC-021
-title: "Discovery summary"
+title: Сводка Discovery
 type: discovery
 status: draft
-version: "0.2.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PHASE-DISC-001
   - DOC-DISC-011
@@ -16,7 +16,6 @@ related:
   - DOC-DISC-018
   - DOC-HANDOFF-DISC-001
 ---
-
 # Discovery summary
 
 Синтез фазы Discovery (D0–D5). Certainty: source-`fact` ≠ применимость к предприятию.

@@ -1,22 +1,22 @@
 ---
 id: DOC-DISC-README-001
-title: "Discovery"
+title: Discovery (исследование)
 type: index
 status: draft
-version: "0.3.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-TPL-DISC-001
   - DOC-PHASE-DISC-001
   - DOC-DISC-021
   - DOC-HANDOFF-DISC-001
+sidebar_label: Discovery
 ---
-
 # 01-discovery
 
-Раздел Discovery для **Pharma Project Control**.
+Раздел Discovery для **Pharma Demo**.
 
 ## Правила
 

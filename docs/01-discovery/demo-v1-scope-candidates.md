@@ -1,12 +1,12 @@
 ---
 id: DOC-DISC-020
-title: "Demo v1 scope candidates (preliminary MoSCoW)"
+title: Кандидаты scope Demo v1 (предварительный MoSCoW)
 type: discovery
 status: draft
-version: "0.2.1"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.1
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-018
   - DOC-DISC-019
@@ -14,7 +14,6 @@ related:
   - DOC-DISC-011
   - DOC-DISC-021
 ---
-
 # Demo v1 scope candidates (preliminary MoSCoW)
 
 > **certainty:** assumption

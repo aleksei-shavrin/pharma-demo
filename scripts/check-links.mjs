@@ -65,9 +65,34 @@ for (const file of files) {
       const normalized = path.resolve(hit);
       if (!normalized.startsWith(ROOT + path.sep) && normalized !== ROOT) {
         errors.push(`${rel(file)}: link escapes repo root → (${url})`);
+      } else if (url.includes('#')) {
+        const hash = url.split('#')[1]?.split('?')[0]?.trim();
+        if (hash && fs.existsSync(hit) && hit.endsWith('.md')) {
+          const targetRaw = fs.readFileSync(hit, 'utf8');
+          const explicit = new RegExp(`\\{#${escapeRegExp(hash)}\\}`, 'i');
+          if (!explicit.test(targetRaw) && explicitAnchorsRequired(hit)) {
+            errors.push(
+              `${rel(file)}: missing anchor #${hash} in ${rel(hit)}`,
+            );
+          }
+        }
       }
     }
   }
+}
+
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Multi-entity canonical pages must keep explicit {#id} anchors. */
+function explicitAnchorsRequired(absPath) {
+  const r = rel(absPath);
+  return (
+    r.endsWith('business-rules-demo-v1.md') ||
+    r.endsWith('process-specs-demo-v1.md') ||
+    r.endsWith('management-scenarios.md')
+  );
 }
 
 if (errors.length) {

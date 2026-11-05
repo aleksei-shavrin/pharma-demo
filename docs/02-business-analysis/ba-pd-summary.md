@@ -1,12 +1,12 @@
 ---
 id: DOC-BA-017
-title: "BA & Product Definition summary"
+title: Сводка BA и Product Definition
 type: business
 status: draft
-version: "0.7.0"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.7.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PHASE-BAPD-001
   - DOC-BA-016
@@ -14,9 +14,9 @@ related:
   - DOC-BA-010
   - DOC-HANDOFF-DISC-001
   - DOC-HANDOFF-BAPD-001
+sidebar_label: Сводка BA/PD
 ---
-
-# BA & Product Definition summary
+# Сводка BA и Product Definition
 
 Синтез фазы BA/PD для Demo v1 narrative **SCN-001 → SCN-007**.
 

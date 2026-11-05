@@ -1,18 +1,17 @@
 ---
 id: DOC-HANDOFF-VD-001
-title: "Handoff: Visual Direction Demo v1"
+title: 'Handoff: Visual Direction Demo v1'
 type: handoff
 status: draft
-version: "0.3.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-010
   - DOC-HANDOFF-UX-001
   - DOC-UX-001
 ---
-
 # Handoff: Visual Direction Demo v1
 
 ## Мета

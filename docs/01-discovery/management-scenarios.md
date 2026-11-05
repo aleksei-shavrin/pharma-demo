@@ -1,22 +1,21 @@
 ---
 id: DOC-DISC-018
-title: "Management scenarios catalog"
+title: Каталог управленческих сценариев
 type: discovery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-012
   - DOC-DISC-015
   - DOC-DISC-016
   - DOC-DISC-010
 ---
-
 # Management scenarios catalog
 
-Каталог **гипотетических** управленческих сценариев (demo narratives) для Discovery Pharma Project Control. Это **не** SOP заказчика, **не** утверждённый scope Demo v1 и **не** нормативные GMP/FR.
+Каталог **гипотетических** управленческих сценариев (demo narratives) для Discovery Pharma Demo. Это **не** SOP заказчика, **не** утверждённый scope Demo v1 и **не** нормативные GMP/FR.
 
 Источники связей: [product-context](./product-context.md) (DOC-DISC-012), [stakeholders](./stakeholders.md) (DOC-DISC-015), [process-inventory](./process-inventory.md) (DOC-DISC-016), [registers](./registers.md) (DOC-DISC-010). Выбор приоритетного narrative — **HIP-006** / **OQ-015**.
 
@@ -61,7 +60,7 @@ related:
 
 ---
 
-## SCN-001 — Задержка critical / long-lead equipment
+## SCN-001 — Задержка critical / long-lead equipment {#scn-001}
 
 > **certainty:** hypothesis
 >
@@ -99,7 +98,7 @@ related:
 
 ---
 
-## SCN-002 — Подрядчик отстаёт от графика
+## SCN-002 — Подрядчик отстаёт от графика {#scn-002}
 
 > **certainty:** hypothesis
 >
@@ -135,7 +134,7 @@ related:
 
 ---
 
-## SCN-003 — Cost overrun (перерасход бюджета)
+## SCN-003 — Cost overrun (перерасход бюджета) {#scn-003}
 
 > **certainty:** hypothesis
 >
@@ -170,7 +169,7 @@ related:
 
 ---
 
-## SCN-004 — Риск ключевой вехе (milestone at risk)
+## SCN-004 — Риск ключевой вехе (milestone at risk) {#scn-004}
 
 > **certainty:** hypothesis
 >
@@ -205,7 +204,7 @@ related:
 
 ---
 
-## SCN-005 — Документация / TOP не готовы к inspection-readiness
+## SCN-005 — Документация / TOP не готовы к inspection-readiness {#scn-005}
 
 > **certainty:** hypothesis
 >
@@ -242,7 +241,7 @@ related:
 
 ---
 
-## SCN-006 — Конфликтующие статусы readiness между units
+## SCN-006 — Конфликтующие статусы readiness между units {#scn-006}
 
 > **certainty:** hypothesis
 >
@@ -278,7 +277,7 @@ related:
 
 ---
 
-## SCN-007 — Угроза дате production start / ready for production
+## SCN-007 — Угроза дате production start / ready for production {#scn-007}
 
 > **certainty:** hypothesis
 >
@@ -314,7 +313,7 @@ related:
 
 ---
 
-## SCN-008 — Late project change с impact на readiness
+## SCN-008 — Late project change с impact на readiness {#scn-008}
 
 > **certainty:** hypothesis
 >

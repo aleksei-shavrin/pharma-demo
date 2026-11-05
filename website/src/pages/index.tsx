@@ -40,7 +40,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={`${siteConfig.title} — ${siteConfig.tagline}`}
-      description="Инженерная документация Pharma Project Control: docs, стандарты, OpenSpec.">
+      description="Инженерная документация Pharma Demo: docs, стандарты, OpenSpec.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

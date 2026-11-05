@@ -1,18 +1,17 @@
 ---
 id: REQ-EQPT-001
-title: "REQ-EQPT-001: Critical equipment delivery status"
+title: 'REQ-EQPT-001: Статус поставки critical equipment'
 type: requirement
 status: draft
-version: "0.3.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-010
   - DOC-BA-014
 ---
-
-# REQ-EQPT-001: Critical equipment delivery status
+# REQ-EQPT-001: Статус поставки critical equipment
 
 ## Формулировка
 

@@ -1,6 +1,6 @@
 # apps/api — Demo v1 NestJS API (I1)
 
-Minimal NestJS scaffold for Pharma Project Control Demo v1.
+Minimal NestJS scaffold for Pharma Demo Demo v1.
 
 ## Run
 

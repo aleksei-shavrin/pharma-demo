@@ -1,17 +1,16 @@
 ---
 id: REQ-NFR-001
-title: "REQ-NFR-001: FE consumes data only via HTTP API"
+title: 'REQ-NFR-001: FE получает данные только через HTTP API'
 type: nfr
 status: draft
-version: "0.1.1"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-003
 ---
-
-# REQ-NFR-001: FE consumes data only via HTTP API
+# REQ-NFR-001: FE получает данные только через HTTP API
 
 ## Категория
 

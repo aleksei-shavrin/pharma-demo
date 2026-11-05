@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-012
-title: "Demo v1 mock narrative data"
+title: Demo v1 — mock narrative data
 type: product
 status: draft
-version: "0.5.1"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.5.1
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-011
   - DOC-PROD-020
@@ -15,7 +15,6 @@ related:
   - DOC-BA-015
   - DOC-DISC-018
 ---
-
 # Demo v1 mock narrative data
 
 Согласованный dataset для SCN-001→SCN-007. Certainty: **assumption** (демо-данные, не данные заказчика).

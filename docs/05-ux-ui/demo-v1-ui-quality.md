@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-020
-title: "Demo v1 UI Design — quality criteria"
+title: Demo v1 UI Design — критерии качества
 type: product
 status: draft
-version: "0.1.0"
-created: 2026-11-01
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-014
   - DOC-UX-015
@@ -17,7 +17,6 @@ related:
   - DOC-UX-009
   - DOC-HANDOFF-UID-001
 ---
-
 # Demo v1 UI Design — quality criteria
 
 > **certainty:** hypothesis

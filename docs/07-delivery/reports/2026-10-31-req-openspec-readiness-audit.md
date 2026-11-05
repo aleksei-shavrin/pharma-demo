@@ -1,12 +1,12 @@
 ---
 id: DOC-RPT-REQOS-001
-title: "Report: Requirements readiness audit (OpenSpec phase Stage 0)"
+title: 'Отчёт: аудит готовности требований (OpenSpec Stage 0)'
 type: delivery
 status: draft
-version: "0.1.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-HANDOFF-BAPD-001
   - DOC-BA-010
@@ -19,7 +19,6 @@ related:
   - DOC-BA-016
   - DOC-REQ-README-001
 ---
-
 # Report: Requirements readiness audit (OpenSpec phase Stage 0)
 
 Дата: **2026-10-31**. Этап 0 фазы Requirements Specification & OpenSpec.  

@@ -1,19 +1,18 @@
 ---
 id: REQ-PROJ-001
-title: "REQ-PROJ-001: Project overview data for Demo v1"
+title: 'REQ-PROJ-001: Данные обзора проекта для Demo v1'
 type: requirement
 status: draft
-version: "0.2.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-010
   - DOC-BA-015
   - DOC-BA-014
 ---
-
-# REQ-PROJ-001: Project overview data for Demo v1
+# REQ-PROJ-001: Данные обзора проекта для Demo v1
 
 ## Формулировка
 

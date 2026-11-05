@@ -1,18 +1,17 @@
 ---
 id: DOC-RPT-REQOS-002
-title: "Report: OpenSpec Stage 1 formalization (Demo v1 Must)"
+title: 'Отчёт: формализация OpenSpec Stage 1 (Demo v1 Must)'
 type: delivery
 status: draft
-version: "0.2.1"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.1
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-HANDOFF-REQOS-001
   - DOC-RPT-REQOS-001
   - DOC-BA-016
 ---
-
 # Report: OpenSpec Stage 1 formalization (Demo v1 Must)
 
 Дата: **2026-10-31**. Stage 1 propose/validate завершены; позже в тот же день — human APPROVE → sync living specs → archive → ограниченная post-archive docs sync (см. §10).

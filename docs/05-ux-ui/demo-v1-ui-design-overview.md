@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-014
-title: "Demo v1 UI Design Specification — overview"
+title: Demo v1 UI Design Specification — обзор
 type: product
 status: draft
-version: "0.7.0"
-created: 2026-10-31
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.7.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-001
   - DOC-UX-010
@@ -20,7 +20,6 @@ related:
   - DOC-HANDOFF-VD-001
   - DOC-HANDOFF-UID-001
 ---
-
 # Demo v1 UI Design Specification — overview
 
 > **certainty:** hypothesis

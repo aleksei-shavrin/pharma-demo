@@ -1,18 +1,17 @@
 ---
 id: DOC-QA-001
-title: "Стратегия тестирования"
+title: Стратегия тестирования
 type: quality
 status: draft
-version: "0.2.0"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-01'
+owner: docs-engineering
 related:
   - DOC-QA-002
   - DOC-QA-003
   - DOC-AI-003
 ---
-
 # Стратегия тестирования
 
 ## Направление инструментов

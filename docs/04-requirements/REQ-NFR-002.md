@@ -1,18 +1,17 @@
 ---
 id: REQ-NFR-002
-title: "REQ-NFR-002: Persistence port for mock adapter"
+title: 'REQ-NFR-002: Persistence port для mock-адаптера'
 type: nfr
 status: draft
-version: "0.2.0"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-004
   - DOC-PROD-003
 ---
-
-# REQ-NFR-002: Persistence port for mock adapter
+# REQ-NFR-002: Persistence port для mock-адаптера
 
 ## Категория
 

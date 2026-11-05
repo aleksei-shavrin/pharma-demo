@@ -1,17 +1,16 @@
 ---
 id: DOC-TPL-BUGFIX-001
-title: "Шаблон: Bugfix test-first"
+title: 'Шаблон: Bugfix test-first'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-AI-003
   - DOC-QA-001
 ---
-
 # Шаблон: Bugfix test-first
 
 Политика: см. [test-first-bugfix](../11-ai-engineering/test-first-bugfix.md).

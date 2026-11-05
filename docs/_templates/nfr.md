@@ -1,16 +1,15 @@
 ---
 id: DOC-TPL-NFR-001
-title: "Шаблон: NFR"
+title: 'Шаблон: NFR'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-REQ-README-001
 ---
-
 # Шаблон: NFR (нефункциональное требование)
 
 ```yaml

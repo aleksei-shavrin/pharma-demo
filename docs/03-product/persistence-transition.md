@@ -1,17 +1,16 @@
 ---
 id: DOC-PROD-004
-title: "Переход mock → PostgreSQL"
+title: Переход persistence (mock → PostgreSQL)
 type: product
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-003
   - DOC-ADR-0002
 ---
-
 # Переход mock → PostgreSQL
 
 ## Принцип

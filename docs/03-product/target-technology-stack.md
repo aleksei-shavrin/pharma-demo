@@ -1,18 +1,17 @@
 ---
 id: DOC-PROD-002
-title: "Целевой технологический стек"
+title: Целевой технологический стек
 type: product
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-ADR-0002
   - DOC-PROD-003
   - DOC-PROD-004
 ---
-
 # Целевой технологический стек
 
 Направление стека приложения. Статус решения: см. [ADR-0002](../06-architecture/decisions/0002-target-technology-stack-direction.md).

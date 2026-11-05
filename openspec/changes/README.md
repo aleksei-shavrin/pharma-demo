@@ -1,6 +1,6 @@
 # OpenSpec changes
 
-Рабочие delta-changes для Pharma Project Control.
+Рабочие delta-changes для Pharma Demo.
 
 - Активные предложения: подкаталоги здесь.
 - Завершённые: `archive/`.

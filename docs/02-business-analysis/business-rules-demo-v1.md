@@ -1,12 +1,12 @@
 ---
 id: DOC-BA-014
-title: "Business rules (Demo v1)"
+title: Бизнес-правила (Demo v1)
 type: business
 status: draft
-version: "0.5.0"
-created: 2026-10-30
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.5.1
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-BA-013
   - DOC-BA-015
@@ -15,19 +15,20 @@ related:
   - DOC-BA-010
   - DOC-PROD-012
   - DOC-PROD-024
+sidebar_label: Бизнес-правила
 ---
 
-# Business rules (Demo v1)
+# Бизнес-правила (Demo v1)
 
 Правила демонстрационной модели SCN-001→SCN-007. Канон полей: план BA/PD §3.2.
 
 > **certainty:** assumption
 >
-> Правила ниже — **demo assumptions / hypotheses**, не отраслевые стандарты и не GMP. ID **BR-001…BR-007 сохранены**; v0.3.0 — Decision flow и RAG fixture vs expectation. Narrative ISS-001 — **NC-001** в mock, не отдельный BR.
+> Правила ниже — **demo assumptions / hypotheses**, не отраслевые стандарты и не GMP. ID **BR-001…BR-007 сохранены**; v0.3.0 — поток Decision и RAG fixture vs ожидание. Narrative ISS-001 — **NC-001** в mock, не отдельный BR.
 
 ---
 
-## BR-001 — Issue registration capability (functional)
+## BR-001 — Возможность регистрации Issue (функциональное) {#br-001}
 
 | Поле | Значение |
 |------|----------|
@@ -43,7 +44,7 @@ related:
 
 ---
 
-## BR-002 — Risk RAG for open critical-delay Issue (deterministic demo)
+## BR-002 — Risk RAG при открытом Issue о critical delay (детерминированный demo) {#br-002}
 
 | Поле | Значение |
 |------|----------|
@@ -57,7 +58,7 @@ related:
 
 **Значения Issue.status (Demo v1):**
 
-| Status | Смысл | Certainty |
+| Статус | Смысл | Certainty |
 |--------|--------|-----------|
 | Open | Зарегистрированное отклонение; Decision PrioritizeRecovery ещё не записан | hypothesis |
 | Mitigating | После Decision **PrioritizeRecovery**; execution recovery **не** моделируется; forecast **не** авто-пересчитывается (BR-006) | assumption |
@@ -76,7 +77,7 @@ related:
 
 ---
 
-## BR-003 — Milestone RAG reflects linked Red risk
+## BR-003 — Milestone RAG отражает связанный Red risk {#br-003}
 
 | Поле | Значение |
 |------|----------|
@@ -99,7 +100,7 @@ related:
 
 ---
 
-## BR-004 — Forecast production start tracks single critical delivery slip (demo)
+## BR-004 — Прогноз production start следует за единственным critical delivery slip (demo) {#br-004}
 
 | Поле | Значение |
 |------|----------|
@@ -113,7 +114,7 @@ related:
 
 **Ограничение применимости:** только текущий демонстрационный набор ([mock narrative](../03-product/demo-v1-mock-narrative-data.md)). Не претендует на достоверный прогноз реального строительства.
 
-### BR-004 late-stage (R2 A–S)
+### BR-004 на поздних стадиях (R2 A–S) {#br-004-late-stage}
 
 > **certainty:** assumption
 >
@@ -121,7 +122,7 @@ related:
 
 ---
 
-## BR-005 — Director exception view lists contributing driver
+## BR-005 — Exception-представление директора включает contributing driver {#br-005}
 
 | Поле | Значение |
 |------|----------|
@@ -135,7 +136,7 @@ related:
 
 ---
 
-## BR-006 — Decision outcomes are recordable (no auto re-forecast)
+## BR-006 — Outcomes решений фиксируются (без auto re-forecast) {#br-006}
 
 | Поле | Значение |
 |------|----------|
@@ -164,7 +165,7 @@ related:
 
 ---
 
-## BR-007 — Causal and temporal integrity (invariant)
+## BR-007 — Причинная и временная целостность (инвариант) {#br-007}
 
 | Поле | Значение |
 |------|----------|
@@ -176,15 +177,15 @@ related:
 | **Ожидаемый результат** | Соответствующие проверки Pass на уровне спецификации |
 | **Проверяемый пример** | См. [demo-v1-mock-narrative-data](../03-product/demo-v1-mock-narrative-data.md) |
 
-### Применимость (state-based; snapshot letters = examples)
+### Применимость (по состоянию; буквы snapshot — примеры)
 
-**Baseline integrity (e.g. Snapshot A)**
+**Целостность baseline (напр. Snapshot A)**
 
 - Нет Open Issue по critical EQ delay fixture.
 - baseline/forecast согласованы (forecast = baseline для EQ delivery и production start).
 - Green Risk/Milestone — **исходные fixture values**, не результат BR-002/003.
 
-**Causal-chain integrity (e.g. enriched C–H when HVAC delay path active)**
+**Целостность причинной цепочки (напр. enriched C–H при активном HVAC delay path)**
 
 - Связаны Equipment, Issue, Risk, Milestone, Project.
 - Fixture Risk/MS rag соответствует ожиданиям BR-002/003.
@@ -197,7 +198,7 @@ related:
 
 ---
 
-## Не-правила (явно out)
+## Не-правила (явно вне scope)
 
 - Нет BR на budget, contractor scorecards, TOP/inspection-ready, multi-area readiness, Amber-шкалу Must.
 - Нет BR «GMP change control».

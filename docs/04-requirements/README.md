@@ -1,12 +1,12 @@
 ---
 id: DOC-REQ-README-001
-title: "Требования"
+title: Требования
 type: index
 status: draft
-version: "0.3.1"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.3.1
+created: '2026-10-30'
+updated: '2026-10-31'
+owner: docs-engineering
 related:
   - DOC-TPL-REQ-001
   - DOC-TPL-NFR-001
@@ -14,7 +14,6 @@ related:
   - DOC-PROD-010
   - DOC-BA-010
 ---
-
 # 04-requirements
 
 Формальные draft-требования Demo v1. Behavior-only (без UI-layout).  

@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-024
-title: "Demo v1 R2 — lifecycle snapshot matrix A–S"
+title: Demo v1 R2 — матрица lifecycle-снимков A–S
 type: product
 status: draft
-version: "0.1.1"
-created: 2026-11-02
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-11-02'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-022
   - DOC-PROD-023
@@ -15,7 +15,6 @@ related:
   - DOC-BA-014
   - DOC-BA-018
 ---
-
 # Demo v1 R2 — lifecycle snapshot matrix A–S
 
 > **certainty:** assumption

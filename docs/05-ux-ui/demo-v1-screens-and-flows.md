@@ -1,18 +1,17 @@
 ---
 id: DOC-UX-003
-title: "Demo v1 screens and flows"
+title: Demo v1 — экраны и потоки
 type: product
 status: draft
-version: "0.2.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-001
   - DOC-PROD-013
   - DOC-PROD-012
 ---
-
 # Demo v1 screens and flows
 
 > **certainty:** hypothesis

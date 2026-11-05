@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-001
-title: "Demo v1 UX concept"
+title: Demo v1 — UX-концепция
 type: product
 status: draft
-version: "0.2.2"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.2
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-README-001
   - DOC-PROD-011
@@ -15,7 +15,6 @@ related:
   - DOC-UX-009
   - DOC-UX-010
 ---
-
 # Demo v1 UX concept
 
 > **certainty:** hypothesis
@@ -24,7 +23,7 @@ related:
 
 ## 1. Executive summary
 
-Pharma Project Control **Demo v1** — компактное enterprise-приложение для директора (primary) и PM (secondary). Главный narrative: Snapshots **A → B → C** и Decision **PrioritizeRecovery** без ложного «улучшения» прогноза (BR-006).
+Pharma Demo **Demo v1** — компактное enterprise-приложение для директора (primary) и PM (secondary). Главный narrative: Snapshots **A → B → C** и Decision **PrioritizeRecovery** без ложного «улучшения» прогноза (BR-006).
 
 **IA (approved UX decision):** Application Shell с пятью разделами Sidebar; Director Impact на **Dashboard**; **Schedule** — визуализация control points (Milestone + Equipment delivery), не Activity/CPM.
 

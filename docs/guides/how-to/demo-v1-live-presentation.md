@@ -1,12 +1,12 @@
 ---
 id: DOC-GUIDE-001
-title: "Demo v1 — сценарий живой демонстрации"
+title: Demo v1 — сценарий живой демонстрации
 type: guide
 status: draft
-version: "0.2.0"
-created: 2026-11-01
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-11-01'
+updated: '2026-11-02'
+owner: docs-engineering
 related:
   - DOC-PROD-012
   - DOC-PROD-020
@@ -15,10 +15,9 @@ related:
   - DOC-UX-021
   - DOC-ADR-0003
 ---
-
 # Demo v1 — сценарий живой демонстрации
 
-Операторская шпаргалка для живого показа **Pharma Project Control** потенциальному директору фармацевтического проекта.
+Операторская шпаргалка для живого показа **Pharma Demo** потенциальному директору фармацевтического проекта.
 
 Не руководство пользователя. Не архитектурный документ. Не маркетинг.
 

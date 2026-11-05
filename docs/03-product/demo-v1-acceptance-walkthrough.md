@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-013
-title: "Demo v1 acceptance walkthrough"
+title: Demo v1 — приёмочный walkthrough
 type: product
 status: draft
-version: "0.3.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-012
   - DOC-DISC-018
@@ -14,7 +14,6 @@ related:
   - REQ-IMPCT-001
   - REQ-IMPCT-002
 ---
-
 # Demo v1 acceptance walkthrough
 
 Проверка **сквозного бизнес-результата** SCN-001 → SCN-007. Не тур по UI-layout.

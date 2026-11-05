@@ -1,18 +1,18 @@
 ---
 id: DOC-GUIDES-README-001
-title: "Guides (Diátaxis)"
+title: Гайды (Diátaxis)
 type: index
 status: draft
-version: "0.1.1"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PORTAL-002
   - DOC-STD-001
   - DOC-GUIDE-001
+sidebar_label: Гайды
 ---
-
 # Guides (Diátaxis)
 
 Практические материалы по модели **Diátaxis**.

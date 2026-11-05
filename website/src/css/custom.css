@@ -29,3 +29,10 @@
   --ifm-color-primary-lightest: #79d1ab;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Autolinked DOC/BR/ADR/… IDs from cross-ref-autolink remark plugin */
+a.ppc-cross-ref {
+  font-variant-ligatures: none;
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.15em;
+}

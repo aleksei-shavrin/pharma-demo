@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-README-001
-title: "UX / UI"
+title: UX/UI
 type: index
 status: draft
-version: "1.1.0"
-created: 2026-10-30
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 1.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-001
   - DOC-UX-001
@@ -22,7 +22,6 @@ related:
   - DOC-UX-022
   - DOC-HANDOFF-UID-001
 ---
-
 # 05-ux-ui
 
 UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter документов — `status: draft` (lifecycle docs ≠ decision status).

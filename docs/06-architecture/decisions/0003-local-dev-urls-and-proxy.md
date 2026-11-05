@@ -1,18 +1,17 @@
 ---
 id: DOC-ADR-0003
-title: "ADR-0003: Local dev URLs and proxy"
+title: 'ADR-0003: Локальные URL и proxy'
 type: adr
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PORTAL-004
   - DOC-PROD-003
 ---
-
-# ADR-0003: Local dev URLs and proxy
+# ADR-0003: Локальные URL и proxy
 
 - **Статус решения:** accepted (направление)
 - **Дата:** 2026-10-30

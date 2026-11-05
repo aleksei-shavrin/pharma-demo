@@ -1,19 +1,18 @@
 ---
 id: DOC-PORTAL-FINAL-001
-title: "Итоговый отчёт: Docs Engineering System"
+title: Итоговый отчёт портала
 type: portal
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PORTAL-001
   - DOC-ADR-0001
   - DOC-ADR-0002
   - DOC-ADR-0003
 ---
-
 # Итоговый отчёт: Docs Engineering System
 
 > **certainty:** fact

@@ -1,22 +1,21 @@
 ---
 id: DOC-DISC-012
-title: "Product context"
+title: Контекст продукта
 type: discovery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-001
   - DOC-PROD-003
   - DOC-DISC-010
   - DOC-DISC-011
 ---
-
 # Product context
 
-Краткий контекст ценности **Pharma Project Control** на уровне Discovery. Не заменяет [vision-and-scope](../03-product/vision-and-scope.md) и не дублирует tech constraints Demo v1.
+Краткий контекст ценности **Pharma Demo** на уровне Discovery. Не заменяет [vision-and-scope](../03-product/vision-and-scope.md) и не дублирует tech constraints Demo v1.
 
 Реестры: [registers.md](./registers.md). Вопросы человеку: [human-input-pack.md](./human-input-pack.md).
 

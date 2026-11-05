@@ -1,19 +1,18 @@
 ---
 id: DOC-UX-005
-title: "Demo v1 Schedule workspace"
+title: Demo v1 — рабочее пространство Schedule
 type: product
 status: draft
-version: "0.2.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-001
   - DOC-BA-015
   - REQ-EQPT-001
   - REQ-MILE-001
 ---
-
 # Demo v1 Schedule workspace
 
 > **certainty:** hypothesis

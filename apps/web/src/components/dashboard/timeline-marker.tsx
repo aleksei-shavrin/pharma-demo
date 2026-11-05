@@ -34,14 +34,21 @@ type Props = {
   entityId?: string;
   labelAlign?: 'start' | 'center' | 'end';
   labelNudgePx?: number;
-  /** 0 near axis; 1 outer (R2-U1-R3 collision lanes). */
-  labelLane?: 0 | 1;
+  /**
+   * Vertical label lane away from axis.
+   * 0 near axis; 1 mid; 2 outer (R2-U1-R5 late-stage density).
+   * Stem length grows with lane so leader stays attached to marker.
+   */
+  labelLane?: 0 | 1 | 2;
   ariaLabel: string;
   detailRows: { label: string; value: string }[];
   links: PopoverLink[];
   'data-testid'?: string;
   markerDataAttrs?: Record<string, string>;
 };
+
+const STEM_BASE_PX = 6;
+const LANE_STEP_PX = 22;
 
 function placeNearTrigger(
   el: HTMLButtonElement | null,
@@ -68,6 +75,9 @@ function placeNearTrigger(
 /**
  * Fixed-geometry interactive timeline marker (HTML, not SVG-scaled).
  * Hover/focus → tooltip; click/Enter/Space → non-modal disclosure popover.
+ *
+ * Stem is anchored to the marker; lane only lengthens the stem so labels
+ * move without detaching the leader line.
  */
 export function TimelineMarker({
   kind,
@@ -200,21 +210,31 @@ export function TimelineMarker({
         : 'bg-[var(--status-ok-border)] ring-2 ring-[var(--status-ok-fg)]';
 
   const stemAbove = labelSide === 'above';
-  const laneOffsetPx = labelLane === 1 ? 26 : 0;
+  const laneOffsetPx = labelLane * LANE_STEP_PX;
+  const stemHeightPx = STEM_BASE_PX + laneOffsetPx;
+  const absNudge = Math.abs(labelNudgePx);
+  const hasElbow = absNudge > 0;
   const alignClass =
     labelAlign === 'start'
       ? 'items-start text-left'
       : labelAlign === 'end'
         ? 'items-end text-right'
         : 'items-center text-center';
-  const labelX =
-    labelAlign === 'start'
-      ? 'left-1/2'
-      : labelAlign === 'end'
-        ? 'right-1/2 translate-x-1/2'
-        : labelNudgePx !== 0
-          ? 'left-1/2'
-          : 'left-1/2 -translate-x-1/2';
+
+  /** Label X: align end grows left (right-edge safe); nudge shifts from marker. */
+  const labelPositionStyle: CSSProperties = {
+    ...(stemAbove
+      ? { bottom: `calc(100% + ${stemHeightPx + 2}px)` }
+      : { top: `calc(100% + ${stemHeightPx + 2}px)` }),
+    ...(labelAlign === 'end'
+      ? { right: '50%', marginRight: labelNudgePx }
+      : labelAlign === 'start'
+        ? { left: '50%', marginLeft: labelNudgePx }
+        : {
+            left: '50%',
+            transform: `translateX(calc(-50% + ${labelNudgePx}px))`,
+          }),
+  };
 
   return (
     <div
@@ -224,45 +244,53 @@ export function TimelineMarker({
       data-marker-geometry="fixed-html"
       data-label-side={labelSide}
       data-label-lane={labelLane}
+      data-stem-attached="marker"
+      data-stem-elbow={hasElbow ? 'true' : 'false'}
       {...(testId ? { 'data-testid': testId } : {})}
     >
+      {/* Vertical stem always at marker X — never a floating dash. */}
+      <span
+        className="pointer-events-none absolute left-1/2 w-px -translate-x-1/2 bg-[var(--border)]"
+        style={
+          stemAbove
+            ? { bottom: '100%', height: stemHeightPx }
+            : { top: '100%', height: stemHeightPx }
+        }
+        aria-hidden
+        data-marker-stem="true"
+        data-stem-side={labelSide}
+      />
+      {/* Short horizontal elbow when label is nudged off marker X. */}
+      {hasElbow ? (
+        <span
+          className="pointer-events-none absolute h-px bg-[var(--border)]"
+          style={{
+            width: absNudge,
+            left: '50%',
+            ...(stemAbove
+              ? { bottom: `calc(100% + ${stemHeightPx - 1}px)` }
+              : { top: `calc(100% + ${stemHeightPx - 1}px)` }),
+            transform:
+              labelNudgePx >= 0 ? 'translateX(0)' : `translateX(-${absNudge}px)`,
+          }}
+          aria-hidden
+          data-marker-stem-elbow="true"
+        />
+      ) : null}
+
       <div
-        className={`pointer-events-none absolute flex w-max max-w-[5.25rem] flex-col ${alignClass} ${labelX}`}
-        style={{
-          ...(stemAbove
-            ? { bottom: `calc(100% + 4px + ${laneOffsetPx}px)` }
-            : { top: `calc(100% + 4px + ${laneOffsetPx}px)` }),
-          ...(labelNudgePx !== 0 && labelAlign === 'center'
-            ? { transform: `translateX(calc(-50% + ${labelNudgePx}px))` }
-            : labelNudgePx !== 0
-              ? { marginInlineStart: labelNudgePx }
-              : null),
-        }}
+        className={`pointer-events-none absolute flex w-max max-w-[6.25rem] flex-col ${alignClass}`}
+        style={labelPositionStyle}
         data-milestone-label={markerDataAttrs?.['data-milestone-id']}
         data-label-side={labelSide}
         data-label-lane={labelLane}
       >
-        {stemAbove ? (
-          <>
-            <span className="text-[10px] font-medium leading-tight text-[var(--text)]">
-              {shortLabel}
-            </span>
-            <span className="text-[10px] tabular-nums text-[var(--text-muted)]">
-              {dateLabel}
-            </span>
-            <span className="mt-0.5 h-1.5 w-px bg-[var(--border)]" aria-hidden />
-          </>
-        ) : (
-          <>
-            <span className="mb-0.5 h-1.5 w-px bg-[var(--border)]" aria-hidden />
-            <span className="text-[10px] font-medium leading-tight text-[var(--text)]">
-              {shortLabel}
-            </span>
-            <span className="text-[10px] tabular-nums text-[var(--text-muted)]">
-              {dateLabel}
-            </span>
-          </>
-        )}
+        <span className="text-[10px] font-medium leading-tight text-[var(--text)]">
+          {shortLabel}
+        </span>
+        <span className="text-[10px] tabular-nums text-[var(--text-muted)]">
+          {dateLabel}
+        </span>
       </div>
 
       <button

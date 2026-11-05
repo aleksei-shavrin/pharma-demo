@@ -1,19 +1,18 @@
 ---
 id: DOC-ADR-0004
-title: "ADR-0004: D12 Schedule timeline renderer — dhtmlx-gantt Community"
+title: 'ADR-0004: Рендерер timeline Schedule (D12) — dhtmlx-gantt Community'
 type: adr
 status: draft
-version: "0.3.0"
-created: 2026-11-01
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-005
   - DOC-UX-018
   - DOC-ADR-0002
 ---
-
-# ADR-0004: D12 Schedule timeline renderer — dhtmlx-gantt Community
+# ADR-0004: Рендерер timeline Schedule (D12) — dhtmlx-gantt Community
 
 - **Статус решения:** accepted
 - **Document lifecycle (`status` frontmatter):** `draft` — как у остальных ADR репозитория; решение D12 при этом **accepted** (не путать со `status: approved` документации).

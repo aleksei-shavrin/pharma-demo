@@ -1,18 +1,17 @@
 ---
 id: DOC-UX-006
-title: "Demo v1 Entity Detail pattern"
+title: Demo v1 — паттерн Entity Detail
 type: product
 status: draft
-version: "0.2.1"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.1
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-001
   - DOC-UX-002
   - DOC-BA-015
 ---
-
 # Demo v1 Entity Detail pattern
 
 > **certainty:** hypothesis

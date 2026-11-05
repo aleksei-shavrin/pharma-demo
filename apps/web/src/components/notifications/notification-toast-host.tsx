@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import {
   fetchNotifications,
   type Notification,
+  type NotificationSeverity,
+  type NotificationTaxonomy,
 } from '@/lib/api-client';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { resolveNotificationHref } from '@/lib/notifications/notification-href';
@@ -22,9 +24,46 @@ type Props = {
   onInteractRead: (id: string) => void;
 };
 
+type ToastTone = 'danger' | 'warn' | 'ok' | 'neutral';
+
+/**
+ * Map authoritative severity (+ recovery/readiness taxonomy for info)
+ * to persistent semantic toast surfaces.
+ */
+export function toastToneFor(
+  severity: NotificationSeverity,
+  taxonomy: NotificationTaxonomy,
+): ToastTone {
+  if (severity === 'critical') return 'danger';
+  if (severity === 'attention') return 'warn';
+  if (taxonomy === 'recovery' || taxonomy === 'readiness') return 'ok';
+  return 'neutral';
+}
+
+function toastSurface(tone: ToastTone): string {
+  if (tone === 'danger') {
+    return 'border-[var(--status-danger-border)] bg-[var(--status-danger-bg)]';
+  }
+  if (tone === 'warn') {
+    return 'border-[var(--status-warn-border)] bg-[var(--status-warn-bg)]';
+  }
+  if (tone === 'ok') {
+    return 'border-[var(--status-ok-border)] bg-[var(--status-ok-bg)]';
+  }
+  return 'border-[var(--border)] bg-[var(--surface-raised)]';
+}
+
+function toastAccent(tone: ToastTone): string {
+  if (tone === 'danger') return 'bg-[var(--status-danger-border)]';
+  if (tone === 'warn') return 'bg-[var(--status-warn-border)]';
+  if (tone === 'ok') return 'bg-[var(--status-ok-border)]';
+  return 'bg-[var(--border)]';
+}
+
 /**
  * Toasts only after a successful committed snapshot switch (not bootstrap,
  * not loading, not stale/failed). Does not auto-mark read.
+ * R2-U1-R5: top-right stack below AppBar + semantic severity surfaces.
  */
 export function NotificationToastHost({
   settled,
@@ -91,29 +130,40 @@ export function NotificationToastHost({
 
   return (
     <div
-      className="pointer-events-none fixed bottom-4 right-4 z-[60] flex w-[min(100vw-2rem,22rem)] flex-col gap-2"
+      className="pointer-events-none fixed right-4 z-[60] flex w-[min(100vw-2rem,22rem)] flex-col gap-2"
+      style={{ top: 'calc(var(--topbar-height) + 0.75rem)' }}
       data-notification-toasts
+      data-toast-placement="top-right"
       aria-live="polite"
     >
       {toasts.map((n) => {
         const href = resolveNotificationHref(n.href, n.entityRefs);
+        const tone = toastToneFor(n.severity, n.taxonomy);
         return (
           <div
             key={n.key}
             role="status"
             data-notification-toast={n.id}
-            className="pointer-events-auto rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2.5 shadow-[var(--elevation-1)]"
+            data-toast-severity={n.severity}
+            data-toast-tone={tone}
+            className={`pointer-events-auto relative overflow-hidden rounded-[var(--radius-md)] border px-3 py-2.5 shadow-[var(--elevation-1)] ${toastSurface(tone)}`}
           >
-            <p className="text-[10px] uppercase tracking-wide text-[var(--text-muted)]">
+            <span
+              className={`absolute inset-y-0 left-0 w-1 ${toastAccent(tone)}`}
+              aria-hidden
+            />
+            <p className="pl-1.5 text-[10px] uppercase tracking-wide text-[var(--text-muted)]">
               Снимок {n.snapshotId}
             </p>
-            <p className="text-sm font-medium text-[var(--text)]">{n.titleRu}</p>
+            <p className="pl-1.5 text-sm font-medium text-[var(--text)]">
+              {n.titleRu}
+            </p>
             {n.bodyRu ? (
-              <p className="mt-0.5 line-clamp-2 text-xs text-[var(--text-secondary)]">
+              <p className="mt-0.5 line-clamp-2 pl-1.5 text-xs text-[var(--text-secondary)]">
                 {n.bodyRu}
               </p>
             ) : null}
-            <div className="mt-2 flex items-center gap-3">
+            <div className="mt-2 flex items-center gap-3 pl-1.5">
               {href ? (
                 <Link
                   href={href}

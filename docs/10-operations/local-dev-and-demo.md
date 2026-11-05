@@ -1,18 +1,17 @@
 ---
 id: DOC-OPS-002
-title: "Local development and production-like Demo"
+title: Локальная разработка и production-like Demo
 type: delivery
 status: draft
-version: "0.1.0"
-created: 2026-11-01
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-OPS-README-001
   - DOC-ADR-0003
   - DOC-GUIDE-001
 ---
-
 # Local development and production-like Demo
 
 Два явных сценария для Demo v1. Не смешивать.
@@ -30,7 +29,9 @@ URLs в обоих случаях:
 | [http://api.localhost](http://api.localhost) | API |
 | [http://docs.localhost](http://docs.localhost) | Docs |
 
-Не запускайте оба стека одновременно: оба занимают порт **80**.
+Не запускайте local production-like и development одновременно на порту **80**.
+
+**Server / IP:port demo** (отдельный Compose, обычно `:8080`): см. [server-compose-demo](./server-compose-demo.md) и [ADR-0005](../06-architecture/decisions/0005-server-single-origin-compose.md). Не использует `api.localhost`.
 
 ---
 

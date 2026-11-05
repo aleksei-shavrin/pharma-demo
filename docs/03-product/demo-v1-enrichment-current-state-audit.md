@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-019
-title: "Demo v1 enrichment — current-state audit"
+title: Demo v1 enrichment — аудит текущего состояния
 type: product
 status: draft
-version: "0.2.0"
-created: 2026-11-01
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-012
   - DOC-PROD-020
@@ -14,7 +14,6 @@ related:
   - DOC-UX-004
   - DOC-GUIDE-001
 ---
-
 # Demo v1 enrichment — current-state audit
 
 > **certainty:** fact (для описания реализованного Demo) / hypothesis (для gaps enrichment)

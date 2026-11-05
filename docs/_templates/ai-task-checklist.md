@@ -1,17 +1,16 @@
 ---
 id: DOC-TPL-AI-001
-title: "Шаблон: AI task checklist"
+title: 'Шаблон: AI task checklist'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-AI-001
   - DOC-AI-002
 ---
-
 # Шаблон: AI task checklist
 
 Использовать перед стартом и перед сдачей задачи агентом.

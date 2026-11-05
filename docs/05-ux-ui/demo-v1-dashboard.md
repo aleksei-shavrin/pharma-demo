@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-004
-title: "Demo v1 Dashboard"
+title: Demo v1 — Dashboard (исполнительный обзор)
 type: product
 status: draft
-version: "0.2.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-001
   - REQ-IMPCT-001
@@ -14,7 +14,6 @@ related:
   - DOC-BA-014
   - DOC-PROD-012
 ---
-
 # Demo v1 Dashboard
 
 > **certainty:** hypothesis

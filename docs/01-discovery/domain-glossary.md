@@ -1,18 +1,17 @@
 ---
 id: DOC-DISC-014
-title: "Domain glossary: pharma facility / project controls"
+title: 'Глоссарий домена: фармацевтический объект / project controls'
 type: discovery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-010
   - DOC-DISC-013
   - DOC-STD-002
 ---
-
 # Domain glossary: pharma facility / project controls
 
 Рабочий глоссарий **доменных** терминов Discovery. Не смешивать с инженерным глоссарием репозитория: [`docs/standards/terminology.md`](../standards/terminology.md) (OpenSpec, ADR, Demo v1, certainty…).

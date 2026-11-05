@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-022
-title: "Demo v1 R2 — UX delta (lifecycle, cost, people, notifications)"
+title: 'Demo v1 R2 — UX delta (lifecycle, cost, people, notifications)'
 type: product
 status: draft
-version: "0.1.4"
-created: 2026-11-02
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.1.9
+created: '2026-11-02'
+updated: '2026-11-02'
+owner: docs-engineering
 related:
   - DOC-UX-021
   - DOC-UX-002
@@ -17,7 +17,6 @@ related:
   - DOC-PROD-026
   - DOC-BA-018
 ---
-
 # Demo v1 R2 — UX delta
 
 > **certainty:** hypothesis
@@ -46,18 +45,18 @@ AppBar: Notification bell (not a nav section).
 
 ## 2. Dashboard (executive)
 
-> **certainty:** assumption
+> **certainty:** fact
 >
-> R2-U1-R4 corrective UX pass (awaiting human visual approval; **not** APPROVED). R2/R3 composition base preserved; R4 fixes overview stretch, readiness RAG surfaces, Exceptions|Attention row, **stable** executive milestone map.
+> **R2-U1 APPROVED / CLOSED** (human visual 2026-11-02: O/S LIGHT, S DARK, O timeline zoom). Accepted: executive IA; 50/50 lower rows; workstream readiness; stable 12 A–S milestones + selector; late collision policy; consolidated PS cluster (`○───●` + leader + single annotation; O active delay vs S historical +N); light/dark parity. Domain/API/BR-004 unchanged. R2-I1 / R2-A1 not started.
 
 Hierarchy (desktop):
 
 1. **Executive overview row** (~55/45):
    - LEFT: Project Status + Production Start + Cost — inner zones **stretch to full card height** (dividers full height)
-   - RIGHT: Workstream readiness — dense clickable rows; soft RAG-tinted surfaces; hover/focus; Red → Yellow → Green + catalog `sortOrder`; optional internal scroll → `/workstreams/:id`
-2. **Контрольные вехи проекта** — **stable curated executive map** (exactly **12** IDs, identical A–S). Snapshot switching changes state/RAG/chrome accents, **not** set membership. Always includes MS-PS. Deliberate RU short labels. Horizon `01.02.2027–30.09.2027`. Multi-lane collision policy; no horizontal timeline scroll.
-3. **Key Exceptions | Management Attention** — one desktop row (~1.5fr / 1fr); stacks vertically on narrow viewports
-4. Trend / Decisions — director-facing narrative RU-only (tech terms HVAC/WFI/IQ/OQ/PQ/BMS/EMS/QC/EAC/VAC/BAC allowed)
+   - RIGHT: Workstream readiness — dense clickable rows; **Yellow/Red** persistent semantic tint; **Green** = neutral/transparent row + green status indicator (no persistent ok fill); separate hover/focus; Red → Yellow → Green + catalog `sortOrder`; optional internal scroll → `/workstreams/:id`
+2. **Контрольные вехи проекта** — **stable curated executive map** (exactly **12** IDs, identical A–S). Snapshot switching changes state/RAG/chrome accents, **not** set membership. Always includes MS-PS. **RU-first** short presentation labels. Horizon `01.02.2027–30.09.2027`. **Production Start cluster (R8/R9):** `○───●` + leader attached to current (`data-ps-connector="baseline-current"`, `data-ps-leader-attached="current"`); true-date markers; one annotation («Запуск производства» / План → прогноз|факт / +N or «По плану»). O: active delay tone on +N. S: historical muted +N (not danger-active). Coincident: one point, no zero-length connector, no +0. Not independent TimelineMarker PS labels. Snapshot chrome above; MS-COM-GO («Решение о запуске») ordinary above-axis milestone. No horizontal timeline scroll.
+3. **Key Exceptions | Management Decisions** — direct siblings in one grid; mobile `grid-cols-1`; desktop `lg:grid-cols-2` (equal 50/50); equal outer height; both lists bounded (~3 items) with internal scroll; headers fixed. Tailwind class literals MUST live in scanned component source (not only `src/lib` constants).
+4. **Management Attention | Snapshot Changes** — same two-column grid contract. Attention = compact **2×2 signal matrix** (quiet → single empty message). Changes = semantic tiles. Narrow viewports stack. Director-facing narrative RU-only (tech terms HVAC/WFI/IQ/OQ/PQ/BMS/EMS/QC/EAC/VAC/BAC allowed)
 
 **Stable executive set (normative):** MS-BLD-EXC, MS-BLD-FND, MS-BLD-STR, MS-BLD-ENCL, MS-CLN-RDY, MS-HVAC-IQ, MS-UTL-WFI, MS-PRD-INST, MS-PKG-SAT, MS-COM-OQ, MS-COM-GO, MS-PS.
 
@@ -115,6 +114,8 @@ No GL, invoices, or contractor ledgers.
 - Read/unread (sessionStorage key `ppc.demo.notificationRead`; per notification id)
 - Switch: «Показывать уведомления при смене снимка» (localStorage key `ppc.demo.notificationPopup`; **default on**)
 - On **successful** atomic snapshot commit: ≤3 prioritized toasts; remainder in tray
+- Toast stack: **top-right**, below AppBar (`--topbar-height` offset); stacks downward; does not cover selector/AppBar controls
+- Semantic toast surfaces from authoritative severity (+ recovery/readiness taxonomy for positive info): critical→danger, attention→warn, info+recovery/readiness→ok, other info→neutral; subtle tinted surface + accent (not consumer-bright alerts); light/dark parity
 - Failed/stale/bootstrap switch: **no** toast; toast appearance does **not** auto-mark read
 - Fixtures authored per snapshot (not generic diff); Notification not SoT; entityRefs soft only
 - Decision refs: no Decision detail route in N1 → no broken link

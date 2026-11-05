@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-015
-title: "Demo v1 UI Design — foundations"
+title: Demo v1 UI Design — основания
 type: product
 status: draft
-version: "0.1.2"
-created: 2026-10-31
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.1.2
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-014
   - DOC-UX-011
@@ -16,7 +16,6 @@ related:
   - DOC-UX-009
   - DOC-UX-018
 ---
-
 # Demo v1 UI Design — foundations
 
 > **certainty:** hypothesis

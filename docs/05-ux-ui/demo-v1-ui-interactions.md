@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-019
-title: "Demo v1 UI Design — interactions"
+title: Demo v1 UI Design — взаимодействия
 type: product
 status: draft
-version: "0.1.2"
-created: 2026-11-01
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.1.2
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-014
   - DOC-UX-015
@@ -17,7 +17,6 @@ related:
   - DOC-UX-006
   - DOC-UX-005
 ---
-
 # Demo v1 UI Design — interactions
 
 > **certainty:** hypothesis

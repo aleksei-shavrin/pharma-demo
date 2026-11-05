@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-025
-title: "Demo v1 R2 — data and catalogue blueprint"
+title: Demo v1 R2 — blueprint данных и каталогов
 type: product
 status: draft
-version: "0.1.0"
-created: 2026-11-02
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-11-02'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-021
   - DOC-PROD-023
@@ -14,7 +14,6 @@ related:
   - DOC-PROD-026
   - DOC-BA-018
 ---
-
 # Demo v1 R2 — data and catalogue blueprint
 
 > **certainty:** hypothesis

@@ -6,9 +6,14 @@ import {
   presentDecisionType,
   presentMilestoneName,
 } from '@/lib/ui-labels';
+import {
+  DASHBOARD_PAIR_LIST_MAX_HEIGHT,
+  DASHBOARD_PAIR_LIST_SCROLL_CLASS,
+  DASHBOARD_PAIR_SURFACE_CLASS,
+} from '@/lib/dashboard/dashboard-layout';
 import { ModuleSurface } from './module-surface';
 
-/** Context-sensitive Decision / required-action — distinct governance pattern. */
+/** Context-sensitive Decision / required-action — paired with Exceptions (R2-U1-R6). */
 export function DecisionAction({ data }: { data: DashboardOverview }) {
   const decisions = data.decisions;
   const milestoneName = (id: string | null) => {
@@ -24,17 +29,20 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
   const needed = data.decisionPanelState === 'needed' && decisions.length === 0;
 
   return (
-    <ModuleSurface data-dashboard-block="decisions" className="min-w-0">
+    <ModuleSurface
+      data-dashboard-block="decisions"
+      className={DASHBOARD_PAIR_SURFACE_CLASS}
+    >
       <h2
         id="decision-heading"
-        className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
+        className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
       >
         Управленческие решения
       </h2>
 
       {needed ? (
         <div
-          className="mt-2 rounded-[var(--radius-sm)] border-2 border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-3.5 py-3"
+          className="mt-2 shrink-0 rounded-[var(--radius-sm)] border-2 border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-3.5 py-3"
           data-decision-callout="needed"
         >
           <p className="text-sm font-bold uppercase tracking-wide text-[var(--status-danger-fg)]">
@@ -49,12 +57,14 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
 
       {decisions.length > 0 ? (
         <>
-          <p className="mt-1.5 text-[11px] text-[var(--text-muted)]">
+          <p className="mt-1.5 shrink-0 text-[11px] text-[var(--text-muted)]">
             Запись решения не означает автоматическое устранение отклонения.
           </p>
           <ul
-            className="mt-2 divide-y divide-[var(--border-subtle)]"
+            className={`${DASHBOARD_PAIR_LIST_SCROLL_CLASS} divide-y divide-[var(--border-subtle)]`}
             data-decisions="list"
+            data-decisions-scroll="bounded"
+            style={{ maxHeight: DASHBOARD_PAIR_LIST_MAX_HEIGHT }}
           >
             {decisions.map((decision) => (
               <li
@@ -105,7 +115,7 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
 
       {data.decisionHonesty && !data.decisionHonesty.recoveryExecuted ? (
         <aside
-          className="mt-2 rounded-[var(--radius-sm)] bg-[var(--surface-sunken)] px-3 py-2 text-sm text-[var(--text-secondary)]"
+          className="mt-2 shrink-0 rounded-[var(--radius-sm)] bg-[var(--surface-sunken)] px-3 py-2 text-sm text-[var(--text-secondary)]"
           aria-label="Уточнение по решению"
           data-decision-honesty="true"
         >

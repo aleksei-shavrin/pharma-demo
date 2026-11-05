@@ -1,19 +1,18 @@
 ---
 id: DOC-PROD-022
-title: "Demo v1 enrichment — snapshot and causal matrix"
+title: Demo v1 enrichment — матрица снимков и причинности
 type: product
 status: draft
-version: "0.3.2"
-created: 2026-11-01
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.3.2
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-012
   - DOC-PROD-020
   - DOC-PROD-021
   - DOC-GUIDE-001
 ---
-
 # Demo v1 enrichment — snapshot and causal matrix
 
 > **certainty:** hypothesis

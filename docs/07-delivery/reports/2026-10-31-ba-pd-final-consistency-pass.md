@@ -1,12 +1,12 @@
 ---
 id: DOC-RPT-BAPD-003
-title: "Report: BA/PD final consistency pass (cross-review)"
+title: 'Отчёт: финальный consistency pass BA/PD (cross-review)'
 type: delivery
 status: draft
-version: "0.1.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-HANDOFF-BAPD-001
   - DOC-RPT-BAPD-002
@@ -16,7 +16,6 @@ related:
   - REQ-NFR-002
   - DOC-PROD-012
 ---
-
 # Report: BA/PD final consistency pass (cross-review)
 
 Дата: 2026-10-31. Узкая корректировка по независимому cross-review. Commit / push / branch не выполнялись.

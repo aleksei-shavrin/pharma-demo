@@ -1,12 +1,12 @@
 ---
 id: DOC-BA-016
-title: "Traceability matrix (BA/PD Demo v1)"
+title: Матрица трассируемости (BA/PD Demo v1)
 type: business
 status: draft
-version: "0.5.1"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.5.1
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-BA-017
   - DOC-PROD-010
@@ -14,9 +14,9 @@ related:
   - DOC-BA-014
   - DOC-BA-015
   - DOC-RPT-REQOS-001
+sidebar_label: Матрица трассируемости
 ---
-
-# Traceability matrix (BA/PD Demo v1)
+# Матрица трассируемости (BA/PD Demo v1)
 
 Цепочка: Problem → Process → BR/NC → Capability → REQ → **OpenSpec** → Walkthrough → Mock.
 

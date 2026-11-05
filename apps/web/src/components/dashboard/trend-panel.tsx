@@ -50,7 +50,10 @@ export function SnapshotChanges({ data }: { data: DashboardOverview }) {
     better.length === 0 && worse.length === 0 && unchangedCritical.length === 0;
 
   return (
-    <ModuleSurface data-dashboard-block="trend" className="min-w-0">
+    <ModuleSurface
+      data-dashboard-block="trend"
+      className="flex h-full min-h-0 min-w-0 flex-col"
+    >
       <h2
         id="trend-heading"
         className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"

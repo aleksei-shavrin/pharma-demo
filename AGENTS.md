@@ -1,4 +1,4 @@
-# AGENTS.md — Pharma Project Control
+# AGENTS.md — Pharma Demo
 
 Инструкции для AI-агентов и людей, работающих с кодом и документацией в этом репозитории.
 Проза — на русском; **EN tech terms** оставлять как есть.

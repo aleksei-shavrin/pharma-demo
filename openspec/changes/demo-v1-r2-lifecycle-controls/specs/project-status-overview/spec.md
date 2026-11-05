@@ -60,12 +60,77 @@ Dashboard SHALL получать fixture-authored `executiveMilestoneIds` as a *
 
 ### Requirement: Navigable workstream readiness
 
-Workstream readiness entries на Dashboard SHALL быть navigable к Workstream detail (`/workstreams/:id`).
+Workstream readiness entries на Dashboard SHALL быть navigable к Workstream detail (`/workstreams/:id`). Yellow/Red readiness rows SHALL expose **persistent** semantic tint at rest; Green rows SHALL remain neutral (no persistent success fill) while keeping a green status indicator. Hover/focus is a separate interactive affordance. Frontend SHALL NOT recompute RAG.
 
 #### Scenario: Click HVAC readiness
 
 - **WHEN** пользователь активирует WS-HVAC на Dashboard Snapshot C
 - **THEN** клиент переходит к Workstream detail WS-HVAC
+
+#### Scenario: Attention surfaces vs green neutral
+
+- **WHEN** Dashboard shows workstream readiness
+- **THEN** Red/Yellow rows have persistent semantic tint and Green rows do not use a persistent ok background fill
+
+### Requirement: Dashboard lower composition (R2-U1-R7)
+
+Desktop Dashboard SHALL place Key Exceptions | Management Decisions and Management Attention | Snapshot Changes as equal **50/50** sibling pairs in two CSS grids with generated two-column rules.
+
+#### Scenario: Aligned 50/50 lower rows
+
+- **WHEN** desktop viewport (≥ lg) shows both lower rows
+- **THEN** Exceptions and Decisions are direct siblings in one two-column grid
+- **AND** Attention and Changes are direct siblings in a second two-column grid
+
+#### Scenario: Tailwind class must be generated
+
+- **WHEN** lower-row grid classes are authored
+- **THEN** the two-column utility SHALL appear in a Tailwind content-scanned source path (not only an unscanned helper module)
+
+#### Scenario: Paired Exceptions and Decisions height
+
+- **WHEN** both panels render list content
+- **THEN** they share equal outer height with bounded internal scroll (~three items)
+- **AND** Management Attention MAY use a compact 2×2 matrix (quiet → single empty message)
+
+### Requirement: Executive timeline presentation labels and lanes
+
+Executive strip short labels SHALL be RU-first for the stable 12-set (Domain IDs unchanged). Marker X SHALL remain on true dates. Late-stage layout SHALL keep snapshot chrome and ordinary milestones (including MS-COM-GO) out of the Production Start annotation zone.
+
+#### Scenario: RU short labels without Domain IDs as captions
+
+- **WHEN** executive strip renders the stable set
+- **THEN** visible short labels are director-facing RU (accepted industry acronyms such as HVAC/WFI/OQ allowed) and not raw `MS-*` ids or English Go/No-Go presentation
+
+### Requirement: Production Start presentation cluster (R2-U1-R8/R9)
+
+Production Start SHALL render as one consolidated executive timeline annotation cluster (presentation-only). Independent stacked PS text labels SHALL NOT appear simultaneously. Domain membership, API contracts, and BR-004 SHALL remain unchanged.
+
+#### Scenario: Delayed O consolidated cluster
+
+- **WHEN** Snapshot O is shown
+- **THEN** one PS cluster shows plan 15.09.2027 → прогноз 22.09.2027 and +7
+- **AND** MS-COM-GO remains a separate ordinary milestone label above the axis
+
+#### Scenario: Achieved S consolidated cluster
+
+- **WHEN** Snapshot S is shown
+- **THEN** one PS cluster shows plan 15.09.2027 → факт 22.09.2027 and +7
+- **AND** the cluster does not use the word «прогноз» for the achieved date
+- **AND** +7 uses historical (non danger-active) presentation while project status remains Green
+
+#### Scenario: Coincident baseline cluster
+
+- **WHEN** baseline and forecast coincide
+- **THEN** one compact PS cluster shows a single date with «По плану»
+- **AND** no zero-length connector and no +0 days label
+
+#### Scenario: Cluster geometry contracts
+
+- **WHEN** baseline and current differ
+- **THEN** true-date markers are linked by a neutral connector
+- **AND** the vertical leader is attached to the current marker
+- **AND** a single annotation block carries title, plan→current line, and delta
 
 ## MODIFIED Requirements
 

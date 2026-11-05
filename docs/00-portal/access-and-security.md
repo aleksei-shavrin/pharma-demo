@@ -1,17 +1,16 @@
 ---
 id: DOC-PORTAL-004
-title: "Доступ и безопасность документации"
+title: Доступ и безопасность
 type: portal
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-ADR-0003
   - DOC-STD-001
 ---
-
 # Доступ и безопасность документации
 
 ## Локальный контур (направление)

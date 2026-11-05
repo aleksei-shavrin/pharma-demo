@@ -1,22 +1,21 @@
 ---
 id: DOC-AI-README-001
-title: "AI engineering"
+title: AI engineering
 type: index
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-AI-001
   - DOC-AI-002
   - DOC-AI-003
   - DOC-AI-004
 ---
-
 # 11-ai-engineering
 
-Нормы работы AI-агентов в репозитории Pharma Project Control.
+Нормы работы AI-агентов в репозитории Pharma Demo.
 
 ## Документы
 

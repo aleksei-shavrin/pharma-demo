@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-023
-title: "Demo v1 R2 — scope and acceptance boundaries"
+title: Demo v1 R2 — границы scope и приёмки
 type: product
 status: draft
-version: "0.1.1"
-created: 2026-11-02
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-11-02'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-020
   - DOC-PROD-021
@@ -19,7 +19,6 @@ related:
   - DOC-BA-014
   - DOC-BA-015
 ---
-
 # Demo v1 R2 — scope and acceptance boundaries
 
 > **certainty:** fact

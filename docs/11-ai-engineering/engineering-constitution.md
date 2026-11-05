@@ -1,19 +1,18 @@
 ---
 id: DOC-AI-001
-title: "Engineering constitution (AI)"
+title: Инженерная конституция (AI)
 type: ai-policy
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-STD-001
   - DOC-AI-002
   - DOC-AI-003
   - DOC-AI-004
 ---
-
 # Engineering constitution (AI)
 
 Краткая конституция для агентов. Детали — в связанных политиках и стандартах.

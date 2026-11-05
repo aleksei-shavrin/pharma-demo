@@ -1,18 +1,17 @@
 ---
 id: DOC-AI-003
-title: "Test-first bugfix"
+title: Test-first bugfix (сначала тест)
 type: ai-policy
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-TPL-BUGFIX-001
   - DOC-QA-001
   - DOC-AI-001
 ---
-
 # Test-first bugfix
 
 ## Политика

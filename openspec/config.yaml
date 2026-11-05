@@ -2,7 +2,7 @@ schema: spec-driven
 
 # Контекст проекта для артефактов OpenSpec (без ключей telemetry — они machine-global).
 context: |
-  Проект: Pharma Project Control — система управления фармацевтическими проектами.
+  Проект: Pharma Demo — система управления фармацевтическими проектами.
   Язык артефактов OpenSpec и связанной документации: русский; EN tech terms сохранять как есть.
   SDD-инструмент: только OpenSpec (не Spec Kit / BMAD и т.п.). ADR — формат MADR в docs/06-architecture/decisions/.
   Living specs (SoT): openspec/specs/. Черновики изменений: openspec/changes/ — на портал НЕ публикуются.

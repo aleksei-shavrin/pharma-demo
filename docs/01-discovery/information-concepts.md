@@ -1,22 +1,21 @@
 ---
 id: DOC-DISC-017
-title: "Information concepts (conceptual)"
+title: Информационные концепции
 type: discovery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-013
   - DOC-DISC-014
   - DOC-DISC-016
   - DOC-DISC-015
 ---
-
 # Information concepts (conceptual)
 
-Концептуальная модель **информационных объектов** project controls для Discovery Pharma Project Control. Это **не** ER-диаграмма, **не** схема БД, **не** OpenAPI и **не** утверждённая модель данных продукта.
+Концептуальная модель **информационных объектов** project controls для Discovery Pharma Demo. Это **не** ER-диаграмма, **не** схема БД, **не** OpenAPI и **не** утверждённая модель данных продукта.
 
 Отраслевой lifecycle: [domain-overview.md](./domain-overview.md). Термины: [domain-glossary.md](./domain-glossary.md). Процессы: [process-inventory.md](./process-inventory.md). Роли: [stakeholders.md](./stakeholders.md). Evidence / OQ: [registers.md](./registers.md).
 
@@ -41,7 +40,7 @@ related:
 | Утверждение | Certainty |
 |-------------|-----------|
 | Парафраз EV-* (milestone, schedule/activities, baseline/change control, project control PDCA, TOP, FAT/SAT…) | `fact` относительно источника |
-| Концепт как объект учёта в Pharma Project Control / демо | `hypothesis` |
+| Концепт как объект учёта в Pharma Demo / демо | `hypothesis` |
 | Связь концепт ↔ PROC-\* / SH-\* | `hypothesis`, если обоснована DOC-DISC-015/016; иначе `open_question` |
 | Customer data dictionary / org master data | **не** фиксируется как `fact` |
 

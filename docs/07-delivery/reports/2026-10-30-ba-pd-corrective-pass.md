@@ -1,18 +1,17 @@
 ---
 id: DOC-RPT-BAPD-001
-title: "Report: BA/PD corrective pass (final consistency)"
+title: 'Отчёт: corrective pass BA/PD (финальная согласованность)'
 type: delivery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-HANDOFF-BAPD-001
   - DOC-BA-017
   - DOC-PHASE-BAPD-001
 ---
-
 # Report: BA/PD corrective pass (final consistency)
 
 Дата: 2026-10-30. Corrective pass по замечаниям сквозного ревью. Коммит не выполнялся в рамках задачи.

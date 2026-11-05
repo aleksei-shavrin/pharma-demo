@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-026
-title: "Demo v1 R2 — cost control, CAPEX research, and A–S money story"
+title: 'Demo v1 R2 — контроль стоимости, CAPEX и денежная история A–S'
 type: product
 status: draft
-version: "0.1.1"
-created: 2026-11-02
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-11-02'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-023
   - DOC-PROD-024
@@ -14,7 +14,6 @@ related:
   - DOC-BA-018
   - DOC-UX-022
 ---
-
 # Demo v1 R2 — cost control, CAPEX research, and A–S money story
 
 > **certainty:** hypothesis

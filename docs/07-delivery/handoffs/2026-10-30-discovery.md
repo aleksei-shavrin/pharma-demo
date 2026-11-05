@@ -1,19 +1,18 @@
 ---
 id: DOC-HANDOFF-DISC-001
-title: "Handoff: Discovery phase"
+title: 'Handoff: фаза Discovery'
 type: handoff
 status: draft
-version: "0.2.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-021
   - DOC-DISC-011
   - DOC-PHASE-DISC-001
   - DOC-PROD-001
 ---
-
 # Handoff: Discovery phase
 
 ## Мета

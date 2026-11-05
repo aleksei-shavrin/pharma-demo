@@ -1,18 +1,17 @@
 ---
 id: DOC-PROD-003
-title: "Архитектура Demo v1"
+title: Архитектура Demo v1
 type: product
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-PROD-002
   - DOC-PROD-004
   - DOC-ADR-0003
 ---
-
 # Архитектура Demo v1
 
 ## Цель Demo v1

@@ -1,19 +1,18 @@
 ---
 id: DOC-HANDOFF-REQOS-001
-title: "Handoff: Requirements Specification & OpenSpec Stage 1"
+title: 'Handoff: Requirements Specification и OpenSpec Stage 1'
 type: handoff
 status: draft
-version: "0.2.1"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.1
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-HANDOFF-BAPD-001
   - DOC-RPT-REQOS-001
   - DOC-PROD-011
   - DOC-BA-010
 ---
-
 # Handoff: Requirements Specification & OpenSpec Stage 1
 
 ## Мета

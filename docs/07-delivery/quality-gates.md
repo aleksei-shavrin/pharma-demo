@@ -1,18 +1,17 @@
 ---
 id: DOC-DEL-001
-title: "Quality gates"
+title: Quality gates (ворота качества)
 type: delivery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-QA-001
   - DOC-QA-002
   - DOC-AI-001
 ---
-
 # Quality gates
 
 Черновая политика ворот. Enforcement в приложении/CI — **FUTURE**, пока фиксируем ожидания.

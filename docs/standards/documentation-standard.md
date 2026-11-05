@@ -1,18 +1,17 @@
 ---
 id: DOC-STD-001
-title: "Стандарт документации"
+title: Стандарт документации
 type: standard
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-STD-002
   - DOC-TPL-CERT-001
   - DOC-AI-001
 ---
-
 # Стандарт документации
 
 Правила для всех substantive Markdown-файлов в `docs/**`.
@@ -108,4 +107,26 @@ related: []
 
 ## 10. Язык
 
-Текст — **русский**. Технические имена (OpenSpec, ADR, Mermaid, Docusaurus, NestJS, Next.js, PostgreSQL, Vitest, Playwright и т.д.) — **английские**, без перевода.
+Русский — **основной язык** документационного портала Pharma Demo.
+
+Человекочитаемые названия страниц (`title` / `sidebar_label`), разделов, таблиц, диаграмм (подписи) и поясняющий текст пишутся на **русском**.
+
+**Не переводятся:**
+
+- идентификаторы (`DOC-*`, `BR-*`, `REQ-*`, `ADR-*`, `SCN-*`, `PROC-*`, `ISS-*`, `RISK-*`, `MS-*`, `EQ-*`, `DEC-*`, `PER-*`, `WS-*` и т.п.);
+- имена технологий и инструментов (OpenSpec, ADR, Mermaid, Docusaurus, NestJS, Next.js, PostgreSQL, Vitest, Playwright и т.д.);
+- общепринятые технические / фармацевтические аббревиатуры (API, REST, HVAC, WFI, IQ/OQ/PQ, BMS/EMS, FAT/SAT, RAG, CPM …);
+- machine-readable / reserved vocabulary внешних инструментов (поля схемы OpenSpec, ключи frontmatter `status` / `certainty` и т.п.).
+
+Пользовательская фраза не должна оставаться английской только потому, что содержит технический термин: «Business Rules» → «Бизнес-правила», при сохранении `BR-004` / HVAC.
+
+## 11. Перекрёстные ссылки портала
+
+Если документ ссылается на ID, для которого существует **однозначный canonical target** в опубликованном портале, предпочтительна deep-link ссылка на этот target, а не plain-text ID.
+
+- Реестр: `website/src/cross-ref-registry.json` (сборка `npm run build:cross-ref`).
+- Autolink на портале: remark-plugin `website/src/remark/cross-ref-autolink.mjs`.
+- Стабильные якоря multi-entity страниц — явные `{#br-004}`, `{#scn-007}`, `{#proc-007}` и т.п.; не полагаться на авто-slug от русского заголовка.
+- Не создавать фиктивные ссылки на несуществующие targets; fixture-сущности без portal-страницы (`ISS-*`, `EQ-*` …) остаются текстом, пока нет канона.
+
+Проверка: `npm run check:cross-ref`.

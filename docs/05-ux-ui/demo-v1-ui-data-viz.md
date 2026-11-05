@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-018
-title: "Demo v1 UI Design — data visualization"
+title: Demo v1 UI Design — визуализация данных
 type: product
 status: draft
-version: "0.1.1"
-created: 2026-11-01
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-014
   - DOC-UX-015
@@ -18,7 +18,6 @@ related:
   - DOC-PROD-012
   - DOC-BA-015
 ---
-
 # Demo v1 UI Design — data visualization
 
 > **certainty:** hypothesis

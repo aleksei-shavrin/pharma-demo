@@ -1,18 +1,17 @@
 ---
 id: DOC-ADR-0001
-title: "ADR-0001: Documentation stack"
+title: 'ADR-0001: Стек документации'
 type: adr
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PORTAL-003
   - DOC-ADR-0002
 ---
-
-# ADR-0001: Documentation stack
+# ADR-0001: Стек документации
 
 - **Статус решения:** accepted (направление)
 - **Дата:** 2026-10-30

@@ -1,19 +1,18 @@
 ---
 id: DOC-DISC-015
-title: "Stakeholder register and analysis"
+title: Реестр и анализ заинтересованных сторон
 type: discovery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-012
   - DOC-DISC-013
   - DOC-DISC-010
   - DOC-DISC-011
 ---
-
 # Stakeholder register and analysis
 
 Реестр **кандидатных** ролей аудитории и участников контура project control для Discovery. Не org chart заказчика и не утверждённый RACI.

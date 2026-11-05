@@ -1,6 +1,7 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import crossRefAutolink from './src/remark/cross-ref-autolink.mjs';
 
 // Publish _templates (default GlobExclude drops underscore directories).
 const docsExclude = [
@@ -9,8 +10,10 @@ const docsExclude = [
   '**/__tests__/**',
 ];
 
+const docsRemarkPlugins = [crossRefAutolink];
+
 const config: Config = {
-  title: 'Pharma Project Control',
+  title: 'Pharma Demo',
   tagline: 'инженерная документация',
   favicon: 'img/favicon.ico',
 
@@ -18,11 +21,13 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'http://docs.localhost',
-  baseUrl: '/',
+  // Server Compose: DOCUSAURUS_URL + DOCUSAURUS_BASE_URL=/portal/
+  // Local ADR-0003 defaults: docs.localhost + /
+  url: process.env.DOCUSAURUS_URL ?? 'http://docs.localhost',
+  baseUrl: process.env.DOCUSAURUS_BASE_URL ?? '/',
 
-  organizationName: 'pharma-project-control',
-  projectName: 'pharma-project-control',
+  organizationName: 'pharma-demo',
+  projectName: 'pharma-demo',
 
   onBrokenLinks: 'throw',
 
@@ -62,6 +67,7 @@ const config: Config = {
           routeBasePath: 'docs',
           sidebarPath: './sidebars.ts',
           exclude: docsExclude,
+          beforeDefaultRemarkPlugins: docsRemarkPlugins,
         },
         blog: false,
         theme: {
@@ -79,6 +85,7 @@ const config: Config = {
         path: '../openspec/specs',
         routeBasePath: 'openspec',
         sidebarPath: './sidebarsOpenSpec.ts',
+        beforeDefaultRemarkPlugins: docsRemarkPlugins,
         // Publish living specs only; never include OpenSpec change drafts.
         exclude: [
           ...docsExclude,
@@ -96,9 +103,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Pharma Project Control',
+      title: 'Pharma Demo',
       logo: {
-        alt: 'Pharma Project Control',
+        alt: 'Pharma Demo',
         src: 'img/logo.svg',
       },
       items: [
@@ -172,7 +179,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Pharma Project Control. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Pharma Demo. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

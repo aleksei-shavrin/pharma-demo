@@ -1,19 +1,18 @@
 ---
 id: DOC-RPT-REQOS-003
-title: "Report: OpenSpec Stage 1 corrective semantic review"
+title: 'Отчёт: corrective semantic review OpenSpec Stage 1'
 type: delivery
 status: draft
-version: "0.1.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-RPT-REQOS-002
   - DOC-HANDOFF-REQOS-001
   - DOC-BA-014
   - DOC-PROD-012
 ---
-
 # Report: OpenSpec Stage 1 corrective semantic review
 
 Дата: **2026-10-31**. Apply/archive/commit **не** выполнялись.

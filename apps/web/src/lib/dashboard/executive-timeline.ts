@@ -8,7 +8,7 @@ import {
 /**
  * Demo horizon covers early execution through Production Start (S: 22.09).
  * R2-U1: end of September 2027 (DOC-PROD-024 close-out).
- * Horizon frozen — do not extend for late-label density (R2-U1-R3).
+ * Horizon frozen — do not extend for late-label density.
  */
 export const TIMELINE_HORIZON_START = '2027-02-01';
 export const TIMELINE_HORIZON_END = '2027-09-30';
@@ -19,12 +19,21 @@ export const LABEL_COLLISION_RATIO = 80 / 1280;
 /** Tighter gap (~40px) escalates to outer label lane. */
 export const LABEL_TIGHT_RATIO = 40 / 1280;
 
+/** Aug–Sep late cluster on the fixed horizon. */
+export const LATE_STAGE_RATIO = 0.7;
+
+/** Max horizontal label nudge while keeping a readable vertical stem. */
+export const MAX_VERTICAL_STEM_NUDGE_PX = 10;
+
 export type LabelSide = 'above' | 'below';
 
 export type LabelAlign = 'start' | 'center' | 'end';
 
-/** 0 = near axis; 1 = outer lane (R2-U1-R3 late-stage density). */
-export type LabelLane = 0 | 1;
+/**
+ * 0 = near axis; 1 = mid; 2 = outer.
+ * Stem length grows with lane; marker X stays on true date.
+ */
+export type LabelLane = 0 | 1 | 2;
 
 export type TimelineMilestonePoint = {
   id: string;
@@ -62,17 +71,43 @@ export type TimelineAnnotationLayout = {
   lane: LabelLane;
   align: LabelAlign;
   nudgePx: number;
+  /** Occupies a shared side:lane slot that milestones must not reuse nearby. */
+  reservesSlot: boolean;
 };
 
 /**
- * Deterministic layout for snapshot / PS baseline / PS forecast captions.
- * Marker X stays on true date; only label lanes/sides/nudges change.
+ * Chrome layout (R2-U1-R8): snapshot + reserved PS cluster zone.
+ * Baseline/forecast/actual captions are consolidated in ProductionStartCluster —
+ * not independent TimelineMarker labels.
  */
 export type TimelineChromeLayout = {
   snapshot: TimelineAnnotationLayout;
+  /** Reserved below-right zone for the consolidated PS annotation. */
+  psCluster: TimelineAnnotationLayout;
+  /** @deprecated R8 — kept null; use ProductionStartCluster */
   baseline: TimelineAnnotationLayout | null;
+  /** @deprecated R8 — kept null; use ProductionStartCluster */
   forecast: TimelineAnnotationLayout | null;
+  /** @deprecated R8 — kept null; use ProductionStartCluster */
   coincident: TimelineAnnotationLayout | null;
+  /** @deprecated R8 — delta lives inside PS cluster copy */
+  delta: TimelineAnnotationLayout & { band: 'axis-mid' };
+};
+
+export type TimelineSlotRef = {
+  key: string;
+  side: LabelSide;
+  lane: LabelLane;
+  occupant: string;
+  ratio: number;
+};
+
+export type ExecutiveTimelinePresentation = {
+  points: TimelineMilestonePoint[];
+  band: ProductionStartBand;
+  chrome: TimelineChromeLayout;
+  /** All reserved/occupied side:lane assignments (milestones + chrome). */
+  slots: TimelineSlotRef[];
 };
 
 function parseIsoUtc(iso: string): number {
@@ -136,8 +171,18 @@ export class ExecutiveMilestoneIntegrityError extends Error {
 
 function edgeAlign(ratio: number): LabelAlign {
   if (ratio < 0.08) return 'start';
-  if (ratio > 0.88) return 'end';
+  if (ratio > 0.85) return 'end';
   return 'center';
+}
+
+export function slotKey(side: LabelSide, lane: LabelLane): string {
+  return `${side}:${lane}`;
+}
+
+function clampNudge(nudge: number): number {
+  if (nudge > MAX_VERTICAL_STEM_NUDGE_PX) return MAX_VERTICAL_STEM_NUDGE_PX;
+  if (nudge < -MAX_VERTICAL_STEM_NUDGE_PX) return -MAX_VERTICAL_STEM_NUDGE_PX;
+  return nudge;
 }
 
 function toTimelinePoint(
@@ -165,12 +210,164 @@ function sameSlot(a: TimelineMilestonePoint, b: TimelineMilestonePoint): boolean
 }
 
 /**
- * R2-U1-R3: deterministic multi-lane collision policy.
- * Keeps marker X on true forecast date; only moves text.
+ * Late-stage chrome reservations (shared with milestone layout) — R2-U1-R8.
+ *
+ * ABOVE lane 2 — Snapshot (top chrome)
+ * BELOW lane 0+1 near PS current X — reserved for ONE PS cluster annotation
+ * MS-COM-GO and other late milestones prefer ABOVE lanes only
+ */
+export function buildLateChromeReservations(
+  band: ProductionStartBand,
+  asOfRatio: number,
+): { chrome: TimelineChromeLayout; reserved: TimelineSlotRef[] } {
+  const late =
+    asOfRatio >= LATE_STAGE_RATIO || band.forecastRatio >= LATE_STAGE_RATIO;
+  const asOfNearForecast =
+    Math.abs(asOfRatio - band.forecastRatio) < LABEL_TIGHT_RATIO;
+  const psRatio = band.forecastRatio;
+
+  const snapshot: TimelineAnnotationLayout = {
+    side: 'above',
+    lane: late ? 2 : 0,
+    align: edgeAlign(asOfRatio),
+    nudgePx: clampNudge(
+      asOfNearForecast ? (asOfRatio > 0.85 ? -10 : 8) : late ? -8 : 0,
+    ),
+    reservesSlot: true,
+  };
+
+  const psCluster: TimelineAnnotationLayout = {
+    side: 'below',
+    lane: 0,
+    align: 'end',
+    nudgePx: 0,
+    reservesSlot: true,
+  };
+
+  const reserved: TimelineSlotRef[] = [
+    {
+      key: slotKey(snapshot.side, snapshot.lane),
+      side: snapshot.side,
+      lane: snapshot.lane,
+      occupant: 'chrome:snapshot',
+      ratio: asOfRatio,
+    },
+    // Reserve both near-axis below lanes around PS so milestones stay above.
+    {
+      key: slotKey('below', 0),
+      side: 'below',
+      lane: 0,
+      occupant: 'chrome:ps-cluster',
+      ratio: psRatio,
+    },
+    {
+      key: slotKey('below', 1),
+      side: 'below',
+      lane: 1,
+      occupant: 'chrome:ps-cluster',
+      ratio: psRatio,
+    },
+  ];
+
+  const deltaBase = {
+    side: 'below' as const,
+    lane: 0 as LabelLane,
+    align: 'end' as const,
+    nudgePx: 0,
+    reservesSlot: false,
+    band: 'axis-mid' as const,
+  };
+
+  return {
+    chrome: {
+      snapshot,
+      psCluster,
+      baseline: null,
+      forecast: null,
+      coincident: null,
+      delta: deltaBase,
+    },
+    reserved,
+  };
+}
+
+/**
+ * Curated late-stage preference for stable executive IDs (excluding MS-PS chrome).
+ * Prefers ABOVE lanes so PS owns BELOW 0/1.
+ */
+const LATE_ID_SLOT_PREFERENCE: Record<
+  string,
+  Array<{ side: LabelSide; lane: LabelLane }>
+> = {
+  'MS-PKG-SAT': [
+    { side: 'above', lane: 0 },
+    { side: 'below', lane: 2 },
+    { side: 'above', lane: 1 },
+  ],
+  'MS-COM-OQ': [
+    { side: 'above', lane: 1 },
+    { side: 'above', lane: 0 },
+    { side: 'below', lane: 2 },
+  ],
+  // Keep «Решение о запуске» ABOVE — outer lane first to clear PS cluster below.
+  'MS-COM-GO': [
+    { side: 'above', lane: 1 },
+    { side: 'above', lane: 0 },
+    { side: 'below', lane: 2 },
+  ],
+};
+
+const LATE_FALLBACK_ORDER: Array<{ side: LabelSide; lane: LabelLane }> = [
+  { side: 'above', lane: 0 },
+  { side: 'above', lane: 1 },
+  { side: 'below', lane: 2 },
+  { side: 'above', lane: 2 },
+  // below 0/1 reserved for PS cluster — last resort only
+  { side: 'below', lane: 0 },
+  { side: 'below', lane: 1 },
+];
+
+function slotBlocked(
+  occupied: TimelineSlotRef[],
+  side: LabelSide,
+  lane: LabelLane,
+  ratio: number,
+): boolean {
+  return occupied.some(
+    (s) =>
+      s.side === side &&
+      s.lane === lane &&
+      Math.abs(s.ratio - ratio) < LABEL_COLLISION_RATIO,
+  );
+}
+
+function pickLateSlot(
+  id: string,
+  ratio: number,
+  occupied: TimelineSlotRef[],
+): { side: LabelSide; lane: LabelLane } {
+  const preferred = [
+    ...(LATE_ID_SLOT_PREFERENCE[id] ?? []),
+    ...LATE_FALLBACK_ORDER,
+  ];
+  for (const cand of preferred) {
+    if (!slotBlocked(occupied, cand.side, cand.lane, ratio)) {
+      return cand;
+    }
+  }
+  return { side: 'above', lane: 1 };
+}
+
+/**
+ * R2-U1-R6: milestone label layout aware of chrome reservations.
+ * MS-PS is chrome-owned — excluded from milestone slot competition.
  */
 export function applyExecutiveLabelLayout(
   points: TimelineMilestonePoint[],
-): void {
+  chromeReserved: TimelineSlotRef[] = [],
+): TimelineSlotRef[] {
+  const occupied: TimelineSlotRef[] = [...chromeReserved];
+
   for (let i = 0; i < points.length; i += 1) {
     const p = points[i]!;
     p.labelSide = i % 2 === 0 ? 'below' : 'above';
@@ -179,10 +376,39 @@ export function applyExecutiveLabelLayout(
     p.labelNudgePx = 0;
   }
 
-  for (let i = 1; i < points.length; i += 1) {
+  for (let i = 0; i < points.length; i += 1) {
     const cur = points[i]!;
+
+    // PS marker is rendered as chrome — do not consume a milestone slot.
+    if (cur.id === 'MS-PS') {
+      cur.labelSide = 'below';
+      cur.labelLane = 1;
+      cur.labelAlign = edgeAlign(cur.ratio);
+      cur.labelNudgePx = 0;
+      continue;
+    }
+
+    const late = cur.ratio >= LATE_STAGE_RATIO;
+    if (late) {
+      const slot = pickLateSlot(cur.id, cur.ratio, occupied);
+      cur.labelSide = slot.side;
+      cur.labelLane = slot.lane;
+      cur.labelAlign = edgeAlign(cur.ratio);
+      // Prefer align over large nudge so vertical stem stays honest.
+      cur.labelNudgePx = 0;
+      occupied.push({
+        key: slotKey(cur.labelSide, cur.labelLane),
+        side: cur.labelSide,
+        lane: cur.labelLane,
+        occupant: `milestone:${cur.id}`,
+        ratio: cur.ratio,
+      });
+      continue;
+    }
+
     for (let j = i - 1; j >= 0; j -= 1) {
       const prev = points[j]!;
+      if (prev.id === 'MS-PS') continue;
       const gap = cur.ratio - prev.ratio;
       if (gap >= LABEL_COLLISION_RATIO) break;
 
@@ -190,31 +416,77 @@ export function applyExecutiveLabelLayout(
         cur.labelSide = prev.labelSide === 'above' ? 'below' : 'above';
       }
       if (gap < LABEL_TIGHT_RATIO || sameSlot(cur, prev)) {
-        cur.labelLane = 1;
+        cur.labelLane = (Math.min(2, cur.labelLane + 1) as LabelLane);
         if (sameSlot(cur, prev)) {
           cur.labelSide = prev.labelSide === 'above' ? 'below' : 'above';
         }
       }
-      if (cur.labelAlign === 'center') {
-        cur.labelNudgePx = i % 2 === 0 ? -10 : 10;
+      if (slotBlocked(occupied, cur.labelSide, cur.labelLane, cur.ratio)) {
+        const alt = pickLateSlot(cur.id, cur.ratio, occupied);
+        cur.labelSide = alt.side;
+        cur.labelLane = alt.lane;
       }
-      if (prev.labelAlign === 'center' && prev.labelNudgePx === 0) {
-        prev.labelNudgePx = j % 2 === 0 ? -8 : 8;
+      if (cur.labelAlign === 'center') {
+        cur.labelNudgePx = clampNudge(i % 2 === 0 ? -8 : 8);
       }
     }
+
+    occupied.push({
+      key: slotKey(cur.labelSide, cur.labelLane),
+      side: cur.labelSide,
+      lane: cur.labelLane,
+      occupant: `milestone:${cur.id}`,
+      ratio: cur.ratio,
+    });
   }
+
+  return occupied;
 }
 
 /**
  * Snapshot-aware executive subset from API `executiveMilestoneIds`.
- *
- * When the field is present it is authoritative: empty / missing MS-PS /
- * unresolved ids throw (no skip, no silent MS-PS inject, no legacy swap).
- * Legacy fallback applies only when the field is absent.
  */
 export function resolveExecutiveMilestones(
   data: DashboardOverview,
 ): TimelineMilestonePoint[] {
+  return resolveExecutiveTimelinePresentation(data).points;
+}
+
+export function resolveProductionStartBand(
+  data: DashboardOverview,
+): ProductionStartBand {
+  const v = data.project.productionStartVariance;
+  const coincident = v.deltaDays === 0;
+  return {
+    baselineDate: v.baselineDate,
+    forecastDate: v.forecastDate,
+    baselineRatio: dateToRatio(v.baselineDate),
+    forecastRatio: dateToRatio(v.forecastDate),
+    deltaDays: v.deltaDays,
+    coincident,
+    deltaLabel: coincident ? 'по плану' : formatDeltaDays(v.deltaDays),
+  };
+}
+
+/**
+ * @deprecated Prefer resolveExecutiveTimelinePresentation — chrome alone
+ * ignores milestone slot competition (R5 defect). Kept for call sites.
+ */
+export function resolveTimelineChromeLayout(
+  data: DashboardOverview,
+  band: ProductionStartBand,
+): TimelineChromeLayout {
+  const asOfRatio = dateToRatio(data.scenarioAsOfDate);
+  return buildLateChromeReservations(band, asOfRatio).chrome;
+}
+
+/**
+ * Unified late-stage presentation: chrome reservations + milestone slots.
+ * Guarantees no two nearby annotations share the same side:lane.
+ */
+export function resolveExecutiveTimelinePresentation(
+  data: DashboardOverview,
+): ExecutiveTimelinePresentation {
   let ids: readonly string[];
   if (data.executiveMilestoneIds !== undefined) {
     if (data.executiveMilestoneIds.length === 0) {
@@ -242,88 +514,41 @@ export function resolveExecutiveMilestones(
     }
     points.push(toTimelinePoint(id, ms));
   }
-
   points.sort((a, b) => a.ratio - b.ratio || a.id.localeCompare(b.id));
-  applyExecutiveLabelLayout(points);
-  return points;
-}
 
-export function resolveProductionStartBand(
-  data: DashboardOverview,
-): ProductionStartBand {
-  const v = data.project.productionStartVariance;
-  const coincident = v.deltaDays === 0;
-  return {
-    baselineDate: v.baselineDate,
-    forecastDate: v.forecastDate,
-    baselineRatio: dateToRatio(v.baselineDate),
-    forecastRatio: dateToRatio(v.forecastDate),
-    deltaDays: v.deltaDays,
-    coincident,
-    deltaLabel: coincident ? 'по плану' : formatDeltaDays(v.deltaDays),
-  };
-}
-
-/**
- * Chrome annotation lanes for asOf / PS baseline / forecast.
- * Late Aug–Sep: snapshot outer-above; PS baseline below; forecast below-outer
- * (or coincident below) so text does not stack on one side of the same X.
- */
-export function resolveTimelineChromeLayout(
-  data: DashboardOverview,
-  band: ProductionStartBand,
-): TimelineChromeLayout {
+  const band = resolveProductionStartBand(data);
   const asOfRatio = dateToRatio(data.scenarioAsOfDate);
-  const late = asOfRatio >= 0.7 || band.forecastRatio >= 0.7;
-  const asOfNearForecast =
-    Math.abs(asOfRatio - band.forecastRatio) < LABEL_TIGHT_RATIO;
+  const { chrome, reserved } = buildLateChromeReservations(band, asOfRatio);
+  const slots = applyExecutiveLabelLayout(points, reserved);
 
-  const snapshot: TimelineAnnotationLayout = {
-    side: 'above',
-    lane: late ? 1 : 0,
-    align: edgeAlign(asOfRatio),
-    nudgePx: asOfNearForecast ? (asOfRatio > 0.85 ? -12 : 12) : 0,
-  };
+  return { points, band, chrome, slots };
+}
 
-  if (band.coincident) {
-    return {
-      snapshot,
-      baseline: null,
-      forecast: null,
-      coincident: {
-        side: 'below',
-        lane: late ? 1 : 0,
-        align: edgeAlign(band.baselineRatio),
-        nudgePx: asOfNearForecast ? 10 : 0,
-      },
-    };
+/** Nearby annotations must not share an identical side:lane. */
+export function assertNoSlotCollisions(slots: TimelineSlotRef[]): void {
+  for (let i = 0; i < slots.length; i += 1) {
+    for (let j = i + 1; j < slots.length; j += 1) {
+      const a = slots[i]!;
+      const b = slots[j]!;
+      if (
+        a.side === b.side &&
+        a.lane === b.lane &&
+        Math.abs(a.ratio - b.ratio) < LABEL_COLLISION_RATIO
+      ) {
+        throw new Error(
+          `timeline slot collision ${a.key} between ${a.occupant} and ${b.occupant}`,
+        );
+      }
+    }
   }
-
-  return {
-    snapshot,
-    baseline: {
-      side: 'below',
-      lane: 0,
-      align: 'end',
-      nudgePx: -12,
-    },
-    forecast: {
-      side: asOfNearForecast ? 'below' : 'above',
-      lane: asOfNearForecast || late ? 1 : 0,
-      align: 'end',
-      nudgePx: 12,
-    },
-    coincident: null,
-  };
 }
 
 export function buildTimelineTextSummary(data: DashboardOverview): string {
-  const milestones = resolveExecutiveMilestones(data);
-  const band = resolveProductionStartBand(data);
+  const { points, band } = resolveExecutiveTimelinePresentation(data);
   const lines = [
     `Дата снимка: ${formatDateRu(data.scenarioAsOfDate)}`,
     `Запуск производства: базовый план ${formatDateRu(band.baselineDate)}, прогноз ${formatDateRu(band.forecastDate)}, ${band.deltaLabel}`,
-    ...milestones.map(
+    ...points.map(
       (m) =>
         `${m.shortLabel} (${m.id}): прогноз ${formatDateRu(m.forecastDate)}, ${m.rag === 'Green' ? 'зелёная' : 'красная'}`,
     ),

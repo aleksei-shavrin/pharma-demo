@@ -1,12 +1,12 @@
 ---
 id: DOC-DISC-019
-title: "Preliminary product boundaries"
+title: Предварительные границы продукта
 type: discovery
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-012
   - DOC-DISC-013
@@ -14,7 +14,6 @@ related:
   - DOC-PROD-003
   - DOC-DISC-020
 ---
-
 # Preliminary product boundaries
 
 Предварительные границы продукта и Demo v1 по итогам D1–D3. **Не** утверждённые FR. Tech constraints Demo v1 — в [demo-v1-architecture](../03-product/demo-v1-architecture.md) (не дублировать).
@@ -23,7 +22,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> **Pharma Project Control** — web-система управленческой видимости и контроля facility-проекта фармацевтического объекта: график/вехи, готовность, риски/проблемы, изменения, документация/handover, impact на дату запуска производства — с опорой на роли директора, PM и functional leads ([product-context](./product-context.md)).
+> **Pharma Demo** — web-система управленческой видимости и контроля facility-проекта фармацевтического объекта: график/вехи, готовность, риски/проблемы, изменения, документация/handover, impact на дату запуска производства — с опорой на роли директора, PM и functional leads ([product-context](./product-context.md)).
 
 > **certainty:** assumption
 >

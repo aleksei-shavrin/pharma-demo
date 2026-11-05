@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-009
-title: "Demo v1 UX traceability"
+title: Demo v1 — UX-трассируемость
 type: product
 status: draft
-version: "0.3.0"
-created: 2026-10-31
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-001
   - DOC-BA-016
@@ -18,7 +18,6 @@ related:
   - DOC-UX-020
   - DOC-HANDOFF-UID-001
 ---
-
 # Demo v1 UX traceability
 
 > **certainty:** hypothesis

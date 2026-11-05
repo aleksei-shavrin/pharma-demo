@@ -32,7 +32,7 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     await app.init();
 
     const config = new DocumentBuilder()
-      .setTitle('Pharma Project Control API')
+      .setTitle('Pharma Demo API')
       .setVersion('0.1.0')
       .build();
     const document = SwaggerModule.createDocument(app, config, {

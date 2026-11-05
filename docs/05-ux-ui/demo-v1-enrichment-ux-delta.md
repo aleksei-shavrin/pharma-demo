@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-021
-title: "Demo v1 enrichment — UX / IA delta"
+title: Demo v1 enrichment — UX/IA delta
 type: ux
 status: draft
-version: "0.2.0"
-created: 2026-11-01
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-11-01'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-001
   - DOC-UX-002
@@ -16,7 +16,6 @@ related:
   - DOC-PROD-021
   - DOC-PROD-022
 ---
-
 # Demo v1 enrichment — UX / IA delta
 
 > **certainty:** hypothesis

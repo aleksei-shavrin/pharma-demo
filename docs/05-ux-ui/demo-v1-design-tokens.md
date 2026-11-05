@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-011
-title: "Demo v1 design tokens (Visual Direction)"
+title: Demo v1 — design tokens (Visual Direction)
 type: product
 status: draft
-version: "0.2.2"
-created: 2026-10-31
-updated: 2026-11-01
-owner: "docs-engineering"
+version: 0.2.2
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-010
   - DOC-UX-007
@@ -14,7 +14,6 @@ related:
   - DOC-UX-015
   - DOC-UX-018
 ---
-
 # Demo v1 design tokens (Visual Direction)
 
 > **certainty:** hypothesis

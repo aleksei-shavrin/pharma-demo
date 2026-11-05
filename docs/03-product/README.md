@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-README-001
-title: "Продукт"
+title: Продукт
 type: index
 status: draft
-version: "0.3.1"
-created: 2026-10-30
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.3.1
+created: '2026-10-30'
+updated: '2026-11-02'
+owner: docs-engineering
 related:
   - DOC-PROD-001
   - DOC-PROD-002
@@ -18,7 +18,6 @@ related:
   - DOC-PROD-021
   - DOC-PROD-022
 ---
-
 # 03-product
 
 Продуктовый контекст: vision/scope, стек, Demo v1 architecture, capabilities/scope/mock/walkthrough.

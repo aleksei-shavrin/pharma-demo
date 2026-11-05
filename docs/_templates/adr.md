@@ -1,16 +1,15 @@
 ---
 id: DOC-TPL-ADR-001
-title: "Шаблон: ADR (MADR bare)"
+title: 'Шаблон: ADR (MADR bare)'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-STD-001
 ---
-
 # Шаблон: ADR (MADR bare, RU)
 
 Скопируйте в `06-architecture/decisions/NNNN-short-title.md`.

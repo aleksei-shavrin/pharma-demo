@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-010
-title: "Demo v1 capabilities"
+title: Возможности Demo v1
 type: product
 status: draft
-version: "0.5.1"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.5.1
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-020
   - DOC-BA-014
@@ -15,7 +15,6 @@ related:
   - DOC-PROD-011
   - DOC-BA-010
 ---
-
 # Demo v1 capabilities
 
 Capability model для обязательного narrative **SCN-001 → SCN-007**. C-01…C-05 — Must freeze Demo v1; **не** FR / OpenSpec living specs.

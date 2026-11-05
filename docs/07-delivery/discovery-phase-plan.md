@@ -1,22 +1,21 @@
 ---
 id: DOC-PHASE-DISC-001
-title: "Фаза: Discovery"
+title: План фазы Discovery
 type: delivery
 status: draft
-version: "0.2.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-DISC-README-001
   - DOC-DEL-001
   - DOC-PROD-001
   - DOC-HANDOFF-DISC-001
 ---
-
 # Фаза: Discovery
 
-План исполнения фазы Discovery для **Pharma Project Control**. Детали методологии: файл плана в репозитории `.cursor/plans/discovery-phase.md` (вне портала docs).
+План исполнения фазы Discovery для **Pharma Demo**. Детали методологии: файл плана в репозитории `.cursor/plans/discovery-phase.md` (вне портала docs).
 
 **Статус фазы:** **completed** (2026-10-30). Handoff: [`2026-10-30-discovery.md`](./handoffs/2026-10-30-discovery.md).
 

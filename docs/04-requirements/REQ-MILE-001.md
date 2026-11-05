@@ -1,19 +1,18 @@
 ---
 id: REQ-MILE-001
-title: "REQ-MILE-001: Milestone RAG and dates"
+title: 'REQ-MILE-001: RAG и даты вехи'
 type: requirement
 status: draft
-version: "0.3.0"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.3.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-PROD-010
   - DOC-BA-014
   - DOC-PROD-012
 ---
-
-# REQ-MILE-001: Milestone RAG and dates
+# REQ-MILE-001: RAG и даты вехи
 
 ## Формулировка
 

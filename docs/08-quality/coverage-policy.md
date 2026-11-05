@@ -1,16 +1,15 @@
 ---
 id: DOC-QA-002
-title: "Политика coverage"
+title: Политика coverage
 type: quality
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-QA-001
 ---
-
 # Политика coverage
 
 ## Цель

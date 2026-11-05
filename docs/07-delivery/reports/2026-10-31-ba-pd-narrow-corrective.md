@@ -1,12 +1,12 @@
 ---
 id: DOC-RPT-BAPD-002
-title: "Report: BA/PD narrow corrective pass (3 remarks)"
+title: 'Отчёт: узкий corrective pass BA/PD (3 замечания)'
 type: delivery
 status: draft
-version: "0.1.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-HANDOFF-BAPD-001
   - DOC-RPT-BAPD-001
@@ -14,7 +14,6 @@ related:
   - DOC-BA-015
   - DOC-BA-013
 ---
-
 # Report: BA/PD narrow corrective pass (3 remarks)
 
 Дата: 2026-10-31. Узкий pass по трём замечаниям. OpenSpec / apps не трогались.

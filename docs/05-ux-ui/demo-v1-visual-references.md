@@ -1,16 +1,15 @@
 ---
 id: DOC-UX-013
-title: "Demo v1 visual references"
+title: Demo v1 — визуальные референсы
 type: product
 status: draft
-version: "0.1.1"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-010
 ---
-
 # Demo v1 visual references
 
 > **certainty:** fact

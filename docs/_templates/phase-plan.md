@@ -1,16 +1,15 @@
 ---
 id: DOC-TPL-PHASE-001
-title: "Шаблон: План фазы"
+title: 'Шаблон: План фазы'
 type: template
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-10-30'
+owner: docs-engineering
 related:
   - DOC-DEL-README-001
 ---
-
 # Шаблон: План фазы
 
 ```yaml

@@ -1,19 +1,18 @@
 ---
 id: DOC-UX-008
-title: "Demo v1 mock data UX requirements"
+title: Demo v1 — UX-требования к mock-данным
 type: product
 status: draft
-version: "0.1.1"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-001
   - DOC-PROD-012
   - DOC-BA-015
   - DOC-BA-010
 ---
-
 # Demo v1 mock data UX requirements
 
 > **certainty:** hypothesis

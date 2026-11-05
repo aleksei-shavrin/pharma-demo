@@ -1,12 +1,12 @@
 ---
 id: DOC-UX-012
-title: "Demo v1 screen compositions (Visual Direction)"
+title: Demo v1 — композиции экранов (Visual Direction)
 type: product
 status: draft
-version: "0.2.0"
-created: 2026-10-31
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.2.0
+created: '2026-10-31'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-UX-010
   - DOC-UX-004
@@ -14,7 +14,6 @@ related:
   - DOC-UX-006
   - DOC-UX-003
 ---
-
 # Demo v1 screen compositions (Visual Direction)
 
 > **certainty:** hypothesis

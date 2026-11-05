@@ -1,12 +1,12 @@
 ---
 id: DOC-BA-018
-title: "Demo v1 R2 — domain extensions and control semantics"
+title: Demo v1 R2 — расширения домена и семантика управления
 type: business
 status: draft
-version: "0.1.1"
-created: 2026-11-02
-updated: 2026-11-02
-owner: "docs-engineering"
+version: 0.1.1
+created: '2026-11-02'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-BA-014
   - DOC-BA-015
@@ -15,9 +15,9 @@ related:
   - DOC-PROD-025
   - DOC-PROD-026
   - DOC-UX-022
+sidebar_label: R2 — домен и controls
 ---
-
-# Demo v1 R2 — domain extensions and control semantics
+# Demo v1 R2 — расширения домена и семантика управления
 
 > **certainty:** assumption
 >

@@ -1,17 +1,16 @@
 ---
 id: DOC-PORTAL-003
-title: "Исследование стека документации и решения"
+title: Исследования и решения
 type: portal
 status: draft
-version: "0.1.0"
-created: 2026-10-30
-updated: 2026-10-30
-owner: "docs-engineering"
+version: 0.1.0
+created: '2026-10-30'
+updated: '2026-11-03'
+owner: docs-engineering
 related:
   - DOC-ADR-0001
   - DOC-STD-001
 ---
-
 # Исследование стека документации и решения
 
 Краткое резюме выбора docs-стека. Детали решения — в [ADR-0001](../06-architecture/decisions/0001-documentation-stack.md).

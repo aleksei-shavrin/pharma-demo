@@ -1,4 +1,4 @@
-# CONTRIBUTING — Pharma Project Control
+# CONTRIBUTING — Pharma Demo
 
 Как работать с репозиторием: портал документации, OpenSpec, добавление docs.
 

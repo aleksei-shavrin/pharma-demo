@@ -52,21 +52,29 @@
 - [x] AppBar bell/popover/toasts; read=`sessionStorage` (`ppc.demo.notificationRead`); popup pref=`localStorage` (`ppc.demo.notificationPopup`, default on); ≤3 toasts only after successful atomic commit — **APPROVED / CLOSED**
 - [x] R2-N1-R1: RU-only director notification copy + taxonomy «Проблема»; full soft entityRef integrity (7 types); Decision remains unroutable — **APPROVED / CLOSED**
 
-## R2-U1 — Dashboard / selector
+## R2-U1 — Dashboard / selector — **APPROVED / CLOSED**
+
+Human visual acceptance 2026-11-02: O LIGHT, S LIGHT, S DARK, O timeline zoom — PASS. No further U1 corrective iteration.
 
 - [x] Cost signal; phase-grouped A–S selector (19); timeline horizon → 30.09.2027
-- [x] Snapshot-aware executive milestones (`executiveMilestoneIds`); Dashboard IA reorder — awaiting human visual review; not human-approved yet
-- [x] R2-U1-R1: authoritative `executiveMilestoneIds` integrity (no silent skip/MS-PS inject); cost signal invalidate-on-switch + stale/mismatch guard; FE `projectCostFixture` ↔ DOC-PROD-026 parity — awaiting human visual review; not human-approved yet
-- [x] R2-U1-R2: executive overview row (Status+Cost | compact RAG-sorted readiness); timeline raised; early BLD story EXC/FND/STR + deliberate short labels; catalogue 43 — awaiting human visual review; not human-approved yet
-- [x] R2-U1-R3: late-stage multi-lane timeline label/chrome policy (no horizon/scroll change); RU-only director Trend/Exceptions narrative; composition R2 preserved — awaiting human visual review; not human-approved yet
-- [x] R2-U1-R4: overview full-height stretch; compact RAG-tinted clickable readiness; Exceptions|Attention desktop row; **stable** executive milestone map (12) A–S — awaiting human visual review; not human-approved yet
+- [x] Snapshot-aware executive milestones (`executiveMilestoneIds`); Dashboard IA reorder
+- [x] R2-U1-R1: authoritative `executiveMilestoneIds` integrity; cost signal invalidate-on-switch + stale/mismatch guard; FE `projectCostFixture` ↔ DOC-PROD-026 parity
+- [x] R2-U1-R2: executive overview row (Status+Cost | compact RAG-sorted readiness); timeline raised; early BLD story + short labels
+- [x] R2-U1-R3: late-stage multi-lane timeline label/chrome policy; RU-only director Trend/Exceptions narrative
+- [x] R2-U1-R4: overview full-height stretch; readiness; **stable** executive milestone map (12) A–S
+- [x] R2-U1-R5: persistent RAG readiness; Attention 2×2; Decisions scroll; toasts; timeline stems/RU labels — interim **REJECTED** (superseded)
+- [x] R2-U1-R6: lower IA 50/50 + Green readiness neutral + unified slots — interim **REJECTED** (two-col CSS miss; superseded by R7)
+- [x] R2-U1-R7: actual two-column lower grid (`lg:grid-cols-2` scanned) — accepted into final pack
+- [x] R2-U1-R8: Production Start consolidated annotation cluster
+- [x] R2-U1-R9: PS cluster geometry (connector / leader / active vs historical +N / coincident) — final visual PASS
+- [x] Stage closed: executive IA, 50/50 lower rows, workstream readiness, stable A–S set + navigation, late collision policy, PS cluster, light/dark parity
 
-## R2-I1 — Integration
+## R2-I1 — Integration (NOT STARTED)
 
 - [ ] Registers/Schedule/Detail cost & people fields
 - [ ] Route smoke A–S
 
-## R2-A1 — Acceptance
+## R2-A1 — Acceptance (NOT STARTED)
 
 - [ ] Full integrity + gates
 - [ ] Human visual pack

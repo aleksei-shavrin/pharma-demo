@@ -7,32 +7,46 @@ import { formatDateRu } from '@/lib/format/ru';
 import {
   buildTimelineTextSummary,
   dateToRatio,
-  resolveExecutiveMilestones,
-  resolveProductionStartBand,
-  resolveTimelineChromeLayout,
+  resolveExecutiveTimelinePresentation,
   timelineMonthTicks,
 } from '@/lib/dashboard/executive-timeline';
+import { resolveProductionStartCluster } from '@/lib/dashboard/production-start-cluster';
 import { presentWorkstream } from '@/lib/ui-labels';
 import { ModuleSurface } from './module-surface';
+import { ProductionStartCluster } from './production-start-cluster';
 import { TimelineMarker } from './timeline-marker';
 
+const LANE_TOP_PX: Record<0 | 1 | 2, number> = {
+  0: 28,
+  1: 10,
+  2: 0,
+};
+
 /**
- * Executive timeline — SVG axis (scalable) + fixed-geometry HTML markers.
- * R2-U1-R3: multi-lane label policy; no horizontal timeline scroll.
+ * Executive timeline — SVG axis + fixed-geometry HTML markers.
+ * R2-U1-R8: Production Start is one consolidated annotation cluster.
  */
 export function ExecutiveMilestoneStrip({
   data,
 }: {
   data: DashboardOverview;
 }) {
-  const milestones = resolveExecutiveMilestones(data);
-  const band = resolveProductionStartBand(data);
-  const chrome = resolveTimelineChromeLayout(data, band);
+  const { points: milestones, band, chrome } =
+    resolveExecutiveTimelinePresentation(data);
   const asOfRatio = dateToRatio(data.scenarioAsOfDate);
   const monthTicks = timelineMonthTicks();
   const summary = buildTimelineTextSummary(data);
   const msPs = milestones.find((m) => m.id === 'MS-PS');
   const psRag = msPs?.rag ?? 'Green';
+  const achieved =
+    data.snapshotId === 'S' &&
+    data.projectStatus === 'Green' &&
+    band.forecastDate === '2027-09-22';
+  const psCluster = resolveProductionStartCluster(band, {
+    snapshotId: data.snapshotId,
+    achieved,
+  });
+
   const statusWord = (rag: 'Green' | 'Red') =>
     rag === 'Green' ? 'В норме' : 'Критично';
   const statusRow = (rag: 'Green' | 'Red') => `● ${statusWord(rag)}`;
@@ -54,7 +68,7 @@ export function ExecutiveMilestoneStrip({
     { href: '/schedule', label: 'Подробный график' },
   ];
 
-  const snapshotTopPx = chrome.snapshot.lane === 1 ? 0 : 4;
+  const snapshotTopPx = LANE_TOP_PX[chrome.snapshot.lane];
 
   return (
     <ModuleSurface data-dashboard-block="executive-timeline">
@@ -76,12 +90,11 @@ export function ExecutiveMilestoneStrip({
       <p className="sr-only">{summary}</p>
 
       <div
-        className="relative mt-3 h-[12.5rem] w-full min-w-0 overflow-x-hidden"
+        className="relative mt-3 h-[15rem] w-full min-w-0 overflow-x-hidden"
         data-timeline-track
-        data-timeline-layout="r2-u1-r3"
+        data-timeline-layout="r2-u1-r9"
       >
         <div className="relative h-full w-full min-w-0">
-          {/* Month labels */}
           <div className="absolute inset-x-0 bottom-0 h-4">
             {monthTicks.map((tick) => (
               <span
@@ -94,9 +107,8 @@ export function ExecutiveMilestoneStrip({
             ))}
           </div>
 
-          {/* Scalable axis layer only — no markers inside SVG */}
           <svg
-            className="pointer-events-none absolute inset-x-0 top-[4.25rem] h-10 w-full overflow-visible"
+            className="pointer-events-none absolute inset-x-0 top-[4.75rem] h-10 w-full overflow-visible"
             viewBox="0 0 1000 40"
             preserveAspectRatio="none"
             role="presentation"
@@ -125,16 +137,17 @@ export function ExecutiveMilestoneStrip({
                 vectorEffect="non-scaling-stroke"
               />
             ))}
+            {/* Subtle span under the HTML connector — not a RAG progress bar */}
             {!band.coincident ? (
               <rect
                 x={bandLeft * 10}
-                y="17"
+                y="18"
                 width={Math.max(bandWidth * 10, 2)}
-                height="6"
-                fill="var(--status-danger-bg)"
-                stroke="var(--status-danger-border)"
-                strokeWidth="1"
-                opacity="0.9"
+                height="4"
+                fill="var(--border-subtle)"
+                stroke="var(--border)"
+                strokeWidth="0.75"
+                opacity="0.55"
                 vectorEffect="non-scaling-stroke"
                 data-ps-variance-span="true"
               />
@@ -152,9 +165,9 @@ export function ExecutiveMilestoneStrip({
             />
           </svg>
 
-          {/* Snapshot caption — dedicated chrome lane */}
+          {/* Snapshot chrome — reserved upper lane; not competing with PS cluster */}
           <div
-            className={`absolute max-w-[6.5rem] text-[10px] leading-tight text-[var(--primary)] ${
+            className={`absolute z-20 max-w-[6.25rem] text-[10px] leading-tight text-[var(--primary)] ${
               chrome.snapshot.align === 'end'
                 ? 'translate-x-[-100%] text-right'
                 : chrome.snapshot.align === 'start'
@@ -168,14 +181,14 @@ export function ExecutiveMilestoneStrip({
             data-snapshot-label
             data-label-side={chrome.snapshot.side}
             data-label-lane={chrome.snapshot.lane}
+            data-chrome-slot={`${chrome.snapshot.side}:${chrome.snapshot.lane}`}
           >
             <span className="font-semibold">Дата снимка</span>
             <br />
             {formatDateRu(data.scenarioAsOfDate)}
           </div>
 
-          {/* Fixed-geometry interactive markers */}
-          <div className="absolute inset-x-0 top-[4.25rem] h-10">
+          <div className="absolute inset-x-0 top-[4.75rem] h-10">
             {milestones
               .filter((m) => m.id !== 'MS-PS')
               .map((m) => {
@@ -216,138 +229,12 @@ export function ExecutiveMilestoneStrip({
                 );
               })}
 
-            {band.coincident && chrome.coincident ? (
-              <TimelineMarker
-                kind="ps-coincident"
-                ratio={band.baselineRatio}
-                labelSide={chrome.coincident.side}
-                labelAlign={chrome.coincident.align}
-                labelNudgePx={chrome.coincident.nudgePx}
-                labelLane={chrome.coincident.lane}
-                shortLabel="Старт пр-ва"
-                title="Запуск производства"
-                subtitle={msPs?.name}
-                entityId="MS-PS"
-                dateLabel={formatDateRu(band.baselineDate)}
-                statusLabel={statusWord(psRag)}
-                rag={psRag}
-                ariaLabel={`Запуск производства, ${formatDateRu(band.baselineDate)}, ${statusWord(psRag)}`}
-                detailRows={[
-                  {
-                    label: 'План / прогноз',
-                    value: formatDateRu(band.baselineDate),
-                  },
-                  { label: 'Отклонение', value: 'по плану' },
-                  { label: 'Состояние', value: statusRow(psRag) },
-                ]}
-                links={entityLinks('MS-PS')}
-                markerDataAttrs={{
-                  'data-ps-baseline-marker': 'true',
-                  'data-ps-forecast-marker': 'coincident',
-                  'data-milestone-id': 'MS-PS',
-                  'data-milestone-marker': 'MS-PS',
-                  'data-milestone-rag': psRag,
-                }}
-              />
-            ) : null}
-
-            {!band.coincident && chrome.baseline && chrome.forecast ? (
-              <>
-                <TimelineMarker
-                  kind="ps-baseline"
-                  ratio={band.baselineRatio}
-                  labelSide={chrome.baseline.side}
-                  labelAlign={chrome.baseline.align}
-                  labelNudgePx={chrome.baseline.nudgePx}
-                  labelLane={chrome.baseline.lane}
-                  shortLabel="База"
-                  title="Запуск производства"
-                  subtitle="Базовый план"
-                  entityId="MS-PS"
-                  dateLabel={formatDateRu(band.baselineDate)}
-                  statusLabel="Базовый план"
-                  rag="Green"
-                  ariaLabel={`Запуск производства, базовый план ${formatDateRu(band.baselineDate)}`}
-                  detailRows={[
-                    {
-                      label: 'Базовый план',
-                      value: formatDateRu(band.baselineDate),
-                    },
-                    {
-                      label: 'Прогноз',
-                      value: formatDateRu(band.forecastDate),
-                    },
-                    { label: 'Отклонение', value: band.deltaLabel },
-                    { label: 'Состояние', value: statusRow(psRag) },
-                  ]}
-                  links={entityLinks('MS-PS')}
-                  markerDataAttrs={{
-                    'data-ps-baseline-marker': 'true',
-                    'data-milestone-id': 'MS-PS',
-                  }}
-                />
-                <TimelineMarker
-                  kind="ps-forecast"
-                  ratio={band.forecastRatio}
-                  labelSide={chrome.forecast.side}
-                  labelAlign={chrome.forecast.align}
-                  labelNudgePx={chrome.forecast.nudgePx}
-                  labelLane={chrome.forecast.lane}
-                  shortLabel={
-                    data.snapshotId === 'S' && psRag === 'Green'
-                      ? 'Старт'
-                      : 'Прогноз'
-                  }
-                  title="Запуск производства"
-                  subtitle={msPs?.name}
-                  entityId="MS-PS"
-                  dateLabel={formatDateRu(band.forecastDate)}
-                  statusLabel={statusWord(psRag)}
-                  rag={psRag}
-                  ariaLabel={`Запуск производства, прогноз ${formatDateRu(band.forecastDate)}, ${band.deltaLabel}, ${statusWord(psRag)}`}
-                  detailRows={[
-                    {
-                      label: 'Базовый план',
-                      value: formatDateRu(band.baselineDate),
-                    },
-                    {
-                      label: 'Прогноз',
-                      value: formatDateRu(band.forecastDate),
-                    },
-                    { label: 'Отклонение', value: band.deltaLabel },
-                    { label: 'Состояние', value: statusRow(psRag) },
-                  ]}
-                  links={entityLinks('MS-PS')}
-                  markerDataAttrs={{
-                    'data-ps-forecast-marker': 'true',
-                    'data-milestone-id': 'MS-PS',
-                    'data-milestone-marker': 'MS-PS',
-                    'data-milestone-rag': psRag,
-                  }}
-                />
-              </>
-            ) : null}
+            <ProductionStartCluster
+              cluster={psCluster}
+              rag={psRag}
+              subtitle={msPs?.name}
+            />
           </div>
-
-          {!band.coincident ? (
-            <div
-              className="pointer-events-none absolute top-[3.55rem] z-20 -translate-x-1/2 text-[10px] font-semibold tabular-nums text-[var(--status-danger-fg)]"
-              style={{
-                left: `${((band.baselineRatio + band.forecastRatio) / 2) * 100}%`,
-              }}
-              data-ps-delta-label
-            >
-              {band.deltaLabel}
-            </div>
-          ) : (
-            <div
-              className="pointer-events-none absolute top-[8.1rem] -translate-x-1/2 text-[10px] font-medium text-[var(--status-ok-fg)]"
-              style={{ left: `${band.baselineRatio * 100}%` }}
-              data-ps-delta-label
-            >
-              {band.deltaLabel}
-            </div>
-          )}
         </div>
       </div>
     </ModuleSurface>

@@ -57,6 +57,10 @@ export function managementAttentionItems(
   ];
 }
 
+/**
+ * R2-U1-R5: compact 2×2 signal matrix inside one surface.
+ * Quiet state keeps a single empty message (no empty 2×2).
+ */
 export function ManagementAttention({ data }: { data: DashboardOverview }) {
   const items = managementAttentionItems(data);
   const active = items.filter((i) => i.count > 0);
@@ -64,7 +68,7 @@ export function ManagementAttention({ data }: { data: DashboardOverview }) {
   return (
     <section
       aria-labelledby="attention-heading"
-      className="rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-2.5 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
+      className="flex h-full min-h-0 min-w-0 flex-col rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-2.5 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
       data-dashboard-block="management-attention"
     >
       <h2
@@ -79,32 +83,40 @@ export function ManagementAttention({ data }: { data: DashboardOverview }) {
           Нет активных управленческих сигналов.
         </p>
       ) : (
-        <ul className="mt-2 flex flex-wrap items-baseline gap-x-1 gap-y-1.5 text-sm">
-          {active.map((item, index) => (
-            <li
-              key={item.id}
-              className="inline-flex items-baseline gap-1.5"
-              data-attention={item.id}
-              data-attention-count={item.count}
-            >
-              {index > 0 ? (
-                <span className="mx-1.5 text-[var(--border)]" aria-hidden>
-                  ·
-                </span>
-              ) : null}
-              <span className="text-base font-semibold tabular-nums text-[var(--text)]">
-                {item.count}
-              </span>
-              <Link
-                href={item.href}
-                className="text-[var(--text-secondary)] underline-offset-2 hover:text-[var(--link)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+        <div
+          className="mt-2 grid grid-cols-2 overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border-subtle)]"
+          data-attention-layout="matrix-2x2"
+        >
+          {items.map((item, index) => {
+            const borderR = index % 2 === 0;
+            const borderB = index < 2;
+            return (
+              <div
+                key={item.id}
+                className={[
+                  'min-w-0 px-3 py-2.5',
+                  borderR ? 'border-r border-[var(--border-subtle)]' : '',
+                  borderB ? 'border-b border-[var(--border-subtle)]' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                data-attention={item.id}
+                data-attention-count={item.count}
               >
-                {item.label}
-                <span className="sr-only"> — {item.hrefLabel}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+                <p className="text-lg font-semibold tabular-nums leading-none text-[var(--text)]">
+                  {item.count}
+                </p>
+                <Link
+                  href={item.href}
+                  className="mt-1.5 block text-[11px] leading-snug text-[var(--text-secondary)] underline-offset-2 hover:text-[var(--link)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                >
+                  {item.label}
+                  <span className="sr-only"> — {item.hrefLabel}</span>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
       )}
     </section>
   );

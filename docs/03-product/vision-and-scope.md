@@ -1,12 +1,12 @@
 ---
 id: DOC-PROD-001
-title: "Vision и scope"
+title: Vision и scope
 type: product
 status: draft
-version: "0.5.0"
-created: 2026-10-30
-updated: 2026-10-31
-owner: "docs-engineering"
+version: 0.5.0
+created: '2026-10-30'
+updated: '2026-10-31'
+owner: docs-engineering
 related:
   - DOC-PROD-002
   - DOC-PROD-003
@@ -18,7 +18,6 @@ related:
   - DOC-BA-017
   - DOC-PROD-011
 ---
-
 # Vision и scope
 
 Актуализировано по итогам Discovery (PO) и BA/PD Demo v1. Certainty утверждений о предприятии **не** повышалась до `fact` без эксперта/заказчика.
@@ -27,7 +26,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> **Pharma Project Control** — рабочее имя системы управленческой видимости facility-проекта в фармацевтическом контексте. Детали домена и оргструктуры заказчика — в Discovery как кандидаты, не как enterprise-fact. См. [product-context](../01-discovery/product-context.md), [domain-overview](../01-discovery/domain-overview.md).
+> **Pharma Demo** — рабочее имя системы управленческой видимости facility-проекта в фармацевтическом контексте. Детали домена и оргструктуры заказчика — в Discovery как кандидаты, не как enterprise-fact. См. [product-context](../01-discovery/product-context.md), [domain-overview](../01-discovery/domain-overview.md).
 
 ## Предполагаемая ценность (направление)
 
