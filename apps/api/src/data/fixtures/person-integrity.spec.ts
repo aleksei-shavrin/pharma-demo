@@ -47,6 +47,10 @@ describe('Person catalogue integrity (R2-P1)', () => {
       EQUIPMENT_RESPONSIBLE_PERSON,
     )) {
       expect(eqId.startsWith('EQ-')).toBe(true);
+      expect(personId).toBeDefined();
+      if (personId === undefined) {
+        throw new Error(`EQUIPMENT_RESPONSIBLE_PERSON missing person for ${eqId}`);
+      }
       expect(PERSON_BY_ID.has(personId)).toBe(true);
     }
   });

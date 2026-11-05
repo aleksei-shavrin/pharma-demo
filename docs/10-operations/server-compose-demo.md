@@ -113,6 +113,18 @@ curl -fsSI "http://127.0.0.1:${HOST_PORT:-8080}/portal/"
 
 UI и загрузку dashboard проверяйте **в браузере** (Network: только same-origin `/backend/...`, без `api.localhost`).
 
+## Typecheck (разработчик / CI локально)
+
+Полная проверка TypeScript **включая тесты**:
+
+```bash
+npm run typecheck:web
+npm run typecheck:api
+npm run typecheck          # оба подряд
+```
+
+Отличие от production Docker build: `typecheck` гоняет `tsc --noEmit` по всем `*.ts(x)` / `*.spec.ts`; `nest build` исключает `**/*spec.ts` через `tsconfig.build.json`, а `next build` собирает приложение (не заменяет полный typecheck).
+
 ## Ограничения
 
 - Это demo с mock API, не production GMP-система.

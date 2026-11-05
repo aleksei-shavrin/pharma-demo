@@ -36,20 +36,25 @@ describe('R2-C1 contract shapes', () => {
 
   it('Workstream catalog contract: eight ids with RU names + sortOrder', () => {
     expect(WORKSTREAM_IDS).toHaveLength(8);
-    const items: WorkstreamCatalogItemDto[] = WORKSTREAM_IDS.map((id) => ({
-      id,
-      nameRu: WORKSTREAM_NAME_RU[id],
-      leadPersonId: null,
-      sortOrder: WORKSTREAM_SORT_ORDER[id],
-    }));
+    const catalogItems: WorkstreamCatalogItemDto[] = WORKSTREAM_IDS.map(
+      (id) => ({
+        id,
+        nameRu: WORKSTREAM_NAME_RU[id],
+        leadPersonId: null,
+        sortOrder: WORKSTREAM_SORT_ORDER[id],
+      }),
+    );
+    expect(catalogItems.map((i) => i.id)).toEqual([...WORKSTREAM_IDS]);
+    expect(catalogItems.every((i) => i.nameRu.length > 0)).toBe(true);
+
+    // List DTO extends catalog with backend-owned RAG (not a catalog field).
     const list: WorkstreamListDto = {
       snapshotId: 'A',
       scenarioAsOfDate: '2027-02-15',
       projectId: 'PRJ-01',
-      items,
+      items: catalogItems.map((item) => ({ ...item, rag: 'Green' as const })),
     };
-    expect(list.items.map((i) => i.id)).toEqual([...WORKSTREAM_IDS]);
-    expect(list.items.every((i) => i.nameRu.length > 0)).toBe(true);
+    expect(list.items.every((i) => i.rag === 'Green')).toBe(true);
   });
 
   it('Workstream detail contract shape (membership via ids, not causal edges)', () => {

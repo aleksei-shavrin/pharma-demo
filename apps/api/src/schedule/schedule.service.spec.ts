@@ -2,6 +2,10 @@ import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { DEMO_DATA_SOURCE } from '../data/demo-data-source';
 import { MockDemoDataSource } from '../data/mock-demo-data-source';
+import type {
+  ScheduleEquipmentItemDto,
+  ScheduleMilestoneItemDto,
+} from './dto/schedule.dto';
 import { ScheduleService } from './schedule.service';
 
 describe('ScheduleService', () => {
@@ -54,14 +58,19 @@ describe('ScheduleService', () => {
   it('B: HVAC calm; PKG Delayed; MS-PS Green', () => {
     const s = service.getSchedule('PRJ-01', 'B');
     const hvac = s.items.find(
-      (i) => i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
-    )!;
+      (i): i is ScheduleEquipmentItemDto =>
+        i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
+    );
     const pkg = s.items.find(
-      (i) => i.kind === 'equipment_delivery' && i.id === 'EQ-PKG-01',
-    )!;
-    const ms = s.items.find((i) => i.kind === 'milestone' && i.id === 'MS-PS')!;
-    expect(hvac.status).toBe('OnTrack');
-    expect(pkg.status).toBe('Delayed');
+      (i): i is ScheduleEquipmentItemDto =>
+        i.kind === 'equipment_delivery' && i.id === 'EQ-PKG-01',
+    );
+    const ms = s.items.find(
+      (i): i is ScheduleMilestoneItemDto =>
+        i.kind === 'milestone' && i.id === 'MS-PS',
+    );
+    expect(hvac?.status).toBe('OnTrack');
+    expect(pkg?.status).toBe('Delayed');
     expect(ms).toMatchObject({
       forecastDate: '2027-09-15',
       rag: 'Green',
@@ -72,14 +81,18 @@ describe('ScheduleService', () => {
   it('C: HVAC +21 Delayed; MS-PS Red +21; no recovery heal', () => {
     const s = service.getSchedule('PRJ-01', 'C');
     const eq = s.items.find(
-      (i) => i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
-    )!;
-    const ms = s.items.find((i) => i.kind === 'milestone' && i.id === 'MS-PS')!;
-    expect(eq.forecastDate).toBe('2027-06-05');
-    expect(eq.dateVariance.deltaDays).toBe(21);
-    expect(ms.forecastDate).toBe('2027-10-06');
-    expect(ms.rag).toBe('Red');
-    expect(ms.dateVariance.deltaDays).toBe(21);
+      (i): i is ScheduleEquipmentItemDto =>
+        i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
+    );
+    const ms = s.items.find(
+      (i): i is ScheduleMilestoneItemDto =>
+        i.kind === 'milestone' && i.id === 'MS-PS',
+    );
+    expect(eq?.forecastDate).toBe('2027-06-05');
+    expect(eq?.dateVariance.deltaDays).toBe(21);
+    expect(ms?.forecastDate).toBe('2027-10-06');
+    expect(ms?.rag).toBe('Red');
+    expect(ms?.dateVariance.deltaDays).toBe(21);
   });
 
   it('unknown project → 404', () => {

@@ -17,11 +17,57 @@ type JsonSchema = {
   items?: JsonSchema;
 };
 
-type OpenApiParam = {
-  name?: string;
+/** Minimal OpenAPI shapes for contract assertions (avoid $ref vs object unions). */
+type ParameterObject = {
+  name: string;
+  in?: string;
   required?: boolean;
   schema?: JsonSchema;
 };
+
+type OperationLike = {
+  parameters?: unknown[];
+  responses?: Record<string, unknown>;
+};
+
+function jsonResponseSchema(
+  operation: OperationLike | undefined,
+  statusCode = '200',
+): JsonSchema | undefined {
+  const response = operation?.responses?.[statusCode];
+  if (!response || typeof response !== 'object' || response === null) {
+    return undefined;
+  }
+  if ('$ref' in response) {
+    return undefined;
+  }
+  const content = (
+    response as { content?: Record<string, { schema?: JsonSchema }> }
+  ).content;
+  return content?.['application/json']?.schema;
+}
+
+function findQueryParam(
+  operation: OperationLike | undefined,
+  name: string,
+): ParameterObject | undefined {
+  for (const parameter of operation?.parameters ?? []) {
+    if (!parameter || typeof parameter !== 'object' || '$ref' in parameter) {
+      continue;
+    }
+    const candidate = parameter as ParameterObject;
+    if (candidate.name === name) {
+      return candidate;
+    }
+  }
+  return undefined;
+}
+
+function paramSchema(
+  parameter: ParameterObject | undefined,
+): JsonSchema | undefined {
+  return parameter?.schema;
+}
 
 describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
   it('publishes response DTOs, snapshot query, dashboard, register, detail and schedule paths', async () => {
@@ -41,34 +87,22 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
 
     const health = document.paths['/health']?.get;
     expect(health).toBeDefined();
-    const healthContent = health?.responses?.['200']?.content;
-    const healthSchema = healthContent?.['application/json']?.schema as
-      JsonSchema | undefined;
-    expect(healthSchema).toEqual({
+    expect(jsonResponseSchema(health)).toEqual({
       $ref: '#/components/schemas/HealthResponseDto',
     });
 
     const project = document.paths['/v1/projects/{id}']?.get;
     expect(project).toBeDefined();
-    const projectContent = project?.responses?.['200']?.content;
-    const projectRespSchema = projectContent?.['application/json']?.schema as
-      JsonSchema | undefined;
-    expect(projectRespSchema).toEqual({
+    expect(jsonResponseSchema(project)).toEqual({
       $ref: '#/components/schemas/ProjectStubDto',
     });
 
-    const snapshotParam = (project?.parameters ?? []).find(
-      (p): p is OpenApiParam =>
-        typeof p === 'object' &&
-        p !== null &&
-        'name' in p &&
-        p.name === 'snapshot',
-    );
+    const snapshotParam = findQueryParam(project, 'snapshot');
     expect(snapshotParam).toBeDefined();
     expect(snapshotParam?.required).toBe(false);
-    expect(snapshotParam?.schema?.enum).toEqual([...SNAPSHOT_IDS]);
-    expect(snapshotParam?.schema?.enum).not.toContain('T');
-    expect(snapshotParam?.schema?.default).toBe('A');
+    expect(paramSchema(snapshotParam)?.enum).toEqual([...SNAPSHOT_IDS]);
+    expect(paramSchema(snapshotParam)?.enum).not.toContain('T');
+    expect(paramSchema(snapshotParam)?.default).toBe('A');
 
     const projectSchema = document.components?.schemas?.ProjectStubDto as
       JsonSchema | undefined;
@@ -85,20 +119,10 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
 
     const dashboard = document.paths['/v1/projects/{id}/dashboard']?.get;
     expect(dashboard).toBeDefined();
-    const dashSchema = dashboard?.responses?.['200']?.content?.[
-      'application/json'
-    ]?.schema as JsonSchema | undefined;
-    expect(dashSchema).toEqual({
+    expect(jsonResponseSchema(dashboard)).toEqual({
       $ref: '#/components/schemas/DashboardOverviewDto',
     });
-    const dashSnap = (dashboard?.parameters ?? []).find(
-      (p): p is OpenApiParam =>
-        typeof p === 'object' &&
-        p !== null &&
-        'name' in p &&
-        p.name === 'snapshot',
-    );
-    expect(dashSnap?.schema?.enum).toEqual(
+    expect(paramSchema(findQueryParam(dashboard, 'snapshot'))?.enum).toEqual(
       expect.arrayContaining(['A', 'B', 'C']),
     );
 
@@ -109,20 +133,14 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     ] as const) {
       const op = document.paths[path]?.get;
       expect(op).toBeDefined();
-      const schema = op?.responses?.['200']?.content?.['application/json']
-        ?.schema as JsonSchema | undefined;
-      expect(schema?.$ref).toMatch(/#\/components\/schemas\//);
-      const snap = (op?.parameters ?? []).find(
-        (p): p is OpenApiParam =>
-          typeof p === 'object' &&
-          p !== null &&
-          'name' in p &&
-          p.name === 'snapshot',
+      expect(jsonResponseSchema(op)?.$ref).toMatch(
+        /#\/components\/schemas\//,
       );
-      expect(snap?.schema?.enum).toEqual(
+      const snap = findQueryParam(op, 'snapshot');
+      expect(paramSchema(snap)?.enum).toEqual(
         expect.arrayContaining(['A', 'B', 'C']),
       );
-      expect(snap?.schema?.default).toBe('A');
+      expect(paramSchema(snap)?.default).toBe('A');
     }
 
     expect(document.components?.schemas?.EquipmentRegisterDto).toBeDefined();
@@ -137,20 +155,14 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     ] as const) {
       const op = document.paths[path]?.get;
       expect(op).toBeDefined();
-      const schema = op?.responses?.['200']?.content?.['application/json']
-        ?.schema as JsonSchema | undefined;
-      expect(schema?.$ref).toMatch(/#\/components\/schemas\//);
-      const snap = (op?.parameters ?? []).find(
-        (p): p is OpenApiParam =>
-          typeof p === 'object' &&
-          p !== null &&
-          'name' in p &&
-          p.name === 'snapshot',
+      expect(jsonResponseSchema(op)?.$ref).toMatch(
+        /#\/components\/schemas\//,
       );
-      expect(snap?.schema?.enum).toEqual(
+      const snap = findQueryParam(op, 'snapshot');
+      expect(paramSchema(snap)?.enum).toEqual(
         expect.arrayContaining(['A', 'B', 'C']),
       );
-      expect(snap?.schema?.default).toBe('A');
+      expect(paramSchema(snap)?.default).toBe('A');
     }
 
     expect(document.components?.schemas?.EquipmentDetailDto).toBeDefined();
@@ -173,23 +185,14 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
 
     const schedule = document.paths['/v1/projects/{id}/schedule']?.get;
     expect(schedule).toBeDefined();
-    const scheduleSchema = schedule?.responses?.['200']?.content?.[
-      'application/json'
-    ]?.schema as JsonSchema | undefined;
-    expect(scheduleSchema).toEqual({
+    expect(jsonResponseSchema(schedule)).toEqual({
       $ref: '#/components/schemas/ScheduleDto',
     });
-    const scheduleSnap = (schedule?.parameters ?? []).find(
-      (p): p is OpenApiParam =>
-        typeof p === 'object' &&
-        p !== null &&
-        'name' in p &&
-        p.name === 'snapshot',
-    );
-    expect(scheduleSnap?.schema?.enum).toEqual(
+    const scheduleSnap = findQueryParam(schedule, 'snapshot');
+    expect(paramSchema(scheduleSnap)?.enum).toEqual(
       expect.arrayContaining(['A', 'B', 'C']),
     );
-    expect(scheduleSnap?.schema?.default).toBe('A');
+    expect(paramSchema(scheduleSnap)?.default).toBe('A');
     expect(document.components?.schemas?.ScheduleDto).toBeDefined();
     expect(
       document.components?.schemas?.ScheduleEquipmentItemDto,
@@ -200,87 +203,51 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
 
     const costs = document.paths['/v1/projects/{id}/costs']?.get;
     expect(costs).toBeDefined();
-    const costsSchema = costs?.responses?.['200']?.content?.[
-      'application/json'
-    ]?.schema as JsonSchema | undefined;
-    expect(costsSchema).toEqual({
+    expect(jsonResponseSchema(costs)).toEqual({
       $ref: '#/components/schemas/ProjectCostsOverviewDto',
     });
-    const costsSnap = (costs?.parameters ?? []).find(
-      (p): p is OpenApiParam =>
-        typeof p === 'object' &&
-        p !== null &&
-        'name' in p &&
-        p.name === 'snapshot',
-    );
-    expect(costsSnap?.schema?.enum).toEqual(
+    const costsSnap = findQueryParam(costs, 'snapshot');
+    expect(paramSchema(costsSnap)?.enum).toEqual(
       expect.arrayContaining(['A', 'S']),
     );
-    expect(costsSnap?.schema?.default).toBe('A');
+    expect(paramSchema(costsSnap)?.default).toBe('A');
 
     const wsList = document.paths['/v1/projects/{id}/workstreams']?.get;
     expect(wsList).toBeDefined();
-    const wsListSchema = wsList?.responses?.['200']?.content?.[
-      'application/json'
-    ]?.schema as JsonSchema | undefined;
-    expect(wsListSchema).toEqual({
+    expect(jsonResponseSchema(wsList)).toEqual({
       $ref: '#/components/schemas/WorkstreamListDto',
     });
     const wsDetail =
       document.paths['/v1/projects/{id}/workstreams/{workstreamId}']?.get;
     expect(wsDetail).toBeDefined();
-    const wsDetailSchema = wsDetail?.responses?.['200']?.content?.[
-      'application/json'
-    ]?.schema as JsonSchema | undefined;
-    expect(wsDetailSchema).toEqual({
+    expect(jsonResponseSchema(wsDetail)).toEqual({
       $ref: '#/components/schemas/WorkstreamDetailDto',
     });
-    const wsSnap = (wsDetail?.parameters ?? []).find(
-      (p): p is OpenApiParam =>
-        typeof p === 'object' &&
-        p !== null &&
-        'name' in p &&
-        p.name === 'snapshot',
-    );
-    expect(wsSnap?.schema?.enum).toEqual(
+    expect(paramSchema(findQueryParam(wsDetail, 'snapshot'))?.enum).toEqual(
       expect.arrayContaining(['A', 'S']),
     );
 
     const peopleList = document.paths['/v1/projects/{id}/people']?.get;
     expect(peopleList).toBeDefined();
-    const peopleListSchema = peopleList?.responses?.['200']?.content?.[
-      'application/json'
-    ]?.schema as JsonSchema | undefined;
-    expect(peopleListSchema).toEqual({
+    expect(jsonResponseSchema(peopleList)).toEqual({
       $ref: '#/components/schemas/PersonListDto',
     });
     const peopleDetail =
       document.paths['/v1/projects/{id}/people/{personId}']?.get;
     expect(peopleDetail).toBeDefined();
-    const peopleDetailSchema = peopleDetail?.responses?.['200']?.content?.[
-      'application/json'
-    ]?.schema as JsonSchema | undefined;
-    expect(peopleDetailSchema).toEqual({
+    expect(jsonResponseSchema(peopleDetail)).toEqual({
       $ref: '#/components/schemas/PersonDetailDto',
     });
 
     const notificationsList =
       document.paths['/v1/projects/{id}/notifications']?.get;
     expect(notificationsList).toBeDefined();
-    const notificationsSchema = notificationsList?.responses?.['200']?.content?.[
-      'application/json'
-    ]?.schema as JsonSchema | undefined;
-    expect(notificationsSchema).toEqual({
+    expect(jsonResponseSchema(notificationsList)).toEqual({
       $ref: '#/components/schemas/NotificationListDto',
     });
-    const ntfSnap = (notificationsList?.parameters ?? []).find(
-      (p): p is OpenApiParam =>
-        typeof p === 'object' &&
-        p !== null &&
-        'name' in p &&
-        p.name === 'snapshot',
-    );
-    expect(ntfSnap?.schema?.enum).toEqual([...SNAPSHOT_IDS]);
+    expect(
+      paramSchema(findQueryParam(notificationsList, 'snapshot'))?.enum,
+    ).toEqual([...SNAPSHOT_IDS]);
 
     for (const name of [
       'PersonDto',

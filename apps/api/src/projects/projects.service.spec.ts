@@ -1,16 +1,23 @@
 import { NotFoundException } from '@nestjs/common';
 import { DemoDataSource } from '../data/demo-data-source';
+import { SNAPSHOT_A, SNAPSHOT_B, SNAPSHOT_C } from '../data/fixtures';
 import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import { ProjectsService } from './projects.service';
 
 class FakeDataSource extends DemoDataSource {
-  constructor(private readonly snapshots: Record<SnapshotId, SnapshotFixture>) {
+  constructor(
+    private readonly snapshots: Partial<Record<SnapshotId, SnapshotFixture>>,
+  ) {
     super();
   }
 
   getSnapshot(id: SnapshotId): SnapshotFixture {
-    return this.snapshots[id];
+    const snapshot = this.snapshots[id];
+    if (!snapshot) {
+      throw new NotFoundException(`Unknown snapshot: ${id}`);
+    }
+    return snapshot;
   }
 
   getProject(snapshotId: SnapshotId, projectId: string): ProjectFixture | null {
@@ -23,7 +30,7 @@ class FakeDataSource extends DemoDataSource {
   }
 
   getDefaultSnapshot(): SnapshotFixture {
-    return this.snapshots.A;
+    return this.snapshots.A!;
   }
 
   getCosts(): never {
@@ -45,50 +52,16 @@ class FakeDataSource extends DemoDataSource {
   leadWorkstreamIdsForPerson(): never {
     throw new Error('leadWorkstreamIdsForPerson not used by ProjectsService');
   }
-}
-
-function stub(id: SnapshotId, forecast: string, asOf: string): SnapshotFixture {
-  return {
-    id,
-    scenarioAsOfDate: asOf,
-    project: {
-      id: 'PRJ-01',
-      name: 'Строительство фармацевтического завода',
-      baselineProductionStart: '2027-09-15',
-      forecastProductionStart: forecast,
-    },
-    milestone: {
-      id: 'MS-PS',
-      name: 'Ready for production',
-      baselineDate: '2027-09-15',
-      forecastDate: forecast,
-      rag: id === 'A' ? 'Green' : 'Red',
-    },
-    equipment: {
-      id: 'EQ-HVAC-01',
-      projectId: 'PRJ-01',
-      critical: true,
-      baselineDelivery: '2027-05-15',
-      forecastDelivery: '2027-05-15',
-      status: 'OnTrack',
-    },
-    risk: {
-      id: 'RISK-001',
-      rag: id === 'A' ? 'Green' : 'Red',
-      milestoneId: 'MS-PS',
-      equipmentId: 'EQ-HVAC-01',
-      issueId: null,
-    },
-    issue: null,
-    decision: null,
-  };
+  listNotifications(): never {
+    throw new Error('listNotifications not used by ProjectsService');
+  }
 }
 
 describe('ProjectsService', () => {
   const ds = new FakeDataSource({
-    A: stub('A', '2027-09-15', '2027-02-15'),
-    B: stub('B', '2027-10-06', '2027-03-01'),
-    C: stub('C', '2027-10-06', '2027-03-02'),
+    A: SNAPSHOT_A,
+    B: SNAPSHOT_B,
+    C: SNAPSHOT_C,
   });
 
   it('returns project stub for requested snapshot via DemoDataSource', () => {
@@ -96,15 +69,15 @@ describe('ProjectsService', () => {
     expect(service.getProjectStub('PRJ-01', 'A')).toEqual(
       expect.objectContaining({
         snapshotId: 'A',
-        forecastProductionStart: '2027-09-15',
-        scenarioAsOfDate: '2027-02-15',
+        forecastProductionStart: SNAPSHOT_A.project.forecastProductionStart,
+        scenarioAsOfDate: SNAPSHOT_A.scenarioAsOfDate,
       }),
     );
     expect(service.getProjectStub('PRJ-01', 'B')).toEqual(
       expect.objectContaining({
         snapshotId: 'B',
-        forecastProductionStart: '2027-10-06',
-        scenarioAsOfDate: '2027-03-01',
+        forecastProductionStart: SNAPSHOT_B.project.forecastProductionStart,
+        scenarioAsOfDate: SNAPSHOT_B.scenarioAsOfDate,
       }),
     );
   });

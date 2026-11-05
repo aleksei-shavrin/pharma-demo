@@ -9,6 +9,7 @@
     "start:standalone": "node .next-build/standalone/server.js",
     "dev:fresh": "rm -rf .next && next dev --turbopack",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run && npm run check:architecture",
     "test:unit": "vitest run",
     "check:architecture": "node scripts/check-no-api-imports.mjs"

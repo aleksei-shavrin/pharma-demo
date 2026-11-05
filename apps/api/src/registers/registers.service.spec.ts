@@ -55,6 +55,10 @@ class FakeDataSource extends DemoDataSource {
   leadWorkstreamIdsForPerson(): never {
     throw new Error('leadWorkstreamIdsForPerson not used by RegistersService');
   }
+
+  listNotifications(): never {
+    throw new Error('listNotifications not used by RegistersService');
+  }
 }
 
 describe('RegistersService', () => {

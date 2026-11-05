@@ -3,7 +3,7 @@ id: DOC-HANDOFF-SERVER-001
 title: Server Compose Demo + подготовка к GitLab
 type: delivery
 status: draft
-version: 0.2.0
+version: 0.3.0
 created: '2026-11-05'
 updated: '2026-11-05'
 owner: docs-engineering
@@ -18,7 +18,7 @@ related:
 
 - Локальный server stack проверен на `http://127.0.0.1:8080/` (Compose project `pharma-demo-server`).
 - Удалённый production deploy **не** выполнялся (нет доступа к хосту).
-- Push в GitLab — по факту наличия URL и рабочей авторизации (см. итог агента).
+- Push в GitLab блокирован отсутствием URL / рабочей авторизации.
 - Данные демо: **только mock в NestJS** (без PostgreSQL).
 
 ## Что подготовлено
@@ -29,20 +29,34 @@ related:
 - API client: `resolveApiBaseUrl` / `joinApiUrl` (локальный fallback `localhost:3001` сохранён)
 - Healthchecks, `restart: unless-stopped`, образы Node 24
 - Основной запуск на сервере — **только Docker Compose** (Node/npm на хосте не нужны)
+- Команды typecheck: `npm run typecheck:web` / `typecheck:api` / `typecheck` (включают тестовые файлы)
 
-## Локальные проверки
+## Различие typecheck и production build
+
+| Проверка | Что покрывает |
+|----------|----------------|
+| `npm run typecheck` | Полный `tsc --noEmit` apps/web и apps/api, **включая** `*.test.ts(x)` / `*.spec.ts` |
+| `nest build` / `next build` (Docker) | Production emit; `tsconfig.build.json` API **исключает** `**/*spec.ts`; Next собирает app-код (eslint может затронуть test-файлы в src) |
+
+## Локальные проверки (факт на момент handoff)
 
 | Проверка | Результат |
 |----------|-----------|
-| Production-образы web/api/docs | OK |
-| Браузер: dashboard → только `/backend/v1/...` | OK (без `api.localhost`) |
-| Деталь сущности `/equipment/EQ-BLD-02` | OK |
-| `/backend/health`, Swagger UI + Try it out | OK |
-| Portal ADR-0005 / DOC-OPS-003, поиск, assets, 404 | OK |
-| Restart → healthy; dev `:80` | OK |
-| Clean-tree `docker compose build` без host `node_modules`/`.env` | OK |
+| `npm run typecheck` | **0 ошибок** (было: web 8, api 45 на HEAD `16ad1b7`) |
+| `npm run api:test` | 27 suites / **171** tests passed |
+| `npm run web:test` | 37 files / **174** tests passed + architecture guard |
+| Production Compose rebuild (`pharma-demo-server`) | OK |
+| UI `/`, `/backend/health`, Swagger `/backend/api`, `/backend/api-json`, `/portal/`, dashboard JSON | OK |
+| Dev stack `:80` | не останавливался |
 
-Актуальные результаты unit/typecheck — в итоговом ответе агента после прогона.
+### Группы исправленных tsc-ошибок
+
+1. **Устаревшие fixtures** — `ownerFullNameRu`, `leadFullNameRu`; FakeDataSource без `listNotifications`; stub SnapshotFixture в `projects.service.spec`.
+2. **Mock typings** — `use-entity-detail-query.test` (SnapshotId / Parameters).
+3. **Discriminated unions** — доступ к `rag`/`status` без сужения `kind` в schedule tests.
+4. **Контракт list vs catalog** — `WorkstreamListDto` требует `rag`.
+5. **OpenAPI `$ref` unions** — helpers вместо прямого доступа к `content`/`schema`.
+6. **Literal duration** — assertion через JSON, без сравнения `0 === 21`.
 
 ## Команды на сервере
 

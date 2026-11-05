@@ -70,6 +70,10 @@ class FakeDataSource extends DemoDataSource {
   leadWorkstreamIdsForPerson(id: PersonId): WorkstreamId[] {
     return leadWorkstreamIdsForPerson(id);
   }
+
+  listNotifications(): never {
+    throw new Error('listNotifications not used by DashboardService');
+  }
 }
 
 describe('DashboardService (E1-R1 collection contracts)', () => {

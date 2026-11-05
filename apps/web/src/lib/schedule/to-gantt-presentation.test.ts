@@ -106,7 +106,8 @@ describe('toGanttPresentation (one logical row)', () => {
       },
     ]);
     expect(p.links).toEqual([]);
-    expect(p.data.some((t) => t.duration === 21)).toBe(false);
+    // duration is typed as literal 0; assert no delta-as-duration leaked into JSON
+    expect(JSON.stringify(p)).not.toMatch(/"duration":\s*21/);
   });
 
   it('C: same delayed forecasts as B; no recovery heal; still 2 rows', () => {

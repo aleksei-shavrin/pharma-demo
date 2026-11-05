@@ -60,6 +60,7 @@ describe('FE R2-C1-R1 api-client contract types', () => {
         leadPersonId: lead,
         sortOrder: 3,
       },
+      leadFullNameRu: 'Смирнов Павел Андреевич',
       rag: 'Red',
       attention: {
         redRiskCount: 1,

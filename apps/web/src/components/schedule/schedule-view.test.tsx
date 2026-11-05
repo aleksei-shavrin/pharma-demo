@@ -5,7 +5,11 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import SchedulePage from '@/app/schedule/page';
 import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
-import type { ScheduleItem, ScheduleReadModel } from '@/lib/api-client';
+import type {
+  ScheduleItem,
+  ScheduleMilestoneItem,
+  ScheduleReadModel,
+} from '@/lib/api-client';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
@@ -334,10 +338,14 @@ describe('E5 Schedule control board', () => {
 
   it('G/H residual MS-PS +14 from register contract shape', () => {
     for (const id of ['G', 'H'] as SnapshotId[]) {
-      const ms = schedule(id).items.find((i) => i.id === 'MS-PS')!;
-      expect(ms.dateVariance.deltaDays).toBe(14);
-      expect(ms.rag).toBe('Red');
-      expect(ms.forecastDate).toBe('2027-09-29');
+      const ms = schedule(id).items.find(
+        (i): i is ScheduleMilestoneItem =>
+          i.kind === 'milestone' && i.id === 'MS-PS',
+      );
+      expect(ms).toBeDefined();
+      expect(ms!.dateVariance.deltaDays).toBe(14);
+      expect(ms!.rag).toBe('Red');
+      expect(ms!.forecastDate).toBe('2027-09-29');
     }
   });
 
