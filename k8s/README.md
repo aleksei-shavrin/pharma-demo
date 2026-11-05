@@ -2,6 +2,7 @@
 
 Namespace: `pharma`  
 Host: `https://[demo-host]/`  
+TLS: cert-manager `letsencrypt-prod` → Secret `pharma-demo-tls`  
 
 Стек как в ADR-0005 / `docker-compose.server.yml`:
 
