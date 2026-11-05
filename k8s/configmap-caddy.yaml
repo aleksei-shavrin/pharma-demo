@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pharma-demo-caddy
+  namespace: test
+data:
+  Caddyfile: |
+    # Same path scheme as Caddyfile.server (ADR-0005).
+    :80 {
+    	encode gzip
+
+    	redir /portal /portal/ 308
+    	redir /backend /backend/ 308
+
+    	handle_path /backend/* {
+    		reverse_proxy pharma-demo-api:3000
+    	}
+
+    	handle_path /portal/* {
+    		reverse_proxy pharma-demo-docs:80
+    	}
+
+    	handle {
+    		reverse_proxy pharma-demo-web:3000
+    	}
+    }

@@ -11,8 +11,10 @@
 | **Development** | `npm run dev` | Hot reload Web + API + Docs (`*.localhost`, порт 80) |
 | **Local production-like** | `docker compose --profile app up --build -d` | Образы на `*.localhost` |
 | **Server / IP:port** | `docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d` | Один origin: `/`, `/backend`, `/portal` (default порт **8080**) |
+| **k3s (namespace `test`)** | push в `main` → GitLab CI | Host `https://[demo-host]/` — см. [`k8s/README.md`](k8s/README.md) |
 
-На сервере достаточно **Git + Docker + Compose** (Node/npm на хосте не нужны). После `cp .env.example .env` задайте `HOST_PORT`, `WEB_ORIGIN` и `PUBLIC_ORIGIN` на внешний `http://SERVER_IP:PORT` или домен.
+На сервере достаточно **Git + Docker + Compose** (Node/npm на хосте не нужны). После `cp .env.example .env` задайте `HOST_PORT`, `WEB_ORIGIN` и `PUBLIC_ORIGIN` на внешний `http://SERVER_IP:PORT` или домен.  
+Для k3s на ветке `main` CI собирает образы `web` / `api` / `docs` и применяет `k8s/` (нужна CI variable `KUBECONFIG_BASE64`, как в `redmineaddon`).
 
 Остановка server: `docker compose -p pharma-demo-server -f docker-compose.server.yml down`  
 Локальные алиасы: `npm run server:up` / `server:down` / `server:logs` · dev: `npm run dev:down`
