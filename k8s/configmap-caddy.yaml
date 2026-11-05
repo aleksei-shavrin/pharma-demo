@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: pharma-demo-caddy
-  namespace: test
+  namespace: pharma
 data:
   Caddyfile: |
     # Same path scheme as Caddyfile.server (ADR-0005).

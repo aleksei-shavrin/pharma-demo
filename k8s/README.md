@@ -1,6 +1,6 @@
 # k3s deploy — pharma-demo
 
-Namespace: `test`  
+Namespace: `pharma`  
 Host: `https://[demo-host]/`  
 
 Стек как в ADR-0005 / `docker-compose.server.yml`:
@@ -22,13 +22,13 @@ Host: `https://[demo-host]/`
 | docs | `ghcr.io/example/pharma-demo/docs:latest` |
 | proxy | `caddy:2-alpine` |
 
-В namespace `test` нужен pull-secret `dockerrebel`.
+В namespace `pharma` нужен pull-secret `dockerrebel`.
 
 ## Apply
 
 ```bash
 kubectl apply -k k8s
-kubectl -n test get pods,svc,ingress -l app.kubernetes.io/part-of=pharma-demo
+kubectl -n pharma get pods,svc,ingress -l app.kubernetes.io/part-of=pharma-demo
 ```
 
 Проверки:

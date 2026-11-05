@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pharma-demo-api
-  namespace: test
+  namespace: pharma
   labels:
     app.kubernetes.io/name: pharma-demo-api
     app.kubernetes.io/part-of: pharma-demo

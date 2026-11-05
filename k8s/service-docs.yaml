@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pharma-demo-docs
-  namespace: test
+  namespace: pharma
   labels:
     app.kubernetes.io/name: pharma-demo-docs
     app.kubernetes.io/part-of: pharma-demo
