@@ -13,12 +13,12 @@ related:
 ---
 # Server Compose Demo
 
-Production-like запуск Demo v1 на одном публичном origin (IP:port или хост).  
-**Данные — mock в NestJS; PostgreSQL не используется.**
+Production-like запуск Demo v1 на одном публичном origin (IP:port или домен).  
+**Это mock demo:** данные только в NestJS; PostgreSQL нет; **не** использовать для реальных производственных данных.
 
 Не путать с [local-dev-and-demo](./local-dev-and-demo.md) (ADR-0003, `*.localhost`, часто порт 80).
 
-На сервере **не требуется** Node.js / npm: достаточно Docker + Compose и файлов репозитория. Скрипты `npm run server:*` — удобные алиасы для локальной разработки.
+На сервере достаточно **Git + Docker + Compose** (Node.js / npm на хосте **не** нужны). Скрипты `npm run server:*` — локальные алиасы разработчика.
 
 ## Поддерживаемые префиксы (фиксированы)
 
@@ -45,8 +45,10 @@ Browser вызывает API только как `/backend/...` на **том ж
 
 ## Требования
 
+- Git (clone репозитория)
 - Docker 24+ / Compose v2 plugin
-- Свободный порт `HOST_PORT` (пример: 8080)
+- Свободный порт `HOST_PORT` на хосте (пример: `8080`); снаружи открыть тот же порт или reverse-proxy
+- В `.env`: `WEB_ORIGIN` и `PUBLIC_ORIGIN` = точный URL браузера (`http://SERVER_IP:PORT` или `https://demo.example.com`)
 - **RAM:** ориентир ≥ 4 GiB на машине сборки; пик при параллельной сборке web+api+docs выше (на слабом хосте ограничить параллелизм BuildKit)
 - **Диск:** ориентир ≥ 8 GiB свободно под layers/images
 - Образы: Node **24** (web, api, docs) — внутри Docker, на хост Node не ставить
