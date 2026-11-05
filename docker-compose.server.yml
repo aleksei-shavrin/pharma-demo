@@ -1,0 +1,72 @@
+# Production-like single-origin stack (ADR-0005).
+# Use a separate project name so local `npm run dev` on :80 stays up:
+#   docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
+#
+# Mock NestJS data only — no PostgreSQL.
+
+name: pharma-demo-server
+
+networks:
+  ppc-server-net:
+    driver: bridge
+
+services:
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-8080}:80"
+    volumes:
+      - ./Caddyfile.server:/etc/caddy/Caddyfile:ro
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+      docs:
+        condition: service_healthy
+    networks:
+      - ppc-server-net
+
+  web:
+    restart: unless-stopped
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/backend}
+    expose:
+      - "3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - ppc-server-net
+
+  api:
+    restart: unless-stopped
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    environment:
+      PORT: "3000"
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://127.0.0.1:8080}
+      PUBLIC_API_PREFIX: ${PUBLIC_API_PREFIX:-/backend}
+      CORS_EXTRA_ORIGINS: ${CORS_EXTRA_ORIGINS:-}
+    expose:
+      - "3000"
+    networks:
+      - ppc-server-net
+
+  docs:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DOCUSAURUS_URL: ${PUBLIC_ORIGIN:-http://127.0.0.1:8080}
+        DOCUSAURUS_BASE_URL: ${DOCUSAURUS_BASE_URL:-/portal/}
+    expose:
+      - "80"
+    networks:
+      - ppc-server-net

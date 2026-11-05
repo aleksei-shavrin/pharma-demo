@@ -1,7 +1,6 @@
-# Demo v1 NestJS API — Compose profile `app`
+# Demo v1 NestJS API — production
 # Build context: apps/api
 
-# Node 24 aligns with local lockfile (npm 11+); node:20 npm ci rejects this lock.
 FROM node:24-bookworm AS build
 WORKDIR /app
 COPY package*.json ./
@@ -17,4 +16,6 @@ COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
 EXPOSE 3000
+HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=5 \
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "dist/main.js"]

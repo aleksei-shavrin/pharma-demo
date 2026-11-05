@@ -1,19 +1,27 @@
 # Docs portal — multi-stage static build (Docusaurus → nginx)
 # Build context: repository root
+# Server: DOCUSAURUS_BASE_URL=/portal/ (Caddy strips /portal before nginx)
 
-FROM node:20-bookworm AS build
+FROM node:24-bookworm AS build
 
 WORKDIR /app
 
-# Install deps first (better layer cache)
+COPY package.json package-lock.json ./
+COPY scripts ./scripts
 COPY website/package*.json website/
-RUN cd website && npm ci
+RUN npm ci && cd website && npm ci
 
-# Content + site sources (paths relative to website: ../docs, ../openspec/specs)
 COPY docs docs
 COPY openspec/specs openspec/specs
 COPY website website
 
+ARG DOCUSAURUS_URL=http://localhost
+ARG DOCUSAURUS_BASE_URL=/portal/
+ENV DOCUSAURUS_URL=$DOCUSAURUS_URL
+ENV DOCUSAURUS_BASE_URL=$DOCUSAURUS_BASE_URL
+
+WORKDIR /app
+RUN npm run build:cross-ref
 WORKDIR /app/website
 RUN npm run build
 
@@ -23,4 +31,6 @@ COPY nginx/docs.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/website/build /usr/share/nginx/html
 
 EXPOSE 80
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=5 \
+  CMD wget -q -O /dev/null http://127.0.0.1/ || exit 1
 CMD ["nginx", "-g", "daemon off;"]

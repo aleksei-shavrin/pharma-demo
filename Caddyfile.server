@@ -1,0 +1,23 @@
+# Single-origin server demo (ADR-0005). Bind :80 inside container; host maps HOST_PORT.
+# Do not use *.localhost — browser talks to HOST:PORT only.
+
+:80 {
+	encode gzip
+
+	redir /portal /portal/ 308
+	redir /backend /backend/ 308
+
+	# Nest routes stay /health, /v1/..., /api, /api-json after strip.
+	handle_path /backend/* {
+		reverse_proxy api:3000
+	}
+
+	# Docusaurus built with baseUrl=/portal/; strip so nginx serves from /
+	handle_path /portal/* {
+		reverse_proxy docs:80
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}

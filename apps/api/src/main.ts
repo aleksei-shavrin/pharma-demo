@@ -2,33 +2,36 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { R2_CONTRACT_EXTRA_MODELS } from './contracts/r2-extra-models';
+import { resolveCorsOrigins } from './cors-origins';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const webOrigin = process.env.WEB_ORIGIN ?? 'http://localhost:3000';
   app.enableCors({
-    origin: [
-      webOrigin,
-      'http://localhost',
-      'http://localhost:3000',
-      'http://localhost:3010',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:3010',
-    ],
+    origin: resolveCorsOrigins(),
   });
 
-  const config = new DocumentBuilder()
-    .setTitle('Pharma Project Control API')
+  const publicApiPrefix = (process.env.PUBLIC_API_PREFIX ?? '').replace(/\/+$/, '');
+  const configBuilder = new DocumentBuilder()
+    .setTitle('Pharma Demo API')
     .setDescription(
-      'Demo v1 NestJS API — R2 contract models (Workstream/Person/Cost/Notification) registered ahead of handlers',
+      'Demo v1 NestJS API — mock data only (no PostgreSQL). R2 contract models registered.',
     )
-    .setVersion('0.1.0')
-    .build();
+    .setVersion('0.1.0');
+  if (publicApiPrefix) {
+    // Try it out / generated server URL must include reverse-proxy prefix (e.g. /backend).
+    configBuilder.addServer(publicApiPrefix);
+  }
+  const config = configBuilder.build();
   const document = SwaggerModule.createDocument(app, config, {
     extraModels: [...R2_CONTRACT_EXTRA_MODELS],
   });
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    // When UI is opened as /backend/api, fetch OpenAPI via same public prefix.
+    swaggerOptions: publicApiPrefix
+      ? { url: `${publicApiPrefix}/api-json` }
+      : undefined,
+  });
 
   const port = Number(process.env.PORT ?? 3001);
   await app.listen(port);

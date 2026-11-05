@@ -4,6 +4,7 @@
  */
 
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { joinApiUrl, resolveApiBaseUrl } from '@/lib/resolve-api-base-url';
 
 export type ProjectStub = {
   id: string;
@@ -152,11 +153,13 @@ export function isNotFoundError(error: unknown): boolean {
 }
 
 function apiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
+  // Build-time NEXT_PUBLIC_* (Compose ARG). Runtime env does not rewrite the client bundle.
+  // Pages that call this client are `'use client'` — relative `/backend` is browser same-origin.
+  return resolveApiBaseUrl(process.env.NEXT_PUBLIC_API_BASE_URL);
 }
 
 async function getJson<T>(path: string): Promise<T> {
-  const url = `${apiBaseUrl()}${path}`;
+  const url = joinApiUrl(apiBaseUrl(), path);
   const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) {
     throw new ApiClientError(
