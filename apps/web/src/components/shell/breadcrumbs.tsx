@@ -3,6 +3,9 @@
 import { usePathname } from 'next/navigation';
 import { crumbForPath, entityIdFromPath } from '@/lib/navigation';
 
+/** Visible root of the portfolio trail. PRJ-01 stays the API container id. */
+const PORTFOLIO_NAV_LABEL = 'Портфель 01';
+
 export function Breadcrumbs() {
   const pathname = usePathname();
   const section = crumbForPath(pathname);
@@ -11,7 +14,7 @@ export function Breadcrumbs() {
   return (
     <nav aria-label="Навигационная цепочка" className="min-w-0">
       <ol className="flex flex-wrap items-center gap-1 text-sm text-[var(--text-secondary)]">
-        <li className="truncate text-[var(--text-muted)]">PRJ-01</li>
+        <li className="truncate text-[var(--text-muted)]">{PORTFOLIO_NAV_LABEL}</li>
         <li aria-hidden className="text-[var(--text-muted)]">
           /
         </li>

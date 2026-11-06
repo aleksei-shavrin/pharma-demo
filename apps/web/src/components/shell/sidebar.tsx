@@ -23,7 +23,7 @@ export function Sidebar() {
     >
       <div className="flex h-[var(--topbar-height)] items-center border-b border-[var(--border)] px-4">
         <span className="text-sm font-semibold tracking-tight text-[var(--text)]">
-          Randoc. Платформа
+          РАНДОК.Платформа
         </span>
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Разделы">

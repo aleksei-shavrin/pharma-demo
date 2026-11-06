@@ -4,7 +4,6 @@ import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } f
 import { usePathname } from 'next/navigation';
 import { PageSurface } from './page-surface';
 import { Sidebar } from './sidebar';
-import { SkipLink } from './skip-link';
 import { TopAppBar } from './top-app-bar';
 import { useNarrowShell } from './use-narrow-shell';
 
@@ -93,7 +92,6 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="fixed inset-0 flex min-h-0 overflow-hidden bg-[var(--canvas)] text-[var(--text)]">
-      <SkipLink />
       {narrow ? null : <Sidebar />}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <TopAppBar

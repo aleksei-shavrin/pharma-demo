@@ -90,6 +90,19 @@ describe('AppShell Page Surface vs Dashboard canvas', () => {
     expect(document.querySelector('[data-page-surface]')).toBeNull();
   });
 
+  it('показывает бренд и крошку портфеля без зелёной ссылки пропуска', async () => {
+    await renderShell('/');
+    expect(screen.getByText('РАНДОК.Платформа')).toBeInTheDocument();
+    expect(screen.queryByText('Randoc. Платформа')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Перейти к основному содержимому' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('navigation', { name: 'Навигационная цепочка' }).textContent,
+    ).toMatch(/Портфель 01\s*\/\s*Дашборд/);
+    expect(screen.getByRole('link', { name: /Дашборд/ })).toBeInTheDocument();
+  });
+
   it('non-Dashboard routes keep Page Surface', async () => {
     await renderShell('/schedule');
     expect(document.querySelector('[data-dashboard-canvas="true"]')).toBeNull();
