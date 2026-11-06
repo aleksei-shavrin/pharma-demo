@@ -8,26 +8,40 @@
 
 | Сценарий | Команда | Назначение |
 |---|---|---|
-| **Development** | `npm run dev` | Hot reload Web + API + Docs (`*.localhost`, порт 80) |
-| **Local production-like** | `docker compose --profile app up --build -d` | Образы на `*.localhost` |
-| **Server / IP:port** | `docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d` | Один origin: `/`, `/backend`, `/portal` (default порт **8080**) |
+| **Development** | `npm run dev` | Hot reload Web + API + Docs, один origin на **:3080** |
+| **Local production-like** | `docker compose --profile app up --build -d` | Образы; host-routing `*.localhost` на :80 |
+| **Server / IP:port** | `docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d` | Один origin: `/`, `/backend`, `/portal` (default **8080**) |
 
-На сервере достаточно **Git + Docker + Compose** (Node/npm на хосте не нужны). После `cp .env.example .env` задайте `HOST_PORT`, `WEB_ORIGIN` и `PUBLIC_ORIGIN` на внешний `http://SERVER_IP:PORT` или домен.
+```bash
+cp .env.local.example .env.local   # HOST_PORT=3080 по умолчанию
+npm run dev                        # = docker compose --env-file .env.local -f docker-compose.dev.yml up --build -d
+# → http://localhost:3080/
+# → http://localhost:3080/backend/health
+# → http://localhost:3080/portal/
+npm run dev:down                   # тома сохраняются (без -v)
+```
 
-Остановка server: `docker compose -p pharma-demo-server -f docker-compose.server.yml down`  
-Локальные алиасы: `npm run server:up` / `server:down` / `server:logs` · dev: `npm run dev:down`
+Смена порта: правьте `HOST_PORT`, `WEB_ORIGIN`, `PUBLIC_ORIGIN`, `DOCUSAURUS_URL` в **корневом** `.env.local`.  
+`apps/web/.env.local` — только для native `npm run web:dev` (без Compose).
 
-Префиксы `/backend` и `/portal` **фиксированы** в `Caddyfile.server` (не менять через произвольный env).
+Откат к прежнему host-routing на :80: вернуть старый `Caddyfile.dev` из Git history и `ports: "80:80"` в compose, либо использовать production-like profile на :80.
 
-**Это mock demo** (данные в NestJS без PostgreSQL) — не система для реальных производственных данных.
+На сервере достаточно **Git + Docker + Compose**. После `cp .env.example .env` задайте `HOST_PORT`, `WEB_ORIGIN` и `PUBLIC_ORIGIN`.  
+Алиасы: `npm run server:up` / `server:down` / `server:logs`.
 
-### Local (ADR-0003)
+Префиксы `/backend` и `/portal` **фиксированы** в `Caddyfile.dev` / `Caddyfile.server`.
 
-| Host | Назначение |
+**Это mock demo** (данные в NestJS без PostgreSQL).
+
+### Local single-origin (dev, path parity with ADR-0005)
+
+| URL | Назначение |
 |---|---|
-| `localhost` | Frontend (Next.js) |
-| `api.localhost` | Backend (NestJS) |
-| `docs.localhost` | Портал документации |
+| `http://localhost:3080/` | Frontend (Next.js HMR) |
+| `http://localhost:3080/backend/...` | NestJS (+ Swagger `/backend/api`) |
+| `http://localhost:3080/portal/` | Docs (Docusaurus live) |
+
+Legacy hostnames (`api.localhost` / `docs.localhost`) — только native или production-like Compose, не текущий `npm run dev`.
 
 ### Server single-origin (ADR-0005)
 
@@ -73,7 +87,7 @@ Demo использует **mock-данные** в API (без PostgreSQL).
 
 ## Документация
 
-- Портал: http://docs.localhost после Compose.
+- Портал (dev): http://localhost:3080/portal/ после `npm run dev`.
 - SoT: каталог [`docs/`](docs/) и living specs [`openspec/specs/`](openspec/specs/).
 - AI / Documentation First / Test First: [`docs/11-ai-engineering/`](docs/11-ai-engineering/).
 - Конституция: [`docs/11-ai-engineering/engineering-constitution.md`](docs/11-ai-engineering/engineering-constitution.md).

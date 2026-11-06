@@ -1,10 +1,12 @@
 # Development stack: Next HMR + Nest watch + Docusaurus live reload + Caddy.
-# Does NOT replace production-like: docker compose --profile app
+# Single origin on HOST_PORT (default 3080): / → web, /backend → api, /portal → docs.
 #
-# Start:  npm run dev
-# Stop:   npm run dev:down
+# Ports require root .env.local via CLI:
+#   docker compose --env-file .env.local -f docker-compose.dev.yml up --build -d
+# (npm run dev / dev:down / dev:logs wrap that.)
 #
-# Repo lives on Linux FS (WSL2); native file watching — no global polling.
+# apps/web/.env.local is separate (native Next without Compose) and must not
+# replace Compose --env-file for HOST_PORT.
 
 networks:
   ppc-net:
@@ -21,7 +23,7 @@ services:
   proxy:
     image: caddy:2-alpine
     ports:
-      - "80:80"
+      - "127.0.0.1:${HOST_PORT:-3080}:80"
     volumes:
       - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
     depends_on:
@@ -35,6 +37,11 @@ services:
     build:
       context: .
       dockerfile: website/Dockerfile.dev
+    environment:
+      DOCUSAURUS_BASE_URL: ${DOCUSAURUS_BASE_URL:-/portal/}
+      DOCUSAURUS_URL: ${DOCUSAURUS_URL:-http://localhost:3080}
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+      WATCHPACK_POLLING: ${WATCHPACK_POLLING:-true}
     volumes:
       - ./website:/app/website
       - ./docs:/app/docs
@@ -50,8 +57,10 @@ services:
       context: ./apps/web
       dockerfile: Dockerfile.dev
     environment:
-      NEXT_PUBLIC_API_BASE_URL: http://api.localhost
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/backend}
       NEXT_TELEMETRY_DISABLED: "1"
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+      WATCHPACK_POLLING: ${WATCHPACK_POLLING:-true}
     volumes:
       - ./apps/web:/app
       - ppc_dev_web_node_modules:/app/node_modules
@@ -69,7 +78,10 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       PORT: "3000"
-      WEB_ORIGIN: http://localhost
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3080}
+      PUBLIC_API_PREFIX: ${PUBLIC_API_PREFIX:-/backend}
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+      WATCHPACK_POLLING: ${WATCHPACK_POLLING:-true}
     volumes:
       - ./apps/api:/app
       - ppc_dev_api_node_modules:/app/node_modules

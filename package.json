@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "docker compose -f docker-compose.dev.yml up --build -d",
-    "dev:down": "docker compose -f docker-compose.dev.yml down",
-    "dev:logs": "docker compose -f docker-compose.dev.yml logs -f",
+    "dev": "bash -c 'set -a && source .env.local && set +a && exec docker compose --env-file .env.local -f docker-compose.dev.yml up --build -d'",
+    "dev:down": "bash -c 'set -a && source .env.local && set +a && exec docker compose --env-file .env.local -f docker-compose.dev.yml down'",
+    "dev:logs": "bash -c 'set -a && source .env.local && set +a && exec docker compose --env-file .env.local -f docker-compose.dev.yml logs -f'",
     "server:up": "docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d",
     "server:down": "docker compose -p pharma-demo-server -f docker-compose.server.yml down",
     "server:logs": "docker compose -p pharma-demo-server -f docker-compose.server.yml logs -f",

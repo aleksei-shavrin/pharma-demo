@@ -21,26 +21,29 @@ related:
 | **Development** | Hot reload Web + API + Docs при разработке |
 | **Production-like Demo** | Образы/билды как для показа (Live Presentation Guide) |
 
-URLs в обоих случаях:
+**Development** (single-origin, default `:3080`):
 
-| Host | Сервис |
+| URL | Сервис |
 |------|--------|
-| [http://localhost](http://localhost) | Web |
-| [http://api.localhost](http://api.localhost) | API |
-| [http://docs.localhost](http://docs.localhost) | Docs |
+| [http://localhost:3080/](http://localhost:3080/) | Web |
+| [http://localhost:3080/backend/...](http://localhost:3080/backend/health) | API |
+| [http://localhost:3080/portal/](http://localhost:3080/portal/) | Docs |
 
-Не запускайте local production-like и development одновременно на порту **80**.
+**Production-like** по-прежнему использует `*.localhost` на порту **80** — не запускайте вместе с другим стеком на том же порту.
 
-**Server / IP:port demo** (отдельный Compose, обычно `:8080`): см. [server-compose-demo](./server-compose-demo.md) и [ADR-0005](../06-architecture/decisions/0005-server-single-origin-compose.md). Не использует `api.localhost`.
+**Server / IP:port demo** (обычно `:8080`): см. [server-compose-demo](./server-compose-demo.md) и [ADR-0005](../06-architecture/decisions/0005-server-single-origin-compose.md).
 
 ---
 
 ## Development
 
 ```bash
+cp .env.local.example .env.local   # once
 npm run dev
-# equivalent: docker compose -f docker-compose.dev.yml up --build -d
+# = docker compose --env-file .env.local -f docker-compose.dev.yml up --build -d
 ```
+
+Смена порта: `HOST_PORT` (+ `WEB_ORIGIN` / `PUBLIC_ORIGIN` / `DOCUSAURUS_URL`) в корневом `.env.local`.
 
 Остановка:
 

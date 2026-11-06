@@ -1,14 +1,26 @@
-# Development reverse proxy — same public hosts as production-like Demo.
-# Used only by docker-compose.dev.yml (docs target port 3000 = Docusaurus dev).
+# Local single-origin DX (parity with ADR-0005 path prefixes).
+# Host maps HOST_PORT → :80. Browser uses http://localhost:<HOST_PORT>/ only.
+# Do not use *.localhost here.
 
-http://localhost {
-	reverse_proxy web:3000
-}
+:80 {
+	encode gzip
 
-http://api.localhost {
-	reverse_proxy api:3000
-}
+	# Exact /portal → trailing slash (Docusaurus baseUrl=/portal/).
+	redir /portal /portal/ 308
+	redir /backend /backend/ 308
 
-http://docs.localhost {
-	reverse_proxy docs:3000
+	# Nest routes stay /health, /v1/..., /api after strip.
+	handle_path /backend/* {
+		reverse_proxy api:3000
+	}
+
+	# Docusaurus dev expects the /portal prefix (no strip — unlike static nginx server).
+	handle /portal/* {
+		reverse_proxy docs:3000
+	}
+
+	# Next.js UI + HMR / Turbopack websockets under /
+	handle {
+		reverse_proxy web:3000
+	}
 }
