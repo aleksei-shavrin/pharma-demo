@@ -14,6 +14,7 @@ import {
   logicalPresentationId,
   presentationIdToSelectionKey,
   toGanttPresentation,
+  workBarTooltip,
   type GanttTreeRow,
 } from './to-gantt-presentation';
 
@@ -547,6 +548,23 @@ describe('toGanttPresentation: иерархия и прогресс', () => {
 
     expect(unknown.barCaption).toBe('');
     expect(unknown.progress).toBeUndefined();
+    expect(
+      workBarTooltip({
+        text: 'Подключение к сетям',
+        type: 'task',
+        progress: 0,
+        css: 'ppc-work ppc-progress-unknown',
+        factCaption: 'Прогноз — факта нет',
+      }),
+    ).toBe('Подключение к сетям · Прогноз — факта нет');
+    expect(
+      workBarTooltip({
+        text: 'Работа',
+        type: 'task',
+        progress: 0,
+        css: 'ppc-work ppc-progress-zero',
+      }),
+    ).toBe('Работа · 0%');
     expect(Object.prototype.hasOwnProperty.call(unknown, 'progress')).toBe(
       false,
     );

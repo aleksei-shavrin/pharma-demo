@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bindSchedulePaneScroll } from './bind-schedule-pane-scroll';
+import { bindSchedulePaneScroll, copyScrollTop } from './bind-schedule-pane-scroll';
 
 function scroller() {
   let scrollTop = 0;
@@ -37,5 +37,16 @@ describe('bindSchedulePaneScroll', () => {
     list.scrollTop = 200;
     list.emit();
     expect(chart.scrollTop).toBe(144);
+  });
+});
+
+describe('copyScrollTop', () => {
+  it('переносит смещение на область задач, когда у шкалы оно уже стоит', () => {
+    const bar = { scrollTop: 280 };
+    const data = { scrollTop: 0 };
+    copyScrollTop(bar, data);
+    expect(data.scrollTop).toBe(280);
+    copyScrollTop(bar, data);
+    expect(data.scrollTop).toBe(280);
   });
 });

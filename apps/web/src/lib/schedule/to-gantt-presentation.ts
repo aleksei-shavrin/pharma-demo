@@ -352,10 +352,27 @@ function rowLabel(row: GanttTreeRow): string {
   return row.name.trim().length > 0 ? row.name : row.id;
 }
 
-/**
- * `0` stays on the task. `null` omits `progress` so the chart does not treat
- * "no data" as a known zero.
- */
+/** Tooltip percent follows the progress class. Vendor parse stores a missing value as 0. */
+export function workBarTooltip(task: {
+  text?: string;
+  factCaption?: string;
+  progress?: number;
+  css?: string;
+  type?: string;
+}): string {
+  const css = task.css ?? '';
+  const progressKnown =
+    css.includes('ppc-progress-known') || css.includes('ppc-progress-zero');
+  let percentPart = '';
+  if (task.type === 'task' && progressKnown && typeof task.progress === 'number') {
+    const pct = Math.round(task.progress * 100);
+    percentPart = Number.isFinite(pct) ? `${pct}%` : '';
+  }
+  return [task.text ?? '', percentPart, task.factCaption ?? '']
+    .filter((part) => part.length > 0)
+    .join(' · ');
+}
+
 function workProgressPresentation(progressPct: number | null): {
   cssClass: string;
   progress?: number;

@@ -26,6 +26,8 @@ import {
 import { useRegisterQuery } from '@/lib/registers/use-register-query';
 import {
   bindSchedulePaneScroll,
+  copyScrollTop,
+  GANTT_DATA_AREA_SELECTOR,
   GANTT_VERTICAL_SCROLL_SELECTOR,
 } from '@/lib/schedule/bind-schedule-pane-scroll';
 import {
@@ -312,11 +314,21 @@ export function ScheduleView() {
       }
       if (list && chart) {
         chart.scrollTop = list.scrollTop;
+        copyScrollTop(
+          chart,
+          chartPaneRef.current?.querySelector<HTMLElement>(GANTT_DATA_AREA_SELECTOR) ??
+            null,
+        );
       } else if (chart) {
         const max = chart.scrollHeight - chart.clientHeight;
         chart.scrollTop = Math.min(
           Math.max(anchor.verticalScrollTop, 0),
           Math.max(max, 0),
+        );
+        copyScrollTop(
+          chart,
+          chartPaneRef.current?.querySelector<HTMLElement>(GANTT_DATA_AREA_SELECTOR) ??
+            null,
         );
       }
     };

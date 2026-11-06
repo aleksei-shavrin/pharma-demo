@@ -20,10 +20,15 @@ import {
   presentationIdToSelectionKey,
   CROSS_PROJECT_PREDECESSOR_CAPTION,
   toGanttPresentation,
+  workBarTooltip,
   type GanttTreeRow,
 } from '@/lib/schedule/to-gantt-presentation';
 import type { ThemeMode } from '@/lib/theme/theme-state';
 import { paintBaselineOverlay, type BaselinePaintTask } from './baseline-overlay';
+import {
+  copyScrollTop,
+  GANTT_VERTICAL_SCROLL_SELECTOR,
+} from '@/lib/schedule/bind-schedule-pane-scroll';
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
 import './dhtmlx-gantt-adapter.css';
 
@@ -38,9 +43,9 @@ type GanttTask = {
   /** Fact dates — tooltip only when fact captions are not painted on the chart. */
   factCaption?: string;
   text?: string;
+  type?: string;
   barCaption?: string;
   progress?: number;
-  type?: string;
   start_date?: Date | string;
   end_date?: Date | string;
 };
@@ -225,6 +230,7 @@ export function DhtmlxGanttAdapter({
         paintFactCaptions(gantt);
         paintCrossProjectCaptions(gantt, linksRef.current);
         paintWorkBarTitles(gantt);
+        reapplyTaskPaneScroll(gantt);
       });
       const scrollId = gantt.attachEvent('onGanttScroll', (left: unknown) => {
         if (suspendScrollRef.current) return true;
@@ -378,18 +384,40 @@ function syncData(
   // Fit-to-data stays the default until the view has a date anchor.
   // Baseline overlays refresh via onGanttRender after parse/render.
   applyExternalSelection(gantt, selected, anchor?.rowKey == null);
-  restoreChartDate(gantt, anchor?.chartDateIso ?? null);
+  restoreChartDate(
+    gantt,
+    anchor?.chartDateIso ?? null,
+    anchor?.verticalScrollTop ?? 0,
+  );
+  reapplyTaskPaneScroll(gantt);
   window.setTimeout(() => {
     suspend.current = false;
   }, 0);
 }
 
-function restoreChartDate(gantt: GanttStatic, iso: string | null) {
-  if (!iso || !gantt.scrollTo || !gantt.getScrollState) return;
-  const x = gantt.posFromDate(parseIsoLocal(iso));
-  if (!Number.isFinite(x)) return;
-  const y = gantt.getScrollState().y;
-  gantt.scrollTo(Math.max(0, x), y);
+function restoreChartDate(
+  gantt: GanttStatic,
+  iso: string | null,
+  verticalScrollTop: number,
+) {
+  if (!gantt.scrollTo || !gantt.getScrollState) return;
+  const state = gantt.getScrollState();
+  let x = state.x;
+  if (iso) {
+    const fromDate = gantt.posFromDate(parseIsoLocal(iso));
+    if (Number.isFinite(fromDate)) x = Math.max(0, fromDate);
+  }
+  const y = Math.max(state.y, verticalScrollTop);
+  gantt.scrollTo(x, y);
+}
+
+function reapplyTaskPaneScroll(gantt: GanttStatic): void {
+  const data = gantt.$task_data;
+  if (!data) return;
+  const root = data.closest('.ppc-gantt-host') ?? data.ownerDocument;
+  const scrollBar = root.querySelector<HTMLElement>(GANTT_VERTICAL_SCROLL_SELECTOR);
+  if (!scrollBar) return;
+  copyScrollTop(scrollBar, data);
 }
 
 function applyExternalSelection(
@@ -427,15 +455,13 @@ function paintWorkBarTitles(gantt: GanttStatic) {
   gantt.eachTask((task) => {
     const node = gantt.getTaskNode(task.id);
     if (!node) return;
-    const name = task.text ?? '';
-    const fact = task.factCaption ?? '';
-    const progress = task.progress;
-    let percentPart = '';
-    if (task.type === 'task' && typeof progress === 'number') {
-      const pct = Math.round(progress * 100);
-      percentPart = Number.isFinite(pct) ? `${pct}%` : '';
-    }
-    const title = [name, percentPart, fact].filter((s) => s.length > 0).join(' · ');
+    const title = workBarTooltip({
+      text: task.text,
+      factCaption: task.factCaption,
+      progress: task.progress,
+      css: task.css,
+      type: task.type,
+    });
     if (title.length > 0) node.setAttribute('title', title);
     else node.removeAttribute('title');
     node.removeAttribute('data-progress-caption');

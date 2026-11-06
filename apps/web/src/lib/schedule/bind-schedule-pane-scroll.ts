@@ -34,3 +34,18 @@ export function bindSchedulePaneScroll(
 
 /** Vendor scroller for the task area. The grid is hidden in hierarchical mode. */
 export const GANTT_VERTICAL_SCROLL_SELECTOR = '.gantt_ver_scroll';
+
+/** Task rows live here. A reparse can zero it while the scrollbar keeps its offset. */
+export const GANTT_DATA_AREA_SELECTOR = '.gantt_data_area';
+
+/**
+ * Copies the scrollbar offset onto the task pane.
+ * Assigning the same `scrollTop` does not scroll the pane again, so the copy is explicit.
+ */
+export function copyScrollTop(
+  from: { scrollTop: number },
+  to: { scrollTop: number } | null,
+): void {
+  if (!to || to.scrollTop === from.scrollTop) return;
+  to.scrollTop = from.scrollTop;
+}
