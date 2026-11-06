@@ -33,7 +33,19 @@
 
 ### Modified Capabilities
 
-- `demo-v1-architecture-constraints`: curated Schedule `work` + display-only links как view-model / API rows; без Domain Activity/CPM.
+- `demo-v1-architecture-constraints`: curated Schedule `work` + display-only links как view-model / API rows; без Domain Activity/CPM. Living requirement `No Activity or WBS entity in enrichment` уже есть: дельта переименовывает его в заголовок ниже и модифицирует этот новый заголовок. Сценарий `Schedule items are only equipment and milestones` остаётся (THEN и AND прежние). Его WHEN сужен до снимка без curated works: безусловный THEN противоречил бы сценарию со строками `work`. Оба сценария этой дельты сохранены.
+
+## Apply order
+
+Этот change создаёт living `schedule-workspace`: в его дельте только ADDED. Пока spec не создан, архив `schedule-hierarchy-baseline-forecast` и `schedule-unified-geometry` отказывает: у них есть MODIFIED, а цели ещё нет. Следующие change только дополняют уже созданный spec. Порядок apply/archive:
+
+1. `demo-v1-schedule-work-bars-links` — создаёт `schedule-workspace`; RENAMED+MODIFIED ограничения архитектуры.
+2. `schedule-hierarchy-baseline-forecast` — MODIFIED `Work interval is a single forecast bar`; ADDED иерархия, база и `Expand state is shared by table and chart`.
+3. `schedule-work-actual` — только ADDED (факт).
+4. `schedule-c-cross-project-subsample` — только ADDED (межпроектная связь).
+5. `schedule-unified-geometry` — MODIFIED `Expand state is shared by table and chart` (требование из шага 2); ADDED общая геометрия.
+
+Living specs этим change не публикуются. Apply и archive — отдельное решение человека, не следствие согласия на демо-контракт 2026-11-06. Проверка порядка на изолированной копии: [2026-11-06-schedule-openspec-order](../../../docs/07-delivery/reports/2026-11-06-schedule-openspec-order.md).
 
 ## Impact
 
