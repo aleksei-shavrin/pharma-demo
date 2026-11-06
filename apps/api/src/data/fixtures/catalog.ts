@@ -8,7 +8,8 @@ import type { SnapshotId } from './types';
 
 export const PROJECT = {
   id: 'PRJ-01',
-  name: 'Строительство фармацевтического завода',
+  /** Заголовок файла аналитика. В иерархии демо это имя портфеля, не одной из семи программ. */
+  name: 'Строительство фармацевтической фабрики (Greenfield)',
   baselineProductionStart: '2027-09-15',
 } as const;
 

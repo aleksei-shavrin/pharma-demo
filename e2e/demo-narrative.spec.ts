@@ -18,7 +18,7 @@ test.describe('Demo v1 narrative readiness (I8)', () => {
     // Snapshot A — on track (success heading is project name)
     await expect(
       page.getByRole('heading', {
-        name: 'Строительство фармацевтического завода',
+        name: 'Строительство фармацевтической фабрики (Greenfield)',
       }),
     ).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText('По плану').first()).toBeVisible();

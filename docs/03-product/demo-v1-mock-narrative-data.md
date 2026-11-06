@@ -3,7 +3,7 @@ id: DOC-PROD-012
 title: Demo v1 — mock narrative data
 type: product
 status: draft
-version: 0.5.7
+version: 0.5.8
 created: '2026-10-30'
 updated: '2026-11-06'
 owner: docs-engineering
@@ -43,7 +43,7 @@ related:
 
 | Object | Key fields | Rule source |
 |--------|------------|-------------|
-| Project PRJ-01 | name «Строительство фармацевтического завода»; baselineProductionStart **2027-09-15**; forecastProductionStart **2027-09-15** | stored |
+| Project PRJ-01 | name «Строительство фармацевтической фабрики (Greenfield)»; baselineProductionStart **2027-09-15**; forecastProductionStart **2027-09-15** | stored |
 | Milestone MS-PS | «Ready for production»; baseline/forecast **2027-09-15**; rag **Green** (baseline fixture; **не** вывод BR-003) | stored baseline |
 | Equipment EQ-HVAC-01 | critical true; projectId PRJ-01; baselineDelivery **2027-05-15**; forecastDelivery **2027-05-15**; status OnTrack | stored |
 | Risk RISK-001 | rag **Green** (baseline fixture; **не** вывод BR-002); milestone MS-PS; equipment EQ-HVAC-01; no open delay issue | stored baseline |
@@ -151,6 +151,8 @@ This document’s historical singular A/B/C narrative above is **superseded for 
 > **certainty:** assumption
 >
 > Read-model внутри `PRJ-01`. Норматив: [ADR-0006](../06-architecture/decisions/0006-portfolio-program-project-read-model.md) и change `portfolio-program-project`. Код фикстур — после review.
+
+Отображаемое имя единственного портфеля — «Строительство фармацевтической фабрики (Greenfield)». В файле аналитика «Демо-данные для Фармы.md» эта строка — заголовок программы; в согласованной иерархии демо это имя портфеля. Поле `PROJECT.name` хранит его. Внутренний id остаётся `PRJ-01`. Короткая подпись «Портфель 01» — отдельная строка навигации, не это имя. Семь имён программ и имена проектов аналитика не берутся из этого заголовка.
 
 Семь программ: `PRG-DSN` AN-01…05, `PRG-CON` AN-06…08, `PRG-ENG` AN-09…12 и AN-24, `PRG-EQP` AN-13…14, `PRG-DIG` AN-15…18, `PRG-STA` AN-19…21 и AN-25, `PRG-ORG` AN-22…23.
 

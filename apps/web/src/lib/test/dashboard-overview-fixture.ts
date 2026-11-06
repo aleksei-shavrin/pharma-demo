@@ -91,7 +91,7 @@ export function dashboardOverviewFixture(
     ],
     project: {
       id: 'PRJ-01',
-      name: 'Строительство фармацевтического завода',
+      name: 'Строительство фармацевтической фабрики (Greenfield)',
       baselineProductionStart: '2027-09-15',
       forecastProductionStart: psForecast,
       productionStartVariance: {

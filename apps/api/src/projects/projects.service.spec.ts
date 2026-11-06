@@ -70,6 +70,9 @@ describe('ProjectsService', () => {
 
   it('returns project stub for requested snapshot via DemoDataSource', () => {
     const service = new ProjectsService(ds);
+    expect(service.getProjectStub('PRJ-01', 'A').name).toBe(
+      'Строительство фармацевтической фабрики (Greenfield)',
+    );
     expect(service.getProjectStub('PRJ-01', 'A')).toEqual(
       expect.objectContaining({
         snapshotId: 'A',
