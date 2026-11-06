@@ -104,7 +104,7 @@ describe('E3 Project Status', () => {
     });
     const block = projectStatusBlock();
     expect(within(block).getByText('Зелёный')).toBeInTheDocument();
-    expect(within(block).getByText('Запуск производства')).toBeInTheDocument();
+    expect(within(block).getByText('Запуск портфеля')).toBeInTheDocument();
     expect(within(block).getByText('15.09.2027')).toBeInTheDocument();
     expect(
       within(block).getByText(/по плану · без отклонения/i),
@@ -139,8 +139,8 @@ describe('E3 Project Status', () => {
       within(block).getByText(/прогноз старта производства без сдвига/i),
     ).toBeInTheDocument();
     expect(
-      document.querySelector('[data-workstream="WS-HVAC"]'),
-    ).toHaveAttribute('data-workstream-status', 'Green');
+      document.querySelector('[data-program="PRG-CON"]'),
+    ).toHaveAttribute('data-program-status', 'Yellow');
   });
 
   it('C: Red, PS +21 with baseline→forecast hierarchy', async () => {
@@ -250,47 +250,31 @@ describe('E3 Top Exceptions', () => {
   });
 });
 
-describe('E3 Workstreams', () => {
-  it('A all Green; B PKG+BLD Yellow HVAC Green; C HVAC Red; G/H HVAC Red PKG Yellow', () => {
+describe('E3 Programs', () => {
+  it('A/B programs stay Yellow; C construction and engineering are Red', () => {
     renderView('A');
-    for (const el of document.querySelectorAll('[data-workstream-status]')) {
-      expect(el).toHaveAttribute('data-workstream-status', 'Green');
+    for (const el of document.querySelectorAll('[data-program-status]')) {
+      expect(el).toHaveAttribute('data-program-status', 'Yellow');
     }
-    expect(screen.getByText('Здание и оболочка')).toBeInTheDocument();
-    expect(screen.getByText('Упаковка')).toBeInTheDocument();
+    expect(screen.getByText('Строительство')).toBeInTheDocument();
 
     cleanup();
     renderView('B');
     expect(
-      document.querySelector('[data-workstream="WS-PKG"]'),
-    ).toHaveAttribute('data-workstream-status', 'Yellow');
-    expect(
-      document.querySelector('[data-workstream="WS-BLD"]'),
-    ).toHaveAttribute('data-workstream-status', 'Yellow');
-    expect(
-      document.querySelector('[data-workstream="WS-HVAC"]'),
-    ).toHaveAttribute('data-workstream-status', 'Green');
+      document.querySelector('[data-program="PRG-CON"]'),
+    ).toHaveAttribute('data-program-status', 'Yellow');
 
     cleanup();
     renderView('C');
     expect(
-      document.querySelector('[data-workstream="WS-HVAC"]'),
-    ).toHaveAttribute('data-workstream-status', 'Red');
-
-    cleanup();
-    renderView('G');
+      document.querySelector('[data-program="PRG-CON"]'),
+    ).toHaveAttribute('data-program-status', 'Red');
     expect(
-      document.querySelector('[data-workstream="WS-HVAC"]'),
-    ).toHaveAttribute('data-workstream-status', 'Red');
+      document.querySelector('[data-program="PRG-ENG"]'),
+    ).toHaveAttribute('data-program-status', 'Red');
     expect(
-      document.querySelector('[data-workstream="WS-PKG"]'),
-    ).toHaveAttribute('data-workstream-status', 'Yellow');
-
-    cleanup();
-    renderView('H');
-    expect(
-      document.querySelector('[data-workstream="WS-PKG"]'),
-    ).toHaveAttribute('data-workstream-status', 'Yellow');
+      document.querySelector('[data-program="PRG-DSN"]'),
+    ).toHaveAttribute('data-program-status', 'Yellow');
   });
 });
 
@@ -328,12 +312,18 @@ describe('E3 Decisions', () => {
   it('pre-F empty; F renders RU mapping + honesty; G AcceptDateSlip', () => {
     renderView('C');
     expect(
-      screen.getByText(/Требуется управленческое решение/i),
+      screen.getByRole('heading', { name: 'Требуется решение' }),
     ).toBeInTheDocument();
     expect(screen.queryByText('DEC-001')).not.toBeInTheDocument();
 
     cleanup();
     renderView('F');
+    expect(
+      screen.getByRole('heading', { name: 'Управленческие решения' }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText('Решение записано').length).toBeGreaterThanOrEqual(
+      1,
+    );
     expect(
       screen.getAllByText('Приоритизировать восстановление сроков').length,
     ).toBeGreaterThanOrEqual(1);
@@ -436,7 +426,7 @@ describe('E3-R5 Dashboard canvas + timeline interaction', () => {
       document.querySelector('[data-dashboard-block="management-attention"]'),
     ).toBeTruthy();
     expect(
-      document.querySelector('[data-dashboard-block="workstream-readiness"]'),
+      document.querySelector('[data-dashboard-block="program-readiness"]'),
     ).toBeTruthy();
     expect(
       document.querySelector('[data-dashboard-block="executive-timeline"]'),
@@ -447,8 +437,8 @@ describe('E3-R5 Dashboard canvas + timeline interaction', () => {
     renderView('A');
     const subset = [
       'MS-BLD-EXC',
-      'MS-BLD-FND',
-      'MS-BLD-STR',
+      'MS-CLN-PANEL',
+      'MS-UTL-PWR',
       'MS-BLD-ENCL',
       'MS-CLN-RDY',
       'MS-HVAC-IQ',
@@ -533,7 +523,7 @@ describe('E3-R5 Dashboard canvas + timeline interaction', () => {
       '/milestones/MS-HVAC-IQ',
     );
     expect(
-      within(pop).getByRole('link', { name: /Подробный график/i }),
+      within(pop).getByRole('link', { name: /Календарный план/i }),
     ).toHaveAttribute('href', '/schedule');
     expect(hvac).toHaveAttribute('aria-expanded', 'true');
   });

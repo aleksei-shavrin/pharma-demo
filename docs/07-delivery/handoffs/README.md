@@ -3,9 +3,9 @@ id: DOC-HANDOFF-README-001
 title: Handoffs (передачи)
 type: index
 status: draft
-version: 0.2.9
+version: 0.2.10
 created: '2026-10-30'
-updated: '2026-11-03'
+updated: '2026-11-06'
 owner: docs-engineering
 related:
   - DOC-TPL-HANDOFF-001
@@ -24,6 +24,8 @@ related:
 
 | Файл | Тема |
 |------|------|
+| [2026-11-06-schedule-c-cross-project-close.md](./2026-11-06-schedule-c-cross-project-close.md) | Межпроектная связь на снимке C — трек Агента №3 закрыт |
+| [2026-11-06-show-kit-cross-project-note.md](./2026-11-06-show-kit-cross-project-note.md) | Заметка для будущего шага комплекта показа; задачей не передана |
 | [2026-11-05-server-compose-gitlab.md](./2026-11-05-server-compose-gitlab.md) | Server Compose Demo (ADR-0005) — локально проверен; загрузка в GitLab |
 | [2026-10-30-w1-docs.md](./2026-10-30-w1-docs.md) | W1-Docs: фундамент документации |
 | [2026-10-30-w3-integrate.md](./2026-10-30-w3-integrate.md) | W3: интеграция портала |

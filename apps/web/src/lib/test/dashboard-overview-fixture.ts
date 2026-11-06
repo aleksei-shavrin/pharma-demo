@@ -49,12 +49,13 @@ export function dashboardOverviewFixture(
   const risk001Green = (
     ['A', 'B', 'Q', 'R', 'S'] as SnapshotId[]
   ).includes(snapshotId);
+  const panelPowerSlip = snapshotId !== 'A' && snapshotId !== 'B';
 
-  /** R2-U1-R4: stable curated executive map — same membership A–S. */
+  /** Stable curated executive map — same membership A–S. */
   const executiveMilestoneIds = [
     'MS-BLD-EXC',
-    'MS-BLD-FND',
-    'MS-BLD-STR',
+    'MS-CLN-PANEL',
+    'MS-UTL-PWR',
     'MS-BLD-ENCL',
     'MS-CLN-RDY',
     'MS-HVAC-IQ',
@@ -71,6 +72,23 @@ export function dashboardOverviewFixture(
     scenarioAsOfDate: SNAPSHOT_AS_OF[snapshotId],
     projectStatus,
     executiveMilestoneIds,
+    programs: [
+      { id: 'PRG-DSN', name: 'Проектирование и разрешения', status: 'Yellow' },
+      {
+        id: 'PRG-CON',
+        name: 'Строительство',
+        status: panelPowerSlip ? 'Red' : 'Yellow',
+      },
+      {
+        id: 'PRG-ENG',
+        name: 'Инженерия',
+        status: panelPowerSlip ? 'Red' : 'Yellow',
+      },
+      { id: 'PRG-EQP', name: 'Оборудование', status: 'Yellow' },
+      { id: 'PRG-DIG', name: 'Цифра', status: 'Yellow' },
+      { id: 'PRG-STA', name: 'Запуск', status: 'Yellow' },
+      { id: 'PRG-ORG', name: 'Организация и люди', status: 'Yellow' },
+    ],
     project: {
       id: 'PRJ-01',
       name: 'Строительство фармацевтического завода',
@@ -290,6 +308,22 @@ export function dashboardOverviewFixture(
         workstream: 'WS-BLD' as const,
         baselineDate: '2027-02-28',
         forecastDate: '2027-02-28',
+      },
+      {
+        id: 'MS-CLN-PANEL',
+        name: 'Монтаж панелей чистых зон завершён',
+        rag: panelPowerSlip ? ('Red' as const) : ('Green' as const),
+        workstream: 'WS-CLN' as const,
+        baselineDate: '2027-02-16',
+        forecastDate: panelPowerSlip ? '2027-03-09' : '2027-02-16',
+      },
+      {
+        id: 'MS-UTL-PWR',
+        name: 'Энергоснабжение обеспечено',
+        rag: panelPowerSlip ? ('Red' as const) : ('Green' as const),
+        workstream: 'WS-UTL' as const,
+        baselineDate: '2027-02-18',
+        forecastDate: panelPowerSlip ? '2027-04-15' : '2027-02-18',
       },
       {
         id: 'MS-CLN-RDY',
@@ -554,7 +588,7 @@ export function dashboardOverviewFixture(
                       id: 'TEX-G-HVAC-PS',
                       title: 'Остаточный HVAC +14',
                       causeImpact:
-                        'Прогресс по сценарию; RISK-001 и MS-PS остаются красными',
+                        'Прогресс по сценарию; риск срыва запуска и веха старта остаются в отклонении',
                       links: [
                         { type: 'equipment', id: 'EQ-HVAC-01' },
                         { type: 'risk', id: 'RISK-001' },

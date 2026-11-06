@@ -18,7 +18,7 @@ export function ScheduleViewToggle({ mode, onChange }: Props) {
   return (
     <div
       role="group"
-      aria-label="Режим представления графика"
+      aria-label="Режим представления календарного плана"
       className="inline-flex rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-sunken)] p-0.5"
     >
       {MODES.map((m) => {

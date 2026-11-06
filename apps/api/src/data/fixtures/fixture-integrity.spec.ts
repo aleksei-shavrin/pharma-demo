@@ -99,7 +99,7 @@ describe('fixture integrity — inventory / counts', () => {
       s.decisions.forEach((d) => dec.add(d.id));
     }
     expect(eq.size).toBe(52);
-    expect(ms.size).toBe(43);
+    expect(ms.size).toBe(44);
     expect(iss.size).toBe(30);
     expect(risk.size).toBe(30);
     expect(dec.size).toBe(18);
@@ -113,7 +113,7 @@ describe('fixture integrity — inventory / counts', () => {
   it('every snapshot has 52 Equipment and 43 Milestones', () => {
     for (const id of ALL) {
       expect(SNAPSHOTS[id].equipment).toHaveLength(52);
-      expect(SNAPSHOTS[id].milestones).toHaveLength(43);
+      expect(SNAPSHOTS[id].milestones).toHaveLength(44);
     }
   });
 
@@ -590,6 +590,50 @@ describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
     expect(findEquipment(SNAPSHOTS.S, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
       'OnTrack',
     );
+  });
+
+  it('panel and power baselines stay fixed; C–S hold the C slip; B stays green', () => {
+    const baselines = {
+      'MS-CLN-PANEL': '2027-02-16',
+      'MS-UTL-PWR': '2027-02-18',
+    } as const;
+    for (const id of ALL) {
+      for (const milestoneId of ['MS-CLN-PANEL', 'MS-UTL-PWR'] as const) {
+        const milestone = findMilestone(SNAPSHOTS[id], milestoneId)!;
+        expect(milestone.baselineDate).toBe(baselines[milestoneId]);
+      }
+    }
+
+    const panelB = findMilestone(SNAPSHOTS.B, 'MS-CLN-PANEL')!;
+    const powerB = findMilestone(SNAPSHOTS.B, 'MS-UTL-PWR')!;
+    expect(panelB.forecastDate).toBe('2027-02-16');
+    expect(panelB.rag).toBe('Green');
+    expect(powerB.forecastDate).toBe('2027-02-18');
+    expect(powerB.rag).toBe('Green');
+
+    for (const id of ALL.filter((snapshotId) => snapshotId !== 'A' && snapshotId !== 'B')) {
+      const panel = findMilestone(SNAPSHOTS[id], 'MS-CLN-PANEL')!;
+      const power = findMilestone(SNAPSHOTS[id], 'MS-UTL-PWR')!;
+      expect(panel.forecastDate).toBe('2027-03-09');
+      expect(panel.rag).toBe('Red');
+      expect(power.forecastDate).toBe('2027-04-15');
+      expect(power.rag).toBe('Red');
+    }
+
+    expect(findMilestone(SNAPSHOT_C, 'MS-PS')!.forecastDate).toBe('2027-10-06');
+    expect(findMilestone(SNAPSHOT_C, 'MS-PS')!.rag).toBe('Red');
+    expect(findEquipment(SNAPSHOT_C, 'EQ-HVAC-01')!.status).toBe('Delayed');
+    expect(ISSUE_CATALOG['ISS-CLN-01'].milestoneId).toBe('MS-CLN-RDY');
+    expect(ISSUE_CATALOG['ISS-CLN-01'].equipmentId).toBe('EQ-CLN-01');
+    expect(
+      SNAPSHOT_C.milestones.some((milestone) => milestone.id === 'MS-BLD-FND'),
+    ).toBe(true);
+    expect(
+      SNAPSHOT_C.milestones.some((milestone) => milestone.id === 'MS-BLD-STR'),
+    ).toBe(true);
+    expect(SNAPSHOT_C.executiveMilestoneIds).not.toContain('MS-BLD-FND');
+    expect(SNAPSHOT_C.executiveMilestoneIds).not.toContain('MS-BLD-STR');
+    expect(SNAPSHOT_C.executiveMilestoneIds).toHaveLength(12);
   });
 
   it('executiveMilestoneIds stable curated set A–S (12) with MS-PS', () => {

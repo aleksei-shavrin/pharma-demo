@@ -1,16 +1,22 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import type { ScheduleItem } from '@/lib/api-client';
+import type { ScheduleItem, ScheduleLink } from '@/lib/api-client';
+import { SCHEDULE_GANTT_ROW_HEIGHT_PX } from '@/lib/schedule/schedule-geometry';
 import type { ScheduleSelectionKey } from '@/lib/schedule/selection-key';
 import { selectionKeyEquals } from '@/lib/schedule/selection-key';
+import type { ScheduleComparisonMode } from '@/lib/schedule/schedule-comparison';
 import {
+  GANTT_LINK_TYPE_CODE,
   computeTimelineVisibleRange,
   logicalPresentationId,
   presentationIdToSelectionKey,
+  CROSS_PROJECT_PREDECESSOR_CAPTION,
   toGanttPresentation,
+  type GanttTreeRow,
 } from '@/lib/schedule/to-gantt-presentation';
 import type { ThemeMode } from '@/lib/theme/theme-state';
+import { paintBaselineOverlay, type BaselinePaintTask } from './baseline-overlay';
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
 import './dhtmlx-gantt-adapter.css';
 
@@ -20,6 +26,10 @@ type GanttTask = {
   css?: string;
   baselineDate?: string;
   showBaselineGhost?: boolean;
+  baselineStart?: string | null;
+  baselineEnd?: string | null;
+  factCaption?: string;
+  type?: string;
   start_date?: Date | string;
   end_date?: Date | string;
 };
@@ -57,12 +67,21 @@ type GanttStatic = {
 
 type Props = {
   items: ScheduleItem[];
+  links?: ScheduleLink[];
+  /**
+   * Visible rows in display order. Omit for the flat control-point/work list.
+   * The app table owns expand; this chart does not store it in `gantt.open`.
+   */
+  treeRows?: readonly GanttTreeRow[];
+  comparison?: ScheduleComparisonMode;
   theme: ThemeMode;
   selected: ScheduleSelectionKey | null;
   onSelect: (key: ScheduleSelectionKey | null) => void;
 };
 
 const BASELINE_LAYER_CLASS = 'ppc-baseline-layer';
+const FACT_CAPTION_LAYER_CLASS = 'ppc-fact-caption-layer';
+const EMPTY_LINKS: ScheduleLink[] = [];
 
 /**
  * Sole FE module allowed to import `dhtmlx-gantt` (ADR-0004).
@@ -70,6 +89,9 @@ const BASELINE_LAYER_CLASS = 'ppc-baseline-layer';
  */
 export function DhtmlxGanttAdapter({
   items,
+  links = EMPTY_LINKS,
+  treeRows,
+  comparison = 'forecast',
   theme,
   selected,
   onSelect,
@@ -79,9 +101,15 @@ export function DhtmlxGanttAdapter({
   const readyRef = useRef(false);
   const onSelectRef = useRef(onSelect);
   const itemsRef = useRef(items);
+  const linksRef = useRef(links);
+  const treeRowsRef = useRef(treeRows);
+  const comparisonRef = useRef(comparison);
   const selectedRef = useRef(selected);
   onSelectRef.current = onSelect;
   itemsRef.current = items;
+  linksRef.current = links;
+  treeRowsRef.current = treeRows;
+  comparisonRef.current = comparison;
   selectedRef.current = selected;
   const eventIdsRef = useRef<Array<string | number>>([]);
 
@@ -117,7 +145,13 @@ export function DhtmlxGanttAdapter({
       gantt.config.drag_links = false;
       gantt.config.details_on_dblclick = false;
       gantt.config.select_task = true;
-      gantt.config.show_links = false;
+      gantt.config.show_links = true;
+      gantt.config.links = {
+        finish_to_start: GANTT_LINK_TYPE_CODE.FS,
+        start_to_start: GANTT_LINK_TYPE_CODE.SS,
+        finish_to_finish: GANTT_LINK_TYPE_CODE.FF,
+        start_to_finish: GANTT_LINK_TYPE_CODE.SF,
+      };
       gantt.config.fit_tasks = false;
       // v10: scales[] owns the header (legacy scale_unit is ignored).
       // Month-only fits May→Oct at desktop width without day/week noise.
@@ -127,6 +161,7 @@ export function DhtmlxGanttAdapter({
       gantt.config.scale_height = 28;
       gantt.config.row_height = 36;
       gantt.config.bar_height = 14;
+      gantt.config.smart_rendering = false;
       gantt.config.columns = [
         {
           name: 'text',
@@ -136,6 +171,11 @@ export function DhtmlxGanttAdapter({
           resize: true,
         },
       ];
+      // Flat mode keeps the name column. Hierarchical mode hides it in syncData.
+      gantt.config.show_grid = true;
+      gantt.config.sort = false;
+      gantt.config.auto_types = false;
+      gantt.config.open_tree_initially = false;
       gantt.templates.task_class = (
         _start: unknown,
         _end: unknown,
@@ -153,13 +193,23 @@ export function DhtmlxGanttAdapter({
       });
       const renderId = gantt.attachEvent('onGanttRender', () => {
         paintBaselineOverlays(gantt, (key) => onSelectRef.current(key));
+        paintWorkBaselineBars(gantt);
+        paintFactCaptions(gantt);
+        paintCrossProjectCaptions(gantt, linksRef.current);
       });
       eventIdsRef.current = [clickId, emptyId, renderId];
 
       gantt.init(hostRef.current);
       ganttRef.current = gantt;
       readyRef.current = true;
-      syncData(gantt, itemsRef.current, selectedRef.current);
+      syncData(
+        gantt,
+        itemsRef.current,
+        linksRef.current,
+        selectedRef.current,
+        treeRowsRef.current,
+        comparisonRef.current,
+      );
     })();
 
     return () => {
@@ -189,8 +239,8 @@ export function DhtmlxGanttAdapter({
   useEffect(() => {
     const g = ganttRef.current;
     if (!g || !readyRef.current) return;
-    syncData(g, items, selected);
-  }, [items, selected]);
+    syncData(g, items, links, selected, treeRows, comparison);
+  }, [items, links, selected, treeRows, comparison]);
 
   useEffect(() => {
     hostRef.current?.setAttribute('data-theme', theme);
@@ -209,16 +259,60 @@ export function DhtmlxGanttAdapter({
   );
 }
 
+function applyChartMode(
+  gantt: GanttStatic,
+  treeRows: readonly GanttTreeRow[] | undefined,
+) {
+  const hierarchical = treeRows != null;
+  gantt.config.row_height = hierarchical ? SCHEDULE_GANTT_ROW_HEIGHT_PX : 36;
+  gantt.config.bar_height = hierarchical ? 18 : 14;
+  // App table owns columns and expand. Do not keep a gantt tree or grid.
+  gantt.config.show_grid = !hierarchical;
+  gantt.config.sort = false;
+  gantt.config.auto_types = false;
+  gantt.config.open_tree_initially = false;
+  const columns = gantt.config.columns;
+  if (Array.isArray(columns)) {
+    for (const column of columns) {
+      if (column && typeof column === 'object' && 'tree' in column) {
+        (column as { tree: boolean }).tree = false;
+      }
+    }
+  }
+}
+
 function syncData(
   gantt: GanttStatic,
   items: ScheduleItem[],
+  links: ScheduleLink[],
   selected: ScheduleSelectionKey | null,
+  treeRows: readonly GanttTreeRow[] | undefined,
+  comparison: ScheduleComparisonMode,
 ) {
-  const range = computeTimelineVisibleRange(items);
+  applyChartMode(gantt, treeRows);
+  const range = computeTimelineVisibleRange(
+    items,
+    treeRows?.flatMap((row) => [row.summaryStart, row.summaryEnd]),
+    comparison,
+  );
   gantt.config.start_date = parseIsoLocal(range.start);
   gantt.config.end_date = parseIsoLocal(range.end);
   gantt.clearAll();
-  gantt.parse(toGanttPresentation(items));
+  const presentation =
+    treeRows != null
+      ? toGanttPresentation(items, links, treeRows, { comparison })
+      : toGanttPresentation(items, links, undefined, { comparison });
+  gantt.parse({
+    data: presentation.data,
+    links: presentation.links.map((link) => ({
+      id: link.id,
+      source: link.source,
+      target: link.target,
+      // Scheduling links already carry a code. A predecessor without one
+      // aims at the successor start. That code is not a planning type.
+      type: link.type ?? GANTT_LINK_TYPE_CODE.FS,
+    })),
+  });
   // Fit-to-data: keep horizontal origin at range start; do not jump to forecast.
   // Baseline overlays refresh via onGanttRender after parse/render.
   applyExternalSelection(gantt, selected);
@@ -251,6 +345,88 @@ function applyExternalSelection(
 function ensureRowVisibleVertically(gantt: GanttStatic, id: string) {
   const node = gantt.getTaskRowNode(id);
   node?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+
+function paintCrossProjectCaptions(
+  gantt: GanttStatic,
+  links: readonly ScheduleLink[],
+) {
+  const host = gantt.$task_data;
+  if (!host) return;
+  for (const link of links) {
+    if (link.kind !== 'cross_project_predecessor') continue;
+    const node =
+      host.querySelector<HTMLElement>(`[data-link-id="${link.id}"]`) ??
+      host.querySelector<HTMLElement>(`[link_id="${link.id}"]`);
+    node?.setAttribute('aria-label', CROSS_PROJECT_PREDECESSOR_CAPTION);
+    node?.setAttribute(
+      'data-schedule-link-caption',
+      CROSS_PROJECT_PREDECESSOR_CAPTION,
+    );
+  }
+}
+
+function paintFactCaptions(gantt: GanttStatic) {
+  const host = gantt.$task_data;
+  if (!host) return;
+  let layer = host.querySelector(`.${FACT_CAPTION_LAYER_CLASS}`);
+  if (!layer) {
+    const created = document.createElement('div');
+    created.className = FACT_CAPTION_LAYER_CLASS;
+    host.appendChild(created);
+    layer = created;
+  }
+  layer.replaceChildren();
+  gantt.eachTask((task) => {
+    if (!task.factCaption) return;
+    let pos: { left: number; top: number; width: number };
+    try {
+      pos = gantt.getTaskPosition(task);
+    } catch {
+      return;
+    }
+    const caption = document.createElement('span');
+    caption.className = 'ppc-fact-caption';
+    caption.dataset.factCaption = task.factCaption;
+    caption.textContent = task.factCaption;
+    caption.style.left = `${pos.left + pos.width + 8}px`;
+    caption.style.top = `${pos.top}px`;
+    layer.appendChild(caption);
+  });
+}
+
+function paintWorkBaselineBars(gantt: GanttStatic) {
+  const host = gantt.$task_data;
+  if (!host) return;
+  const rowHeight = Number(gantt.config.row_height) || SCHEDULE_GANTT_ROW_HEIGHT_PX;
+  const barHeight = Number(gantt.config.bar_height) || 18;
+  const tasks: BaselinePaintTask[] = [];
+  gantt.eachTask((task) => {
+    if (task.type !== 'task') return;
+    if (!task.baselineStart || !task.baselineEnd) return;
+    const start = parseIsoLocal(task.baselineStart);
+    const end = parseIsoLocal(task.baselineEnd);
+    end.setDate(end.getDate() + 1);
+    let rowPos: { top: number };
+    let barPos: { left: number; width: number };
+    try {
+      rowPos = gantt.getTaskPosition(task);
+      barPos = gantt.getTaskPosition(task, start, end);
+    } catch {
+      return;
+    }
+    tasks.push({
+      taskId: String(task.id),
+      forecastTop: rowPos.top,
+      barHeight,
+      rowHeight,
+      baselineStart: task.baselineStart,
+      baselineEnd: task.baselineEnd,
+      left: barPos.left,
+      width: barPos.width,
+    });
+  });
+  paintBaselineOverlay(host, tasks);
 }
 
 function parseIsoLocal(iso: string): Date {
@@ -290,6 +466,7 @@ function paintBaselineOverlays(
   layer.replaceChildren();
 
   gantt.eachTask((task) => {
+    if (task.type !== 'milestone') return;
     if (!task.showBaselineGhost || !task.baselineDate) return;
     const baseline = parseIsoLocal(task.baselineDate);
     let rowPos: { top: number; height: number };

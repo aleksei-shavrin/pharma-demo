@@ -200,6 +200,8 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     expect(
       document.components?.schemas?.ScheduleMilestoneItemDto,
     ).toBeDefined();
+    expect(document.components?.schemas?.ScheduleWorkItemDto).toBeDefined();
+    expect(document.components?.schemas?.ScheduleLinkDto).toBeDefined();
 
     const costs = document.paths['/v1/projects/{id}/costs']?.get;
     expect(costs).toBeDefined();

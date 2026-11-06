@@ -2,35 +2,110 @@
 
 import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { ScheduleItem } from '@/lib/api-client';
+import type {
+  ScheduleControlPointItem,
+  ScheduleWorkItem,
+  ScheduleWorkStatus,
+} from '@/lib/api-client';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import {
+  displayedWorkBounds,
+  factCaption,
+  type ScheduleComparisonMode,
+} from '@/lib/schedule/schedule-comparison';
+import {
   markerGeometry,
+  workBarGeometry,
   type ScheduleHorizon,
 } from '@/lib/schedule/schedule-geometry';
 import {
   equipmentStatusLabel,
   presentMilestoneName,
   ragLabel,
+  workStatusLabel,
 } from '@/lib/ui-labels';
 
 type Props = {
-  item: ScheduleItem;
+  item: ScheduleControlPointItem;
   horizon: ScheduleHorizon;
 };
 
-function titleOf(item: ScheduleItem): string {
+function titleOf(item: ScheduleControlPointItem): string {
   if (item.kind === 'milestone') {
     return presentMilestoneName(item.id, item.name);
   }
   return item.name;
 }
 
-function statusLabel(item: ScheduleItem): string {
+function statusLabel(item: ScheduleControlPointItem): string {
   if (item.kind === 'equipment_delivery') {
     return equipmentStatusLabel(item.status);
   }
   return ragLabel('milestone', item.rag);
+}
+
+const WORK_BAR_CLASS: Record<ScheduleWorkStatus, string> = {
+  Waiting:
+    'border-[var(--status-warn-border)] bg-[var(--status-warn-bg)]',
+  OnSchedule:
+    'border-[var(--status-info-border)] bg-[var(--status-info-bg)]',
+  Delayed:
+    'border-[var(--status-danger-border)] bg-[var(--status-danger-bg)]',
+  Completed: 'border-[var(--status-ok-border)] bg-[var(--status-ok-bg)]',
+};
+
+type WorkBarProps = {
+  item: ScheduleWorkItem;
+  horizon: ScheduleHorizon;
+  comparison?: ScheduleComparisonMode;
+};
+
+/** Нижняя полоса — прогноз или закрытый факт. Верхняя — база, если заданы оба конца. */
+export function ScheduleWorkBar({
+  item,
+  horizon,
+  comparison = 'forecast',
+}: WorkBarProps) {
+  const bounds = displayedWorkBounds(item, comparison);
+  const shown = { ...item, startDate: bounds.start, endDate: bounds.end };
+  const geom = workBarGeometry(shown, horizon);
+  const baseline =
+    item.baselineStart && item.baselineEnd
+      ? workBarGeometry(
+          { ...item, startDate: item.baselineStart, endDate: item.baselineEnd },
+          horizon,
+        )
+      : null;
+  const caption = comparison === 'actual' ? factCaption(item.actualStart, item.actualEnd) : null;
+  const label = `${item.name}: ${formatDateRu(bounds.start)} – ${formatDateRu(bounds.end)}, ${workStatusLabel(item.status)}`;
+  return (
+    <div
+      className="relative h-full w-full"
+      data-schedule-markers={item.id}
+    >
+      {baseline ? (
+        <span
+          className="absolute top-1 h-2 rounded-[var(--radius-sm)] border border-[var(--text-muted)] bg-[var(--surface-raised)] opacity-75"
+          style={{ left: `${baseline.leftPct}%`, width: `${baseline.widthPct}%` }}
+          data-marker="work-baseline"
+          data-kind="work"
+        />
+      ) : null}
+      <span
+        className={[
+          'absolute top-1/2 h-3 -translate-y-1/2 rounded-[var(--radius-sm)] border',
+          WORK_BAR_CLASS[item.status],
+        ].join(' ')}
+        style={{ left: `${geom.leftPct}%`, width: `${geom.widthPct}%` }}
+        role="img"
+        aria-label={caption ? `${label}. ${caption}` : label}
+        title={caption ? `${label}. ${caption}` : label}
+        data-marker="work-bar"
+        data-kind="work"
+        data-fact-caption={caption ?? undefined}
+      />
+    </div>
+  );
 }
 
 type TipPos = { left: number; top: number; placeAbove: boolean };

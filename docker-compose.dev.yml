@@ -1,5 +1,5 @@
 # Development stack: Next HMR + Nest watch + Docusaurus live reload + Caddy.
-# Single origin on HOST_PORT (default 3080): / → web, /backend → api, /portal → docs.
+# Single origin on HOST_PORT (default 3080): / → web, /backend → api, /docs → docs.
 #
 # Ports require root .env.local via CLI:
 #   docker compose --env-file .env.local -f docker-compose.dev.yml up --build -d
@@ -38,7 +38,7 @@ services:
       context: .
       dockerfile: website/Dockerfile.dev
     environment:
-      DOCUSAURUS_BASE_URL: ${DOCUSAURUS_BASE_URL:-/portal/}
+      DOCUSAURUS_BASE_URL: ${DOCUSAURUS_BASE_URL:-/docs/}
       DOCUSAURUS_URL: ${DOCUSAURUS_URL:-http://localhost:3080}
       CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
       WATCHPACK_POLLING: ${WATCHPACK_POLLING:-true}

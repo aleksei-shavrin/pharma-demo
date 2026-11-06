@@ -9,14 +9,15 @@ import {
   type SnapshotFixture,
   type SnapshotId,
 } from './fixtures';
-import {
-  COST_SNAPSHOTS,
-  type BuiltProjectCosts,
-} from './fixtures/build-costs';
+import { COST_SNAPSHOTS, type BuiltProjectCosts } from './fixtures/build-costs';
 import {
   notificationsForSnapshot,
   type NotificationFixture,
 } from './fixtures/notification-catalog';
+import {
+  getScheduleWorkFixture,
+  type ScheduleWorkSnapshotFixture,
+} from './fixtures/schedule-works';
 import {
   leadPersonIdForWorkstream as leadFromCatalog,
   leadWorkstreamIdsForPerson as leadsFromCatalog,
@@ -86,5 +87,11 @@ export class MockDemoDataSource extends DemoDataSource {
       throw new NotFoundException(`Unknown snapshot: ${snapshotId}`);
     }
     return notificationsForSnapshot(snapshotId);
+  }
+
+  override getScheduleWorks(
+    snapshotId: SnapshotId,
+  ): ScheduleWorkSnapshotFixture {
+    return getScheduleWorkFixture(snapshotId);
   }
 }

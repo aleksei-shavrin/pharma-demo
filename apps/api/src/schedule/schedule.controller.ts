@@ -19,7 +19,7 @@ export class ScheduleController {
   @Get(':id/schedule')
   @ApiOperation({
     summary:
-      'Schedule control-point read model (Milestone + Equipment delivery only; D11)',
+      'Schedule read model: control points (Milestone + Equipment delivery) + Work bars + links',
   })
   @ApiQuery({
     name: 'snapshot',

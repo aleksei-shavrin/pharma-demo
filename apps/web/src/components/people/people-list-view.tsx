@@ -15,7 +15,7 @@ export function PeopleListView({ data }: { data: PersonList }) {
     <PageFrame className="gap-4 p-6" data-page="people-list">
       <PageHeader className="space-y-1">
         <h1 className="text-xl font-semibold tracking-tight text-[var(--text)]">
-          Люди
+          Персоны
         </h1>
         <p className="text-sm text-[var(--text-secondary)]">
           На дату {formatDateRu(data.scenarioAsOfDate)} · снимок{' '}

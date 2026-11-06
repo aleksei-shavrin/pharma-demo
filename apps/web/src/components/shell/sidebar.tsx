@@ -2,7 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { BookOpen } from 'lucide-react';
 import { NAV_ITEMS } from '@/lib/navigation';
+
+const DOCS_HREF = '/docs/';
+
+const docsLinkClassName = [
+  'flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-sm outline-none transition-colors',
+  'text-[var(--text-secondary)] hover:bg-[var(--interactive)] hover:text-[var(--text)]',
+  'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-raised)]',
+].join(' ');
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -14,7 +23,7 @@ export function Sidebar() {
     >
       <div className="flex h-[var(--topbar-height)] items-center border-b border-[var(--border)] px-4">
         <span className="text-sm font-semibold tracking-tight text-[var(--text)]">
-          Pharma Demo
+          Randoc. Платформа
         </span>
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Разделы">
@@ -55,6 +64,16 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <footer className="mt-auto border-t border-[var(--border)] p-3">
+        <a href={DOCS_HREF} className={docsLinkClassName}>
+          <BookOpen
+            className="h-4 w-4 shrink-0"
+            strokeWidth={1.75}
+            aria-hidden
+          />
+          <span>Документация</span>
+        </a>
+      </footer>
     </aside>
   );
 }

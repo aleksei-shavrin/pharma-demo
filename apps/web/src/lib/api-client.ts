@@ -100,6 +100,9 @@ export type DashboardOverview = {
     workstream: WorkstreamId | null;
     baselineDate: string;
     forecastDate: string;
+    programId?: string | null;
+    projectId?: string | null;
+    portfolioVisible?: boolean;
   }[];
   decisions: {
     id: string;
@@ -113,6 +116,9 @@ export type DashboardOverview = {
     approvedCostImpactRub?: number;
   }[];
   workstreamRollups: { workstream: WorkstreamId; status: ProjectStatus }[];
+  programs?: { id: string; name: string; status: ProjectStatus }[];
+  /** FE-only: program scale may omit MS-PS and may be empty. */
+  timelineScope?: 'portfolio' | 'program';
   topExceptions: {
     id: string;
     title: string;
@@ -191,6 +197,110 @@ export function fetchDashboardOverview(
   const qs = new URLSearchParams({ snapshot });
   return getJson<DashboardOverview>(
     `/v1/projects/${encodeURIComponent(projectId)}/dashboard?${qs.toString()}`,
+  );
+}
+
+export type AnalystProjectRow = {
+  id: string;
+  name: string;
+  programId: string;
+  status: ProjectStatus;
+  ownerLabel: string;
+  progressLabel: string;
+  depth: 'deep' | 'thin';
+};
+
+export type ProgramDetail = {
+  snapshotId: SnapshotId;
+  id: string;
+  name: string;
+  status: ProjectStatus;
+  projects: AnalystProjectRow[];
+  issues: {
+    id: string;
+    title: string;
+    status: string;
+    projectId: string | null;
+  }[];
+  milestones: {
+    id: string;
+    name: string;
+    rag: 'Green' | 'Red';
+    baselineDate: string;
+    forecastDate: string;
+    projectId: string | null;
+  }[];
+};
+
+export type AnalystProjectCard = {
+  snapshotId: SnapshotId;
+  id: string;
+  name: string;
+  programId: string;
+  programName: string;
+  status: ProjectStatus;
+  ownerPersonId: string | null;
+  ownerLabel: string;
+  progressLabel: string;
+  datesLabel: string;
+  issues: { id: string; title: string; status: string }[];
+  equipment: {
+    id: string;
+    name: string;
+    status: string;
+    forecastDelivery: string;
+    deltaDays: number;
+  }[];
+  milestones: {
+    id: string;
+    name: string;
+    rag: 'Green' | 'Red';
+    baselineDate: string;
+    forecastDate: string;
+  }[];
+  installationLag: string | null;
+  deliveryNote: string | null;
+};
+
+export function fetchProgramList(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<{ snapshotId: SnapshotId; items: { id: string; name: string; status: ProjectStatus }[] }> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson(
+    `/v1/projects/${encodeURIComponent(projectId)}/programs?${qs.toString()}`,
+  );
+}
+
+export function fetchProgramDetail(
+  projectId: string,
+  programId: string,
+  snapshot: SnapshotId,
+): Promise<ProgramDetail> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson(
+    `/v1/projects/${encodeURIComponent(projectId)}/programs/${encodeURIComponent(programId)}?${qs.toString()}`,
+  );
+}
+
+export function fetchAnalystProjects(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<{ snapshotId: SnapshotId; items: AnalystProjectRow[] }> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson(
+    `/v1/projects/${encodeURIComponent(projectId)}/analyst-projects?${qs.toString()}`,
+  );
+}
+
+export function fetchAnalystProject(
+  projectId: string,
+  analystProjectId: string,
+  snapshot: SnapshotId,
+): Promise<AnalystProjectCard> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson(
+    `/v1/projects/${encodeURIComponent(projectId)}/analyst-projects/${encodeURIComponent(analystProjectId)}?${qs.toString()}`,
   );
 }
 
@@ -495,7 +605,18 @@ export function fetchMilestoneDetail(
   );
 }
 
-export type ScheduleEquipmentItem = {
+/** Present on every schedule row from the API. Omitted in older fixtures means null. `0` is a known percent. */
+type ScheduleTreeFields = {
+  /** `kind:id` of a group in the same snapshot, or null. */
+  parentKey?: string | null;
+  wbs?: string | null;
+  siblingOrder?: number | null;
+  /** Known percent 0..100, or null when the source has no percent. 0 is kept. */
+  progressPct?: number | null;
+  sourceWeeks?: number | null;
+};
+
+export type ScheduleEquipmentItem = ScheduleTreeFields & {
   kind: 'equipment_delivery';
   id: string;
   name: string;
@@ -507,7 +628,7 @@ export type ScheduleEquipmentItem = {
   dateVariance: RegisterVariance;
 };
 
-export type ScheduleMilestoneItem = {
+export type ScheduleMilestoneItem = ScheduleTreeFields & {
   kind: 'milestone';
   id: string;
   name: string;
@@ -518,13 +639,75 @@ export type ScheduleMilestoneItem = {
   dateVariance: RegisterVariance;
 };
 
-export type ScheduleItem = ScheduleEquipmentItem | ScheduleMilestoneItem;
+export type ScheduleGroupKind = 'project_group' | 'stage_group';
+
+/** No startDate/endDate. The client summarizes child forecast bounds. */
+export type ScheduleGroupItem = ScheduleTreeFields & {
+  kind: ScheduleGroupKind;
+  id: string;
+  name: string;
+};
+
+export type ScheduleWorkStatus =
+  | 'Waiting'
+  | 'OnSchedule'
+  | 'Delayed'
+  | 'Completed';
+
+export type ScheduleWorkItem = ScheduleTreeFields & {
+  kind: 'work';
+  id: string;
+  name: string;
+  workstream?: string | null;
+  startDate: string;
+  endDate: string;
+  status: ScheduleWorkStatus;
+  /** Both null or both set. Not a substitute for the forecast bar. */
+  baselineStart?: string | null;
+  baselineEnd?: string | null;
+  /**
+   * Inclusive actual interval. Both null means no fact.
+   * Start without end is an open fact and does not replace the forecast bar.
+   */
+  actualStart?: string | null;
+  actualEnd?: string | null;
+};
+
+export type ScheduleLinkType = 'FS' | 'SS' | 'FF' | 'SF';
+
+export type ScheduleLinkKind = 'scheduling' | 'cross_project_predecessor';
+
+/**
+ * `kind` is optional on scheduling literals written before the discriminant.
+ * `cross_project_predecessor` has no planning type.
+ */
+export type ScheduleLink = {
+  id: string;
+  kind?: ScheduleLinkKind;
+  /** Selection-key form, e.g. `work:WK-01` or `milestone:MS-UTL-PWR`. */
+  sourceRef: string;
+  targetRef: string;
+  type?: ScheduleLinkType;
+};
+
+export type ScheduleItem =
+  | ScheduleEquipmentItem
+  | ScheduleMilestoneItem
+  | ScheduleGroupItem
+  | ScheduleWorkItem;
+
+/** Control-point items only (equipment + milestone) — carry baseline/forecast. */
+export type ScheduleControlPointItem =
+  | ScheduleEquipmentItem
+  | ScheduleMilestoneItem;
 
 export type ScheduleReadModel = {
   snapshotId: SnapshotId;
   scenarioAsOfDate: string;
   projectId: string;
   items: ScheduleItem[];
+  /** Always present; `[]` when the snapshot has no works. */
+  links: ScheduleLink[];
 };
 
 export function fetchSchedule(

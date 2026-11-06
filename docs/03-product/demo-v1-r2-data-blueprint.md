@@ -3,9 +3,9 @@ id: DOC-PROD-025
 title: Demo v1 R2 — blueprint данных и каталогов
 type: product
 status: draft
-version: 0.1.0
+version: 0.1.2
 created: '2026-11-02'
-updated: '2026-11-03'
+updated: '2026-11-06'
 owner: docs-engineering
 related:
   - DOC-PROD-021
@@ -115,11 +115,11 @@ R2-U1-R2 additive early BLD story (distinct Domain events; not renames of `MS-BL
 | MS-BLD-FND | Фундамент принят | 2027-02-12 |
 | MS-BLD-STR | Каркас здания готов | 2027-02-20 |
 
-Catalogue count after U1-R2: **43** milestones (still in ~40 class).
+Catalogue count after U1-R2: **43** milestones (still in ~40 class). A01–A05 adds **MS-UTL-PWR** → **44**.
 
 **Classes:**
 
-- **Executive:** fixture-authored **stable curated set of 12** across A–S (R2-U1-R4), always includes **MS-PS**. Membership does **not** change by snapshot; state/RAG/chrome do. Set: EXC→FND→STR→ENCL→CLN-RDY→HVAC-IQ→WFI→PRD-INST→PKG-SAT→COM-OQ→COM-GO→MS-PS.
+- **Executive:** fixture-authored **stable curated set of 12** across A–S (R2-U1-R4, состав пересмотрен 2026-11-06), always includes **MS-PS**. Membership does **not** change by snapshot; state/RAG/chrome do. Set: EXC→CLN-PANEL→UTL-PWR→ENCL→CLN-RDY→HVAC-IQ→WFI→PRD-INST→PKG-SAT→COM-OQ→COM-GO→MS-PS. `MS-BLD-FND` и `MS-BLD-STR` остаются в каталоге и реестре, не в обзоре. Baseline `MS-CLN-PANEL` = 2027-02-16; `MS-UTL-PWR` = 2027-02-18. На A–B delta 0 и Green. На C–S у панелей +21 / Red (прогноз 2027-03-09), у энергоснабжения +56 / Red (прогноз 2027-04-15): D продолжает C теми же числами, без отката к baseline. Подробности: [DOC-DEL-A01-A05](../07-delivery/reports/2026-11-06-a01-a05-analyst-mapping.md).
 - **Control:** full Schedule + Workstream page + registers.
 
 **Forbidden:** Equipment → Milestone edge (BA-015).

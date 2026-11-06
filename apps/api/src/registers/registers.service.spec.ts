@@ -56,6 +56,10 @@ class FakeDataSource extends DemoDataSource {
     throw new Error('leadWorkstreamIdsForPerson not used by RegistersService');
   }
 
+  getScheduleWorks(): never {
+    throw new Error('getScheduleWorks not used by RegistersService');
+  }
+
   listNotifications(): never {
     throw new Error('listNotifications not used by RegistersService');
   }
@@ -162,7 +166,7 @@ describe('RegistersService', () => {
       expect(ms?.rag).toBe('Green');
       expect(ms?.dateVariance.deltaDays).toBe(0);
       expect(ms?.workstream).toBeNull();
-      expect(r.items).toHaveLength(43);
+      expect(r.items).toHaveLength(44);
     });
 
     it('B: MS-PS still Green', () => {

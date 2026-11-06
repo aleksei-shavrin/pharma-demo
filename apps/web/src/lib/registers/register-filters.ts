@@ -34,7 +34,7 @@ export function matchesSearch(
 
 export function matchesWorkstream(
   filter: WorkstreamId | 'all',
-  workstream: WorkstreamId | null | undefined,
+  workstream: string | null | undefined,
 ): boolean {
   if (filter === 'all') return true;
   return workstream === filter;

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Baseline over forecast lab</title>
+    <link rel="stylesheet" href="/node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.css" />
+    <link rel="stylesheet" href="/src/components/schedule/dhtmlx-gantt-adapter.css" />
+    <style>
+      :root {
+        --surface-raised: #f7f4ef;
+        --surface-sunken: #efeae3;
+        --text: #1c1915;
+        --text-muted: #5c564e;
+        --border: #c9c1b6;
+        --border-subtle: #ddd6cc;
+        --selected: #d7ebe8;
+        --interactive: #e7f2f0;
+        --radius-md: 8px;
+      }
+      body {
+        margin: 16px;
+        background: var(--surface-raised);
+        color: var(--text);
+        font: 14px/1.4 sans-serif;
+      }
+      #gantt {
+        height: 560px;
+      }
+      .baseline-overlay-bar {
+        background: #8a8175;
+        box-sizing: border-box;
+        pointer-events: none;
+      }
+      pre {
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Лаборатория базы над прогнозом. Не маршрут показа и не /schedule.</p>
+    <div id="gantt" class="ppc-gantt-host"></div>
+    <pre id="report">запуск…</pre>
+    <script src="/node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.js"></script>
+    <script src="./compare-lab.js"></script>
+  </body>
+</html>

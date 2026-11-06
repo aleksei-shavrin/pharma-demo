@@ -7,7 +7,7 @@ import {
   DASHBOARD_LOWER_GRID_CLASS,
 } from '@/lib/dashboard/dashboard-layout';
 import { DecisionAction } from './decision-panel';
-import { ExecutiveMilestoneStrip } from './executive-milestone-strip';
+import { ExecutiveTimelineExperimentHost } from './executive-timeline-experiment-host';
 import { ManagementAttention } from './management-attention';
 import { ProjectControlSummary } from './project-control-summary';
 import { SnapshotChanges } from './trend-panel';
@@ -26,8 +26,8 @@ const LOWER_ROW_GRID =
  * R2-U1-R7 executive Dashboard IA:
  * 1 Executive overview (Status+PS+Cost | Workstream readiness)
  * 2 Control milestones timeline (stable curated map A–S)
- * 3 Key Exceptions | Management Decisions  (lg: 50/50)
- * 4 Management Attention | Snapshot Changes (lg: 50/50)
+ * 3–4 lower cards in one lg:2-col auto-flow grid (B11):
+ *    Exceptions → Decisions? → Attention → Changes
  */
 export function DashboardView({
   data,
@@ -51,7 +51,7 @@ export function DashboardView({
 
   return (
     <div
-      className="flex flex-1 flex-col gap-4 p-4 md:gap-5 md:p-5"
+      className="flex flex-col gap-4 p-4 md:gap-5 md:p-5"
       data-dashboard="r2-u1"
       data-dashboard-ia="r2-u1-r7"
     >
@@ -69,30 +69,20 @@ export function DashboardView({
         <WorkstreamStatusMatrix data={data} />
       </div>
 
-      <ExecutiveMilestoneStrip data={data} />
+      <ExecutiveTimelineExperimentHost data={data} />
 
       {/*
-        Direct children only — no wrappers. Class literal below is scanned by
-        Tailwind; do not replace with a lib-only string reference.
+        Single lower grid (B11): direct children only — no wrappers. Class literal
+        below is scanned by Tailwind; do not replace with a lib-only string reference.
       */}
       <div
         className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2 lg:gap-5"
-        data-dashboard-block="exceptions-decisions"
+        data-dashboard-block="lower-cards"
         data-dashboard-grid={DASHBOARD_LOWER_GRID_ATTR}
-        data-dashboard-row="1"
-        data-dashboard-layout="two-col"
+        data-dashboard-layout="two-col-auto-flow"
       >
         <TopExceptionsPanel data={data} />
         {showDecisions ? <DecisionAction data={data} /> : null}
-      </div>
-
-      <div
-        className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2 lg:gap-5"
-        data-dashboard-block="attention-changes"
-        data-dashboard-grid={DASHBOARD_LOWER_GRID_ATTR}
-        data-dashboard-row="2"
-        data-dashboard-layout="two-col"
-      >
         <ManagementAttention data={data} />
         <SnapshotChanges data={data} />
       </div>

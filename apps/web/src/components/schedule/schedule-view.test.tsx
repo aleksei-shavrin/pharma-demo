@@ -9,6 +9,7 @@ import type {
   ScheduleItem,
   ScheduleMilestoneItem,
   ScheduleReadModel,
+  ScheduleWorkItem,
 } from '@/lib/api-client';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
@@ -29,6 +30,13 @@ vi.mock('@/lib/api-client', async () => {
     fetchSchedule: (...a: unknown[]) => fetchSchedule(...a),
   };
 });
+
+/** Avoid loading real dhtmlx-gantt in jsdom when Timeline mode mounts. */
+vi.mock('@/components/schedule/dhtmlx-gantt-adapter', () => ({
+  DhtmlxGanttAdapter: () => (
+    <div data-testid="dhtmlx-gantt-stub" data-gantt-stub="true" />
+  ),
+}));
 
 function dash(snapshotId: SnapshotId) {
   return dashboardOverviewFixture(snapshotId);
@@ -127,6 +135,7 @@ function schedule(snapshotId: SnapshotId): ScheduleReadModel {
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
     projectId: 'PRJ-01',
     items: buildItems(snapshotId),
+    links: [],
   };
 }
 
@@ -245,7 +254,7 @@ describe('E5 Schedule control board', () => {
     ).toBeGreaterThan(0);
   });
 
-  it('Table / Timeline modes share the same board row model', async () => {
+  it('Таблица — board; Временная шкала — DHTMLX (стрелки G07–G11)', async () => {
     const user = userEvent.setup();
     render(wrap(<SchedulePage />));
     await waitFor(() => {
@@ -266,16 +275,17 @@ describe('E5 Schedule control board', () => {
     ).toMatch(/Тип/);
 
     await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-schedule-timeline="live"]'),
+      ).toBeTruthy();
+    });
     expect(
       document.querySelector('[data-schedule-layout="gantt"]'),
-    ).toBeTruthy();
+    ).toBeNull();
     expect(
-      document.querySelector('[data-schedule-row-timeline="true"]'),
+      document.querySelector('[data-gantt-viewport="bounded"]'),
     ).toBeTruthy();
-    expect(document.querySelectorAll('[data-schedule-row]').length).toBe(37);
-    expect(
-      document.querySelectorAll('[data-month-span]').length,
-    ).toBeGreaterThan(0);
   });
 
   it('filters by attention / kind / search; reset restores full set', async () => {
@@ -336,6 +346,139 @@ describe('E5 Schedule control board', () => {
     expect(document.querySelectorAll('[data-schedule-row]').length).toBe(1);
   });
 
+  it('работы: строки, статус, фильтр «Работы», таблица с начало/окончание', async () => {
+    const user = userEvent.setup();
+    const works: ScheduleWorkItem[] = [
+      {
+        kind: 'work',
+        id: 'WK-01',
+        name: 'Монтаж AHU',
+        workstream: 'WS-HVAC',
+        startDate: '2027-06-01',
+        endDate: '2027-06-10',
+        status: 'Delayed',
+      },
+      {
+        kind: 'work',
+        id: 'WK-02',
+        name: 'Пусконаладка',
+        workstream: null,
+        startDate: '2027-06-11',
+        endDate: '2027-06-11',
+        status: 'Completed',
+      },
+    ];
+    fetchSchedule.mockImplementation(async (_id: string, s: SnapshotId) => ({
+      ...schedule(s),
+      items: [...buildItems(s), ...works],
+      links: [
+        {
+          id: 'LNK-01',
+          sourceRef: 'work:WK-01',
+          targetRef: 'work:WK-02',
+          type: 'FS' as const,
+        },
+      ],
+    }));
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText('39 / 39')).toBeInTheDocument();
+    });
+    expect(
+      document.querySelector('[data-schedule-row="work:WK-01"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-marker="work-bar"][data-kind="work"]'),
+    ).toBeTruthy();
+    expect(screen.getByText('Работы')).toBeInTheDocument();
+    // Статус работы и предупреждение строки оба говорят «Отстаёт».
+    expect(screen.getAllByText('Отстаёт').length).toBeGreaterThanOrEqual(2);
+    expect(
+      document.querySelector(
+        '[data-schedule-row="work:WK-01"] [data-schedule-warning="lag"]',
+      ),
+    ).toHaveTextContent('Отстаёт');
+    expect(screen.getByText('Выполнено')).toBeInTheDocument();
+    // Работы без карточки детализации — не ссылки.
+    expect(
+      screen.queryByRole('link', { name: 'Монтаж AHU' }),
+    ).not.toBeInTheDocument();
+
+    await user.selectOptions(
+      screen.getByLabelText('Фильтр типа контрольной точки'),
+      'work',
+    );
+    await waitFor(() => {
+      expect(document.querySelectorAll('[data-schedule-row]').length).toBe(2);
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Таблица' }));
+    const header = document.querySelector('[data-schedule-header="true"]');
+    expect(header?.textContent).toMatch(/Начало/);
+    expect(header?.textContent).toMatch(/Окончание/);
+    // Колонка «Тип» и подпись дерева на каждой работе.
+    expect(screen.getAllByText('Работа').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText('01.06.2027')).toBeInTheDocument();
+    expect(screen.getByText('10.06.2027')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-schedule-timeline="live"]'),
+      ).toBeTruthy();
+    });
+    expect(
+      document.querySelector('[data-schedule-legend="links"]'),
+    ).toBeTruthy();
+  });
+
+  it('SF-связь: disclaimer о точках крепления на временной шкале', async () => {
+    const user = userEvent.setup();
+    fetchSchedule.mockImplementation(async (_id: string, s: SnapshotId) => ({
+      ...schedule(s),
+      items: [
+        ...buildItems(s),
+        {
+          kind: 'work' as const,
+          id: 'WK-04',
+          name: 'Герметизация',
+          startDate: '2027-03-06',
+          endDate: '2027-03-10',
+          status: 'OnSchedule' as const,
+        },
+        {
+          kind: 'work' as const,
+          id: 'WK-05',
+          name: 'Приёмка',
+          startDate: '2027-03-13',
+          endDate: '2027-03-13',
+          status: 'Waiting' as const,
+        },
+      ],
+      links: [
+        {
+          id: 'LNK-SF-01',
+          sourceRef: 'work:WK-04',
+          targetRef: 'work:WK-05',
+          type: 'SF' as const,
+        },
+      ],
+    }));
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText(/39 \/ 39|2 \/ /)).toBeTruthy();
+    });
+    await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-schedule-legend="sf-demo"]'),
+      ).toBeTruthy();
+    });
+    expect(
+      screen.getByText(/не утверждённая технологическая зависимость/i),
+    ).toBeInTheDocument();
+  });
+
   it('G/H residual MS-PS +14 from register contract shape', () => {
     for (const id of ['G', 'H'] as SnapshotId[]) {
       const ms = schedule(id).items.find(
@@ -356,5 +499,66 @@ describe('E5 Schedule control board', () => {
     });
     expect(screen.queryByText(/\bOnTrack\b/)).not.toBeInTheDocument();
     expect(screen.queryByText(/\bDelayed\b/)).not.toBeInTheDocument();
+  });
+
+  it('временная шкала выбирает столбец или ряд по ширине своей колонки', async () => {
+    const user = userEvent.setup();
+    let reportedWidth = 696;
+    class ColumnResizeObserver {
+      private readonly callback: ResizeObserverCallback;
+      constructor(callback: ResizeObserverCallback) {
+        this.callback = callback;
+      }
+      observe(target: Element) {
+        this.callback(
+          [
+            {
+              target,
+              contentRect: { width: reportedWidth } as DOMRectReadOnly,
+            } as ResizeObserverEntry,
+          ],
+          this,
+        );
+      }
+      unobserve() {}
+      disconnect() {}
+    }
+    vi.stubGlobal('ResizeObserver', ColumnResizeObserver);
+
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText('37 / 37')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-schedule-timeline-layout="stack"]'),
+      ).toBeTruthy();
+    });
+    expect(
+      document.querySelector('[data-schedule-timeline-layout="stack"]')
+        ?.className,
+    ).toMatch(/overflow-y-auto/);
+    expect(
+      document.querySelector('[data-schedule-timeline-layout="stack"]'),
+    ).toHaveAttribute('aria-label', 'Прокрутка к диаграмме');
+
+    cleanup();
+    reportedWidth = 935;
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText('37 / 37')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-schedule-timeline-layout="row"]'),
+      ).toBeTruthy();
+    });
+    expect(
+      document.querySelector('[data-schedule-timeline-layout="row"]')
+        ?.className,
+    ).toMatch(/flex-row/);
+    vi.unstubAllGlobals();
   });
 });

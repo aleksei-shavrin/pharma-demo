@@ -6,6 +6,7 @@ import {
 } from '../common/derived-impact';
 import { buildDirectEdges } from '../common/direct-edges';
 import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
+import { milestoneMembership, programSummariesFor } from '../data/fixtures/analyst-portfolio';
 import {
   computeProjectStatus,
   computeWorkstreamRollups,
@@ -92,14 +93,31 @@ export class DashboardService {
         milestoneId: risk.milestoneId,
         issueId: risk.issueId,
       })),
-      milestones: snapshot.milestones.map((ms) => ({
-        id: ms.id,
-        name: ms.name,
-        rag: ms.rag,
-        workstream: ms.workstream,
-        baselineDate: ms.baselineDate,
-        forecastDate: ms.forecastDate,
-      })),
+      milestones: snapshot.milestones.map((ms) => {
+        const member = milestoneMembership(ms.id);
+        return {
+          id: ms.id,
+          name: ms.name,
+          rag: ms.rag,
+          workstream: ms.workstream,
+          baselineDate: ms.baselineDate,
+          forecastDate: ms.forecastDate,
+          programId: member.programId,
+          projectId: member.projectId,
+          portfolioVisible: member.portfolioVisible,
+        };
+      }),
+      programs: programSummariesFor({
+        panelRed:
+          snapshot.milestones.find((ms) => ms.id === 'MS-CLN-PANEL')?.rag ===
+          'Red',
+        powerRed:
+          snapshot.milestones.find((ms) => ms.id === 'MS-UTL-PWR')?.rag ===
+          'Red',
+        hvacDelayed:
+          snapshot.equipment.find((item) => item.id === 'EQ-HVAC-01')
+            ?.status === 'Delayed',
+      }),
       decisions: snapshot.decisions.map((d) => ({
         id: d.id,
         projectId: d.projectId,

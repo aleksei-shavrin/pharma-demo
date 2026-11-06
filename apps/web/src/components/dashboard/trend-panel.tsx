@@ -1,4 +1,5 @@
 import type { DashboardOverview } from '@/lib/api-client';
+import { trendHeading } from '@/lib/dashboard/trend-heading';
 import { ModuleSurface } from './module-surface';
 
 function ChangeTile({
@@ -58,7 +59,7 @@ export function SnapshotChanges({ data }: { data: DashboardOverview }) {
         id="trend-heading"
         className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
       >
-        Изменения с прошлого снимка
+        {trendHeading(data.snapshotId)}
       </h2>
 
       {emptyAll ? (

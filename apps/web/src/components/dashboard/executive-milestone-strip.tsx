@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import type { DashboardOverview, WorkstreamId } from '@/lib/api-client';
 import { entityDetailHref } from '@/lib/entity-routes';
 import { formatDateRu } from '@/lib/format/ru';
@@ -28,8 +29,15 @@ const LANE_TOP_PX: Record<0 | 1 | 2, number> = {
  */
 export function ExecutiveMilestoneStrip({
   data,
+  toolbar,
+  dataTimelineRenderer = 'current',
+  heading = 'Вехи портфеля',
 }: {
   data: DashboardOverview;
+  /** C10: optional 1/2/3 renderer toggle in the section header. */
+  toolbar?: ReactNode;
+  dataTimelineRenderer?: string;
+  heading?: string;
 }) {
   const { points: milestones, band, chrome } =
     resolveExecutiveTimelinePresentation(data);
@@ -65,7 +73,7 @@ export function ExecutiveMilestoneStrip({
       href: entityDetailHref('milestone', id),
       label: 'Открыть веху',
     },
-    { href: '/schedule', label: 'Подробный график' },
+    { href: '/schedule', label: 'Календарный план' },
   ];
 
   const snapshotTopPx = LANE_TOP_PX[chrome.snapshot.lane];
@@ -77,14 +85,17 @@ export function ExecutiveMilestoneStrip({
           id="executive-timeline-heading"
           className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
         >
-          Контрольные вехи проекта
+          {heading}
         </h2>
-        <Link
-          href="/schedule"
-          className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-        >
-          Подробный график
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          {toolbar}
+          <Link
+            href="/schedule"
+            className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+          >
+            Календарный план
+          </Link>
+        </div>
       </div>
 
       <p className="sr-only">{summary}</p>
@@ -93,6 +104,7 @@ export function ExecutiveMilestoneStrip({
         className="relative mt-3 h-[15rem] w-full min-w-0 overflow-x-hidden"
         data-timeline-track
         data-timeline-layout="r2-u1-r9"
+        data-timeline-renderer={dataTimelineRenderer}
       >
         <div className="relative h-full w-full min-w-0">
           <div className="absolute inset-x-0 bottom-0 h-4">

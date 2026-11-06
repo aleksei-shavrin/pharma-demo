@@ -75,9 +75,15 @@
   color-scheme: dark;
 }
 
+/*
+ * Document scroll lock: AppShell is h-dvh + overflow-hidden. If html/body can
+ * grow/scroll, the browser shows a second scrollbar and the shell can be
+ * scrolled away, revealing empty canvas below the app.
+ */
 html,
 body {
-  min-height: 100%;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 body {

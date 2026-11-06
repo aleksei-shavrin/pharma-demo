@@ -4,7 +4,12 @@
  * Unknown IDs fall back to the API string (no invented translations).
  */
 
-import type { ProjectStatus, WorkstreamId } from '@/lib/api-client';
+import type {
+  ProjectStatus,
+  ScheduleItem,
+  ScheduleWorkStatus,
+  WorkstreamId,
+} from '@/lib/api-client';
 
 export type DecisionType = 'PrioritizeRecovery' | 'AcceptDateSlip';
 
@@ -81,10 +86,31 @@ export function registerRowTypeLabel(type: 'Issue' | 'Risk'): string {
 }
 
 /** Schedule control-point kind → director-facing type label (D11). */
-export function scheduleKindLabel(
-  kind: 'equipment_delivery' | 'milestone',
-): string {
-  return kind === 'equipment_delivery' ? 'Оборудование' : 'Веха';
+export function scheduleKindLabel(kind: ScheduleItem['kind']): string {
+  switch (kind) {
+    case 'equipment_delivery':
+      return 'Оборудование';
+    case 'work':
+      return 'Работа';
+    case 'project_group':
+    case 'stage_group':
+      return 'Группа';
+    default:
+      return 'Веха';
+  }
+}
+
+export function workStatusLabel(status: ScheduleWorkStatus): string {
+  switch (status) {
+    case 'Waiting':
+      return 'Ожидание';
+    case 'OnSchedule':
+      return 'По графику';
+    case 'Delayed':
+      return 'Отстаёт';
+    case 'Completed':
+      return 'Выполнено';
+  }
 }
 
 export function entityTypeLabel(

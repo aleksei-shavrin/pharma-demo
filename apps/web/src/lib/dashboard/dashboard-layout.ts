@@ -1,5 +1,6 @@
 /**
- * Shared desktop column template for lower Dashboard rows (R2-U1-R7).
+ * Shared desktop column template for the lower Dashboard card grid (R2-U1-R7, B11).
+ * One auto-flow grid for Exceptions / Decisions / Attention / Changes.
  *
  * IMPORTANT: the class string MUST also appear as a full literal in a file
  * scanned by Tailwind (`src/components/**`, `src/app/**`). Tailwind content

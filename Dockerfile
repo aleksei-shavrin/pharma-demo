@@ -1,6 +1,6 @@
 # Docs portal — multi-stage static build (Docusaurus → nginx)
 # Build context: repository root
-# Server: DOCUSAURUS_BASE_URL=/portal/ (Caddy strips /portal before nginx)
+# Server: DOCUSAURUS_BASE_URL=/docs/ (Caddy strips /docs before nginx)
 
 FROM node:24-bookworm AS build
 
@@ -16,7 +16,7 @@ COPY openspec/specs openspec/specs
 COPY website website
 
 ARG DOCUSAURUS_URL=http://localhost
-ARG DOCUSAURUS_BASE_URL=/portal/
+ARG DOCUSAURUS_BASE_URL=/docs/
 ENV DOCUSAURUS_URL=$DOCUSAURUS_URL
 ENV DOCUSAURUS_BASE_URL=$DOCUSAURUS_BASE_URL
 

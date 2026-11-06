@@ -5,17 +5,31 @@
 :80 {
 	encode gzip
 
-	# Exact /portal → trailing slash (Docusaurus baseUrl=/portal/).
-	redir /portal /portal/ 308
+	# Canonical docs prefix (Docusaurus baseUrl=/docs/).
+	redir /docs /docs/ 308
 	redir /backend /backend/ 308
+
+	# Legacy /portal → /docs (308).
+	redir /portal /docs/ 308
+	redir /portal/ /docs/ 308
+	redir /portal/search /docs/search 308
+
+	@portalDocsLegacy path_regexp portalDocsLegacy ^/portal/docs/(?P<suffix>.+)$
+	redir @portalDocsLegacy /docs/{re.portalDocsLegacy.suffix} 308
+
+	@portalOpenspecLegacy path_regexp portalOpenspecLegacy ^/portal/openspec(?P<suffix>/.*)$
+	redir @portalOpenspecLegacy /docs/openspec{re.portalOpenspecLegacy.suffix} 308
+
+	@portalAssetsLegacy path_regexp portalAssetsLegacy ^/portal/assets(?P<suffix>/.*)$
+	redir @portalAssetsLegacy /docs/assets{re.portalAssetsLegacy.suffix} 308
 
 	# Nest routes stay /health, /v1/..., /api after strip.
 	handle_path /backend/* {
 		reverse_proxy api:3000
 	}
 
-	# Docusaurus dev expects the /portal prefix (no strip — unlike static nginx server).
-	handle /portal/* {
+	# Docusaurus dev expects the /docs prefix (no strip — unlike static nginx server).
+	handle /docs/* {
 		reverse_proxy docs:3000
 	}
 

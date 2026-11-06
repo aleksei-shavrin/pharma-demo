@@ -38,3 +38,10 @@ export function isSelectableSnapshotId(
 ): value is SelectableSnapshotId {
   return isSnapshotId(value);
 }
+
+/** Предыдущая буква порядка A–S. У A предшественника нет. */
+export function previousScenarioSnapshot(id: SnapshotId): SnapshotId | null {
+  const index = SNAPSHOT_IDS.indexOf(id);
+  if (index <= 0) return null;
+  return SNAPSHOT_IDS[index - 1] ?? null;
+}

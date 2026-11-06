@@ -488,7 +488,9 @@ export function resolveExecutiveTimelinePresentation(
   data: DashboardOverview,
 ): ExecutiveTimelinePresentation {
   let ids: readonly string[];
-  if (data.executiveMilestoneIds !== undefined) {
+  if (data.timelineScope === 'program') {
+    ids = data.executiveMilestoneIds ?? [];
+  } else if (data.executiveMilestoneIds !== undefined) {
     if (data.executiveMilestoneIds.length === 0) {
       throw new ExecutiveMilestoneIntegrityError(
         'executiveMilestoneIds is empty',

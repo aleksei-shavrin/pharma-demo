@@ -3,9 +3,9 @@ id: DOC-ADR-0003
 title: 'ADR-0003: Локальные URL и proxy'
 type: adr
 status: draft
-version: 0.2.0
+version: 0.3.0
 created: '2026-10-30'
-updated: '2026-11-05'
+updated: '2026-11-06'
 owner: docs-engineering
 related:
   - DOC-PORTAL-004
@@ -15,7 +15,7 @@ related:
 # ADR-0003: Локальные URL и proxy
 
 - **Статус решения:** accepted (направление)
-- **Дата:** 2026-10-30 · **обновлено:** 2026-11-05
+- **Дата:** 2026-10-30 · **обновлено:** 2026-11-06
 
 ## Контекст
 
@@ -31,7 +31,7 @@ related:
 > |-----|------------|
 > | `http://localhost:3080/` | Frontend (Next.js) |
 > | `http://localhost:3080/backend/...` | API (NestJS; strip prefix) |
-> | `http://localhost:3080/portal/` | Docs (Docusaurus; prefix **не** снимать в dev) |
+> | `http://localhost:3080/docs/` | Docs (Docusaurus; prefix **не** снимать в dev) |
 >
 > Порт задаётся корневым `.env.local` и передаётся как  
 > `docker compose --env-file .env.local -f docker-compose.dev.yml …`  
@@ -40,24 +40,27 @@ related:
 > Reverse proxy: **Caddy**. Сеть Compose: **`ppc-net`**.  
 > Auth на docs в local dev **не** требуется.
 >
+> **Legacy /portal (обратная совместимость):** Caddy отдаёт **308** на эквиваленты под `/docs/` (см. [local-dev-and-demo](../../10-operations/local-dev-and-demo.md)).
+>
 > **Legacy / native:** `localhost` / `api.localhost` / `docs.localhost` — production-like Compose или запуск без proxy.
 
 ## Последствия
 
 ### Положительные
 
-- Те же path-префиксы, что ADR-0005 (server).
+- Те же path-префиксы docs, что ADR-0005 (server), без удвоения `/docs/docs` (`routeBasePath: '/'`, `baseUrl=/docs/`).
 - Один bookmark `localhost:PORT` без зависимости от `*.localhost` в WSL/Windows.
 
 ### Отрицательные / компромиссы
 
-- Docusaurus dev требует `baseUrl=/portal/` и proxy **без** strip (в отличие от static nginx на server).
+- Docusaurus dev требует `baseUrl=/docs/` и proxy **без** strip (в отличие от static nginx на server).
 - `NEXT_PUBLIC_API_BASE_URL=/backend` задаётся Compose env; корневой `.env.local` ≠ `apps/web/.env.local`.
 
 ## Альтернативы
 
 - Только `*.localhost` на :80 — прежний DX (оставлен как legacy).
 - Отдельные localhost-порты на каждый сервис — проще proxy, хуже единообразие с server.
+- Оставить `/portal/` как канон — отклонено (F03: вход документации `/docs/`).
 
 ## Ссылки
 

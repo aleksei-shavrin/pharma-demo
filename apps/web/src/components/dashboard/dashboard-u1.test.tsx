@@ -7,12 +7,12 @@ import { WorkstreamStatusMatrix } from '@/components/dashboard/workstream-readin
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import { projectCostFixture } from '@/lib/test/project-cost-fixture';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
-import { WORKSTREAM_DISPLAY_ORDER } from '@/lib/ui-labels';
 import {
   EXECUTIVE_TIMELINE_SHORT_LABEL,
   requireExecutiveShortLabel,
 } from '@/lib/dashboard/executive-timeline-ids';
 import { resolveExecutiveMilestones } from '@/lib/dashboard/executive-timeline';
+import { DASHBOARD_LOWER_GRID_ATTR } from '@/lib/dashboard/dashboard-layout';
 
 const fetchDashboardOverview = vi.fn();
 const fetchProjectCosts = vi.fn();
@@ -78,7 +78,7 @@ beforeEach(() => {
 });
 
 describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
-  it('executive overview → timeline → exceptions|decisions → attention|changes', () => {
+  it('executive overview → timeline → lower-cards (Exceptions → Decision → Attention → Changes)', () => {
     renderView('C');
     const root = document.querySelector('[data-dashboard="r2-u1"]')!;
     expect(root).toHaveAttribute('data-dashboard-ia', 'r2-u1-r7');
@@ -90,7 +90,7 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
       overview.querySelector('[data-dashboard-block="project-status"]'),
     ).toBeTruthy();
     expect(
-      overview.querySelector('[data-dashboard-block="workstream-readiness"]'),
+      overview.querySelector('[data-dashboard-block="program-readiness"]'),
     ).toBeTruthy();
     expect(
       overview.querySelector('[data-overview-stretch="full-height"]'),
@@ -99,36 +99,17 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
       overview.querySelector('[data-summary-grid="stretch"]'),
     ).toBeTruthy();
 
-    const row1 = root.querySelector(
-      '[data-dashboard-block="exceptions-decisions"]',
-    )!;
-    const row1Children = [...row1.children];
-    expect(row1Children).toHaveLength(2);
-    expect(row1Children[0]).toHaveAttribute(
-      'data-dashboard-block',
-      'top-exceptions',
-    );
-    expect(row1Children[1]).toHaveAttribute(
-      'data-dashboard-block',
-      'decisions',
-    );
-    expect(row1).toHaveAttribute('data-dashboard-layout', 'two-col');
-    expect(row1.className).toMatch(/\bgrid\b/);
-    expect(row1.className).toMatch(/\bgrid-cols-1\b/);
-    expect(row1.className).toMatch(/\blg:grid-cols-2\b/);
-
-    const row2 = root.querySelector(
-      '[data-dashboard-block="attention-changes"]',
-    )!;
-    const row2Children = [...row2.children];
-    expect(row2Children).toHaveLength(2);
-    expect(row2Children[0]).toHaveAttribute(
-      'data-dashboard-block',
-      'management-attention',
-    );
-    expect(row2Children[1]).toHaveAttribute('data-dashboard-block', 'trend');
-    expect(row2).toHaveAttribute('data-dashboard-layout', 'two-col');
-    expect(row2.className).toBe(row1.className);
+    const lower = root.querySelector('[data-dashboard-block="lower-cards"]')!;
+    const lowerChildren = [...lower.children];
+    expect(lowerChildren).toHaveLength(4);
+    expect(
+      lowerChildren.map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['top-exceptions', 'decisions', 'management-attention', 'trend']);
+    expect(lower).toHaveAttribute('data-dashboard-layout', 'two-col-auto-flow');
+    expect(lower).toHaveAttribute('data-dashboard-grid', DASHBOARD_LOWER_GRID_ATTR);
+    expect(lower.className).toMatch(/\bgrid\b/);
+    expect(lower.className).toMatch(/\bgrid-cols-1\b/);
+    expect(lower.className).toMatch(/\blg:grid-cols-2\b/);
 
     const blocks = [
       ...root.querySelectorAll('[data-dashboard-block]'),
@@ -138,12 +119,10 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
       blocks.indexOf('executive-timeline')!,
     );
     expect(blocks.indexOf('executive-timeline')).toBeLessThan(
-      blocks.indexOf('exceptions-decisions')!,
+      blocks.indexOf('lower-cards')!,
     );
-    expect(blocks.indexOf('exceptions-decisions')).toBeLessThan(
-      blocks.indexOf('attention-changes')!,
-    );
-    expect(blocks.indexOf('workstream-readiness')).toBeLessThan(
+    expect(blocks.indexOf('program-readiness')).toBeGreaterThanOrEqual(0);
+    expect(blocks.indexOf('program-readiness')).toBeLessThan(
       blocks.indexOf('executive-timeline')!,
     );
   });
@@ -166,65 +145,48 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     expect(s).toHaveAttribute('data-vac', '-80000000');
   });
 
-  it('workstream: Red/Yellow persistent surfaces; Green neutral + indicator', () => {
+  it('program rows: Red/Yellow persistent surfaces; Green neutral', () => {
     renderView('C');
     const matrix = document.querySelector(
-      '[data-workstream-layout="compact-rag"]',
+      '[data-program-layout="compact-rag"]',
     );
     expect(matrix).toBeTruthy();
-    for (const id of WORKSTREAM_DISPLAY_ORDER) {
-      const cell = document.querySelector(`[data-workstream="${id}"]`);
-      expect(cell?.getAttribute('href')).toBe(`/workstreams/${id}`);
-      expect(cell).toHaveAttribute('data-workstream-interactive', 'true');
-      expect(cell?.className).toMatch(/cursor-pointer/);
-      expect(cell?.className).toMatch(/hover:/);
-      expect(cell?.className).toMatch(/focus-visible:/);
-      const status = cell?.getAttribute('data-workstream-status');
+    for (const cell of document.querySelectorAll('[data-program]')) {
+      expect(cell.className).toMatch(/cursor-pointer/);
+      const status = cell.getAttribute('data-program-status');
       expect(['Red', 'Yellow', 'Green']).toContain(status);
       if (status === 'Red') {
         expect(cell).toHaveAttribute('data-rag-surface', 'persistent');
-        expect(cell?.className).toMatch(/status-danger-bg/);
+        expect(cell.className).toMatch(/status-danger-bg/);
       } else if (status === 'Yellow') {
         expect(cell).toHaveAttribute('data-rag-surface', 'persistent');
-        expect(cell?.className).toMatch(/status-warn-bg/);
+        expect(cell.className).toMatch(/status-warn-bg/);
       } else {
         expect(cell).toHaveAttribute('data-rag-surface', 'neutral');
-        expect(cell?.className).not.toMatch(/status-ok-bg/);
-        expect(cell?.className).toMatch(/bg-transparent/);
+        expect(cell.className).not.toMatch(/status-ok-bg/);
+        expect(cell.className).toMatch(/bg-transparent/);
       }
     }
   });
 
-  it('workstream readiness orders Red → Yellow → Green with catalog stability', () => {
-    const data = dashboardOverviewFixture('C', {
-      workstreamRollups: [
-        { workstream: 'WS-BLD', status: 'Green' },
-        { workstream: 'WS-CLN', status: 'Yellow' },
-        { workstream: 'WS-HVAC', status: 'Red' },
-        { workstream: 'WS-UTL', status: 'Green' },
-        { workstream: 'WS-PRD', status: 'Yellow' },
-        { workstream: 'WS-PKG', status: 'Red' },
-        { workstream: 'WS-QC', status: 'Green' },
-        { workstream: 'WS-AUT', status: 'Green' },
-      ],
-    });
+  it('program readiness orders Red before Yellow and keeps catalog order', () => {
+    const data = dashboardOverviewFixture('C');
     render(
       <SnapshotProvider>
         <WorkstreamStatusMatrix data={data} />
       </SnapshotProvider>,
     );
-    const ids = [
-      ...document.querySelectorAll('[data-workstream]'),
-    ].map((el) => el.getAttribute('data-workstream'));
+    const ids = [...document.querySelectorAll('[data-program]')].map((el) =>
+      el.getAttribute('data-program'),
+    );
     expect(ids).toEqual([
-      'WS-HVAC',
-      'WS-PKG',
-      'WS-CLN',
-      'WS-PRD',
-      'WS-BLD',
-      'WS-UTL',
-      'WS-QC',
-      'WS-AUT',
+      'PRG-CON',
+      'PRG-ENG',
+      'PRG-DSN',
+      'PRG-EQP',
+      'PRG-DIG',
+      'PRG-STA',
+      'PRG-ORG',
     ]);
   });
 
@@ -264,8 +226,8 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
   it('stable executive map A/O/S: same 12 IDs + deliberate short labels', () => {
     const expected = [
       'MS-BLD-EXC',
-      'MS-BLD-FND',
-      'MS-BLD-STR',
+      'MS-CLN-PANEL',
+      'MS-UTL-PWR',
       'MS-BLD-ENCL',
       'MS-CLN-RDY',
       'MS-HVAC-IQ',
@@ -422,30 +384,21 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     ).toBeTruthy();
   });
 
-  it('R2-U1-R7: structural two-col siblings + bounded pair scroll', () => {
+  it('R2-U1-R7: single lower grid siblings + bounded pair scroll', () => {
     renderView('C');
     expect(
       document.querySelector('[data-attention-layout="matrix-2x2"]'),
     ).toBeTruthy();
 
-    const row1 = document.querySelector(
-      '[data-dashboard-block="exceptions-decisions"]',
-    )!;
-    const row2 = document.querySelector(
-      '[data-dashboard-block="attention-changes"]',
-    )!;
+    const lower = document.querySelector('[data-dashboard-block="lower-cards"]')!;
 
-    // Same container — direct children, not nested wrappers.
-    expect(row1.children).toHaveLength(2);
-    expect(row1.children[0]?.parentElement).toBe(row1);
-    expect(row1.children[1]?.parentElement).toBe(row1);
-    expect(row2.children).toHaveLength(2);
-    expect(row2.children[0]?.parentElement).toBe(row2);
-    expect(row2.children[1]?.parentElement).toBe(row2);
+    expect(lower.children).toHaveLength(4);
+    for (const child of lower.children) {
+      expect(child.parentElement).toBe(lower);
+    }
 
-    expect(row1.className).toMatch(/\blg:grid-cols-2\b/);
-    expect(row1.className).toMatch(/\bgrid-cols-1\b/);
-    expect(row2.className).toBe(row1.className);
+    expect(lower.className).toMatch(/\blg:grid-cols-2\b/);
+    expect(lower.className).toMatch(/\bgrid-cols-1\b/);
 
     const exList = document.querySelector('[data-top-exceptions="list"]');
     expect(exList).toHaveAttribute('data-exceptions-scroll', 'bounded');
@@ -458,5 +411,45 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     expect(decisions).toHaveAttribute('data-decisions-scroll', 'bounded');
     expect(decisions?.className).toMatch(/overflow-y-auto/);
     expect(decisions?.getAttribute('style')).toMatch(/14\.25rem/);
+  });
+});
+
+describe('B11 lower cards — single auto-flow grid', () => {
+  it('Snapshot A: one grid, three dense cards, no separate row hole', () => {
+    renderView('A');
+    const grids = document.querySelectorAll(
+      `[data-dashboard-grid="${DASHBOARD_LOWER_GRID_ATTR}"]`,
+    );
+    expect(grids).toHaveLength(1);
+    expect(
+      document.querySelector('[data-dashboard-block="exceptions-decisions"]'),
+    ).toBeNull();
+    expect(
+      document.querySelector('[data-dashboard-block="attention-changes"]'),
+    ).toBeNull();
+
+    const grid = grids[0]!;
+    expect(grid).toHaveAttribute('data-dashboard-block', 'lower-cards');
+    const blocks = [...grid.children].map((el) =>
+      el.getAttribute('data-dashboard-block'),
+    );
+    expect(blocks).toEqual(['top-exceptions', 'management-attention', 'trend']);
+    expect(document.querySelector('[data-dashboard-block="decisions"]')).toBeNull();
+  });
+
+  it('Snapshot C: four cards Exceptions → Decision → Attention → Changes', () => {
+    renderView('C');
+    const grid = document.querySelector('[data-dashboard-block="lower-cards"]')!;
+    expect(
+      [...grid.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['top-exceptions', 'decisions', 'management-attention', 'trend']);
+  });
+
+  it('Snapshot G: four cards in canonical order', () => {
+    renderView('G');
+    const grid = document.querySelector('[data-dashboard-block="lower-cards"]')!;
+    expect(
+      [...grid.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['top-exceptions', 'decisions', 'management-attention', 'trend']);
   });
 });

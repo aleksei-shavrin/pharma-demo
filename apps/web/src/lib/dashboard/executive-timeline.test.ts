@@ -43,8 +43,8 @@ describe('executive timeline helpers', () => {
   it('uses executiveMilestoneIds when present; always includes MS-PS', () => {
     expect([...EXECUTIVE_TIMELINE_MILESTONE_IDS]).toEqual([
       'MS-BLD-EXC',
-      'MS-BLD-FND',
-      'MS-BLD-STR',
+      'MS-CLN-PANEL',
+      'MS-UTL-PWR',
       'MS-BLD-ENCL',
       'MS-CLN-RDY',
       'MS-HVAC-IQ',
@@ -222,8 +222,8 @@ describe('executive timeline helpers', () => {
     const points = resolveExecutiveMilestones(dashboardOverviewFixture('S'));
     const byId = Object.fromEntries(points.map((p) => [p.id, p.shortLabel]));
     expect(byId['MS-BLD-EXC']).toBe('Котлован');
-    expect(byId['MS-BLD-FND']).toBe('Фундамент');
-    expect(byId['MS-BLD-STR']).toBe('Каркас');
+    expect(byId['MS-CLN-PANEL']).toBe('Панели чистых');
+    expect(byId['MS-UTL-PWR']).toBe('Энергоснабжение');
     expect(byId['MS-BLD-ENCL']).toBe('Контур здания');
     expect(byId['MS-CLN-RDY']).toBe('Чистые помещения');
     expect(byId['MS-HVAC-IQ']).toBe('Готовность HVAC');

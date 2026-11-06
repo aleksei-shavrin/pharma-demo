@@ -223,6 +223,20 @@ describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
     });
   });
 
+  it('длинная подпись обрезается, кнопка и доступное имя остаются', async () => {
+    renderSelector();
+    const trigger = await screen.findByRole('button', {
+      name: /Снимок A, .*активный/,
+    });
+    expect(trigger).toBeVisible();
+    expect(trigger.className).toMatch(/max-w-/);
+    const caption = trigger.querySelector('span.truncate');
+    expect(caption).toBeTruthy();
+    expect(caption?.className).toMatch(/max-w-/);
+    expect(caption?.textContent).toMatch(/·/);
+    expect(trigger).toHaveAttribute('aria-label', expect.stringMatching(/Снимок A/));
+  });
+
   it('re-selecting active A does not refetch', async () => {
     const user = userEvent.setup();
     renderSelector();

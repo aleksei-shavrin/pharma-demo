@@ -12,6 +12,10 @@ import type { ScheduleItem } from '@/lib/api-client';
 import { entityDetailHref } from '@/lib/entity-routes';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import {
+  scheduleDateColumnLabels,
+  scheduleRowDates,
+} from '@/lib/schedule/schedule-item-dates';
+import {
   selectionKeyEquals,
   selectionKeyId,
   selectionKeyOf,
@@ -37,6 +41,14 @@ function objectCell(item: ScheduleItem) {
       </Link>
     );
   }
+  if (item.kind === 'work' || item.kind === 'project_group' || item.kind === 'stage_group') {
+    return (
+      <span className="inline-flex flex-col gap-0.5">
+        <span>{item.id}</span>
+        <span className="text-xs text-[var(--text-muted)]">{item.name}</span>
+      </span>
+    );
+  }
   return (
     <span className="inline-flex flex-col gap-0.5">
       <Link
@@ -54,10 +66,16 @@ function objectCell(item: ScheduleItem) {
 }
 
 function statusCell(item: ScheduleItem) {
+  if (item.kind === 'work') {
+    return <StatusPill family="work" value={item.status} />;
+  }
   if (item.kind === 'equipment_delivery') {
     return <StatusPill family="equipment" value={item.status} />;
   }
-  return <StatusPill family="rag" value={item.rag} entity="milestone" />;
+  if (item.kind === 'milestone') {
+    return <StatusPill family="rag" value={item.rag} entity="milestone" />;
+  }
+  return <span>—</span>;
 }
 
 type Props = {
@@ -72,6 +90,10 @@ export function ScheduleTable({
   selected = null,
   onSelect,
 }: Props) {
+  const dateLabels = scheduleDateColumnLabels(items, {
+    first: 'Базовая дата',
+    second: 'Прогноз',
+  });
   const rowRefs = useRef<Map<string, HTMLTableRowElement | null>>(new Map());
 
   useEffect(() => {
@@ -84,12 +106,12 @@ export function ScheduleTable({
 
   return (
     <RegisterTable
-      caption="График контрольных точек"
+      caption="Календарный план: контрольные точки"
       columns={[
         'Тип',
         'Объект',
-        'Базовая дата',
-        'Прогноз',
+        dateLabels.first,
+        dateLabels.second,
         'Отклонение',
         'Статус',
         'Критичность',
@@ -97,6 +119,7 @@ export function ScheduleTable({
     >
       {items.map((item) => {
         const key = selectionKeyOf(item);
+        const dates = scheduleRowDates(item);
         const isSelected = selectionKeyEquals(selected, key);
         return (
           <RegisterRow
@@ -111,10 +134,12 @@ export function ScheduleTable({
             <RegisterCell className="font-medium text-[var(--text)]">
               {objectCell(item)}
             </RegisterCell>
-            <RegisterCell>{formatDateRu(item.baselineDate)}</RegisterCell>
-            <RegisterCell>{formatDateRu(item.forecastDate)}</RegisterCell>
+            <RegisterCell>{formatDateRu(dates.first)}</RegisterCell>
+            <RegisterCell>{formatDateRu(dates.second)}</RegisterCell>
             <RegisterCell className="tabular-nums text-[var(--text)]">
-              {formatDeltaDays(item.dateVariance.deltaDays)}
+              {item.kind === 'milestone' || item.kind === 'equipment_delivery'
+                ? formatDeltaDays(item.dateVariance.deltaDays)
+                : '—'}
             </RegisterCell>
             <RegisterCell>{statusCell(item)}</RegisterCell>
             <RegisterCell>

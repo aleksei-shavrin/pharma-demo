@@ -10,14 +10,14 @@
 |---|---|---|
 | **Development** | `npm run dev` | Hot reload Web + API + Docs, один origin на **:3080** |
 | **Local production-like** | `docker compose --profile app up --build -d` | Образы; host-routing `*.localhost` на :80 |
-| **Server / IP:port** | `docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d` | Один origin: `/`, `/backend`, `/portal` (default **8080**) |
+| **Server / IP:port** | `docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d` | Один origin: `/`, `/backend`, `/docs` (default **8080**) |
 
 ```bash
 cp .env.local.example .env.local   # HOST_PORT=3080 по умолчанию
 npm run dev                        # = docker compose --env-file .env.local -f docker-compose.dev.yml up --build -d
 # → http://localhost:3080/
 # → http://localhost:3080/backend/health
-# → http://localhost:3080/portal/
+# → http://localhost:3080/docs/
 npm run dev:down                   # тома сохраняются (без -v)
 ```
 
@@ -29,7 +29,7 @@ npm run dev:down                   # тома сохраняются (без -v)
 На сервере достаточно **Git + Docker + Compose**. После `cp .env.example .env` задайте `HOST_PORT`, `WEB_ORIGIN` и `PUBLIC_ORIGIN`.  
 Алиасы: `npm run server:up` / `server:down` / `server:logs`.
 
-Префиксы `/backend` и `/portal` **фиксированы** в `Caddyfile.dev` / `Caddyfile.server`.
+Префиксы `/backend` и `/docs` **фиксированы** в `Caddyfile.dev` / `Caddyfile.server`. Старые закладки `/portal/*` редиректятся на `/docs/*` (308).
 
 **Это mock demo** (данные в NestJS без PostgreSQL).
 
@@ -39,7 +39,7 @@ npm run dev:down                   # тома сохраняются (без -v)
 |---|---|
 | `http://localhost:3080/` | Frontend (Next.js HMR) |
 | `http://localhost:3080/backend/...` | NestJS (+ Swagger `/backend/api`) |
-| `http://localhost:3080/portal/` | Docs (Docusaurus live) |
+| `http://localhost:3080/docs/` | Docs (Docusaurus live) |
 
 Legacy hostnames (`api.localhost` / `docs.localhost`) — только native или production-like Compose, не текущий `npm run dev`.
 
@@ -49,7 +49,7 @@ Legacy hostnames (`api.localhost` / `docs.localhost`) — только native и
 |---|---|
 | `http://HOST:PORT/` | UI |
 | `http://HOST:PORT/backend/...` | Mock NestJS API (+ Swagger `/backend/api`) |
-| `http://HOST:PORT/portal/` | Docs |
+| `http://HOST:PORT/docs/` | Docs |
 
 Demo использует **mock-данные** в API (без PostgreSQL).  
 Подробности: [`docs/10-operations/server-compose-demo.md`](docs/10-operations/server-compose-demo.md), [`docs/10-operations/local-dev-and-demo.md`](docs/10-operations/local-dev-and-demo.md), [`CONTRIBUTING.md`](CONTRIBUTING.md). Нормы для агентов: [`AGENTS.md`](AGENTS.md).
@@ -87,7 +87,7 @@ Demo использует **mock-данные** в API (без PostgreSQL).
 
 ## Документация
 
-- Портал (dev): http://localhost:3080/portal/ после `npm run dev`.
+- Портал (dev): http://localhost:3080/docs/ после `npm run dev`.
 - SoT: каталог [`docs/`](docs/) и living specs [`openspec/specs/`](openspec/specs/).
 - AI / Documentation First / Test First: [`docs/11-ai-engineering/`](docs/11-ai-engineering/).
 - Конституция: [`docs/11-ai-engineering/engineering-constitution.md`](docs/11-ai-engineering/engineering-constitution.md).

@@ -40,7 +40,7 @@ describe('PageFrame scroll contract (R2-W1-R2)', () => {
     render(
       <PageFrame>
         <PageHeader>
-          <h1>График</h1>
+          <h1>Календарный план</h1>
         </PageHeader>
         <PageContent mode="workspace">
           <div data-inner-scroll="true" className="min-h-0 flex-1 overflow-auto">

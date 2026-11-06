@@ -1,5 +1,6 @@
 /** @vitest-environment jsdom */
-import { cleanup, render, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import { ThemeProvider } from '@/lib/theme/theme-context';
@@ -95,10 +96,197 @@ describe('AppShell Page Surface vs Dashboard canvas', () => {
     expect(document.querySelector('[data-page-surface]')).toBeTruthy();
   });
 
-  it('shell uses bounded dvh height (viewport chain for Schedule)', async () => {
+  it('shell is fixed to the viewport (out of document flow)', async () => {
     const { container } = await renderShell('/schedule');
     const root = container.firstElementChild as HTMLElement;
-    expect(root.className).toMatch(/h-dvh/);
+    expect(root.className).toMatch(/fixed/);
+    expect(root.className).toMatch(/inset-0/);
     expect(root.className).toMatch(/overflow-hidden/);
+  });
+
+  it('Dashboard canvas is the page scroll owner (not document)', async () => {
+    await renderShell('/');
+    const canvas = document.querySelector(
+      '[data-dashboard-canvas="true"]',
+    ) as HTMLElement;
+    expect(canvas.className).toMatch(/overflow-auto/);
+    expect(canvas.className).toMatch(/min-h-0/);
+  });
+});
+
+type MediaListener = (event: MediaQueryListEvent) => void;
+
+function stubMatchMedia(matches: boolean) {
+  const listeners = new Set<MediaListener>();
+  const media = {
+    matches,
+    media: '(max-width: 1023px)',
+    onchange: null,
+    addEventListener: (type: string, listener: EventListener) => {
+      if (type === 'change') listeners.add(listener as MediaListener);
+    },
+    removeEventListener: (type: string, listener: EventListener) => {
+      if (type === 'change') listeners.delete(listener as MediaListener);
+    },
+    addListener: (listener: MediaListener) => {
+      listeners.add(listener);
+    },
+    removeListener: (listener: MediaListener) => {
+      listeners.delete(listener);
+    },
+    dispatchEvent: () => true,
+  };
+
+  const matchMediaMock = vi.fn((query: string) => {
+    if (query !== '(max-width: 1023px)') {
+      return {
+        ...media,
+        matches: false,
+        media: query,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      };
+    }
+    return media;
+  });
+  vi.stubGlobal('matchMedia', matchMediaMock);
+
+  return { matchMediaMock };
+}
+
+describe('меню оболочки ниже 1024px', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  async function renderAt(pathname: string, matches: boolean) {
+    const media = stubMatchMedia(matches);
+    const view = await renderShell(pathname);
+    await waitFor(() => {
+      expect(media.matchMediaMock).toHaveBeenCalledWith('(max-width: 1023px)');
+    });
+    return { ...view, media };
+  }
+
+  it('на узкой ширине кнопка есть, меню закрыто', async () => {
+    await renderAt('/', true);
+
+    const button = await screen.findByRole('button', { name: 'Открыть меню' });
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+    expect(button.getAttribute('aria-controls')).toBeTruthy();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(document.querySelector('aside')).toBeNull();
+    expect(screen.getByRole('button', { name: /Снимок/ })).toBeInTheDocument();
+
+    const crumbs = screen.getByRole('navigation', { name: 'Навигационная цепочка' });
+    expect(
+      button.compareDocumentPosition(crumbs) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('открытие ставит фокус в диалог', async () => {
+    const user = userEvent.setup();
+    await renderAt('/schedule', true);
+
+    await user.click(await screen.findByRole('button', { name: 'Открыть меню' }));
+
+    const dialog = await screen.findByRole('dialog', { name: 'Основная навигация' });
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Закрыть меню' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Закрыть меню' })).toHaveAttribute(
+      'aria-controls',
+      dialog.id,
+    );
+    expect(within(dialog).getByRole('link', { name: /Календарный план/ })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(within(dialog).getByRole('link', { name: 'Документация' })).toBeInTheDocument();
+    expect(dialog.className).toMatch(/w-\[var\(--sidebar-width\)\]/);
+    const aside = dialog.querySelector('aside');
+    expect(aside).toBeTruthy();
+    expect(aside?.parentElement).toBe(dialog);
+  });
+
+  it('Escape возвращает фокус на кнопку', async () => {
+    const user = userEvent.setup();
+    await renderAt('/', true);
+
+    const openButton = await screen.findByRole('button', { name: 'Открыть меню' });
+    await user.click(openButton);
+    const dialog = await screen.findByRole('dialog');
+    expect(dialog).toHaveFocus();
+
+    await user.keyboard('{Escape}');
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    const closedButton = screen.getByRole('button', { name: 'Открыть меню' });
+    expect(closedButton).toHaveFocus();
+    expect(closedButton).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('клик по затемнению закрывает меню', async () => {
+    const user = userEvent.setup();
+    await renderAt('/', true);
+    await user.click(await screen.findByRole('button', { name: 'Открыть меню' }));
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+    const backdrop = document.querySelector('[data-shell-menu-backdrop]');
+    expect(backdrop).toBeTruthy();
+    await user.click(backdrop as HTMLElement);
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Открыть меню' })).toHaveFocus();
+  });
+
+  it('переход по ссылке раздела закрывает меню', async () => {
+    const user = userEvent.setup();
+    const view = await renderAt('/', true);
+    await user.click(await screen.findByRole('button', { name: 'Открыть меню' }));
+    const dialog = await screen.findByRole('dialog');
+
+    const programs = within(dialog).getByRole('link', { name: 'Программы' });
+    programs.addEventListener('click', (event) => event.preventDefault());
+    await user.click(programs);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Открыть меню' }));
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+    (globalThis as { __testPathname?: string }).__testPathname = '/projects';
+    view.rerender(
+      <ThemeProvider>
+        <SnapshotProvider>
+          <AppShell>
+            <div>x</div>
+          </AppShell>
+        </SnapshotProvider>
+      </ThemeProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+  });
+
+  it('на широкой ширине кнопки нет и aside в потоке', async () => {
+    const { container } = await renderAt('/schedule', false);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Открыть меню' })).not.toBeInTheDocument();
+    });
+    expect(screen.queryByRole('button', { name: 'Закрыть меню' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    const root = container.firstElementChild as HTMLElement;
+    const aside = root.querySelector(':scope > aside');
+    expect(aside).toBeTruthy();
+    expect(aside?.className).toMatch(/w-\[var\(--sidebar-width\)\]/);
+    expect(aside?.className).not.toMatch(/\bfixed\b/);
+    expect(aside?.getAttribute('aria-label')).toBe('Основная навигация');
   });
 });

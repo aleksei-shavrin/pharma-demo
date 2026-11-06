@@ -45,7 +45,7 @@ export function ProjectControlSummary({
       data-overview-stretch="full-height"
     >
       <h2 id="project-control-summary-heading" className="sr-only">
-        Сводка управления проектом
+        Сводка портфеля
       </h2>
 
       <div
@@ -62,7 +62,7 @@ export function ProjectControlSummary({
           />
           <div className="flex min-h-0 flex-1 flex-col pl-1.5">
             <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
-              Состояние
+              Состояние портфеля
             </p>
             <div className="mt-2">
               <StatusPill family="project" value={data.projectStatus} />
@@ -89,7 +89,7 @@ export function ProjectControlSummary({
           data-production-start
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
-            Запуск производства
+            Запуск портфеля
           </p>
           {achieved ? (
             <>

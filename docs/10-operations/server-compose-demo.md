@@ -3,9 +3,9 @@ id: DOC-OPS-003
 title: Server Compose Demo (single-origin)
 type: delivery
 status: draft
-version: 0.2.0
+version: 0.3.0
 created: '2026-11-05'
-updated: '2026-11-05'
+updated: '2026-11-06'
 owner: docs-engineering
 related:
   - DOC-ADR-0005
@@ -16,7 +16,7 @@ related:
 Production-like запуск Demo v1 на одном публичном origin (IP:port или домен).  
 **Это mock demo:** данные только в NestJS; PostgreSQL нет; **не** использовать для реальных производственных данных.
 
-Не путать с [local-dev-and-demo](./local-dev-and-demo.md) (ADR-0003, `*.localhost`, часто порт 80).
+Не путать с [local-dev-and-demo](./local-dev-and-demo.md) (ADR-0003, `localhost:PORT`, default 3080).
 
 На сервере достаточно **Git + Docker + Compose** (Node.js / npm на хосте **не** нужны). Скрипты `npm run server:*` — локальные алиасы разработчика.
 
@@ -27,9 +27,13 @@ Production-like запуск Demo v1 на одном публичном origin (
 | Префикс | Назначение |
 |---------|------------|
 | `/backend` | API (strip перед Nest) |
-| `/portal` | Docs (strip перед nginx; Docusaurus `baseUrl=/portal/`) |
+| `/docs` | Docs (strip перед nginx; Docusaurus `baseUrl=/docs/`, docs plugin `routeBasePath: '/'`) |
 
-Значения `NEXT_PUBLIC_API_BASE_URL`, `PUBLIC_API_PREFIX` и `DOCUSAURUS_BASE_URL` в `.env` должны оставаться `/backend` и `/portal/` соответственно. Смена на другие пути **не поддерживается** без правки Caddy и пересборки образов.
+Значения `NEXT_PUBLIC_API_BASE_URL`, `PUBLIC_API_PREFIX` и `DOCUSAURUS_BASE_URL` в `.env` должны оставаться `/backend` и `/docs/` соответственно. Смена на другие пути **не поддерживается** без правки Caddy и пересборки образов.
+
+## Legacy `/portal` → `/docs` (308)
+
+Те же правила, что в [local-dev-and-demo](./local-dev-and-demo.md#legacy-portal--docs-308-caddyfiledev).
 
 ## Маршруты
 
@@ -39,7 +43,8 @@ Production-like запуск Demo v1 на одном публичном origin (
 | `http://HOST:PORT/backend/health` | API health |
 | `http://HOST:PORT/backend/api` | Swagger UI |
 | `http://HOST:PORT/backend/api-json` | OpenAPI JSON |
-| `http://HOST:PORT/portal/` | Docs portal |
+| `http://HOST:PORT/docs/` | Docs portal |
+| `http://HOST:PORT/docs/openspec/` | OpenSpec living specs |
 
 Browser вызывает API только как `/backend/...` на **том же** origin.
 
@@ -75,7 +80,7 @@ cp .env.example .env
 #   HOST_PORT=8080
 #   WEB_ORIGIN=http://SERVER_IP:8080
 #   PUBLIC_ORIGIN=http://SERVER_IP:8080
-# Префиксы оставьте как в примере: /backend и /portal/
+# Префиксы оставьте как в примере: /backend и /docs/
 
 docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
 ```
@@ -110,7 +115,9 @@ docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
 ```bash
 curl -fsS "http://127.0.0.1:${HOST_PORT:-8080}/backend/health"
 curl -fsS "http://127.0.0.1:${HOST_PORT:-8080}/backend/api-json" | head -c 200
-curl -fsSI "http://127.0.0.1:${HOST_PORT:-8080}/portal/"
+curl -fsSI "http://127.0.0.1:${HOST_PORT:-8080}/docs/"
+# legacy redirect smoke (optional):
+curl -fsSI "http://127.0.0.1:${HOST_PORT:-8080}/portal/" | head -5
 ```
 
 UI и загрузку dashboard проверяйте **в браузере** (Network: только same-origin `/backend/...`, без `api.localhost`).
@@ -129,6 +136,6 @@ npm run typecheck          # оба подряд
 
 ## Ограничения
 
-- Это demo с mock API, не production GMP-система.
+- Это demo с mock API, not production GMP-система.
 - Push в GitLab ≠ deployment на сервер; для выкладки нужны адрес и доступ к хосту.
-- Не запускайте server compose на том же `HOST_PORT`, что занимает local `npm run dev` (обычно 80).
+- Не запускайте server compose на том же `HOST_PORT`, что занимает local `npm run dev` (обычно 3080).

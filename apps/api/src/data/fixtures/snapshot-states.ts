@@ -44,13 +44,14 @@ const emptyTrend = (): TrendFixture => ({
 });
 
 /**
- * Stable executive map (12) across A–S — construction → systems → COM → PS.
+ * Stable executive map (12) across A–S.
+ * FND and STR stay in the catalogue and the milestone register.
  * R2-U1-R4: not snapshot-phase-varying.
  */
 export const EXECUTIVE_MILESTONE_SET_STABLE: MilestoneId[] = [
   'MS-BLD-EXC',
-  'MS-BLD-FND',
-  'MS-BLD-STR',
+  'MS-CLN-PANEL',
+  'MS-UTL-PWR',
   'MS-BLD-ENCL',
   'MS-CLN-RDY',
   'MS-HVAC-IQ',
@@ -79,7 +80,57 @@ const BASE_RISKS_GREEN: Partial<Record<RiskId, Rag>> = {
   'RISK-BLD-02': 'Green',
 };
 
-export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
+/**
+ * Panel and power slips are authored on C and held through S.
+ * A–B stay at delta 0. Holding avoids a C→D forecast jump back to baseline
+ * while scenarioAsOfDate moves forward. Demo assumption: the source has no recovery date.
+ * Project/workstream rollups do not read milestone RAG, so HVAC and MS-PS arcs stay intact.
+ */
+const PANEL_POWER_SLIP_FROM: readonly PopulatedSnapshotId[] = [
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+];
+
+const PANEL_POWER_SLIP_DELTA: Partial<Record<MilestoneId, number>> = {
+  'MS-CLN-PANEL': 21,
+  'MS-UTL-PWR': 56,
+};
+
+function holdPanelPowerSlip(
+  states: Record<PopulatedSnapshotId, SnapshotState>,
+): Record<PopulatedSnapshotId, SnapshotState> {
+  const next = { ...states };
+  for (const id of PANEL_POWER_SLIP_FROM) {
+    const state = states[id];
+    next[id] = {
+      ...state,
+      msDelta: { ...state.msDelta, ...PANEL_POWER_SLIP_DELTA },
+      msRag: {
+        ...state.msRag,
+        'MS-CLN-PANEL': 'Red',
+        'MS-UTL-PWR': 'Red',
+      },
+    };
+  }
+  return next;
+}
+
+const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
   A: {
     asOf: '2027-02-15',
     psForecast: '2027-09-15',
@@ -239,7 +290,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-D-HVAC-PS',
         title: 'HVAC → старт производства',
-        causeImpact: 'Путь PS остаётся +21 / Red',
+        causeImpact: 'Прогноз запуска остаётся сдвинутым на 21 день',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -249,7 +300,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-D-CLN',
         title: 'Чистые зоны не готовы к HVAC',
-        causeImpact: 'Каскад S2: панели +14, RISK-CLN Red',
+        causeImpact:
+          'Отставание монтажа панелей. Риск: чистые зоны не готовы к HVAC. Сдвиг поставки панелей — отдельное демосостояние, не причина монтажа',
         links: [
           { type: 'equipment', id: 'EQ-CLN-01' },
           { type: 'issue', id: 'ISS-CLN-01' },
@@ -340,7 +392,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-E-HVAC-PS',
         title: 'HVAC → старт производства',
-        causeImpact: 'Единственный драйвер PS остаётся +21 / Red',
+        causeImpact:
+          'Единственный драйвер старта производства остаётся со сдвигом на 21 день',
         links: [
           { type: 'equipment', id: 'EQ-HVAC-01' },
           { type: 'risk', id: 'RISK-001' },
@@ -351,7 +404,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-E-WFI',
         title: 'WFI недоступна к прогонам',
-        causeImpact: 'Дистиллятор +18; RISK-UTL-01 Red',
+        causeImpact:
+          'Дистиллятор сдвинут на 18 дней; риск недоступности WFI сохраняется',
         links: [
           { type: 'equipment', id: 'EQ-UTL-02' },
           { type: 'issue', id: 'ISS-UTL-01' },
@@ -363,7 +417,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-E-CLN',
         title: 'Чистые зоны',
-        causeImpact: 'Панели +14; RISK-CLN Red',
+        causeImpact:
+          'Монтаж панелей сдвинут на 14 дней; риск неготовности чистых зон к HVAC сохраняется',
         links: [
           { type: 'risk', id: 'RISK-CLN-01' },
           { type: 'milestone', id: 'MS-CLN-RDY' },
@@ -384,7 +439,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-E-QC',
         title: 'QC / HPLC',
-        causeImpact: 'Прогноз поздней поставки HPLC (attention без Red Risk)',
+        causeImpact:
+          'Прогноз поздней поставки HPLC: внимание, без критичного риска',
         links: [
           { type: 'equipment', id: 'EQ-QC-01' },
           { type: 'issue', id: 'ISS-QC-01' },
@@ -562,7 +618,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
         id: 'TEX-G-HVAC-PS',
         title: 'Остаточный HVAC +14',
         causeImpact:
-          'Прогресс по сценарию; RISK-001 и MS-PS остаются красными',
+          'Прогресс по сценарию; риск срыва запуска и веха старта остаются в отклонении',
         links: [
           { type: 'equipment', id: 'EQ-HVAC-01' },
           { type: 'risk', id: 'RISK-001' },
@@ -574,7 +630,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
         id: 'TEX-G-WFI',
         title: 'Остаточное отклонение WFI',
         causeImpact:
-          'WFI +12; меры выполняются, красный риск не снят полностью',
+          'WFI сдвинута на 12 дней; меры выполняются, риск недоступности снят не полностью',
         links: [
           { type: 'risk', id: 'RISK-UTL-01' },
           { type: 'milestone', id: 'MS-UTL-WFI' },
@@ -686,7 +742,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-H-COM',
         title: 'Накопительный риск общего демо-гейта (IQ)',
-        causeImpact: 'RISK-COM-01 (красный без связанной проблемы)',
+        causeImpact:
+          'Риск общего демо-гейта IQ сохраняется без связанной проблемы',
         links: [
           { type: 'risk', id: 'RISK-COM-01' },
           { type: 'milestone', id: 'MS-COM-IQ' },
@@ -1059,7 +1116,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-L-AUT',
         title: 'BMS/EMS интеграция',
-        causeImpact: 'AUT Red; EMS/BMS Issues Open',
+        causeImpact:
+          'Автоматизация в отклонении; проблемы EMS и BMS открыты',
         links: [
           { type: 'issue', id: 'ISS-AUT-03' },
           { type: 'risk', id: 'RISK-AUT-03' },
@@ -1154,7 +1212,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-M-COM',
         title: 'Демо-гейты готовности IQ/OQ',
-        causeImpact: 'Давление на пусконаладку; несколько направлений Yellow/Red',
+        causeImpact:
+          'Давление на пусконаладку; несколько направлений в отклонении или требуют внимания',
         links: [
           { type: 'issue', id: 'ISS-COM-01' },
           { type: 'risk', id: 'RISK-COM-01' },
@@ -1253,7 +1312,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
         id: 'TEX-N-COM',
         title: 'Остаточное давление демо-гейтов',
         causeImpact:
-          'Проблемы в Mitigating; красные риски до авторского пост-состояния',
+          'По проблемам выполняются меры; критичные риски сохраняются до авторского пост-состояния',
         links: [
           { type: 'issue', id: 'ISS-COM-01' },
           { type: 'milestone', id: 'MS-COM-IQ' },
@@ -1334,7 +1393,8 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-O-PS',
         title: 'Восстановление прогноза HVAC и старта → +7',
-        causeImpact: 'Атомарное пост-состояние; RISK-001 всё ещё Red (BR-007)',
+        causeImpact:
+          'Атомарное пост-состояние; риск срыва запуска сохраняется (BR-007)',
         links: [
           { type: 'equipment', id: 'EQ-HVAC-01' },
           { type: 'risk', id: 'RISK-001' },
@@ -1423,8 +1483,9 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
     topExceptions: [
       {
         id: 'TEX-P-PS',
-        title: 'PQ / финальная готовность — общий статус Red',
-        causeImpact: 'RISK-001 Red ⇒ MS-PS не Green (BR-007)',
+        title: 'PQ / финальная готовность — общий статус в отклонении',
+        causeImpact:
+          'Риск срыва запуска сохраняется, поэтому веха старта не в норме (BR-007)',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -1511,7 +1572,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
         id: 'TEX-Q-BASELINE',
         title: 'Базовая дата старта пройдена без фактического запуска',
         causeImpact:
-          'Дата снимка 15.09.2027; прогноз 22.09.2027; критичный путь без Red',
+          'Дата снимка 15.09.2027; прогноз 22.09.2027; критичный путь без отклонения по риску запуска',
         links: [
           { type: 'milestone', id: 'MS-PS' },
           { type: 'issue', id: 'ISS-RDY-01' },
@@ -1595,7 +1656,7 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
         id: 'TEX-R-GO',
         title: 'Go / No-Go',
         causeImpact:
-          'DEC-GO-01; критичный путь не Red; общий статус Yellow до фактического старта',
+          'DEC-GO-01 записан; критичный путь без отклонения по риску запуска; до фактического старта статус требует внимания',
         links: [
           { type: 'issue', id: 'ISS-GO-01' },
           { type: 'risk', id: 'RISK-GO-01' },
@@ -1677,3 +1738,5 @@ export const SNAPSHOT_STATES: Record<PopulatedSnapshotId, SnapshotState> = {
   },
 
 };
+
+export const SNAPSHOT_STATES = holdPanelPowerSlip(SNAPSHOT_STATES_BASE);

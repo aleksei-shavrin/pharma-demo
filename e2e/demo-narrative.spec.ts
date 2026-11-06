@@ -46,7 +46,7 @@ test.describe('Demo v1 narrative readiness (I8)', () => {
     await expect(page.getByText('PrioritizeRecovery')).toHaveCount(0);
 
     // Schedule table primary path
-    await page.getByRole('link', { name: 'График' }).click();
+    await page.getByRole('link', { name: 'Календарный план' }).click();
     await expect(page.getByRole('button', { name: 'Таблица' })).toBeVisible({
       timeout: 15_000,
     });

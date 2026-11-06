@@ -3,9 +3,9 @@ id: DOC-UX-022
 title: 'Demo v1 R2 — UX delta (lifecycle, cost, people, notifications)'
 type: product
 status: draft
-version: 0.1.9
+version: 0.2.0
 created: '2026-11-02'
-updated: '2026-11-02'
+updated: '2026-11-06'
 owner: docs-engineering
 related:
   - DOC-UX-021
@@ -32,7 +32,7 @@ related:
 **Primary navigation (7):**
 
 1. Обзор
-2. График
+2. Календарный план
 3. Оборудование
 4. Проблемы и риски
 5. Вехи
@@ -58,7 +58,11 @@ Hierarchy (desktop):
 3. **Key Exceptions | Management Decisions** — direct siblings in one grid; mobile `grid-cols-1`; desktop `lg:grid-cols-2` (equal 50/50); equal outer height; both lists bounded (~3 items) with internal scroll; headers fixed. Tailwind class literals MUST live in scanned component source (not only `src/lib` constants).
 4. **Management Attention | Snapshot Changes** — same two-column grid contract. Attention = compact **2×2 signal matrix** (quiet → single empty message). Changes = semantic tiles. Narrow viewports stack. Director-facing narrative RU-only (tech terms HVAC/WFI/IQ/OQ/PQ/BMS/EMS/QC/EAC/VAC/BAC allowed)
 
-**Stable executive set (normative):** MS-BLD-EXC, MS-BLD-FND, MS-BLD-STR, MS-BLD-ENCL, MS-CLN-RDY, MS-HVAC-IQ, MS-UTL-WFI, MS-PRD-INST, MS-PKG-SAT, MS-COM-OQ, MS-COM-GO, MS-PS.
+**Stable executive set (normative, 2026-11-06):** MS-BLD-EXC, MS-CLN-PANEL, MS-UTL-PWR, MS-BLD-ENCL, MS-CLN-RDY, MS-HVAC-IQ, MS-UTL-WFI, MS-PRD-INST, MS-PKG-SAT, MS-COM-OQ, MS-COM-GO, MS-PS.
+
+> **certainty:** assumption
+>
+> Состав обзора заменён для показа панелей чистых помещений и энергоснабжения. `MS-BLD-FND` и `MS-BLD-STR` сняты со шкалы и остаются в реестре вех. `MS-PS`, сюжет HVAC (`MS-HVAC-IQ`) и прежний гейт готовности чистых помещений (`MS-CLN-RDY`) сохранены. Абзац приёмки R2-U1 выше описывает прежний набор из 12. Правило членства то же: один набор на все снимки A–S, меняются RAG и даты прогноза.
 
 **Not** a KPI wall or finance dashboard. Notifications do not duplicate Dashboard content. Selector phase groups remain navigation-only (not a second Dashboard timeline).
 

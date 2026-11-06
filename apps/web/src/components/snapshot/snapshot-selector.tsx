@@ -328,7 +328,7 @@ export function SnapshotSelector() {
         }}
         onKeyDown={onTriggerKeyDown}
         className={[
-          'inline-flex min-h-9 min-w-[9.5rem] flex-col items-start justify-center rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-left outline-none',
+          'inline-flex min-h-9 min-w-[9.5rem] max-w-[9.5rem] flex-col items-stretch justify-center overflow-hidden rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-left outline-none',
           'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]',
           loading ? 'opacity-80' : '',
         ].join(' ')}
@@ -340,7 +340,8 @@ export function SnapshotSelector() {
             <span className="font-normal text-[var(--text-muted)]"> …</span>
           ) : null}
         </span>
-        <span className="text-[10px] leading-tight text-[var(--text-muted)]">
+        {/* Clip the phase line only; aria-label still carries the letter and date. */}
+        <span className="block w-full max-w-full truncate text-[10px] leading-tight text-[var(--text-muted)]">
           {settled ? committedAsOfRu : snapshotAsOfRu(displayId)}
           {phaseHint ? ` · ${phaseHint}` : ''}
         </span>

@@ -33,27 +33,30 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
       data-dashboard-block="decisions"
       className={DASHBOARD_PAIR_SURFACE_CLASS}
     >
-      <h2
-        id="decision-heading"
-        className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
-      >
-        Управленческие решения
-      </h2>
-
       {needed ? (
         <div
-          className="mt-2 shrink-0 rounded-[var(--radius-sm)] border-2 border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-3.5 py-3"
+          className="shrink-0 rounded-[var(--radius-sm)] border-2 border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-3.5 py-3"
           data-decision-callout="needed"
         >
-          <p className="text-sm font-bold uppercase tracking-wide text-[var(--status-danger-fg)]">
-            Требуется управленческое решение
-          </p>
+          <h2
+            id="decision-heading"
+            className="text-sm font-bold uppercase tracking-wide text-[var(--status-danger-fg)]"
+          >
+            Требуется решение
+          </h2>
           <p className="mt-1.5 text-sm leading-snug text-[var(--text-secondary)]">
             Есть отклонение по поставке и запуску производства. Решение ещё не
             зарегистрировано. Запись решения не устранит прогноз автоматически.
           </p>
         </div>
-      ) : null}
+      ) : (
+        <h2
+          id="decision-heading"
+          className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
+        >
+          Управленческие решения
+        </h2>
+      )}
 
       {decisions.length > 0 ? (
         <>
@@ -72,7 +75,13 @@ export function DecisionAction({ data }: { data: DashboardOverview }) {
                 className="py-2.5 first:pt-1 last:pb-0 text-sm"
                 data-decision-id={decision.id}
               >
-                <p className="font-semibold text-[var(--text)]">
+                <p
+                  className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]"
+                  data-decision-mark="recorded"
+                >
+                  Решение записано
+                </p>
+                <p className="mt-0.5 font-semibold text-[var(--text)]">
                   {presentDecisionType(decision.type)}
                 </p>
                 <p className="mt-0.5 text-[var(--text-secondary)]">

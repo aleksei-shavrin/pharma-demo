@@ -152,6 +152,15 @@ export class DashboardMilestoneDto {
 
   @ApiProperty()
   forecastDate!: string;
+
+  @ApiProperty({ nullable: true })
+  programId!: string | null;
+
+  @ApiProperty({ nullable: true })
+  projectId!: string | null;
+
+  @ApiProperty()
+  portfolioVisible!: boolean;
 }
 
 export class DashboardDecisionDto {
@@ -248,6 +257,17 @@ export class WorkstreamRollupDto {
   status!: 'Green' | 'Yellow' | 'Red';
 }
 
+export class ProgramSummaryDto {
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty()
+  name!: string;
+
+  @ApiProperty({ enum: ['Green', 'Yellow', 'Red'] })
+  status!: 'Green' | 'Yellow' | 'Red';
+}
+
 export class TopExceptionLinkDto {
   @ApiProperty({ enum: ['equipment', 'issue', 'risk', 'milestone'] })
   type!: 'equipment' | 'issue' | 'risk' | 'milestone';
@@ -328,6 +348,9 @@ export class DashboardOverviewDto {
 
   @ApiProperty({ type: [WorkstreamRollupDto] })
   workstreamRollups!: WorkstreamRollupDto[];
+
+  @ApiProperty({ type: [ProgramSummaryDto] })
+  programs!: ProgramSummaryDto[];
 
   @ApiProperty({ type: [TopExceptionDto] })
   topExceptions!: TopExceptionDto[];

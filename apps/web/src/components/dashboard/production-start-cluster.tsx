@@ -379,7 +379,7 @@ export function ProductionStartCluster({ cluster, rag, subtitle }: Props) {
                     href="/schedule"
                     className="text-xs font-medium text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
                   >
-                    Подробный график →
+                    Календарный план →
                   </Link>
                 </li>
               </ul>

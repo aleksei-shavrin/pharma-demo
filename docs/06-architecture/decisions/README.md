@@ -21,7 +21,8 @@ sidebar_label: ADR
 | [0002](./0002-target-technology-stack-direction.md) | Target technology stack direction | accepted (направление) |
 | [0003](./0003-local-dev-urls-and-proxy.md) | Local dev URLs and proxy | accepted (направление) |
 | [0004](./0004-d12-dhtmlx-gantt-community.md) | D12 Schedule timeline — dhtmlx-gantt Community | accepted (decision; doc lifecycle `draft`) |
-| [0005](./0005-server-single-origin-compose.md) | Server single-origin Compose (`/backend`, `/portal`) | accepted (направление; doc lifecycle `draft`) |
+| [0005](./0005-server-single-origin-compose.md) | Server single-origin Compose (`/backend`, `/docs`) | accepted (направление; doc lifecycle `draft`) |
+| [0006](./0006-portfolio-program-project-read-model.md) | Портфель, программы и проекты как read-model | accepted (направление; doc lifecycle `draft`; review 2026-11-06) |
 
 > **certainty:** assumption
 >

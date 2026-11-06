@@ -52,6 +52,10 @@ class FakeDataSource extends DemoDataSource {
   leadWorkstreamIdsForPerson(): never {
     throw new Error('leadWorkstreamIdsForPerson not used by ProjectsService');
   }
+  getScheduleWorks(): never {
+    throw new Error('getScheduleWorks not used by ProjectsService');
+  }
+
   listNotifications(): never {
     throw new Error('listNotifications not used by ProjectsService');
   }

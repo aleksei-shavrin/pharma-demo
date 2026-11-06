@@ -25,7 +25,10 @@ export function selectionKeyId(key: ScheduleSelectionKey): string {
 export function parseSelectionKeyId(
   id: string,
 ): ScheduleSelectionKey | null {
-  const m = /^(equipment_delivery|milestone):(.+)$/.exec(id);
+  const m =
+    /^(equipment_delivery|milestone|work|project_group|stage_group):(.+)$/.exec(
+      id,
+    );
   if (!m) return null;
   return { kind: m[1] as ScheduleSelectionKey['kind'], entityId: m[2] };
 }

@@ -4,16 +4,30 @@
 :80 {
 	encode gzip
 
-	redir /portal /portal/ 308
+	redir /docs /docs/ 308
 	redir /backend /backend/ 308
+
+	# Legacy /portal → /docs (308).
+	redir /portal /docs/ 308
+	redir /portal/ /docs/ 308
+	redir /portal/search /docs/search 308
+
+	@portalDocsLegacy path_regexp portalDocsLegacy ^/portal/docs/(?P<suffix>.+)$
+	redir @portalDocsLegacy /docs/{re.portalDocsLegacy.suffix} 308
+
+	@portalOpenspecLegacy path_regexp portalOpenspecLegacy ^/portal/openspec(?P<suffix>/.*)$
+	redir @portalOpenspecLegacy /docs/openspec{re.portalOpenspecLegacy.suffix} 308
+
+	@portalAssetsLegacy path_regexp portalAssetsLegacy ^/portal/assets(?P<suffix>/.*)$
+	redir @portalAssetsLegacy /docs/assets{re.portalAssetsLegacy.suffix} 308
 
 	# Nest routes stay /health, /v1/..., /api, /api-json after strip.
 	handle_path /backend/* {
 		reverse_proxy api:3000
 	}
 
-	# Docusaurus built with baseUrl=/portal/; strip so nginx serves from /
-	handle_path /portal/* {
+	# Docusaurus built with baseUrl=/docs/; strip so nginx serves from /
+	handle_path /docs/* {
 		reverse_proxy docs:80
 	}
 

@@ -371,6 +371,12 @@ export const MILESTONE_CATALOG = {
     workstream: 'WS-UTL' as WorkstreamId,
     baselineDate: '2027-07-01',
   },
+  /** Исходник 24.1.3. Baseline общий для A–S; отставание — overlay с C. */
+  'MS-UTL-PWR': {
+    name: 'Энергоснабжение обеспечено',
+    workstream: 'WS-UTL' as WorkstreamId,
+    baselineDate: '2027-02-18',
+  },
   'MS-PRD-INST': {
     name: 'Технологическое оборудование смонтировано',
     workstream: 'WS-PRD' as WorkstreamId,
@@ -431,10 +437,14 @@ export const MILESTONE_CATALOG = {
     workstream: 'WS-BLD' as WorkstreamId,
     baselineDate: '2027-03-05',
   },
+  /**
+   * Приблизительное соответствие исходнику 8.2.3.
+   * Baseline синтетический и стабильный: на снимке C плановая дата уже прошла.
+   */
   'MS-CLN-PANEL': {
     name: 'Монтаж панелей чистых зон завершён',
     workstream: 'WS-CLN' as WorkstreamId,
-    baselineDate: '2027-04-15',
+    baselineDate: '2027-02-16',
   },
   'MS-CLN-BAL': {
     name: 'Баланс чистых зон выполнен',

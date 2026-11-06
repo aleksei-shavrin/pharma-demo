@@ -9,7 +9,7 @@ export default function DashboardPage() {
   if (!dashboard && status === 'loading') {
     return (
       <div className="flex flex-1 items-center justify-center p-8 text-sm text-[var(--text-muted)]">
-        Загрузка обзора…
+        Загрузка дашборда…
       </div>
     );
   }
@@ -17,7 +17,7 @@ export default function DashboardPage() {
   if (!dashboard && status === 'error') {
     return (
       <div className="flex flex-1 flex-col items-start gap-3 p-8" role="alert">
-        <h1 className="text-lg font-semibold text-[var(--text)]">Обзор</h1>
+        <h1 className="text-lg font-semibold text-[var(--text)]">Дашборд</h1>
         <p className="text-sm text-[var(--status-danger-fg)]">
           Не удалось загрузить снимок {active}. {error}
         </p>
@@ -37,7 +37,7 @@ export default function DashboardPage() {
   if (!dashboard) {
     return (
       <div className="flex flex-1 items-center justify-center p-8 text-sm text-[var(--text-muted)]">
-        Ожидание данных обзора…
+        Ожидание данных дашборда…
       </div>
     );
   }

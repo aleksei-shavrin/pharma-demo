@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ScheduleItem } from '@/lib/api-client';
+import type { ScheduleItem, ScheduleWorkItem } from '@/lib/api-client';
 import {
   SCHEDULE_ROW_HEIGHT_PX,
   buildScheduleHorizon,
@@ -7,6 +7,7 @@ import {
   markerGeometry,
   monthLabelSpans,
   sortScheduleItems,
+  workBarGeometry,
 } from './schedule-geometry';
 
 const eqC: ScheduleItem = {
@@ -112,5 +113,76 @@ describe('schedule geometry / row contract', () => {
     expect(last.leftPct + last.widthPct).toBeCloseTo(100, 5);
     // First span starts at first tick (may be >0); cell layout keeps label inside.
     expect(spans.every((s) => s.widthPct >= 0)).toBe(true);
+  });
+});
+
+const workItem: ScheduleWorkItem = {
+  kind: 'work',
+  id: 'WK-01',
+  name: 'Монтаж AHU',
+  workstream: null,
+  startDate: '2027-05-20',
+  endDate: '2027-05-25',
+  status: 'OnSchedule',
+};
+
+describe('schedule geometry: работы', () => {
+  it('работа сортируется по startDate среди прогнозов контрольных точек', () => {
+    const sorted = sortScheduleItems([msC, workItem, eqC]);
+    expect(sorted.map((i) => i.id)).toEqual(['WK-01', 'EQ-HVAC-01', 'MS-PS']);
+  });
+
+  it('при равной дате: оборудование, веха, работа', () => {
+    const msSame: ScheduleItem = {
+      ...msC,
+      forecastDate: '2027-05-20',
+      baselineDate: '2027-05-20',
+    };
+    const eqSame: ScheduleItem = {
+      ...eqC,
+      forecastDate: '2027-05-20',
+      baselineDate: '2027-05-20',
+    };
+    const sorted = sortScheduleItems([workItem, msSame, eqSame]);
+    expect(sorted.map((i) => i.kind)).toEqual([
+      'equipment_delivery',
+      'milestone',
+      'work',
+    ]);
+  });
+
+  it('при равных дате и виде порядок по id', () => {
+    const other: ScheduleWorkItem = { ...workItem, id: 'WK-00' };
+    expect(sortScheduleItems([workItem, other]).map((i) => i.id)).toEqual([
+      'WK-00',
+      'WK-01',
+    ]);
+  });
+
+  it('внимание: только Delayed у работы', () => {
+    expect(isScheduleAttention({ ...workItem, status: 'Delayed' })).toBe(true);
+    expect(isScheduleAttention(workItem)).toBe(false);
+    expect(isScheduleAttention({ ...workItem, status: 'Waiting' })).toBe(false);
+    expect(isScheduleAttention({ ...workItem, status: 'Completed' })).toBe(
+      false,
+    );
+  });
+
+  it('горизонт покрывает окончание работы', () => {
+    const late: ScheduleWorkItem = { ...workItem, endDate: '2027-12-20' };
+    const h = buildScheduleHorizon([eqA, late]);
+    expect(h.endIso > '2027-12-20').toBe(true);
+  });
+
+  it('полоса работы: endDate включительно, ширина > 0 и в пределах 0–100', () => {
+    const h = buildScheduleHorizon([eqA, workItem]);
+    const bar = workBarGeometry(workItem, h);
+    expect(bar.leftPct).toBeGreaterThan(0);
+    expect(bar.widthPct).toBeGreaterThan(0);
+    expect(bar.leftPct + bar.widthPct).toBeLessThanOrEqual(100);
+
+    const oneDay = workBarGeometry({ ...workItem, endDate: '2027-05-20' }, h);
+    expect(oneDay.widthPct).toBeGreaterThan(0);
+    expect(oneDay.widthPct).toBeLessThan(bar.widthPct);
   });
 });

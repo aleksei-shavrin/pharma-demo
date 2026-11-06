@@ -4,6 +4,7 @@ import {
   SNAPSHOT_IDS,
   isSelectableSnapshotId,
   isSnapshotId,
+  previousScenarioSnapshot,
 } from './snapshot-id';
 
 describe('web SnapshotId contract A–S (R2-C1)', () => {
@@ -18,5 +19,13 @@ describe('web SnapshotId contract A–S (R2-C1)', () => {
     expect(isSelectableSnapshotId('H')).toBe(true);
     expect(isSelectableSnapshotId('S')).toBe(true);
     expect(isSelectableSnapshotId('T')).toBe(false);
+  });
+
+  it('предыдущая буква сценария: у A нет, у C это B, у F это E', () => {
+    expect(previousScenarioSnapshot('A')).toBeNull();
+    expect(previousScenarioSnapshot('B')).toBe('A');
+    expect(previousScenarioSnapshot('C')).toBe('B');
+    expect(previousScenarioSnapshot('F')).toBe('E');
+    expect(previousScenarioSnapshot('S')).toBe('R');
   });
 });

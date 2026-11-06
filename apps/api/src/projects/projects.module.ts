@@ -15,6 +15,8 @@ import { PeopleController } from '../people/people.controller';
 import { PeopleService } from '../people/people.service';
 import { WorkstreamsController } from '../workstreams/workstreams.controller';
 import { WorkstreamsService } from '../workstreams/workstreams.service';
+import { PortfolioController } from '../portfolio/portfolio.controller';
+import { PortfolioService } from '../portfolio/portfolio.service';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 
@@ -29,6 +31,7 @@ import { ProjectsService } from './projects.service';
     PeopleController,
     NotificationsController,
     ProjectsController,
+    PortfolioController,
   ],
   providers: [
     DashboardService,
@@ -40,6 +43,7 @@ import { ProjectsService } from './projects.service';
     PeopleService,
     NotificationsService,
     ProjectsService,
+    PortfolioService,
   ],
 })
 export class ProjectsModule {}

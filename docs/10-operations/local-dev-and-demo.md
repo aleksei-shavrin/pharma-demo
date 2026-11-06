@@ -3,9 +3,9 @@ id: DOC-OPS-002
 title: Локальная разработка и production-like Demo
 type: delivery
 status: draft
-version: 0.1.0
+version: 0.2.0
 created: '2026-11-01'
-updated: '2026-11-03'
+updated: '2026-11-06'
 owner: docs-engineering
 related:
   - DOC-OPS-README-001
@@ -27,7 +27,17 @@ related:
 |------|--------|
 | [http://localhost:3080/](http://localhost:3080/) | Web |
 | [http://localhost:3080/backend/...](http://localhost:3080/backend/health) | API |
-| [http://localhost:3080/portal/](http://localhost:3080/portal/) | Docs |
+| [http://localhost:3080/docs/](http://localhost:3080/docs/) | Docs |
+
+**Legacy `/portal` → `/docs` (308, `Caddyfile.dev`):**
+
+| Запрос | Редirect |
+|--------|----------|
+| `/portal`, `/portal/` | `/docs/` |
+| `/portal/docs/*` | `/docs/{slug}` (prefix `/portal/docs` снимается) |
+| `/portal/openspec/*` | `/docs/openspec/{rest}` |
+| `/portal/assets/*` | `/docs/assets/{rest}` |
+| `/portal/search` | `/docs/search` |
 
 **Production-like** по-прежнему использует `*.localhost` на порту **80** — не запускайте вместе с другим стеком на том же порту.
 

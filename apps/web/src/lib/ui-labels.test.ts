@@ -10,12 +10,14 @@ import {
   projectStatusLabel,
   projectStatusMeaning,
   scheduleKindLabel,
+  workStatusLabel,
 } from './ui-labels';
 
 describe('Demo v1 presentation mapping', () => {
   it('maps schedule kinds to director-facing type labels', () => {
     expect(scheduleKindLabel('equipment_delivery')).toBe('Оборудование');
     expect(scheduleKindLabel('milestone')).toBe('Веха');
+    expect(scheduleKindLabel('work')).toBe('Работа');
   });
 
   it('localizes known milestone / issue / decision / WS / owner', () => {
@@ -55,5 +57,14 @@ describe('Demo v1 presentation mapping', () => {
     expect(projectStatusMeaning('Yellow', 0)).toMatch(/без сдвига/);
     expect(projectStatusMeaning('Red', 21)).toMatch(/Критический прогноз/);
     expect(projectStatusMeaning('Red', 14)).toMatch(/Остаточный критический/);
+  });
+});
+
+describe('workStatusLabel', () => {
+  it('русские подписи статусов работ', () => {
+    expect(workStatusLabel('Waiting')).toBe('Ожидание');
+    expect(workStatusLabel('OnSchedule')).toBe('По графику');
+    expect(workStatusLabel('Delayed')).toBe('Отстаёт');
+    expect(workStatusLabel('Completed')).toBe('Выполнено');
   });
 });

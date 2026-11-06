@@ -118,7 +118,7 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
         id="top-exceptions-heading"
         className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
       >
-        Ключевые исключения
+        Требует внимания
       </h2>
 
       {items.length === 0 ? (

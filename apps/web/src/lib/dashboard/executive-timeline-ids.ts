@@ -5,8 +5,8 @@
  */
 export const EXECUTIVE_TIMELINE_MILESTONE_IDS = [
   'MS-BLD-EXC',
-  'MS-BLD-FND',
-  'MS-BLD-STR',
+  'MS-CLN-PANEL',
+  'MS-UTL-PWR',
   'MS-BLD-ENCL',
   'MS-CLN-RDY',
   'MS-HVAC-IQ',
@@ -47,6 +47,7 @@ export const EXECUTIVE_TIMELINE_SHORT_LABEL: Readonly<Record<string, string>> = 
   'MS-UTL-PW': 'PW',
   'MS-UTL-PW-RDY': 'PW контур',
   'MS-UTL-WFI': 'Вода WFI',
+  'MS-UTL-PWR': 'Энергоснабжение',
   'MS-UTL-BLK': 'Чёрные утил.',
   'MS-UTL-RDY': 'Инж. готовность',
   'MS-UTL-GAS': 'Процесс. газы',

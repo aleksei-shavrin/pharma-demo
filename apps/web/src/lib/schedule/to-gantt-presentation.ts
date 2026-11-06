@@ -1,4 +1,15 @@
-import type { ScheduleItem } from '@/lib/api-client';
+import type {
+  ScheduleItem,
+  ScheduleLink,
+  ScheduleLinkType,
+  ScheduleWorkItem,
+} from '@/lib/api-client';
+import {
+  displayedWorkBounds,
+  factCaption,
+  type ScheduleComparisonMode,
+} from './schedule-comparison';
+import { scheduleCoveredDates } from './schedule-item-dates';
 import {
   parseSelectionKeyId,
   selectionKeyId,
@@ -7,28 +18,105 @@ import {
 } from './selection-key';
 
 /**
- * One DHTMLX row per logical Schedule control point.
- * Forecast is the row's milestone date; baseline (when different) is a
- * same-row overlay marker — never a second row / never duration from delta.
+ * Visible-row shape for the main gantt. Duplicated so this module does not
+ * import the table's row owner (import cycle). Groups carry summary bounds;
+ * works and control points carry the schedule `item`.
+ */
+export type GanttTreeRowKind =
+  | ScheduleItem['kind']
+  | 'project_group'
+  | 'stage_group';
+
+export type GanttTreeRow = {
+  key: string;
+  kind: GanttTreeRowKind;
+  id: string;
+  name: string;
+  progressPct: number | null;
+  summaryStart: string | null;
+  summaryEnd: string | null;
+  item: ScheduleItem | null;
+};
+
+export type GanttPresentationSelectionKey = {
+  kind: GanttTreeRowKind;
+  entityId: string;
+};
+
+/**
+ * One DHTMLX row per logical Schedule item.
+ * Control point: forecast is the row's milestone date (duration 0); baseline
+ * (when different) is a same-row overlay marker — never a second row.
+ * Work: inclusive-calendar-day bar (`type: 'task'`, duration >= 1), no baseline.
+ * Group (only when `treeRows` is passed): `type: 'project'` summary bar.
  */
 export type GanttPresentationTask = {
   id: string;
   text: string;
-  /** Forecast (primary) point — zero-duration milestone. */
-  start_date: string;
-  duration: 0;
-  type: 'milestone';
+  /** Forecast point for milestones; work or summary start. Omitted when the row has no bar. */
+  start_date?: string;
+  /**
+   * 0 for milestones; inclusive calendar days (>= 1) for work and summary bars.
+   * Omitted when the row has no bar. Works are never duration 0.
+   */
+  duration?: number;
+  type: 'milestone' | 'task' | 'project';
   css: string;
-  selectionKey: ScheduleSelectionKey;
-  forecastDate: string;
-  baselineDate: string;
+  selectionKey: GanttPresentationSelectionKey;
+  /** Control points only. */
+  forecastDate?: string;
+  /** Control points only. */
+  baselineDate?: string;
   /** When true, adapter paints a ghost marker at baselineDate on this row. */
   showBaselineGhost: boolean;
+  /** Work baseline interval. Both absent means the forecast bar stands alone. */
+  baselineStart?: string | null;
+  baselineEnd?: string | null;
+  /** Fact-mode caption. Absent in the default forecast comparison. */
+  factCaption?: string;
+  /**
+   * Known work progress as a fraction (0..1). `0` is a known zero.
+   * Omitted when progress is unknown — not stored as 0.
+   */
+  progress?: number;
+  /** Row stays in the chart with no task bar (group without both summary bounds). */
+  unscheduled?: boolean;
+  /**
+   * Community project tasks drop their own dates unless this is strictly false
+   * (scheduled summary). This is not the auto-scheduling engine and not baselines.
+   */
+  auto_scheduling?: false;
+};
+
+/**
+ * DHTMLX Community stores link types as strings: "0" FS, "1" SS, "2" FF, "3" SF
+ * (`gantt.config.links`). Single source of truth for presentation + adapter config.
+ */
+export const GANTT_LINK_TYPE_CODE = {
+  FS: '0',
+  SS: '1',
+  FF: '2',
+  SF: '3',
+} as const satisfies Record<ScheduleLinkType, string>;
+
+export const CROSS_PROJECT_PREDECESSOR_CAPTION =
+  'Межпроектное предшествование, тип не указан';
+
+export type GanttPresentationLink = {
+  id: string;
+  source: string;
+  target: string;
+  /**
+   * DHTMLX geometry code for scheduling links.
+   * Absent on a cross-project predecessor: the adapter fills that code itself.
+   */
+  type?: (typeof GANTT_LINK_TYPE_CODE)[ScheduleLinkType];
+  accessibleName?: string;
 };
 
 export type GanttPresentationData = {
   data: GanttPresentationTask[];
-  links: [];
+  links: GanttPresentationLink[];
 };
 
 export type TimelineVisibleRange = {
@@ -44,13 +132,34 @@ function itemLabel(item: ScheduleItem): string {
   return item.id;
 }
 
+const WORK_STATUS_CSS: Record<ScheduleWorkItem['status'], string> = {
+  Waiting: 'ppc-work ppc-work-waiting',
+  OnSchedule: 'ppc-work ppc-work-onschedule',
+  Delayed: 'ppc-work ppc-work-delayed',
+  Completed: 'ppc-work ppc-work-completed',
+};
+
 function statusCss(item: ScheduleItem): string {
-  if (item.kind === 'equipment_delivery') {
-    return item.status === 'Delayed'
-      ? 'ppc-eq ppc-eq-delayed'
-      : 'ppc-eq ppc-eq-ontrack';
+  switch (item.kind) {
+    case 'work':
+      return WORK_STATUS_CSS[item.status];
+    case 'project_group':
+    case 'stage_group':
+      return 'ppc-summary';
+    case 'equipment_delivery':
+      return item.status === 'Delayed'
+        ? 'ppc-eq ppc-eq-delayed'
+        : 'ppc-eq ppc-eq-ontrack';
+    case 'milestone':
+      // Outline vs filled diamond — a one-day work bar must not share this geometry.
+      return item.rag === 'Red'
+        ? 'ppc-ms ppc-ms-red ppc-ms-outline'
+        : 'ppc-ms ppc-ms-green ppc-ms-filled';
+    default: {
+      const unreachable: never = item;
+      return unreachable;
+    }
   }
-  return item.rag === 'Red' ? 'ppc-ms ppc-ms-red' : 'ppc-ms ppc-ms-green';
 }
 
 function parseIso(iso: string): Date {
@@ -71,16 +180,31 @@ function addDays(iso: string, days: number): string {
   return toIso(d);
 }
 
+const MS_PER_DAY = 86_400_000;
+
+/** Inclusive calendar-day span (same-day → 1); DST-safe via UTC midnight. */
+export function inclusiveDurationDays(startIso: string, endIso: string): number {
+  const toUtc = (iso: string) => {
+    const [y, m, d] = iso.split('-').map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  const diff = Math.round((toUtc(endIso) - toUtc(startIso)) / MS_PER_DAY);
+  return Math.max(diff, 0) + 1;
+}
+
 /**
  * Deterministic Demo v1 fit-to-data window: all control-point dates + padding.
  * Padding keeps May↔Oct story visible without horizontal scroll at desktop width.
  */
 export function computeTimelineVisibleRange(
   items: ScheduleItem[],
+  extraDates?: readonly (string | null | undefined)[],
+  comparison: ScheduleComparisonMode = 'forecast',
 ): TimelineVisibleRange {
-  const coveredDates = items
-    .flatMap((i) => [i.baselineDate, i.forecastDate])
-    .sort();
+  const coveredDates = [
+    ...items.flatMap((item) => scheduleCoveredDates(item, comparison)),
+    ...(extraDates ?? []).filter((date): date is string => Boolean(date)),
+  ].sort();
   if (coveredDates.length === 0) {
     return {
       start: '2027-05-01',
@@ -98,31 +222,262 @@ export function computeTimelineVisibleRange(
   };
 }
 
+function toPresentationTask(
+  item: ScheduleItem,
+  comparison: ScheduleComparisonMode,
+): GanttPresentationTask {
+  const key = selectionKeyOf(item);
+  const css = statusCss(item);
+  switch (item.kind) {
+    case 'work': {
+      const bounds = displayedWorkBounds(item, comparison);
+      return {
+        id: selectionKeyId(key),
+        text: itemLabel(item),
+        start_date: bounds.start,
+        duration: inclusiveDurationDays(bounds.start, bounds.end),
+        type: 'task',
+        css,
+        selectionKey: key,
+        showBaselineGhost: false,
+        baselineStart: item.baselineStart ?? null,
+        baselineEnd: item.baselineEnd ?? null,
+        ...(comparison === 'actual'
+          ? { factCaption: factCaption(item.actualStart, item.actualEnd) }
+          : {}),
+      };
+    }
+    case 'project_group':
+    case 'stage_group':
+      // Summary bounds live on treeRows. A bare group in the flat list has no bar.
+      return {
+        id: selectionKeyId(key),
+        text: item.name,
+        type: 'project',
+        css,
+        selectionKey: key,
+        showBaselineGhost: false,
+        auto_scheduling: false,
+        unscheduled: true,
+      };
+    case 'milestone':
+    case 'equipment_delivery':
+      return {
+        id: selectionKeyId(key),
+        text: itemLabel(item),
+        start_date: item.forecastDate,
+        duration: 0,
+        type: 'milestone',
+        css: `${css} ppc-role-forecast`,
+        selectionKey: key,
+        forecastDate: item.forecastDate,
+        baselineDate: item.baselineDate,
+        showBaselineGhost: item.baselineDate !== item.forecastDate,
+      };
+    default: {
+      const unreachable: never = item;
+      return unreachable;
+    }
+  }
+}
+
+function toPresentationLinks(
+  tasks: readonly GanttPresentationTask[],
+  links: ScheduleLink[],
+  items: readonly ScheduleItem[],
+  comparison: ScheduleComparisonMode,
+): GanttPresentationLink[] {
+  const workIds = new Set(
+    tasks.filter((task) => task.type === 'task').map((task) => task.id),
+  );
+  const milestoneIds = new Set(
+    tasks.filter((task) => task.type === 'milestone').map((task) => task.id),
+  );
+  const worksById = new Map(
+    items.filter((item) => item.kind === 'work').map((item) => [item.id, item]),
+  );
+  const mapped: GanttPresentationLink[] = [];
+  for (const link of links) {
+    if (link.kind === 'cross_project_predecessor') {
+      if (
+        !milestoneIds.has(link.sourceRef) ||
+        !workIds.has(link.targetRef)
+      ) {
+        continue;
+      }
+      const work = worksById.get(link.targetRef.slice('work:'.length));
+      // Closed fact replaces the forecast bar. The line is not redrawn onto that fact.
+      if (
+        comparison === 'actual' &&
+        work?.actualStart &&
+        work.actualEnd
+      ) {
+        continue;
+      }
+      mapped.push({
+        id: link.id,
+        source: link.sourceRef,
+        target: link.targetRef,
+        accessibleName: CROSS_PROJECT_PREDECESSOR_CAPTION,
+      });
+      continue;
+    }
+    if (
+      link.type == null ||
+      !workIds.has(link.sourceRef) ||
+      !workIds.has(link.targetRef)
+    ) {
+      continue;
+    }
+    mapped.push({
+      id: link.id,
+      source: link.sourceRef,
+      target: link.targetRef,
+      type: GANTT_LINK_TYPE_CODE[link.type],
+    });
+  }
+  return mapped;
+}
+
+function rowTaskId(row: GanttTreeRow): string {
+  return row.key.trim().length > 0 ? row.key : `${row.kind}:${row.id}`;
+}
+
+function rowLabel(row: GanttTreeRow): string {
+  return row.name.trim().length > 0 ? row.name : row.id;
+}
+
 /**
- * Point-based presentation: one visible row per control point.
- * Δ0 → forecast only; Δ≠0 → forecast row + baseline ghost metadata (overlay).
+ * `0` stays on the task. `null` omits `progress` so the chart does not treat
+ * "no data" as a known zero.
+ */
+function workProgressPresentation(progressPct: number | null): {
+  cssClass: string;
+  progress?: number;
+} {
+  if (progressPct === null) {
+    return { cssClass: 'ppc-progress-unknown' };
+  }
+  if (progressPct === 0) {
+    return { cssClass: 'ppc-progress-zero', progress: 0 };
+  }
+  return { cssClass: 'ppc-progress-known', progress: progressPct / 100 };
+}
+
+function groupPresentationTask(row: GanttTreeRow): GanttPresentationTask {
+  const task: GanttPresentationTask = {
+    id: rowTaskId(row),
+    text: rowLabel(row),
+    type: 'project',
+    css: 'ppc-summary',
+    selectionKey: { kind: row.kind, entityId: row.id },
+    showBaselineGhost: false,
+    auto_scheduling: false,
+  };
+  if (!row.summaryStart || !row.summaryEnd) {
+    return { ...task, unscheduled: true };
+  }
+  return {
+    ...task,
+    start_date: row.summaryStart,
+    duration: inclusiveDurationDays(row.summaryStart, row.summaryEnd),
+  };
+}
+
+function workTreeTask(
+  row: GanttTreeRow,
+  comparison: ScheduleComparisonMode,
+): GanttPresentationTask {
+  const progress = workProgressPresentation(row.progressPct);
+  const progressFields =
+    progress.progress === undefined ? {} : { progress: progress.progress };
+  if (!row.item || row.item.kind !== 'work') {
+    return {
+      id: rowTaskId(row),
+      text: rowLabel(row),
+      type: 'task',
+      css: `ppc-work ${progress.cssClass}`,
+      selectionKey: { kind: 'work', entityId: row.id },
+      showBaselineGhost: false,
+      unscheduled: true,
+      ...progressFields,
+    };
+  }
+  const task = toPresentationTask(row.item, comparison);
+  return {
+    ...task,
+    id: rowTaskId(row),
+    text: rowLabel(row),
+    css: `${task.css} ${progress.cssClass}`,
+    ...progressFields,
+  };
+}
+
+function controlPointTreeTask(row: GanttTreeRow): GanttPresentationTask {
+  if (
+    row.item &&
+    (row.item.kind === 'milestone' || row.item.kind === 'equipment_delivery') &&
+    row.item.kind === row.kind
+  ) {
+    const task = toPresentationTask(row.item, 'forecast');
+    return {
+      ...task,
+      id: rowTaskId(row),
+      text: rowLabel(row),
+    };
+  }
+  const equipment = row.kind === 'equipment_delivery';
+  return {
+    id: rowTaskId(row),
+    text: rowLabel(row),
+    type: 'milestone',
+    css: equipment
+      ? 'ppc-eq ppc-eq-ontrack ppc-role-forecast'
+      : 'ppc-ms ppc-ms-red ppc-ms-outline ppc-role-forecast',
+    selectionKey: {
+      kind: equipment ? 'equipment_delivery' : 'milestone',
+      entityId: row.id,
+    },
+    showBaselineGhost: false,
+    unscheduled: true,
+  };
+}
+
+/** Caller order is the chart order. No parent link and no `open` — the app owns expand. */
+function treeRowToTask(
+  row: GanttTreeRow,
+  comparison: ScheduleComparisonMode,
+): GanttPresentationTask {
+  if (row.kind === 'project_group' || row.kind === 'stage_group') {
+    return groupPresentationTask(row);
+  }
+  if (row.kind === 'work') return workTreeTask(row, comparison);
+  return controlPointTreeTask(row);
+}
+
+/**
+ * One visible row per item. Control points: Δ0 → forecast only; Δ≠0 → forecast
+ * row + baseline ghost metadata. Works: duration bar. Scheduling links stay
+ * on work bars. A cross-project predecessor also needs its milestone row.
+ *
+ * When `treeRows` is passed, those rows are rendered in that order and `items`
+ * are not re-listed. Omit `treeRows` for the flat snapshot.
  */
 export function toGanttPresentation(
   items: ScheduleItem[],
+  links: ScheduleLink[] = [],
+  treeRows?: readonly GanttTreeRow[],
+  options?: { comparison?: ScheduleComparisonMode },
 ): GanttPresentationData {
-  const data: GanttPresentationTask[] = items.map((item) => {
-    const key = selectionKeyOf(item);
-    const css = statusCss(item);
-    return {
-      id: selectionKeyId(key),
-      text: itemLabel(item),
-      start_date: item.forecastDate,
-      duration: 0,
-      type: 'milestone',
-      css: `${css} ppc-role-forecast`,
-      selectionKey: key,
-      forecastDate: item.forecastDate,
-      baselineDate: item.baselineDate,
-      showBaselineGhost: item.baselineDate !== item.forecastDate,
-    };
-  });
-
-  return { data, links: [] };
+  const comparison = options?.comparison ?? 'forecast';
+  const data =
+    treeRows != null
+      ? treeRows.map((row) => treeRowToTask(row, comparison))
+      : items.map((item) => toPresentationTask(item, comparison));
+  return {
+    data,
+    links: toPresentationLinks(data, links, items, comparison),
+  };
 }
 
 /** Logical row id (and legacy `:forecast`/`:baseline` ids) → selection key. */
@@ -131,7 +486,7 @@ export function presentationIdToSelectionKey(
 ): ScheduleSelectionKey | null {
   const raw = String(presentationId);
   const legacy =
-    /^(equipment_delivery|milestone):(.+):(forecast|baseline)$/.exec(raw);
+    /^(equipment_delivery|milestone|work):(.+):(forecast|baseline)$/.exec(raw);
   if (legacy) {
     return { kind: legacy[1] as ScheduleSelectionKey['kind'], entityId: legacy[2] };
   }

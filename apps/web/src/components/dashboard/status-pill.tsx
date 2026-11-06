@@ -1,29 +1,45 @@
-import type { ProjectStatus } from '@/lib/api-client';
+import type { ProjectStatus, ScheduleWorkStatus } from '@/lib/api-client';
 import {
   equipmentStatusLabel,
   issueStatusLabel,
   projectStatusLabel,
   ragLabel,
+  workStatusLabel,
 } from '@/lib/ui-labels';
 
 type Props =
   | { family: 'equipment'; value: 'OnTrack' | 'Delayed' }
   | { family: 'issue'; value: 'Open' | 'Mitigating' | 'Closed' }
   | { family: 'rag'; value: 'Green' | 'Red'; entity: 'risk' | 'milestone' }
-  | { family: 'project'; value: ProjectStatus };
+  | { family: 'project'; value: ProjectStatus }
+  | { family: 'work'; value: ScheduleWorkStatus };
+
+const WORK_STATUS_TONE: Record<
+  ScheduleWorkStatus,
+  'ok' | 'warn' | 'info' | 'danger'
+> = {
+  Waiting: 'warn',
+  OnSchedule: 'info',
+  Delayed: 'danger',
+  Completed: 'ok',
+};
 
 export function StatusPill(props: Props) {
   const text =
     props.family === 'project'
       ? projectStatusLabel(props.value)
-      : props.family === 'rag'
-        ? ragLabel(props.entity, props.value)
-        : props.family === 'equipment'
-          ? equipmentStatusLabel(props.value)
-          : issueStatusLabel(props.value);
+      : props.family === 'work'
+        ? workStatusLabel(props.value)
+        : props.family === 'rag'
+          ? ragLabel(props.entity, props.value)
+          : props.family === 'equipment'
+            ? equipmentStatusLabel(props.value)
+            : issueStatusLabel(props.value);
 
   const tone =
-    props.family === 'project'
+    props.family === 'work'
+      ? WORK_STATUS_TONE[props.value]
+      : props.family === 'project'
       ? props.value === 'Green'
         ? 'ok'
         : props.value === 'Yellow'

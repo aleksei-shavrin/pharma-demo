@@ -65,7 +65,7 @@ services:
       dockerfile: Dockerfile
       args:
         DOCUSAURUS_URL: ${PUBLIC_ORIGIN:-http://127.0.0.1:8080}
-        DOCUSAURUS_BASE_URL: ${DOCUSAURUS_BASE_URL:-/portal/}
+        DOCUSAURUS_BASE_URL: ${DOCUSAURUS_BASE_URL:-/docs/}
     expose:
       - "80"
     networks:

@@ -21,7 +21,7 @@ const config: Config = {
     v4: true,
   },
 
-  // Server Compose: DOCUSAURUS_URL + DOCUSAURUS_BASE_URL=/portal/
+  // Server Compose: DOCUSAURUS_URL + DOCUSAURUS_BASE_URL=/docs/
   // Local ADR-0003 defaults: docs.localhost + /
   url: process.env.DOCUSAURUS_URL ?? 'http://docs.localhost',
   baseUrl: process.env.DOCUSAURUS_BASE_URL ?? '/',
@@ -52,7 +52,7 @@ const config: Config = {
         hashed: true,
         language: ['ru', 'en'],
         indexBlog: false,
-        docsRouteBasePath: ['docs', 'openspec'],
+        docsRouteBasePath: ['/', 'openspec'],
         docsDir: ['../docs', '../openspec/specs'],
       },
     ],
@@ -64,7 +64,7 @@ const config: Config = {
       {
         docs: {
           path: '../docs',
-          routeBasePath: 'docs',
+          routeBasePath: '/',
           sidebarPath: './sidebars.ts',
           exclude: docsExclude,
           beforeDefaultRemarkPlugins: docsRemarkPlugins,
@@ -149,11 +149,11 @@ const config: Config = {
           items: [
             {
               label: 'Карта docs',
-              to: '/docs/',
+              to: '/DOC-PORTAL-001',
             },
             {
               label: 'Портал',
-              to: '/docs/portal/DOC-PORTAL-HOME-001',
+              to: '/portal/DOC-PORTAL-HOME-001',
             },
             {
               label: 'OpenSpec',
@@ -166,15 +166,15 @@ const config: Config = {
           items: [
             {
               label: 'Документация',
-              to: '/docs/standards/DOC-STD-001',
+              to: '/standards/DOC-STD-001',
             },
             {
               label: 'Терминология',
-              to: '/docs/standards/DOC-STD-002',
+              to: '/standards/DOC-STD-002',
             },
             {
               label: 'Шаблоны',
-              to: '/docs/_templates/',
+              to: '/_templates/',
             },
           ],
         },

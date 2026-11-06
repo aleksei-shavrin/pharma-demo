@@ -15,6 +15,19 @@
   overflow: hidden;
 }
 
+.ppc-gantt-viewport.ppc-gantt-viewport-tree {
+  /* Definite box: percentage height on an auto parent made DHTMLX grow without bound. */
+  height: 36rem;
+  min-height: 36rem;
+  max-height: 36rem;
+}
+
+.baseline-overlay-bar {
+  background: var(--text-muted);
+  border-radius: 2px;
+  opacity: 0.9;
+}
+
 .ppc-gantt-host {
   --ppc-gantt-row-h: 36px;
 
@@ -45,6 +58,10 @@
   --dhx-gantt-grid-row-border: 1px solid var(--border-subtle);
   --dhx-gantt-grid-body-background: var(--surface-raised);
   --dhx-gantt-font-family: inherit;
+  /* Summary bars: app text token, never the vendor project green. */
+  --dhx-gantt-project-background: var(--text-secondary);
+  --dhx-gantt-project-color: var(--text-inverse);
+  --dhx-gantt-project-progress-color: transparent;
 
   box-sizing: border-box;
   width: 100%;
@@ -127,8 +144,18 @@
   box-shadow: none;
 }
 
+/*
+ * Progress is hidden unless the work opts in. Unknown progress must not look
+ * like a 0% track. Milestones never draw a progress slab.
+ */
 .ppc-gantt-host .gantt_task_progress {
   display: none;
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-progress-known .gantt_task_progress,
+.ppc-gantt-host .gantt_task_line.ppc-progress-zero .gantt_task_progress {
+  display: block;
+  height: 100%;
 }
 
 .ppc-gantt-host .gantt_task_line .gantt_task_content {
@@ -143,19 +170,31 @@
 }
 
 /* Forecast primary — use border token as fill in Dark for stronger marker weight. */
-.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-ontrack .gantt_task_content,
-.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-green .gantt_task_content {
+.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-ontrack .gantt_task_content {
   background: var(--status-ok-fg);
   border-color: var(--status-ok-border);
   border-radius: 999px;
   transform: translate(-50%, -50%);
 }
 
+/* Green milestone: filled diamond. Not a one-day work rectangle. */
+.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-green .gantt_task_content {
+  background: var(--status-ok-fg);
+  border-color: var(--status-ok-border);
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 2px;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Red / incomplete milestone: outline diamond. */
 .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-red .gantt_task_content {
-  background: var(--status-danger-fg);
+  background: var(--surface-raised);
   border-color: var(--status-danger-border);
-  border-radius: 999px;
-  transform: translate(-50%, -50%);
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 2px;
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-delayed .gantt_task_content {
@@ -171,16 +210,167 @@
   border-color: var(--status-ok-fg);
 }
 
-[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-red .gantt_task_content,
 [data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-delayed .gantt_task_content {
   background: var(--status-danger-border);
   border-color: var(--status-danger-fg);
+}
+
+/* Dark theme keeps the red milestone as an outline, not a filled marker. */
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-red .gantt_task_content {
+  background: var(--surface);
+  border-color: var(--status-danger-fg);
+}
+
+[data-theme='dark'] .ppc-gantt-host {
+  --dhx-gantt-project-background: var(--surface-sunken);
+  --dhx-gantt-project-color: var(--text);
 }
 
 [data-theme='dark'] .ppc-gantt-host .ppc-baseline-marker {
   background: var(--surface);
   border-color: var(--text-secondary);
   opacity: 0.9;
+}
+
+/*
+ * Work bars (type: 'task'). The generic `.gantt_task_content` rule above is
+ * sized for point markers; bars reset it so the line itself is the visual.
+ */
+.ppc-gantt-host .gantt_task_line.ppc-work {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work .gantt_task_content {
+  position: static;
+  width: auto;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  transform: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work-waiting {
+  background: var(--status-warn-bg);
+  border-color: var(--status-warn-border);
+  color: var(--status-warn-fg);
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work-onschedule {
+  background: var(--status-info-bg);
+  border-color: var(--status-info-border);
+  color: var(--status-info-fg);
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work-delayed {
+  background: var(--status-danger-bg);
+  border-color: var(--status-danger-border);
+  color: var(--status-danger-fg);
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work-completed {
+  background: var(--status-ok-bg);
+  border-color: var(--status-ok-border);
+  color: var(--status-ok-fg);
+}
+
+/*
+ * Known 0%: hollow forecast track (status border stays) and a zero-width
+ * progress edge. Unknown progress keeps the status fill and hides the slab.
+ */
+.ppc-gantt-host .gantt_task_line.ppc-work.ppc-progress-zero {
+  background: transparent;
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-progress-zero .gantt_task_progress {
+  background: transparent;
+  border-right: 2px solid var(--text);
+  box-sizing: content-box;
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-progress-zero .gantt_task_progress_wrapper {
+  overflow: visible;
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work-waiting.ppc-progress-known .gantt_task_progress {
+  background: var(--status-warn-fg);
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work-onschedule.ppc-progress-known .gantt_task_progress {
+  background: var(--status-info-fg);
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work-delayed.ppc-progress-known .gantt_task_progress {
+  background: var(--status-danger-fg);
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-work-completed.ppc-progress-known .gantt_task_progress {
+  background: var(--status-ok-fg);
+}
+
+/*
+ * Group summary. Darker than pastel work fills in light; in dark a sunken
+ * fill plus a text-colored border, still not the vendor project green.
+ */
+.ppc-gantt-host .gantt_task_line.ppc-summary {
+  background: var(--text-secondary);
+  border: 2px solid var(--text);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  color: var(--text-inverse);
+  --dhx-gantt-task-background: var(--text-secondary);
+  --dhx-gantt-project-background: var(--text-secondary);
+}
+
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-summary {
+  background: var(--surface-sunken);
+  border-color: var(--text);
+  color: var(--text);
+  --dhx-gantt-task-background: var(--surface-sunken);
+  --dhx-gantt-project-background: var(--surface-sunken);
+}
+
+.ppc-gantt-host .gantt_task_line.ppc-summary .gantt_task_content {
+  position: static;
+  width: auto;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  transform: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Typed dependency links — theme-aware strokes. */
+.ppc-gantt-host .gantt_task_link .gantt_line_wrapper div {
+  background-color: var(--text-muted);
+}
+
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow {
+  border-color: transparent;
+}
+
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow_right {
+  border-left-color: var(--text-muted);
+}
+
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow_left {
+  border-right-color: var(--text-muted);
+}
+
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow_down {
+  border-top-color: var(--text-muted);
+}
+
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow_up {
+  border-bottom-color: var(--text-muted);
 }
 
 /* Same-row baseline ghost — project overlay layer (not a DHTMLX row) */
@@ -220,6 +410,21 @@
 .ppc-gantt-host .ppc-baseline-marker:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+.ppc-gantt-host .ppc-fact-caption-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ppc-gantt-host .ppc-fact-caption {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  color: var(--text-muted);
 }
 
 .ppc-gantt-host .gantt_grid_data .gantt_row,

@@ -59,7 +59,7 @@ afterEach(() => cleanup());
 describe('People UI (R2-P1 / P1-R1)', () => {
   it('lists people in Russian without SH ids or EN role fragments', () => {
     render(<PeopleListView data={list} />);
-    expect(screen.getByRole('heading', { name: 'Люди' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Персоны' })).toBeInTheDocument();
     expect(screen.getByText('Смирнов Павел Андреевич')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Смирнов Павел Андреевич' }),
@@ -92,8 +92,8 @@ describe('People UI (R2-P1 / P1-R1)', () => {
     ).toBeTruthy();
   });
 
-  it('sidebar IA includes Люди and not Workstreams top-level', () => {
-    expect(NAV_ITEMS.some((n) => n.href === '/people' && n.label === 'Люди')).toBe(
+  it('sidebar IA includes Персоны and not Workstreams top-level', () => {
+    expect(NAV_ITEMS.some((n) => n.href === '/people' && n.label === 'Персоны')).toBe(
       true,
     );
     expect(NAV_ITEMS.some((n) => n.href === '/workstreams')).toBe(false);

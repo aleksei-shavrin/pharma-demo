@@ -3,7 +3,9 @@ import {
   AlertTriangle,
   CalendarRange,
   Flag,
+  FolderKanban,
   LayoutDashboard,
+  ListTree,
   Users,
   Wrench,
 } from 'lucide-react';
@@ -15,14 +17,26 @@ export type NavItem = {
   crumb: string;
 };
 
-/** Demo IA: Overview, Schedule, registers, People (R2-P1). No Workstreams top-level. */
+/** Demo IA: Dashboard, Schedule, registers, People (R2-P1). No Workstreams top-level. */
 export const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Обзор', icon: LayoutDashboard, crumb: 'Обзор' },
+  { href: '/', label: 'Дашборд', icon: LayoutDashboard, crumb: 'Дашборд' },
+  {
+    href: '/programs',
+    label: 'Программы',
+    icon: FolderKanban,
+    crumb: 'Программы',
+  },
+  {
+    href: '/projects',
+    label: 'Проекты',
+    icon: ListTree,
+    crumb: 'Проекты',
+  },
   {
     href: '/schedule',
-    label: 'График',
+    label: 'Календарный план',
     icon: CalendarRange,
-    crumb: 'График',
+    crumb: 'Календарный план',
   },
   {
     href: '/equipment',
@@ -44,9 +58,9 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     href: '/people',
-    label: 'Люди',
+    label: 'Персоны',
     icon: Users,
-    crumb: 'Люди',
+    crumb: 'Персоны',
   },
 ];
 
@@ -62,10 +76,12 @@ export function crumbForPath(pathname: string): string {
     return 'Проблемы и риски';
   }
   if (pathname.startsWith('/milestones')) return 'Вехи';
-  if (pathname.startsWith('/schedule')) return 'График';
+  if (pathname.startsWith('/schedule')) return 'Календарный план';
+  if (pathname.startsWith('/programs')) return 'Программы';
+  if (pathname.startsWith('/projects')) return 'Проекты';
   if (pathname.startsWith('/workstreams')) return 'Направление';
-  if (pathname.startsWith('/people')) return 'Люди';
-  return 'Обзор';
+  if (pathname.startsWith('/people')) return 'Персоны';
+  return 'Дашборд';
 }
 
 /** Optional entity id segment for detail breadcrumbs (Section / EntityId). */
@@ -79,7 +95,9 @@ export function entityIdFromPath(pathname: string): string | null {
       section === 'risks' ||
       section === 'milestones' ||
       section === 'workstreams' ||
-      section === 'people') &&
+      section === 'people' ||
+      section === 'programs' ||
+      section === 'projects') &&
     id
   ) {
     return decodeURIComponent(id);
