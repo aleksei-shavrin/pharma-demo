@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   RegisterEmpty,
   RegisterError,
@@ -28,11 +28,13 @@ import {
   bindSchedulePaneScroll,
   GANTT_VERTICAL_SCROLL_SELECTOR,
 } from '@/lib/schedule/bind-schedule-pane-scroll';
-import { isScheduleAttention } from '@/lib/schedule/schedule-geometry';
 import {
-  resolveScheduleTimelineLayout,
-  type ScheduleTimelineLayout,
-} from '@/lib/schedule/schedule-pane-layout';
+  captureRowAnchor,
+  emptyScheduleScrollAnchor,
+  restoreRowAnchor,
+  restoreScrollLeft,
+} from '@/lib/schedule/schedule-scroll-anchor';
+import { isScheduleAttention } from '@/lib/schedule/schedule-geometry';
 import type { ScheduleSelectionKey } from '@/lib/schedule/selection-key';
 import { parseSelectionKeyId } from '@/lib/schedule/selection-key';
 import type { GanttTreeRow } from '@/lib/schedule/to-gantt-presentation';
@@ -198,30 +200,139 @@ export function ScheduleView() {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const listPaneRef = useRef<HTMLDivElement>(null);
   const chartPaneRef = useRef<HTMLDivElement>(null);
-  const timelineColumnRef = useRef<HTMLDivElement>(null);
-  const [timelineLayout, setTimelineLayout] =
-    useState<ScheduleTimelineLayout>('stack');
+  const scrollAnchorRef = useRef(emptyScheduleScrollAnchor());
+
+  const rememberScroll = () => {
+    const anchor = scrollAnchorRef.current;
+    const list = listPaneRef.current?.querySelector<HTMLElement>(
+      '[data-schedule-viewport="true"]',
+    );
+    const chartPane = chartPaneRef.current;
+    const chart = chartPane?.querySelector<HTMLElement>(
+      GANTT_VERTICAL_SCROLL_SELECTOR,
+    );
+    if (list) {
+      const row = captureRowAnchor(list);
+      anchor.rowKey = row.rowKey;
+      anchor.rowOffsetPx = row.rowOffsetPx;
+      anchor.tableScrollLeft = list.scrollLeft;
+      anchor.verticalScrollTop = list.scrollTop;
+      return;
+    }
+    if (!chartPane || !chart) return;
+    // Rows live in the task pane, not inside the scrollbar element.
+    const taskPane =
+      chartPane.querySelector<HTMLElement>('.gantt_task') ?? chart;
+    const row = captureRowAnchor(
+      taskPane,
+      chartPane,
+      '.gantt_task_row',
+      'task_id',
+    );
+    if (row.rowKey) {
+      anchor.rowKey = row.rowKey;
+      anchor.rowOffsetPx = row.rowOffsetPx;
+    }
+    anchor.verticalScrollTop = chart.scrollTop;
+  };
+
+  const changeMode = (next: ScheduleViewMode) => {
+    rememberScroll();
+    setMode(next);
+  };
+
+  const changeComparison = (next: ScheduleComparisonMode) => {
+    rememberScroll();
+    setComparison(next);
+  };
 
   useEffect(() => {
-    if (mode !== 'gantt') return;
-    const column = timelineColumnRef.current;
-    if (!column) return;
-    const apply = (width: number) => {
-      setTimelineLayout(resolveScheduleTimelineLayout(width));
+    let list: HTMLElement | null = null;
+    let chart: HTMLElement | null = null;
+    let timer = 0;
+    let attempts = 0;
+    let stopped = false;
+    const onScroll = () => rememberScroll();
+    const attach = () => {
+      if (stopped) return;
+      const nextList =
+        listPaneRef.current?.querySelector<HTMLElement>(
+          '[data-schedule-viewport="true"]',
+        ) ?? null;
+      const nextChart =
+        chartPaneRef.current?.querySelector<HTMLElement>(
+          GANTT_VERTICAL_SCROLL_SELECTOR,
+        ) ?? null;
+      if (nextList && nextList !== list) {
+        list?.removeEventListener('scroll', onScroll);
+        list = nextList;
+        list.addEventListener('scroll', onScroll, { passive: true });
+      }
+      if (nextChart && nextChart !== chart && !nextList) {
+        chart?.removeEventListener('scroll', onScroll);
+        chart = nextChart;
+        chart.addEventListener('scroll', onScroll, { passive: true });
+      }
+      const waitingForList = mode !== 'gantt' && !nextList;
+      const waitingForChart = mode !== 'table' && !nextChart;
+      if ((waitingForList || waitingForChart) && attempts < 20) {
+        attempts += 1;
+        timer = window.setTimeout(attach, 200);
+      }
     };
-    apply(column.getBoundingClientRect().width);
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver((entries) => {
-      const width = entries[0]?.contentRect.width;
-      if (width === undefined) return;
-      apply(width);
-    });
-    observer.observe(column);
-    return () => observer.disconnect();
-  }, [mode, status]);
+    attach();
+    return () => {
+      stopped = true;
+      window.clearTimeout(timer);
+      list?.removeEventListener('scroll', onScroll);
+      chart?.removeEventListener('scroll', onScroll);
+    };
+  }, [mode, status, data]);
+
+  useLayoutEffect(() => {
+    let timer = 0;
+    let attempts = 0;
+    const apply = () => {
+      const anchor = scrollAnchorRef.current;
+      const hasAnchor =
+        anchor.rowKey != null ||
+        anchor.chartDateIso != null ||
+        anchor.tableScrollLeft > 0 ||
+        anchor.verticalScrollTop > 0;
+      if (!hasAnchor) return;
+      const list = listPaneRef.current?.querySelector<HTMLElement>(
+        '[data-schedule-viewport="true"]',
+      );
+      const chart = chartPaneRef.current?.querySelector<HTMLElement>(
+        GANTT_VERTICAL_SCROLL_SELECTOR,
+      );
+      if (list) {
+        restoreRowAnchor(list, anchor.rowKey, anchor.rowOffsetPx);
+        restoreScrollLeft(list, anchor.tableScrollLeft);
+      }
+      if (list && chart) {
+        chart.scrollTop = list.scrollTop;
+      } else if (chart) {
+        const max = chart.scrollHeight - chart.clientHeight;
+        chart.scrollTop = Math.min(
+          Math.max(anchor.verticalScrollTop, 0),
+          Math.max(max, 0),
+        );
+      }
+    };
+    const loop = () => {
+      apply();
+      if (attempts < 8) {
+        attempts += 1;
+        timer = window.setTimeout(loop, 150);
+      }
+    };
+    loop();
+    return () => window.clearTimeout(timer);
+  }, [mode, comparison, status, data]);
 
   useEffect(() => {
-    if (mode !== 'gantt') return;
+    if (mode !== 'split') return;
     const listPane = listPaneRef.current;
     const chartPane = chartPaneRef.current;
     if (!listPane || !chartPane) return;
@@ -329,9 +440,9 @@ export function ScheduleView() {
         </p>
         <div className="flex flex-wrap items-center gap-2">
           {hasWorks ? (
-            <ScheduleComparisonToggle mode={comparison} onChange={setComparison} />
+            <ScheduleComparisonToggle mode={comparison} onChange={changeComparison} />
           ) : null}
-          <ScheduleViewToggle mode={mode} onChange={setMode} />
+          <ScheduleViewToggle mode={mode} onChange={changeMode} />
         </div>
       </div>
 
@@ -378,63 +489,52 @@ export function ScheduleView() {
 
           {visibleRows.length === 0 && anyFilter ? (
             <RegisterFilteredEmpty onReset={resetAll} />
-          ) : mode === 'gantt' ? (
+          ) : (
             <div
-              ref={timelineColumnRef}
-              data-schedule-timeline-layout={timelineLayout}
-              tabIndex={timelineLayout === 'stack' ? 0 : undefined}
-              aria-label={
-                timelineLayout === 'stack' ? 'Прокрутка к диаграмме' : undefined
-              }
+              data-schedule-presentation={mode}
               className={
-                timelineLayout === 'row'
+                mode === 'split'
                   ? 'flex min-h-0 flex-1 flex-row gap-2 overflow-hidden'
-                  : 'flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto'
+                  : 'flex min-h-0 flex-1 flex-col overflow-hidden'
               }
             >
-              <div
-                ref={listPaneRef}
-                className={
-                  timelineLayout === 'row'
-                    ? 'flex h-[36rem] w-[36rem] shrink-0 flex-col overflow-hidden'
-                    : 'flex h-[14rem] w-full shrink-0 flex-col overflow-hidden'
-                }
-              >
-                <ScheduleBoard
-                  items={legacyItems}
-                  mode="table"
-                  treeRows={boardRows}
-                  onToggleRow={toggleExpanded}
-                  leadOnly
-                  comparison={comparison}
-                />
-              </div>
-              <div
-                ref={chartPaneRef}
-                className={
-                  timelineLayout === 'row'
-                    ? 'min-h-0 min-w-0 w-full flex-1'
-                    : 'h-[36rem] w-full shrink-0'
-                }
-              >
-                <ScheduleTimeline
-                  items={legacyItems}
-                  links={visibleLinks}
-                  treeRows={ganttRows}
-                  comparison={comparison}
-                  selected={selectedSelection}
-                  onSelect={onTimelineSelect}
-                />
-              </div>
+              {mode === 'gantt' ? null : (
+                <div
+                  ref={listPaneRef}
+                  data-schedule-pane="table"
+                  className={
+                    mode === 'split'
+                      ? 'flex min-h-0 min-w-0 w-[42rem] max-w-[46%] shrink-0 flex-col overflow-hidden'
+                      : 'flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden'
+                  }
+                >
+                  <ScheduleBoard
+                    items={legacyItems}
+                    mode="table"
+                    treeRows={boardRows}
+                    onToggleRow={toggleExpanded}
+                    comparison={comparison}
+                  />
+                </div>
+              )}
+              {mode === 'table' ? null : (
+                <div
+                  ref={chartPaneRef}
+                  data-schedule-pane="chart"
+                  className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+                >
+                  <ScheduleTimeline
+                    items={legacyItems}
+                    links={visibleLinks}
+                    treeRows={ganttRows}
+                    comparison={comparison}
+                    selected={selectedSelection}
+                    onSelect={onTimelineSelect}
+                    scrollAnchor={scrollAnchorRef.current}
+                  />
+                </div>
+              )}
             </div>
-          ) : (
-            <ScheduleBoard
-              items={legacyItems}
-              mode={mode}
-              treeRows={boardRows}
-              onToggleRow={toggleExpanded}
-              comparison={comparison}
-            />
           )}
         </div>
       ) : null}

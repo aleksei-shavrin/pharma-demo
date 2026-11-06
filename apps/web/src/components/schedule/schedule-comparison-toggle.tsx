@@ -18,7 +18,7 @@ export function ScheduleComparisonToggle({ mode, onChange }: Props) {
     <div
       role="group"
       aria-label="Сравнение полос"
-      className="inline-flex rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-sunken)] p-0.5"
+      className="inline-flex min-h-8 items-stretch gap-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-sunken)] p-1"
       data-schedule-comparison={mode}
     >
       {MODES.map((item) => {
@@ -30,11 +30,12 @@ export function ScheduleComparisonToggle({ mode, onChange }: Props) {
             aria-pressed={selected}
             onClick={() => onChange(item.id)}
             className={[
-              'rounded-[calc(var(--radius-md)-2px)] px-3 py-1.5 text-sm font-medium outline-none transition-colors',
-              'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]',
+              'flex min-h-8 min-w-0 flex-1 items-center justify-center px-2 py-0 text-center text-xs font-medium leading-tight outline-none transition-colors',
+              'rounded-[var(--radius-sm)]',
+              'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-sunken)]',
               selected
-                ? 'bg-[var(--surface-raised)] text-[var(--text)] shadow-sm'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text)]',
+                ? 'bg-[var(--surface-raised)] text-[var(--text)] shadow-[var(--elevation-1)] ring-1 ring-inset ring-[var(--border)]'
+                : 'text-[var(--text-secondary)] hover:bg-[var(--interactive)] hover:text-[var(--text)]',
             ].join(' ')}
           >
             {item.label}

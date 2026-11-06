@@ -1,0 +1,140 @@
+---
+name: Календарь единая геометрия
+overview: "Сначала зафиксировать в UX и OpenSpec один контракт строк, шапок и прокрутки календарного плана, затем параллельно довести таблицу, графику Ганта и панель по референсу Bryntum Calendar Plan в reference platform. Живой замер пикселей на снимке C в этой сессии не снимался: смещение доказано константами 48px против 72px и легендой над диаграммой."
+todos:
+  - id: docs-contract
+    content: "Волна 0: UX §1.6/§1.11 и OpenSpec schedule-unified-geometry до кода"
+    status: pending
+  - id: geometry-owner
+    content: "Волна 1: один шаг 32, шапки 40, снять легенду, память прокрутки в ScheduleView"
+    status: pending
+  - id: table-track
+    content: "Волна 2: ИСР, иконка предупреждения, широкий прогресс, минимумы и многоточие в schedule-board"
+    status: pending
+  - id: gantt-track
+    content: "Волна 2: компактные полосы и ромб, стрелка 1.5px одним цветом, снять подписи с фигур"
+    status: pending
+  - id: toolbar-track
+    content: "Волна 2: иконки трёх режимов и переключатель сравнения в верхней панели"
+    status: pending
+  - id: integrate-accept
+    content: "Интегратор: сквозная приёмка на C в обеих темах после волны 2"
+    status: pending
+isProject: false
+---
+
+# Календарный план: единая геометрия и визуальная доводка
+
+Реализация не начинается, пока этот план не принят. Мобильная доводка не входит. Основная приёмка — обычное окно, снимок C, режим «Разделение» по умолчанию.
+
+Исследование: [геометрия](53c0f045-9b22-49f3-acb2-085ccfd171fc), [таблица](fcd532f8-6be9-4607-93c9-472636ba28f8), [графика](b03d039d-1e6e-4393-ad07-45cdfabeda5a), [панель](90dd2653-e1d3-4d24-8396-71a372614edb), [владельцы и референс](7fb66ee5-8ecd-4a0c-88dc-9fee82e17c9d).
+
+## Референс
+
+Экран ePPM — виджет **Calendar Plan** на Bryntum внутри FormViewer, не отдельный маршрут `app/`. Живой кадр в этой сессии не открывался: в `reference platform/src/app` виджет не смонтирован, dev-сервер не найден.
+
+Подтверждение кодом:
+
+- Оболочка: [CalendarPlanView/index.tsx]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/CalendarPlanView/index.tsx)
+- Колонки, `rowHeight: 32`, `barMargin: 8`, `preserveScroll`: [presentationConfig.ts]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/presentationConfig.ts)
+- Полосы, веха, прогресс, предупреждение, шапка: [styles.module.css]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/styles.module.css)
+- Иконки `LuTable2` и `LuChartGantt`, 18px, кнопки 32×32, зазор группы 4px: [Gantt/index.tsx]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/index.tsx), [ToolbarIconButton.module.css]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/ToolbarIconButton.module.css)
+
+Демо, которое доводим: [schedule/page.tsx](/home/aleksei/pharma-demo/apps/web/src/app/schedule/page.tsx) → `ScheduleView`. UX: [demo-v1-schedule-workspace.md](/home/aleksei/pharma-demo/docs/05-ux-ui/demo-v1-schedule-workspace.md) §1.11.
+
+### Что сверять глазами, потому что в CSS референса этого нет
+
+- Форма сводной полосы этапа: цвет родителя задан, высота нет. При `rowHeight: 32` и `barMargin: 8` вендорная полоса около 16px. Скобка или заливка — только с экрана.
+- Форма наконечника стрелки Bryntum. В коде есть толщина 1.5px и один цвет `--calendar-plan-gantt-dependency`, не чертёж треугольника.
+- Зазор базы и основной полосы. В референсе baseline — назначения ресурсов, не вторая полоса на строке.
+- Третьей иконки «разделение» нет: в референсе две независимые кнопки, обе нажатые и есть split.
+
+## Почему строки расходятся
+
+Предсказанное смещение на C в «Разделении» (без свежего замера DOM):
+
+- Таблица: шапка 40px (`SCHEDULE_HEADER_HEIGHT_PX`), шаг строки **48px** (`SCHEDULE_ROW_HEIGHT_PX`). Первая строка начинается на 40px.
+- Диаграмма: над канвой легенда «Прогноз / База / Связи» и при SF ещё абзац ([schedule-timeline.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-timeline.tsx) строки 44–74), затем шкала `scale_height = 28`, затем строки **72px** (`SCHEDULE_GANTT_ROW_HEIGHT_PX` в [dhtmlx-gantt-adapter.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx) `applyChartMode`).
+- На строке `i` добавка `(72 − 48) × i = 24i` px плюс разница шапок. Середина и конец списка расходятся сильнее начала. Выбор, фокус, шеврон и вторая полоса высоту коробки не меняют: база — абсолютный overlay, `bar_height` 26px живёт внутри 72px.
+- Прокрутка — два скроллера (`[data-schedule-viewport]` и `.gantt_ver_scroll`), их связывает [bind-schedule-pane-scroll.ts](/home/aleksei/pharma-demo/apps/web/src/lib/schedule/bind-schedule-pane-scroll.ts). Одинаковый `scrollTop` не совмещает строки при разном шаге.
+- В [schedule-board.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.tsx) строка 464 шаг 72px включается только при `leadOnly`. Экран передаёт `mode="table"`, поэтому доска остаётся на 48px. Это и есть регрессия после «одного календаря» ([handoff](/home/aleksei/pharma-demo/docs/07-delivery/handoffs/2026-11-06-schedule-one-calendar.md)).
+
+Сброс прокрутки при смене сравнения и представления:
+
+- Смена «Таблица» / «Временная шкала» **размонтирует** панель (`mode === 'table' ? null` / `mode === 'gantt' ? null` в [schedule-view.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-view.tsx)). Позиция живёт только в DOM.
+- Смена сравнения **не** перезапрашивает API (`useRegisterQuery` зависит от снимка). Она вызывает `syncData` → `clearAll` / `parse` / `render` DHTMLX и может сбросить внутренний скролл виджета.
+- Повторной загрузки данных при этих переключениях нет.
+
+Дубли:
+
+- Порядок строк уже один: `buildVisibleScheduleRows` → `boardRows` и `ganttRows`.
+- Живой рисунок полос — только DHTMLX. `ScheduleTable` в приложении не импортируется. `schedule-markers` на текущем split не монтируется, потому что у доски `showTimeline` ложен. Их не развивать вторым календарём.
+
+## Контракт геометрии
+
+Один список видимых строк. Один шаг **32px** (референс `rowHeight: 32`) для группы, работы и вехи в таблице и на диаграмме. Высота области диаграммы равна табличной области; высота содержимого = число видимых строк × 32. Выбор, контур фокуса, раскрытие и вторая полоса не меняют коробку строки.
+
+Общая нижняя граница шапок: одна полоса **40px** (`SCHEDULE_HEADER_HEIGHT_PX`). Слева заголовки столбцов, справа только шкала дат (`scale_height = 40`). Легенду маркеров и текст про SF убрать из потока над канвой. Пояснение базы и факта — одна короткая строка в верхней панели экрана, вне области строк. Шкала остаётся частью диаграммы.
+
+Константу `SCHEDULE_GANTT_ROW_HEIGHT_PX = 72` убрать. Ветку `leadOnly ? 72 : 48` убрать, чтобы второй шаг не вернулся.
+
+Прокрутка остаётся двумя связанными скроллерами, но только после равного шага и равных шапок. Горизонтальный скролл таблицы — внутри неё и не меняет высоту строк.
+
+## Размеры по референсу
+
+Текущее демо → цель этого этапа:
+
+- Шаг строки: 48 таблица / 72 диаграмма → **32** обеим.
+- Шапка: 40 таблица / легенда + шкала 28 → **40 и 40**, легенда вне строк.
+- Сводная полоса этапа: сейчас тот же `bar_height` 26 → **около 16** (32 − 2×8 `barMargin`), подтвердить форму на экране.
+- Полоса работы: 26 → **8** (`--b-event-size: 8`, `margin-top: 2px`). Длина по-прежнему календарный интервал, `endDate` включительно.
+- Ромб вехи на диаграмме: 12×12, рамка 2px → **высота 8.49px**, скругление 2px.
+- Зазор база/основная полоса: сейчас 4px, в референсе нет второй полосы → **2px**, обе полосы внутри 32px. Это пункт review.
+- Стрелка: цвет уже один, `--text-muted`; толщина ствола в репозитории не задана → **1.5px**, ствол, поворот и треугольный наконечник одним цветом. Точки SS/FS/FF/SF и линия энергоснабжение → HVAC (`LNK-X-PWR-HVAC`) сохраняются; в режиме факта линия по-прежнему скрыта, если у работы закрыты оба фактических конца.
+- Прогресс в таблице: нативный `h-1.5 w-16` → полоса на всю колонку, **высота 4px**, процент 12px, зазор 12px, колонка не уже 148px. 0% — пустой трек и «0%»; частичный и 100% — заливка по проценту цветом статуса; неизвестно — не «0%» и не полоса нуля («нет данных»).
+- Предупреждение: видимый текст в колонке 160px → **иконка 15×15** по центру колонки около 46px. Шапка — треугольник, ячейка — круг, как `luTriangleAlertMarkup` / `luCircleAlertMarkup`. Полный текст в `title` и с клавиатуры (`tabIndex={0}`, `aria-label`).
+- Подписи на фигурах диаграммы убрать: `task_text` / `barCaption` («40%») и `.ppc-fact-caption`. Имя на полосе из `taskRenderer` референса **не** копировать. Детали остаются в таблице и в `title` полосы.
+- Кнопки представления: текстовые `px-3 py-1.5` → группа 32×32, иконка 18px, зазор 4px, видимое нажатие. Имена: «Таблица», «Разделение», «Временная шкала». Глифы: `LuTable2`, составная иконка таблицы и диаграммы, `LuChartGantt`. Режимы по-прежнему исключающие, не две независимые кнопки референса.
+
+Первый столбец референса — отдельная **ИСР** (`type: 'wbs'`, ширина 67, минимум 72), код не перенумеровывается при раскрытии и фильтре. Наименование — соседняя колонка, только имя, без «работа / веха / этап». В демо сейчас порядковый «№» (`visibleOrdinal`) и вторая строка `treeKindLabel` в [schedule-board.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.tsx). Предложение: колонка ИСР из `row.wbs`, имя с шевроном и отступом глубины, подпись вида убрать. Вложенность и раскрытие остаются.
+
+Столбцы «Таблицы» и «Разделения» уже совпадают, потому что оба режима рендерят `ScheduleBoard` с `mode="table"`. Набор сохранить: ИСР, Наименование, предупреждение, Прогресс, Тип, Объект, даты базы/прогноза, при факте четыре колонки прогноза и факта, Δ, Статус, Крит. Длинные значения — одна строка, многоточие, полный текст в подсказке. Если не влезают, горизонтальная прокрутка внутри таблицы. `ScheduleTable` с урезанным набором не возвращать на экран.
+
+## Состояние
+
+Владелец — `ScheduleView`. Уже живут в React state: снимок (контекст), режим, сравнение, фильтры, раскрытие, выбор. Не живут: вертикаль строки и горизонталь времени.
+
+Перед скрытием панели и перед `syncData` запоминать вертикальный `scrollTop` и дату у левого края диаграммы. После монтирования и после `parse` восстанавливать. При смене ширины якорь — дата, не сырой `scrollLeft`. У скрытой части позиция хранится отдельно и возвращается вместе с ней. Ориентир референса: `preserveScroll` и `preserveScrollOnDatasetChange`.
+
+## Владельцы сейчас
+
+Отдельных lock-файлов нет. Handoff’и 2026-11-06 отпускают ядро календаря. Незакоммиченный diff «одного календаря» — база этого этапа, не чужая незакрытая сессия. `schedule-board.tsx` в handoff поверхности числился за треком адаптивности; для этой волны он свободен и уходит писателю таблицы. В один файл одновременно не писать.
+
+## Волны
+
+Документация раньше кода. Новый change `openspec/changes/schedule-unified-geometry/` (proposal, design, delta `schedule-workspace`, tasks). В [DOC-UX-005](/home/aleksei/pharma-demo/docs/05-ux-ui/demo-v1-schedule-workspace.md) обновить §1.6 и §1.11: шаг 32, общая шапка 40, ИСР, иконка предупреждения, прогресс, компактные полосы, панель, сохранение позиции. `status` не поднимать до approved. Размеры без живого кадра помечать `assumption`. §1.7–§1.9 (интервал, факт, межпроектная линия) не переписывать заново.
+
+Волна 0, агент документации. Файлы: UX и новый OpenSpec change. Зависимостей нет. Готово, когда контракт строк, шапок, столбца ИСР и выноса легенды записан, а зависимый код ещё не менялся.
+
+Волна 1, владелец `schedule-view` и общего состояния. Файлы: [schedule-geometry.ts](/home/aleksei/pharma-demo/apps/web/src/lib/schedule/schedule-geometry.ts), [schedule-view.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-view.tsx) и его тест, [bind-schedule-pane-scroll.ts](/home/aleksei/pharma-demo/apps/web/src/lib/schedule/bind-schedule-pane-scroll.ts), [schedule-timeline.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-timeline.tsx) только снятие легенды из потока, [schedule-board.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.tsx) только шаг строки и высота шапки, [dhtmlx-gantt-adapter.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx) только `row_height` и `scale_height`. Зависит от волны 0. Готово, когда на C в «Разделении» верх первой строки, середина и низ после прокрутки совпадают у таблицы и диаграммы, а легенда не стоит над канвой.
+
+Волна 2, параллельно, после передачи файлов волны 1:
+
+- Таблица. Только [schedule-board.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.tsx) и [schedule-board.test.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.test.tsx). ИСР, снятие подписи вида, иконка предупреждения, широкий прогресс, минимумы и многоточие. Не трогает адаптер и `schedule-view`.
+- Гант. [dhtmlx-gantt-adapter.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx), [dhtmlx-gantt-adapter.css](/home/aleksei/pharma-demo/apps/web/src/components/schedule/dhtmlx-gantt-adapter.css), [baseline-overlay.ts](/home/aleksei/pharma-demo/apps/web/src/components/schedule/baseline-overlay.ts), [to-gantt-presentation.ts](/home/aleksei/pharma-demo/apps/web/src/lib/schedule/to-gantt-presentation.ts) и их тесты. Полосы, ромб, стрелка, снятие подписей с фигур. CSS адаптера пишет только он.
+- Панель. [schedule-view-toggle.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-view-toggle.tsx) и [schedule-comparison-toggle.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-comparison-toggle.tsx). В `schedule-view.tsx` их вставляет владелец вида, когда волна 1 закрыта. Пояснение базы и факта — в этой верхней полосе.
+- Тесты геометрии и прокрутки остаются у владельца вида.
+
+Интегратор один: после волны 2 собирает вставку переключателей, прогоняет vitest календаря и сценарий приёмки. Если два агента всё же сойдутся на файле, порядок такой: геометрия → таблица или гант → интегратор. Обратно файлы не переписывать.
+
+## Приёмка
+
+Свежая сессия, снимок C, обычное окно, старт в «Разделении». Сравнить Y соответствующих строк сверху, в середине и после прокрутки. Раскрыть группу, выбрать строку, пройти прогноз → факт → прогноз и «Разделение» → «Таблица» → «Временная шкала» → «Разделение». Позиция строки и дата у левого края, выбор, раскрытие и фильтры на месте. Столбцы обоих режимов с таблицей совпадают. База, факт, прогресс и связи читаются. Ключевой проход повторить в светлой и тёмной теме. Координаты снять с DOM, не с одного скриншота.
+
+## На review
+
+1. Шаг строки 32px вместо нынешних 48/72.
+2. Первая колонка — стабильная ИСР из `wbs`, не порядковый номер видимых строк.
+3. Три исключающих режима с иконками при том, что референс использует две независимые кнопки.
+4. Зазор базы 2px и сводная полоса около 16px — до подтверждения формы на экране.
+5. Имя работы на полосе референса в демо не переносится: подписи с фигур снимаются.

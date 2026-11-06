@@ -3,17 +3,29 @@ import type { ScheduleComparisonMode } from './schedule-comparison';
 import { scheduleSortDate } from './schedule-item-dates';
 import { computeTimelineVisibleRange } from './to-gantt-presentation';
 
-/** Shared compact row height for Table / Split / Timeline (px). */
-export const SCHEDULE_ROW_HEIGHT_PX = 48;
+/**
+ * One row pitch for the table and the chart.
+ * 32 matches the Calendar Plan reference and still fits an 8px bar,
+ * a 2px gap and an 8px baseline (see `rowPitchFitsStackedBars`).
+ */
+export const SCHEDULE_ROW_HEIGHT_PX = 32;
+
+/** Sticky table header and the chart date scale share this band (px). */
+export const SCHEDULE_HEADER_HEIGHT_PX = 40;
 
 /**
- * Pitch of a hierarchical DHTMLX row. The list beside that chart uses the same
- * pitch so one scroll offset keeps a table row next to its bar.
+ * Centered main bar leaves room above itself. The baseline must fit in that
+ * room together with `gapPx`, otherwise the shared pitch is too small.
  */
-export const SCHEDULE_GANTT_ROW_HEIGHT_PX = 72;
-
-/** Sticky schedule header band height (px). */
-export const SCHEDULE_HEADER_HEIGHT_PX = 40;
+export function rowPitchFitsStackedBars(
+  rowHeight: number,
+  barHeight: number,
+  gapPx: number,
+): boolean {
+  if (rowHeight <= barHeight || barHeight <= 0 || gapPx < 0) return false;
+  const offset = Math.floor((rowHeight - barHeight) / 2);
+  return offset - gapPx >= barHeight;
+}
 
 /** Approximate month column width for timeline mapping. */
 export const SCHEDULE_MONTH_COL_PX = 72;

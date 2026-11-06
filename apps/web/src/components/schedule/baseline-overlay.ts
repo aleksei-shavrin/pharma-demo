@@ -8,7 +8,7 @@
  * not the centered bar's visual top.
  */
 
-const BASELINE_GAP_PX = 4;
+export const BASELINE_GAP_PX = 2;
 
 export type BaselineBox = {
   top: number;

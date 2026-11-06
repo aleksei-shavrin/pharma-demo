@@ -3,7 +3,8 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ScheduleItem } from '@/lib/api-client';
-import { SCHEDULE_GANTT_ROW_HEIGHT_PX } from '@/lib/schedule/schedule-geometry';
+import { SCHEDULE_ROW_HEIGHT_PX } from '@/lib/schedule/schedule-geometry';
+import { SCHEDULE_SHIFT_WARNING_LABEL } from '@/lib/schedule/schedule-warning';
 import { ScheduleBoard, type ScheduleTreeRow } from './schedule-board';
 
 const work: ScheduleItem = {
@@ -24,7 +25,40 @@ const zeroWork: ScheduleItem = {
   status: 'Delayed',
 };
 
-function treeRow(overrides: Partial<ScheduleTreeRow> & Pick<ScheduleTreeRow, 'key' | 'visibleOrdinal' | 'name'>): ScheduleTreeRow {
+const milestoneItem: ScheduleItem = {
+  kind: 'milestone',
+  id: 'MS-X',
+  name: 'Готовность',
+  workstream: null,
+  rag: 'Green',
+  baselineDate: '2027-01-01',
+  forecastDate: '2027-01-05',
+  dateVariance: {
+    baselineDate: '2027-01-01',
+    forecastDate: '2027-01-05',
+    deltaDays: 4,
+  },
+};
+
+const equipmentItem: ScheduleItem = {
+  kind: 'equipment_delivery',
+  id: 'EQ-1',
+  name: 'AHU',
+  workstream: 'WS-HVAC',
+  critical: false,
+  status: 'OnTrack',
+  baselineDate: '2027-02-01',
+  forecastDate: '2027-02-10',
+  dateVariance: {
+    baselineDate: '2027-02-01',
+    forecastDate: '2027-02-10',
+    deltaDays: 9,
+  },
+};
+
+function treeRow(
+  overrides: Partial<ScheduleTreeRow> & Pick<ScheduleTreeRow, 'key' | 'visibleOrdinal' | 'name'>,
+): ScheduleTreeRow {
   return {
     depth: 0,
     kind: 'work',
@@ -43,7 +77,7 @@ describe('ScheduleBoard', () => {
   it('без treeRows оставляет плоскую доску: прежние колонки и порядок items', () => {
     render(<ScheduleBoard items={[work, zeroWork]} mode="table" />);
 
-    expect(screen.queryByText('№')).not.toBeInTheDocument();
+    expect(screen.queryByText('ИСР')).not.toBeInTheDocument();
     expect(screen.queryByText('нет данных')).not.toBeInTheDocument();
     expect(document.querySelector('[data-schedule-tree="true"]')).toBeNull();
 
@@ -58,8 +92,10 @@ describe('ScheduleBoard', () => {
     expect(document.querySelector('[data-schedule-header="true"]')?.textContent).toMatch(/Объект/);
   });
 
-  it('показывает №, имя, предупреждение и прогресс перед колонками режима', async () => {
+  it('таблица: ИСР из wbs, без подписи вида «Работа», иконка предупреждения с именем по фокусу, 0% и «нет данных», 40% и 100%', async () => {
+    const user = userEvent.setup();
     const onToggleRow = vi.fn();
+    const lagLabel = 'Отставание, 3 недели';
     const rows: ScheduleTreeRow[] = [
       treeRow({
         key: 'project_group:AN-08',
@@ -70,7 +106,7 @@ describe('ScheduleBoard', () => {
         wbs: '8',
         hasChildren: true,
         expanded: true,
-        progressPct: null,
+        progressPct: 40,
         warning: { tone: 'none', label: '' },
       }),
       treeRow({
@@ -83,7 +119,7 @@ describe('ScheduleBoard', () => {
         hasChildren: true,
         expanded: false,
         progressPct: null,
-        warning: { tone: 'lag', label: 'Отставание, 3 недели' },
+        warning: { tone: 'lag', label: lagLabel },
       }),
       treeRow({
         key: 'work:8.2.1',
@@ -95,12 +131,23 @@ describe('ScheduleBoard', () => {
         hasChildren: false,
         expanded: false,
         progressPct: 0,
-        warning: { tone: 'shift', label: 'Прогноз отличается от базового плана' },
+        warning: { tone: 'shift', label: SCHEDULE_SHIFT_WARNING_LABEL },
+      }),
+      treeRow({
+        key: 'work:WK-02',
+        depth: 0,
+        visibleOrdinal: 4,
+        name: 'Завершение участка',
+        kind: 'work',
+        wbs: '9',
+        hasChildren: false,
+        progressPct: 100,
+        warning: { tone: 'none', label: '' },
       }),
       treeRow({
         key: 'work:WK-01',
         depth: 0,
-        visibleOrdinal: 4,
+        visibleOrdinal: 5,
         name: 'Монтаж AHU',
         kind: 'work',
         wbs: null,
@@ -119,83 +166,101 @@ describe('ScheduleBoard', () => {
       />,
     );
 
-    const header = document.querySelector('[data-schedule-header="true"]')?.textContent ?? '';
-    const ordinalHeader = header.indexOf('№');
-    const nameHeader = header.indexOf('Наименование');
-    const warningHeader = header.indexOf('Предупреждение');
-    const progressHeader = header.indexOf('Прогресс');
-    const typeHeader = header.indexOf('Тип');
-    expect(ordinalHeader).toBeGreaterThanOrEqual(0);
-    expect(ordinalHeader).toBeLessThan(nameHeader);
-    expect(nameHeader).toBeLessThan(warningHeader);
-    expect(warningHeader).toBeLessThan(progressHeader);
-    expect(progressHeader).toBeLessThan(typeHeader);
+    const header = document.querySelector('[data-schedule-header="true"]');
+    expect(header?.textContent).toMatch(/ИСР/);
+    expect(header?.textContent).toMatch(/Наименование/);
+    expect(header?.textContent).toMatch(/Прогресс/);
+    expect(screen.getByLabelText('Предупреждение')).toBeInTheDocument();
+    const h = header?.textContent ?? '';
+    expect(h.indexOf('ИСР')).toBeLessThan(h.indexOf('Наименование'));
+    expect(h.indexOf('Наименование')).toBeLessThan(h.indexOf('Прогресс'));
+    expect(h.indexOf('Прогресс')).toBeLessThan(h.indexOf('Тип'));
 
-    const rowIds = [...document.querySelectorAll('[data-schedule-row]')].map((row) =>
-      row.getAttribute('data-schedule-row'),
-    );
-    expect(rowIds).toEqual([
-      'project_group:AN-08',
-      'stage_group:8.2',
-      'work:8.2.1',
-      'work:WK-01',
-    ]);
+    expect(document.querySelectorAll('[data-schedule-ordinal]')).toHaveLength(0);
+    expect(document.querySelector('[data-schedule-kind]')).toBeNull();
 
-    const ordinals = [...document.querySelectorAll('[data-schedule-ordinal]')].map(
-      (cell) => cell.textContent,
-    );
-    expect(ordinals).toEqual(['1', '2', '3', '4']);
-    expect(document.querySelector('[data-schedule-ordinal="1"]')?.textContent).toBe('1');
-
-    expect(document.querySelector('[data-depth="0"]')).toHaveClass('pl-0');
-    expect(document.querySelector('[data-depth="1"]')).toHaveClass('pl-3');
-    expect(document.querySelector('[data-depth="2"]')).toHaveClass('pl-6');
-
+    const row8 = document.querySelector('[data-schedule-row="project_group:AN-08"]');
+    expect(row8?.querySelector('[data-schedule-wbs="8"]')).toHaveTextContent('8');
     expect(
-      document.querySelector('[data-schedule-row="project_group:AN-08"] [data-schedule-kind="group"]'),
-    ).toHaveTextContent('Группа');
-    expect(
-      document.querySelector('[data-schedule-row="work:8.2.1"] [data-schedule-kind="work"]'),
-    ).toHaveTextContent('Работа');
+      document.querySelector('[data-schedule-row="work:8.2.1"] [data-schedule-wbs="8.2.1"]'),
+    ).toHaveTextContent('8.2.1');
 
-    const zeroCell = document.querySelector(
-      '[data-schedule-row="work:8.2.1"] [data-schedule-progress]',
+    const emptyWbsRow = document.querySelector('[data-schedule-row="work:WK-01"]');
+    expect(emptyWbsRow?.querySelector('[data-schedule-wbs]')).toBeNull();
+    expect(emptyWbsRow?.textContent).toMatch(/—/);
+    expect(screen.getByLabelText('ИСР отсутствует')).toBeInTheDocument();
+
+    const nameCell = document.querySelector('[data-schedule-row="work:8.2.1"] [data-schedule-name]');
+    expect(nameCell?.textContent).toBe('Сэндвич-панели и герметизация');
+    expect(nameCell?.textContent).not.toMatch(/Работа/);
+    expect(document.querySelector('[data-schedule-row="work:8.2.1"] button')).toBeNull();
+
+    const lagIcon = document.querySelector(
+      `[data-schedule-row="stage_group:8.2"] [data-schedule-warning="lag"] [aria-label="${lagLabel}"]`,
     );
+    expect(lagIcon).toBeTruthy();
+    expect(lagIcon?.querySelector('svg')).toBeTruthy();
+    expect(lagIcon?.textContent).not.toMatch(/\S{5,}/);
+
+    const lagIconEl = screen.getByLabelText(lagLabel);
+    lagIconEl.focus();
+    expect(document.activeElement).toBe(lagIconEl);
+
+    const zeroCell = document.querySelector('[data-schedule-row="work:8.2.1"] [data-schedule-progress]');
     expect(zeroCell).toHaveTextContent('0%');
-    expect(zeroCell).not.toHaveTextContent('нет данных');
-    expect(zeroCell?.querySelector('progress')).toHaveAttribute('aria-valuenow', '0');
-    expect(zeroCell?.querySelector('progress')).toHaveAttribute('value', '0');
+    expect(zeroCell?.textContent).not.toMatch(/нет данных/);
+    expect(zeroCell?.querySelector('[style*="width: 0%"]')).toBeTruthy();
+
+    const pct40 = document.querySelector('[data-schedule-row="project_group:AN-08"] [data-schedule-progress]');
+    expect(pct40).toHaveTextContent('40%');
+    expect(pct40?.querySelector('[style*="width: 40%"]')).toBeTruthy();
+
+    const pct100 = document.querySelector('[data-schedule-row="work:WK-02"] [data-schedule-progress]');
+    expect(pct100).toHaveTextContent('100%');
+    expect(pct100?.querySelector('[style*="width: 100%"]')).toBeTruthy();
 
     const unknownCell = document.querySelector(
-      '[data-schedule-row="work:WK-01"] [data-schedule-progress]',
+      '[data-schedule-row="stage_group:8.2"] [data-schedule-progress]',
     );
     expect(unknownCell).toHaveTextContent('нет данных');
-    expect(unknownCell?.textContent).not.toMatch(/%/);
-    expect(unknownCell?.querySelector('progress')).toBeNull();
-    expect(unknownCell?.querySelector('[aria-valuenow]')).toBeNull();
-
-    const warning = document.querySelector(
-      '[data-schedule-row="stage_group:8.2"] [aria-label="Отставание, 3 недели"]',
-    );
-    expect(warning).toHaveTextContent('Отставание, 3 недели');
-    expect(
-      document.querySelector('[data-schedule-row="project_group:AN-08"] [data-schedule-warning="none"]')
-        ?.textContent,
-    ).toBe('');
+    expect(unknownCell?.querySelector('[style*="width"]')).toBeNull();
 
     const collapse = screen.getByRole('button', { name: 'Свернуть Внутренняя отделка' });
     expect(collapse).toHaveAttribute('aria-expanded', 'true');
     const expand = screen.getByRole('button', { name: 'Развернуть Чистые помещения' });
     expect(expand).toHaveAttribute('aria-expanded', 'false');
-    expect(document.querySelector('[data-schedule-row="work:8.2.1"] button')).toBeNull();
 
-    await userEvent.click(expand);
+    await user.click(expand);
     expect(onToggleRow).toHaveBeenCalledTimes(1);
     expect(onToggleRow).toHaveBeenCalledWith('stage_group:8.2');
 
-    expect(screen.getByText('8.2.1')).toBeInTheDocument();
-    expect(screen.getByText('Отстаёт')).toBeInTheDocument();
-    expect(screen.getByText('WK-01')).toBeInTheDocument();
+    expect(
+      document.querySelector('[data-schedule-row="work:8.2.1"] [data-schedule-wbs="8.2.1"]'),
+    ).toHaveTextContent('8.2.1');
+    expect(
+      document.querySelector('[data-schedule-row="work:WK-01"] [aria-label="Идентификатор WK-01"]'),
+    ).toHaveTextContent('WK-01');
+  });
+
+  it('отметка внимания не задаёт левую рамку строки', () => {
+    render(
+      <ScheduleBoard
+        items={[zeroWork]}
+        mode="split"
+        treeRows={[
+          treeRow({
+            key: 'work:8.2.1',
+            visibleOrdinal: 1,
+            name: 'Сэндвич-панели и герметизация',
+          }),
+        ]}
+      />,
+    );
+
+    const row = document.querySelector('[data-schedule-row="work:8.2.1"]');
+    expect(row).toHaveAttribute('data-emphasis', 'true');
+    expect(row?.className ?? '').not.toMatch(/border-l/);
+    expect(row?.className ?? '').toContain('shadow-[inset_2px_0_0_0_var(--border)]');
   });
 
   it('не сортирует treeRows повторно', () => {
@@ -204,48 +269,46 @@ describe('ScheduleBoard', () => {
         items={[]}
         mode="table"
         treeRows={[
-          treeRow({ key: 'work:b', visibleOrdinal: 2, name: 'Вторая' }),
-          treeRow({ key: 'work:a', visibleOrdinal: 1, name: 'Первая' }),
+          treeRow({ key: 'work:b', visibleOrdinal: 2, name: 'Вторая', wbs: '2' }),
+          treeRow({ key: 'work:a', visibleOrdinal: 1, name: 'Первая', wbs: '1' }),
         ]}
       />,
     );
 
-    const ordinals = [...document.querySelectorAll('[data-schedule-ordinal]')].map(
-      (cell) => cell.textContent,
+    const wbsOrder = [...document.querySelectorAll('[data-schedule-wbs]')].map((cell) =>
+      cell.getAttribute('data-schedule-wbs'),
     );
-    expect(ordinals).toEqual(['2', '1']);
+    expect(wbsOrder).toEqual(['2', '1']);
   });
 
-  it('подписывает веху и оборудование коротким типом', () => {
+  it('в широкой таблице показывает короткий тип вехи и оборудования', () => {
     render(
       <ScheduleBoard
-        items={[]}
-        mode="split"
+        items={[milestoneItem, equipmentItem]}
+        mode="table"
         treeRows={[
           treeRow({
-            key: 'milestone:MS-PS',
+            key: 'milestone:MS-X',
             visibleOrdinal: 1,
             name: 'Готовность',
             kind: 'milestone',
+            wbs: 'M1',
           }),
           treeRow({
             key: 'equipment_delivery:EQ-1',
             visibleOrdinal: 2,
             name: 'AHU',
             kind: 'equipment_delivery',
+            wbs: 'E1',
           }),
         ]}
       />,
     );
 
-    expect(
-      document.querySelector('[data-schedule-kind="milestone"]'),
-    ).toHaveTextContent('Веха');
-    expect(
-      document.querySelector('[data-schedule-kind="equipment"]'),
-    ).toHaveTextContent('Оборудование');
+    expect(screen.getByLabelText('Веха')).toBeInTheDocument();
+    expect(screen.getByLabelText('Оборудование')).toBeInTheDocument();
     const header = document.querySelector('[data-schedule-header="true"]')?.textContent ?? '';
-    expect(header.indexOf('Прогресс')).toBeLessThan(header.indexOf('Объект'));
+    expect(header.indexOf('Прогресс')).toBeLessThan(header.indexOf('Тип'));
   });
 
   it('в списке рядом со шкалой оставляет имя и предупреждение без широких колонок', () => {
@@ -275,7 +338,7 @@ describe('ScheduleBoard', () => {
     expect(header).not.toMatch(/Тип/);
     expect(document.querySelector('[data-schedule-board="true"]')).toHaveAttribute(
       'data-schedule-row-height',
-      String(SCHEDULE_GANTT_ROW_HEIGHT_PX),
+      String(SCHEDULE_ROW_HEIGHT_PX),
     );
   });
 

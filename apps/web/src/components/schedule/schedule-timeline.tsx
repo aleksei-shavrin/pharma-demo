@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import type { ScheduleItem, ScheduleLink } from '@/lib/api-client';
 import type { ScheduleComparisonMode } from '@/lib/schedule/schedule-comparison';
 import type { ScheduleSelectionKey } from '@/lib/schedule/selection-key';
+import type { ScheduleScrollAnchor } from '@/lib/schedule/schedule-scroll-anchor';
 import { useTheme } from '@/lib/theme/theme-context';
 import './dhtmlx-gantt-adapter.css';
 
@@ -27,6 +28,7 @@ type Props = {
   comparison?: ScheduleComparisonMode;
   selected: ScheduleSelectionKey | null;
   onSelect: (key: ScheduleSelectionKey | null) => void;
+  scrollAnchor?: ScheduleScrollAnchor;
 };
 
 export function ScheduleTimeline({
@@ -36,53 +38,23 @@ export function ScheduleTimeline({
   comparison = 'forecast',
   selected,
   onSelect,
+  scrollAnchor,
 }: Props) {
   const { theme } = useTheme();
-  const hasSfDemo = links.some((link) => link.type === 'SF');
 
   return (
-    <div className="flex flex-col gap-2" data-schedule-timeline="live">
-      <p
-        className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--text-muted)]"
-        data-schedule-legend="markers"
-      >
-        <span className="inline-flex items-center gap-1.5">
-          <span
-            className="inline-block size-2.5 rotate-45 border-2 border-[var(--status-danger-border)] bg-[var(--status-danger-fg)]"
-            aria-hidden
-          />
-          Прогноз
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span
-            className="inline-block size-2.5 rotate-45 border-2 border-[var(--text-muted)] bg-[var(--surface-raised)] opacity-75"
-            aria-hidden
-          />
-          База
-        </span>
-        {links.length > 0 ? (
-          <span data-schedule-legend="links">Связи SS / SF / FF / FS</span>
-        ) : null}
-      </p>
-      {hasSfDemo ? (
-        <p
-          className="text-xs text-[var(--text-muted)]"
-          data-schedule-legend="sf-demo"
-        >
-          Связь SF на демо показывает точки крепления стрелки; это не
-          утверждённая технологическая зависимость.
-        </p>
-      ) : null}
+    <div className="flex min-h-0 flex-1 flex-col" data-schedule-timeline="live">
       {/*
-        Project-owned definite viewport height. DHTMLX must fill this box —
-        never size an unbounded ancestor (height:100% / flex-1 on auto parents
-        + vendor resize→render caused infinite growth).
+        The pane is a bounded flex column. The viewport fills it; DHTMLX
+        setSizes reads that height. A percentage height on an auto parent
+        previously grew without bound, so the fixed 36rem box stays only
+        outside this pane.
       */}
       <div
         className={
           treeRows
-            ? 'ppc-gantt-viewport ppc-gantt-viewport-tree'
-            : 'ppc-gantt-viewport'
+            ? 'ppc-gantt-viewport ppc-gantt-viewport-tree min-h-0 flex-1'
+            : 'ppc-gantt-viewport min-h-0 flex-1'
         }
         data-gantt-viewport="bounded"
       >
@@ -94,6 +66,7 @@ export function ScheduleTimeline({
           theme={theme}
           selected={selected}
           onSelect={onSelect}
+          scrollAnchor={scrollAnchor}
         />
       </div>
     </div>

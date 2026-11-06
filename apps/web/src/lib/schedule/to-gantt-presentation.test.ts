@@ -531,17 +531,21 @@ describe('toGanttPresentation: иерархия и прогресс', () => {
     });
     expect(zero.css).toContain('ppc-work-delayed');
     expect(zero.css).toContain('ppc-progress-zero');
+    expect(zero.barCaption).toBe('');
     expect(zero.duration).toBeGreaterThan(0);
 
     expect(partial.progress).toBe(0.4);
+    expect(partial.barCaption).toBe('');
     expect(partial.css).toContain('ppc-progress-known');
     expect(partial.css).toContain('ppc-work-onschedule');
     expect(partial.type).toBe('task');
 
     expect(done.progress).toBe(1);
+    expect(done.barCaption).toBe('');
     expect(done.css).toContain('ppc-progress-known');
     expect(done.css).toContain('ppc-work-completed');
 
+    expect(unknown.barCaption).toBe('');
     expect(unknown.progress).toBeUndefined();
     expect(Object.prototype.hasOwnProperty.call(unknown, 'progress')).toBe(
       false,
@@ -551,6 +555,21 @@ describe('toGanttPresentation: иерархия и прогресс', () => {
     expect(unknown.type).toBe('task');
     expect(unknown.duration).toBe(1);
     expect(unknown.css).not.toContain('ppc-ms');
+  });
+
+  it('готовность 50% занимает половину полосы и подписывается числом', () => {
+    const half = treeRow({
+      key: 'work:WK-HALF',
+      kind: 'work',
+      id: 'WK-HALF',
+      name: 'Ровно половина',
+      progressPct: 50,
+      item: { ...workPartial, id: 'WK-HALF', name: 'Ровно половина' },
+    });
+    const task = toGanttPresentation([], [], [half]).data[0];
+    expect(task.progress).toBe(0.5);
+    expect(task.barCaption).toBe('');
+    expect(task.css).toContain('ppc-progress-known');
   });
 
   it('веха остаётся milestone, красная — контур, зелёная — заливка; поставка не полоса', () => {

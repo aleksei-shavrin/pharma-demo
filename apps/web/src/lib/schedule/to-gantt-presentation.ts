@@ -79,6 +79,11 @@ export type GanttPresentationTask = {
    * Omitted when progress is unknown — not stored as 0.
    */
   progress?: number;
+  /**
+   * Chart stage: leave empty — percent/name live in the adapter `title` only.
+   * Progress unknown still omits `progress` (no 0% confusion).
+   */
+  barCaption?: string;
   /** Row stays in the chart with no task bar (group without both summary bounds). */
   unscheduled?: boolean;
   /**
@@ -354,14 +359,19 @@ function rowLabel(row: GanttTreeRow): string {
 function workProgressPresentation(progressPct: number | null): {
   cssClass: string;
   progress?: number;
+  barCaption: string;
 } {
   if (progressPct === null) {
-    return { cssClass: 'ppc-progress-unknown' };
+    return { cssClass: 'ppc-progress-unknown', barCaption: '' };
   }
   if (progressPct === 0) {
-    return { cssClass: 'ppc-progress-zero', progress: 0 };
+    return { cssClass: 'ppc-progress-zero', progress: 0, barCaption: '' };
   }
-  return { cssClass: 'ppc-progress-known', progress: progressPct / 100 };
+  return {
+    cssClass: 'ppc-progress-known',
+    progress: progressPct / 100,
+    barCaption: '',
+  };
 }
 
 function groupPresentationTask(row: GanttTreeRow): GanttPresentationTask {
@@ -389,8 +399,10 @@ function workTreeTask(
   comparison: ScheduleComparisonMode,
 ): GanttPresentationTask {
   const progress = workProgressPresentation(row.progressPct);
-  const progressFields =
-    progress.progress === undefined ? {} : { progress: progress.progress };
+  const progressFields = {
+    barCaption: progress.barCaption,
+    ...(progress.progress === undefined ? {} : { progress: progress.progress }),
+  };
   if (!row.item || row.item.kind !== 'work') {
     return {
       id: rowTaskId(row),

@@ -22,6 +22,15 @@
   max-height: 36rem;
 }
 
+/* Inside the schedule pane the table column already has a definite height. */
+[data-schedule-pane='chart'] .ppc-gantt-viewport,
+[data-schedule-pane='chart'] .ppc-gantt-viewport.ppc-gantt-viewport-tree {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  flex: 1 1 auto;
+}
+
 .baseline-overlay-bar {
   background: var(--text-muted);
   border-radius: 2px;
@@ -29,7 +38,13 @@
 }
 
 .ppc-gantt-host {
-  --ppc-gantt-row-h: 36px;
+  height: 100%;
+  min-height: 0;
+  --ppc-gantt-row-h: 32px;
+  /* Dependency lines: one semantic stroke + arrow (vendor sets --dhx-gantt-icon-size on the head). */
+  --dhx-gantt-link-background: var(--text-muted);
+  --dhx-gantt-link-background-hover: var(--text-muted);
+  --dhx-gantt-base-colors-icons: var(--text-muted);
 
   /* Map DHTMLX terrace CSS vars → PPC semantic tokens (theme-aware). */
   --dhx-gantt-base-colors-background: var(--surface-raised);
@@ -159,9 +174,9 @@
 }
 
 .ppc-gantt-host .gantt_task_line .gantt_task_content {
-  width: 12px;
-  height: 12px;
-  border: 2px solid transparent;
+  width: 8.49px;
+  height: 8.49px;
+  border: 1px solid transparent;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -182,8 +197,8 @@
   background: var(--status-ok-fg);
   border-color: var(--status-ok-border);
   border-style: solid;
-  border-width: 2px;
-  border-radius: 2px;
+  border-width: 1px;
+  border-radius: 1px;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
@@ -192,15 +207,15 @@
   background: var(--surface-raised);
   border-color: var(--status-danger-border);
   border-style: solid;
-  border-width: 2px;
-  border-radius: 2px;
+  border-width: 1px;
+  border-radius: 1px;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-delayed .gantt_task_content {
   background: var(--status-danger-fg);
   border-color: var(--status-danger-border);
-  border-radius: 2px;
+  border-radius: 1px;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
@@ -248,11 +263,11 @@
   height: 100%;
   border: none;
   background: transparent;
-  color: inherit;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
   transform: none;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-waiting {
@@ -301,8 +316,9 @@
   background: var(--status-warn-fg);
 }
 
+/* On-schedule work: the track stays info; the known-progress fill is the green ok token. */
 .ppc-gantt-host .gantt_task_line.ppc-work-onschedule.ppc-progress-known .gantt_task_progress {
-  background: var(--status-info-fg);
+  background: var(--status-ok-fg);
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-delayed.ppc-progress-known .gantt_task_progress {
@@ -317,12 +333,20 @@
  * Group summary. Darker than pastel work fills in light; in dark a sunken
  * fill plus a text-colored border, still not the vendor project green.
  */
+.ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary {
+  height: 16px !important;
+  min-height: 16px;
+  /* Re-center in the 32px row: default layout assumes 8px bar (offset 12); 16px needs offset 8. */
+  margin-top: -4px;
+  box-sizing: border-box;
+}
+
 .ppc-gantt-host .gantt_task_line.ppc-summary {
   background: var(--text-secondary);
-  border: 2px solid var(--text);
+  border: 1px solid var(--text);
   border-radius: var(--radius-sm);
   box-shadow: none;
-  color: var(--text-inverse);
+  color: transparent;
   --dhx-gantt-task-background: var(--text-secondary);
   --dhx-gantt-project-background: var(--text-secondary);
 }
@@ -341,36 +365,47 @@
   height: 100%;
   border: none;
   background: transparent;
-  color: inherit;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
   transform: none;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-/* Typed dependency links — theme-aware strokes. */
+/* Typed dependency links — single token for shaft, corners, and icon arrow (::before). */
 .ppc-gantt-host .gantt_task_link .gantt_line_wrapper div {
-  background-color: var(--text-muted);
+  background-color: var(--text-muted) !important;
+}
+
+.ppc-gantt-host .gantt_task_link .gantt_link_corner {
+  border-color: var(--text-muted) !important;
 }
 
 .ppc-gantt-host .gantt_task_link .gantt_link_arrow {
-  border-color: transparent;
+  color: var(--text-muted) !important;
 }
 
-.ppc-gantt-host .gantt_task_link .gantt_link_arrow_right {
-  border-left-color: var(--text-muted);
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow::before {
+  color: var(--text-muted) !important;
 }
 
-.ppc-gantt-host .gantt_task_link .gantt_link_arrow_left {
-  border-right-color: var(--text-muted);
+.ppc-gantt-host .gantt_task_link:hover,
+.ppc-gantt-host .gantt_task_link:hover .gantt_line_wrapper div,
+.ppc-gantt-host .gantt_task_link:hover .gantt_link_corner,
+.ppc-gantt-host .gantt_task_link:hover .gantt_link_arrow,
+.ppc-gantt-host .gantt_task_link:hover .gantt_link_arrow::before {
+  --dhx-gantt-link-background: var(--text-muted);
+  --dhx-gantt-link-background-hover: var(--text-muted);
+  color: var(--text-muted) !important;
+  border-color: var(--text-muted) !important;
+  background-color: var(--text-muted) !important;
 }
 
-.ppc-gantt-host .gantt_task_link .gantt_link_arrow_down {
-  border-top-color: var(--text-muted);
-}
-
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow_right,
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow_left,
+.ppc-gantt-host .gantt_task_link .gantt_link_arrow_down,
 .ppc-gantt-host .gantt_task_link .gantt_link_arrow_up {
-  border-bottom-color: var(--text-muted);
+  border-color: transparent !important;
 }
 
 /* Same-row baseline ghost — project overlay layer (not a DHTMLX row) */
@@ -387,11 +422,11 @@
 
 .ppc-gantt-host .ppc-baseline-marker {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 8.49px;
+  height: 8.49px;
   margin: 0;
   padding: 0;
-  border: 2px solid var(--text-muted);
+  border: 1px solid var(--text-muted);
   background: var(--surface-raised);
   opacity: 0.85;
   border-radius: 999px;
@@ -403,7 +438,7 @@
 
 .ppc-gantt-host .ppc-baseline-marker.ppc-eq-delayed,
 .ppc-gantt-host .ppc-baseline-marker.ppc-eq-ontrack {
-  border-radius: 2px;
+  border-radius: 1px;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
@@ -413,18 +448,7 @@
 }
 
 .ppc-gantt-host .ppc-fact-caption-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.ppc-gantt-host .ppc-fact-caption {
-  position: absolute;
-  white-space: nowrap;
-  font-size: 0.75rem;
-  line-height: 1.125rem;
-  color: var(--text-muted);
+  display: none;
 }
 
 .ppc-gantt-host .gantt_grid_data .gantt_row,

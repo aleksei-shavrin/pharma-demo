@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { ScheduleItem, ScheduleWorkItem } from '@/lib/api-client';
 import {
+  SCHEDULE_HEADER_HEIGHT_PX,
   SCHEDULE_ROW_HEIGHT_PX,
+  rowPitchFitsStackedBars,
   buildScheduleHorizon,
   isScheduleAttention,
   markerGeometry,
@@ -53,8 +55,11 @@ const eqA: ScheduleItem = {
 };
 
 describe('schedule geometry / row contract', () => {
-  it('exports fixed compact row height', () => {
-    expect(SCHEDULE_ROW_HEIGHT_PX).toBe(48);
+  it('общий шаг 32px вмещает полосу 8px, зазор 2px и базу', () => {
+    expect(SCHEDULE_ROW_HEIGHT_PX).toBe(32);
+    expect(SCHEDULE_HEADER_HEIGHT_PX).toBe(40);
+    expect(rowPitchFitsStackedBars(SCHEDULE_ROW_HEIGHT_PX, 8, 2)).toBe(true);
+    expect(rowPitchFitsStackedBars(32, 26, 2)).toBe(false);
   });
 
   it('Δ0: no baseline ghost; Δ≠0: connector + baseline', () => {

@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it } from 'vitest';
 import {
+  BASELINE_GAP_PX,
   baselineBox,
   forecastBarTop,
   paintBaselineOverlay,
@@ -21,7 +22,7 @@ describe('baselineBox', () => {
     expect(box.top).toBeGreaterThanOrEqual(ROW_TOP);
     expect(box.top).toBeLessThan(barTop);
     expect(box.top + box.height).toBeLessThanOrEqual(barTop);
-    expect(barTop - (box.top + box.height)).toBe(4);
+    expect(barTop - (box.top + box.height)).toBe(BASELINE_GAP_PX);
     expect(box.top + box.height).toBeLessThanOrEqual(ROW_TOP + ROW_HEIGHT);
   });
 
