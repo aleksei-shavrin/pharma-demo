@@ -10,6 +10,7 @@ import { describe, expect, it } from 'vitest';
  * second scrollbar beside the canvas scroll.
  */
 describe('document scroll lock (globals.css)', () => {
+  // Target is ES2017, so the dotAll flag is not available. [^}] already crosses line breaks.
   const css = readFileSync(
     resolve(dirname(fileURLToPath(import.meta.url)), 'globals.css'),
     'utf8',
@@ -17,18 +18,18 @@ describe('document scroll lock (globals.css)', () => {
 
   it('locks html/body height to the dynamic viewport', () => {
     expect(css).toMatch(
-      /html\s*,\s*body\s*\{[^}]*height:\s*100dvh/s,
+      /html\s*,\s*body\s*\{[^}]*height:\s*100dvh/,
     );
   });
 
   it('hides overflow on html/body so the document cannot scroll', () => {
     expect(css).toMatch(
-      /html\s*,\s*body\s*\{[^}]*overflow:\s*hidden/s,
+      /html\s*,\s*body\s*\{[^}]*overflow:\s*hidden/,
     );
   });
 
   it('does not leave min-height:100% as the sole body size (allows document growth)', () => {
-    const bodyBlock = css.match(/html\s*,\s*body\s*\{[^}]*\}/s)?.[0] ?? '';
+    const bodyBlock = css.match(/html\s*,\s*body\s*\{[^}]*\}/)?.[0] ?? '';
     expect(bodyBlock).not.toMatch(/min-height:\s*100%/);
   });
 });

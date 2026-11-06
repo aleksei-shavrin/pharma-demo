@@ -14,7 +14,7 @@ export function bindSchedulePaneScroll(
 ): () => void {
   let source: 'list' | 'chart' | null = null;
 
-  const follow = (from: HTMLElement, to: HTMLElement, origin: 'list' | 'chart') => {
+  const follow = (from: Scrollable, to: Scrollable, origin: 'list' | 'chart') => {
     if (source !== null && source !== origin) return;
     if (to.scrollTop === from.scrollTop) return;
     source = origin;
