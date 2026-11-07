@@ -5,7 +5,7 @@ type: delivery
 status: draft
 version: 0.2.0
 created: '2026-11-01'
-updated: '2026-11-06'
+updated: '2026-11-07'
 owner: docs-engineering
 related:
   - DOC-OPS-README-001
@@ -50,10 +50,12 @@ related:
 ```bash
 cp .env.local.example .env.local   # once
 npm run dev
-# = docker compose --env-file .env.local -f docker-compose.dev.yml up --build -d
+# = docker compose -p pharma-demo --env-file .env.local -f docker-compose.dev.yml up --build -d
+# `-p pharma-demo` зафиксирован в scripts `dev` / `dev:down` / `dev:logs`
+# (`name:` в compose перекрывается `-p` / COMPOSE_PROJECT_NAME)
 ```
 
-Смена порта: `HOST_PORT` (+ `WEB_ORIGIN` / `PUBLIC_ORIGIN` / `DOCUSAURUS_URL`) в корневом `.env.local`.
+Смена порта: `HOST_PORT` (+ `WEB_ORIGIN` / `PUBLIC_ORIGIN` / `DOCUSAURUS_URL`) в корневом `.env.local`. Повторный `npm run dev` обновляет **тот же** стек. Штатный npm script уже передаёт `-p pharma-demo`, поэтому `COMPOSE_PROJECT_NAME` из окружения на этот запуск **не влияет**. Новый ручной `-p` с другим именем на том же compose-файле создаст **отдельную** Compose-группу.
 
 Остановка:
 
@@ -71,7 +73,7 @@ npm run dev:down
 | API | Nest `start:dev` (watch), исходники `apps/api` |
 | Docs | Docusaurus `start`, исходники `docs/`, `website/`, `openspec/specs/` |
 
-File watching: native (repo на Linux FS в WSL2). Глобальный polling не включён.
+File watching в **dev Compose** (`docker-compose.dev.yml`): `CHOKIDAR_USEPOLLING` / `WATCHPACK_POLLING` по умолчанию **`true`** (можно переопределить через env). Это соответствует реальному docker-стеку, а не native-only запуску на хосте.
 
 Конфиг в корне репозитория: `docker-compose.dev.yml`, `Caddyfile.dev`.
 

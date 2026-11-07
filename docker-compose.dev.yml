@@ -5,8 +5,14 @@
 #   docker compose --env-file .env.local -f docker-compose.dev.yml up --build -d
 # (npm run dev / dev:down / dev:logs wrap that.)
 #
+# Fallback project name below. Routine restarts must use scripts with
+# `-p pharma-demo` (CLI `-p` / COMPOSE_PROJECT_NAME override `name:`).
+# A different `-p` on this file creates a second stack.
+#
 # apps/web/.env.local is separate (native Next without Compose) and must not
 # replace Compose --env-file for HOST_PORT.
+
+name: pharma-demo
 
 networks:
   ppc-net:
