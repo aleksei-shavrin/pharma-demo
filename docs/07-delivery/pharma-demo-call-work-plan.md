@@ -3,7 +3,7 @@ id: DOC-DEL-PHARMA-CALL-001
 title: План работ по демо фармацевтического завода
 type: delivery
 status: draft
-version: '0.7.9'
+version: '0.7.10'
 created: '2026-11-06'
 updated: '2026-11-07'
 owner: docs-engineering
@@ -80,6 +80,8 @@ related: []
 **Статус доводки 2026-11-06:** C05 и платформенная часть E04 выведены из активной доводки демо. Чекбоксы C05 и E04 остаются открытыми. E02 остаётся открытой до репетиции другим участником и записи отзыва в [walkthrough](../03-product/demo-v1-acceptance-walkthrough.md). C06 и C07 сохраняют прежний открытый статус. F07 закрыт удалением skip-link. Комплект репетиции — [director-rehearsal.md](director-rehearsal.md) 0.3.0. Прогон интегратора по этому письму на изолированной сборке `http://127.0.0.1:3091` совпал с экраном и E02 не закрывает. Запуск зафиксирован в [отчёте](reports/2026-11-06-show-readiness-launch.md).
 
 **Статус recovery 2026-11-07:** геометрия и стабилизация календаря в Git (`7765e32`, `c811882`, `801b626`, `419fa12`); отчёты [unified-geometry](reports/2026-11-06-calendar-unified-geometry.md) и [stabilization-walk](reports/2026-11-06-calendar-stabilization-walk.md). План исполнения: [.cursor/plans/demo-recovery-2026-11-07.md](../../.cursor/plans/demo-recovery-2026-11-07.md). Dirty волны: Page Surface / tokens, docker-dev `-p pharma-demo`, handoffs — раздельные коммиты. Штатный стек `http://localhost:3080`. **E02**, **C06**, **C07** без новых галочек. Продуктовый режим сравнения с фактом уже в сборке; C07 остаётся сверкой оформления с макетами ОСУП (макетов нет). OpenSpec calendar changes остаются `propose`: archive ждёт решения человека ([порядок](reports/2026-11-06-schedule-openspec-order.md)); review Codex ≠ human approval.
+
+**Followup приёмки 2026-11-07:** строгие F/D UI+DOM факты и e2e A→C→D→F/split зелёные против `http://localhost:3080`; frontmatter `DOC-OPS-004`; отчёт [demo-recovery-followup](reports/2026-11-07-demo-recovery-followup.md). Isolated docs build в `/tmp` падает на pre-existing broken links портала. **E02**, **C06**, **C07** по-прежнему открыты.
 
 ## Готовность к показу
 

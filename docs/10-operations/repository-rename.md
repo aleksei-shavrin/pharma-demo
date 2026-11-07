@@ -1,3 +1,14 @@
+---
+id: DOC-OPS-004
+title: Переименование репозитория (pharma-project-control → pharma-demo)
+type: delivery
+status: draft
+version: "0.1.0"
+created: '2026-11-05'
+updated: '2026-11-07'
+owner: docs-engineering
+related: []
+---
 # Переименование репозитория — 2026-11-05
 
 По запросу владельца папка `pharma-project-control` переименована в `pharma-demo`. Текущее название: **Pharma Demo**.

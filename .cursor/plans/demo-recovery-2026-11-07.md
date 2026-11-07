@@ -202,6 +202,10 @@ Living `openspec/specs/schedule-workspace/` — **MISSING**. Все пять pro
 - OpenSpec: порядок исследован/зафиксирован; living не опубликован без человека.
 - E02 / C06 / C07 остаются с фактическим открытым статусом; соседний docs-dev жив; новых стеков нет.
 
+## Followup 2026-11-07 (после `7f1441b`)
+
+Исполнитель Cursor session `bf7ecd13-350e-4615-944b-758e679268a6` по `/tmp/pharma-recovery-followup-plan.md`. Доводка: жёсткая приёмка F/D в `/tmp/pharma-demo-artifacts/demo-recovery/accept.mjs`, e2e A→C→D→F + split, frontmatter `DOC-OPS-004`. Header-трек не затрагивался. Факт: [reports/2026-11-07-demo-recovery-followup.md](../../docs/07-delivery/reports/2026-11-07-demo-recovery-followup.md).
+
 ## Вне scope
 
 - Закрытие E02 без отзыва второго участника.

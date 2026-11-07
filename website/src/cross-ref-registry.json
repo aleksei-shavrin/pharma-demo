@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-11-07",
-  "count": 192,
+  "count": 195,
   "entries": {
     "DOC-PORTAL-004": {
       "href": "/docs/portal/DOC-PORTAL-004",
@@ -572,6 +572,11 @@
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-stage1-shell-dashboard-docs.md"
     },
+    "DOC-HANDOFF-2026-11-07-CALENDAR-HEADER-RECOVERY": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-CALENDAR-HEADER-RECOVERY",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-07-calendar-header-recovery.md"
+    },
     "DOC-HANDOFF-2026-11-07-DOCKER-DEV-CLEANUP": {
       "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-DOCKER-DEV-CLEANUP",
       "kind": "doc",
@@ -732,6 +737,11 @@
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-show-readiness-launch.md"
     },
+    "DOC-DEL-RECOVERY-FU": {
+      "href": "/docs/delivery/reports/DOC-DEL-RECOVERY-FU",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-07-demo-recovery-followup.md"
+    },
     "DOC-QA-003": {
       "href": "/docs/quality/DOC-QA-003",
       "kind": "doc",
@@ -766,6 +776,11 @@
       "href": "/docs/operations/",
       "kind": "doc",
       "source": "docs/10-operations/README.md"
+    },
+    "DOC-OPS-004": {
+      "href": "/docs/operations/DOC-OPS-004",
+      "kind": "doc",
+      "source": "docs/10-operations/repository-rename.md"
     },
     "DOC-OPS-003": {
       "href": "/docs/operations/DOC-OPS-003",
