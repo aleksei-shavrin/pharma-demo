@@ -17,9 +17,9 @@ related:
 
 > **certainty:** fact
 >
-> Прогон 2026-11-06 на `http://127.0.0.1:3000/schedule`, API `http://127.0.0.1:3011`, снимок C, окно Chromium 1440×900. Change [schedule-unified-geometry](../../../openspec/changes/schedule-unified-geometry/proposal.md) остаётся в `propose`: living spec не публиковался. E02 остаётся открытым до репетиции другим участником.
+> Прогон 2026-11-06 на `http://127.0.0.1:3000/schedule`, API `http://127.0.0.1:3011`, снимок C, окно Chromium 1440×900. Change schedule-unified-geometry (`openspec/changes/schedule-unified-geometry/proposal.md`) остаётся в `propose`: living spec не публиковался. E02 остаётся открытым до репетиции другим участником.
 
-Контракт: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.6 и §1.11. План: [calendar-unified-geometry](../../../.cursor/plans/calendar-unified-geometry.md).
+Контракт: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.6 и §1.11. План: calendar-unified-geometry (`.cursor/plans/calendar-unified-geometry.md`).
 
 ## Ответ Schedule и видимые строки
 

@@ -13,7 +13,7 @@ related:
 
 # Handoff: этап 1 (F01–F06, B10–B11)
 
-План: [`.cursor/plans/shell_dashboard_milestones_f75ea209.plan.md`](../../../.cursor/plans/shell_dashboard_milestones_f75ea209.plan.md).
+План: `.cursor/plans/shell_dashboard_milestones_f75ea209.plan.md` (`.cursor/plans/shell_dashboard_milestones_f75ea209.plan.md`).
 
 ## Закрытые ID
 

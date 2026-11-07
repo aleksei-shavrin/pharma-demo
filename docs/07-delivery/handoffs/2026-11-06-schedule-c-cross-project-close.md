@@ -28,7 +28,7 @@ related:
 
 ## Сделано
 
-- Оба требования change [schedule-c-cross-project-subsample](../../../openspec/changes/schedule-c-cross-project-subsample/proposal.md) реализованы. Review требования 2 принят 2026-11-06. Дельта: [spec.md](../../../openspec/changes/schedule-c-cross-project-subsample/specs/schedule-workspace/spec.md). Задачи 1.1–3.2 отмечены.
+- Оба требования change schedule-c-cross-project-subsample (`openspec/changes/schedule-c-cross-project-subsample/proposal.md`) реализованы. Review требования 2 принят 2026-11-06. Дельта: spec.md (`openspec/changes/schedule-c-cross-project-subsample/specs/schedule-workspace/spec.md`). Задачи 1.1–3.2 отмечены.
 - Дерево: на C свёрнутые по умолчанию «Внешние сети и энергоснабжение» и «HVAC и системы подготовки воздуха». Полное раскрытие — 113 строк, одна `MS-UTL-PWR`. На A, D и F новых групп нет.
 - Стрелка: `LNK-X-PWR-HVAC`, `kind=cross_project_predecessor`, `milestone:MS-UTL-PWR` → `work:9.3.2`, поля типа нет. Четыре связи WK остаются `scheduling`.
 - UX §1.9 и addendum ADR-0004 записаны до кода. `openspec validate schedule-c-cross-project-subsample --strict --type change --no-interactive` проходил после этих правок.

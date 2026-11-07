@@ -3,7 +3,7 @@ id: DOC-DEL-RECOVERY-FU
 title: Demo recovery followup — строгая приёмка F/D, e2e, docs gates
 type: delivery
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 created: '2026-11-07'
 updated: '2026-11-07'
 owner: docs-engineering
@@ -25,7 +25,7 @@ related:
 | `accept.mjs` → `acceptance.json` | **ok: true** — F и D на UI+DOM фактах |
 | `e2e/demo-narrative.spec.ts` | **2 passed** (`E2E_BASE_URL=http://localhost:3080 E2E_SKIP_WEBSERVER=1`) |
 | `check:frontmatter` / `check:ids` | **OK**; `DOC-OPS-004` уникален |
-| Isolated `npm run docs:build` в `/tmp/pharma-demo-docs-build` | **FAIL** (exit 1) — pre-existing broken links Docusaurus (`/DOC-PORTAL-001`, `/docs/…`); не chown/Compose; соседний `docs-portal-dev` сохранён |
+| Isolated `npm run docs:build` в `/tmp/pharma-demo-docs-build` | Сначала **FAIL** без env и с `to=/DOC-PORTAL-001`. После сверки: compose задаёт `DOCUSAURUS_BASE_URL=/docs/`; default конфига `/`. С env `/docs/` оставались реальные дефекты (footer/index → несуществующий slug; ссылки на unpublished `openspec/changes`). После правок — **OK** (exit 0). Не chown; `docs-portal-dev` сохранён |
 
 ## Приёмка F/D
 
@@ -39,12 +39,12 @@ related:
 
 - Frontmatter добавлен в [`repository-rename.md`](../../10-operations/repository-rename.md) (`DOC-OPS-004`).
 - Registry обновлён штатным `npm run build:cross-ref`.
-- Isolated build: rsync-копия без `.env` / `.docusaurus` / generated; symlink `node_modules`. Отказ — broken links на многих страницах (в т.ч. layout → `/DOC-PORTAL-001`); `DOC-OPS-004` в списке только с тем же layout-линком. Правка портальных broken links вне этой волны.
+- Isolated build: rsync-копия без `.env` / `.docusaurus` / generated; symlink `node_modules`. Повтор с `DOCUSAURUS_BASE_URL=/docs/ DOCUSAURUS_URL=http://localhost:3080` + pipefail. Исправления: footer/index `to: '/'` (корневой `docs/README.md` = DOC-PORTAL-001); unpublished paths → code spans; каталоги assets → файл внутри. Log: `/tmp/pharma-demo-artifacts/calendar-header-recovery/docs-build-final.log`.
 
 ## E2E
 
-Контракт A→C→D→F + default «Разделение» + missing entity; helper `selectSnapshot` на listbox. Issues/risks — listbox для B.
+Контракт A→C→D→F + default «Разделение» + missing entity; helper `selectSnapshot` на listbox. Issues/risks — listbox для B. **2 passed** в `cde4dfc` — не перегонялись без причины.
 
-## Вне зоны
+## Связанные треки
 
-Header-трек (`schedule-board*`, `dhtmlx-gantt-adapter*`, UX §1.11) не трогался. Push не выполнялся.
+Calendar header recovery (паритет + Object one-line) — отдельный коммит; handoff [2026-11-07-calendar-header-recovery](../handoffs/2026-11-07-calendar-header-recovery.md). Push не выполнялся.

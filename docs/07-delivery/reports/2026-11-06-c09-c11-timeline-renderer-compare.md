@@ -51,7 +51,7 @@ related:
 
 ## Скриншоты (раунд доработки)
 
-Каталог: [assets/c09-c11-timeline-compare-v2/](./assets/c09-c11-timeline-compare-v2/).
+Каталог: `assets/c09-c11-timeline-compare-v2/` (например [A-light-1-current.png](./assets/c09-c11-timeline-compare-v2/A-light-1-current.png)).
 
 | Файл | Содержание |
 |------|------------|
@@ -61,7 +61,7 @@ related:
 | `C-dark-2-vis.png` / `C-dark-3-echarts.png` | C dark |
 | `C-tablet-3-echarts.png` | ~768px (частичный кадр) |
 
-Первый раунд (до C12): [assets/c09-c11-timeline-compare/](./assets/c09-c11-timeline-compare/).
+Первый раунд (до C12): `assets/c09-c11-timeline-compare/` (например [A-light-1-current.png](./assets/c09-c11-timeline-compare/A-light-1-current.png)).
 
 ## Решение (2026-11-06)
 

@@ -79,9 +79,9 @@ related: []
 
 **Статус доводки 2026-11-06:** C05 и платформенная часть E04 выведены из активной доводки демо. Чекбоксы C05 и E04 остаются открытыми. E02 остаётся открытой до репетиции другим участником и записи отзыва в [walkthrough](../03-product/demo-v1-acceptance-walkthrough.md). C06 и C07 сохраняют прежний открытый статус. F07 закрыт удалением skip-link. Комплект репетиции — [director-rehearsal.md](director-rehearsal.md) 0.3.0. Прогон интегратора по этому письму на изолированной сборке `http://127.0.0.1:3091` совпал с экраном и E02 не закрывает. Запуск зафиксирован в [отчёте](reports/2026-11-06-show-readiness-launch.md).
 
-**Статус recovery 2026-11-07:** геометрия и стабилизация календаря в Git (`7765e32`, `c811882`, `801b626`, `419fa12`); отчёты [unified-geometry](reports/2026-11-06-calendar-unified-geometry.md) и [stabilization-walk](reports/2026-11-06-calendar-stabilization-walk.md). План исполнения: [.cursor/plans/demo-recovery-2026-11-07.md](../../.cursor/plans/demo-recovery-2026-11-07.md). Dirty волны: Page Surface / tokens, docker-dev `-p pharma-demo`, handoffs — раздельные коммиты. Штатный стек `http://localhost:3080`. **E02**, **C06**, **C07** без новых галочек. Продуктовый режим сравнения с фактом уже в сборке; C07 остаётся сверкой оформления с макетами ОСУП (макетов нет). OpenSpec calendar changes остаются `propose`: archive ждёт решения человека ([порядок](reports/2026-11-06-schedule-openspec-order.md)); review Codex ≠ human approval.
+**Статус recovery 2026-11-07:** геометрия и стабилизация календаря в Git (`7765e32`, `c811882`, `801b626`, `419fa12`); отчёты [unified-geometry](reports/2026-11-06-calendar-unified-geometry.md) и [stabilization-walk](reports/2026-11-06-calendar-stabilization-walk.md). План исполнения: `.cursor/plans/demo-recovery-2026-11-07.md`. Page Surface / docker-dev / F/D e2e — `cde4dfc`. Штатный стек `http://localhost:3080`. **E02**, **C06**, **C07** без новых галочек. Продуктовый режим сравнения с фактом уже в сборке; C07 остаётся сверкой оформления с макетами ОСУП (макетов нет). OpenSpec calendar changes остаются `propose`: archive ждёт решения человека ([порядок](reports/2026-11-06-schedule-openspec-order.md)); review Codex ≠ human approval.
 
-**Followup приёмки 2026-11-07:** строгие F/D UI+DOM факты и e2e A→C→D→F/split зелёные против `http://localhost:3080`; frontmatter `DOC-OPS-004`; отчёт [demo-recovery-followup](reports/2026-11-07-demo-recovery-followup.md). Isolated docs build в `/tmp` падает на pre-existing broken links портала. **E02**, **C06**, **C07** по-прежнему открыты.
+**Followup приёмки 2026-11-07:** строгие F/D UI+DOM и e2e A→C→D→F/split зелёные (`cde4dfc`); отчёт [demo-recovery-followup](reports/2026-11-07-demo-recovery-followup.md). Calendar header recovery (`292c964`): паритет колонок + шкала + Object one-line ([handoff](handoffs/2026-11-07-calendar-header-recovery.md); evidence `/tmp/pharma-demo-artifacts/calendar-header-recovery/`). Isolated docs build с `DOCUSAURUS_BASE_URL=/docs/` — **OK** после footer/index `to: '/'` и снятия ссылок на unpublished `openspec/changes` / `.cursor/plans` (без отключения `onBrokenLinks`). **E02**, **C06**, **C07** по-прежнему открыты.
 
 ## Готовность к показу
 
@@ -182,7 +182,7 @@ DHTMLX поддерживает четыре вида связей через `s
 
 Текущий Schedule передаёт вехи и поставки как точечные строки, а адаптер получает пустой список связей. Для работ нужны согласованные интервалы. Разность базовой и прогнозной дат вехи обозначает отклонение в днях. В исходнике аналитика стрелки различают внутри- и межпроектные зависимости, поэтому типы SS, SF, FF и FS нужно уточнить отдельно.
 
-**Демо-контракт G07–G11 согласован 2026-11-06** (прогноз, inclusive end, календарные дни, authored-статусы, work↔work, `work:<id>`). Docs: [DOC-UX-005](../05-ux-ui/demo-v1-schedule-workspace.md), [ADR-0004](../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md), [OpenSpec](../../openspec/changes/demo-v1-schedule-work-bars-links/proposal.md). До кода остаётся curated подвыборка: [запрос аналитику](reports/2026-11-06-g07-g11-analyst-questions.md). После ответа — параллельно API+fixtures и FE.
+**Демо-контракт G07–G11 согласован 2026-11-06** (прогноз, inclusive end, календарные дни, authored-статусы, work↔work, `work:<id>`). Docs: [DOC-UX-005](../05-ux-ui/demo-v1-schedule-workspace.md), [ADR-0004](../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md), OpenSpec (`openspec/changes/demo-v1-schedule-work-bars-links/proposal.md`). До кода остаётся curated подвыборка: [запрос аналитику](reports/2026-11-06-g07-g11-analyst-questions.md). После ответа — параллельно API+fixtures и FE.
 
 Источники: [типы задач DHTMLX](https://docs.dhtmlx.com/gantt/guides/task-types/), [CSS-класс полосы](https://docs.dhtmlx.com/gantt/api/template/task_class/), [типы связей](https://docs.dhtmlx.com/gantt/api/config/links/).
 
@@ -194,7 +194,7 @@ DHTMLX поддерживает четыре вида связей через `s
 
 ## 17. Иерархия календарного плана
 
-R1 и R2 согласованы 2026-11-06. Портфель, программы и проекты не меняются. Контракт: [change](../../openspec/changes/schedule-hierarchy-baseline-forecast/proposal.md).
+R1 и R2 согласованы 2026-11-06. Портфель, программы и проекты не меняются. Контракт: change (`openspec/changes/schedule-hierarchy-baseline-forecast/proposal.md`).
 
 - [x] **H01** Дерево снимка C: `AN-08` → `8.2` → `8.2.1`, `8.2.2`, одна строка `MS-CLN-PANEL`. Кластер `WK-01`…`WK-05` без этого родителя. На A, D и F новых строк нет.
 - [x] **H02** Таблица и диаграмма раскрываются одним списком. Первые колонки: номер, вложенное имя, предупреждение с текстом, прогресс. 0% отличим от «нет данных». Прогресс группы неизвестен.
@@ -248,7 +248,7 @@ C07 (план и факт, фактические интервалы) остаё
 
 ## Документация прежде кода
 
-Этот порядок применяется к каждой задаче или к группе связанных задач с общим изменением. Он опирается на [AGENTS.md](../../AGENTS.md) и [Documentation First](../11-ai-engineering/documentation-first.md).
+Этот порядок применяется к каждой задаче или к группе связанных задач с общим изменением. Он опирается на AGENTS.md (`AGENTS.md`) и [Documentation First](../11-ai-engineering/documentation-first.md).
 
 1. **До правок** сверить план, текущую сборку и канонические документы. В плане реализации указать ID задач, ожидаемое поведение, критерии приёмки и конкретные файлы документации. Если действующее решение расходится с задачей, зафиксировать расхождение и вопрос на согласование.
 2. **Сначала обновить документацию** на затронутых уровнях из таблицы ниже. Дополнять существующие документы. Для изменения действующего поведения или контракта подготовить OpenSpec change и пройти human review до реализации. Для изменения архитектурного решения подготовить ADR. Для локальной правки оформления достаточно уточнения в UX-документе или записи в плане реализации со способом проверки, если существующая спецификация уже описывает нужный результат.
@@ -259,7 +259,7 @@ C07 (план и факт, фактические интервалы) остаё
 | --- | --- |
 | Продукт и сценарий | При изменении маршрута руководителя, состава демо или условий показа. Начать с [сценария приёмки](../03-product/demo-v1-acceptance-walkthrough.md) и связанных product-документов. |
 | UX и навигация | При изменении подписи, компоновки, переходов или состояний. Для B10–B11 и C09–C11 смотреть [спецификацию дашборда](../05-ux-ui/demo-v1-dashboard.md), для F01–F06 — [спецификацию оболочки](../05-ux-ui/demo-v1-shell-navigation.md), для G07–G11 — [спецификацию графика](../05-ux-ui/demo-v1-schedule-workspace.md). |
-| Поведение и API | При изменении действующего пользовательского поведения или контракта данных. Сверить [living specs](../../openspec/specs/README.md) и подготовить изменение в `openspec/changes/`. Для G07–G11 описать форму интервалов, типы зависимостей и правила отображения. |
+| Поведение и API | При изменении действующего пользовательского поведения или контракта данных. Сверить [living specs](/openspec/) и подготовить изменение в `openspec/changes/`. Для G07–G11 описать форму интервалов, типы зависимостей и правила отображения. |
 | Архитектура и эксплуатация | При смене принятого решения о рендерере или границах адаптера сверить [ADR-0004](../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md). При смене URL документации обновить [гайд локального запуска](../10-operations/local-dev-and-demo.md) и связанные документы по прокси и развёртыванию. |
 | Демоданные | При изменении fixtures сверить [сценарий данных](../03-product/demo-v1-mock-narrative-data.md). Зафиксировать источник, правила сопоставления, снимки и значения, которые согласованы специально для демо. |
 

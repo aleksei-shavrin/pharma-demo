@@ -148,8 +148,10 @@ const config: Config = {
           title: 'Документация',
           items: [
             {
+              // Root docs/README.md (id DOC-PORTAL-001) is the docs index at `/`,
+              // not a `/DOC-PORTAL-001` slug — registry href is `/docs/` under compose baseUrl.
               label: 'Карта docs',
-              to: '/DOC-PORTAL-001',
+              to: '/',
             },
             {
               label: 'Портал',

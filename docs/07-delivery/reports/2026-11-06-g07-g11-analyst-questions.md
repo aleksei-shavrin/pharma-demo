@@ -20,7 +20,7 @@ related:
 - статус **authored** в снимке: `Waiting` | `OnSchedule` | `Delayed` | `Completed` (Ожидание / По графику / Отстаёт / Выполнено);
 - связи только **work↔work**; адрес `work:<id>` с **исходным ID аналитика**, если он уникален и стабилен.
 
-Норматив: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md), [ADR-0004](../../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md), [OpenSpec](../../../openspec/changes/demo-v1-schedule-work-bars-links/proposal.md).
+Норматив: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md), [ADR-0004](../../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md), OpenSpec (`openspec/changes/demo-v1-schedule-work-bars-links/proposal.md`).
 
 **Статус:** подвыборка для реализации **заморожена** синтетически — см. [2026-11-06-g07-g11-schedule-work-fixtures.md](./2026-11-06-g07-g11-schedule-work-fixtures.md) (снимок C + регрессия A). Ниже — исходный шаблон запроса (архив).
 

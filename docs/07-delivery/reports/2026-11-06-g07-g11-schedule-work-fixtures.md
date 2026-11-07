@@ -13,7 +13,7 @@ related:
 ---
 # G07–G11 — curated works / links (демоданные)
 
-Контракт: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md), [ADR-0004](../../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md), OpenSpec [demo-v1-schedule-work-bars-links](../../../openspec/changes/demo-v1-schedule-work-bars-links/proposal.md).
+Контракт: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md), [ADR-0004](../../06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md), OpenSpec demo-v1-schedule-work-bars-links (`openspec/changes/demo-v1-schedule-work-bars-links/proposal.md`).
 
 ## Сверка с снимком C
 
