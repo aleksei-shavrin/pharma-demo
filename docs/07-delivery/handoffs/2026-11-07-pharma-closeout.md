@@ -3,7 +3,7 @@ id: DOC-HANDOFF-2026-11-07-PHARMA-CLOSEOUT
 title: 'Handoff: pharma demo closeout (C06/C07 + OpenSpec archive)'
 type: handoff
 status: draft
-version: '0.2.0'
+version: '0.2.1'
 created: '2026-11-07'
 updated: '2026-11-07'
 owner: docs-engineering
@@ -76,6 +76,8 @@ E02 **открыт**. Автопрогон ≠ human.
 | architecture `No Activity or WBS…` | links: scheduling work refs и/или milestone→work cross-project |
 
 Код/runtime/browser не менялись. Исторические archive пяти calendar changes не переписывались. E02 open; C05/E04 вне scope.
+
+Follow-up review: DOC-OPS-003 href → `#development`; `require-explicit-schedule-link-kind` убрал kindless-исключение из Typed links (DTO/`явный kind`).
 
 ## Remaining
 

@@ -33,7 +33,7 @@ Production-like запуск Demo v1 на одном публичном origin (
 
 ## Legacy `/portal` → `/docs` (308)
 
-Те же правила, что в [local-dev-and-demo](./local-dev-and-demo.md#legacy-portal--docs-308-caddyfiledev).
+Те же правила, что в [local-dev-and-demo](./local-dev-and-demo.md#development).
 
 ## Маршруты
 
