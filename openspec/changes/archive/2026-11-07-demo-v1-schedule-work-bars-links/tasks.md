@@ -40,8 +40,8 @@
 - [x] Light/dark status colors + text
 - [x] Snapshot without works/links — MS/EQ markers intact
 - [x] Tick G07–G11 in call work-plan; integrator report
-- [ ] Archive OpenSpec per workflow (после human apply living specs)
+- [x] Archive OpenSpec per workflow (closeout mandate 2026-11-07; apply/archive в этой сессии)
 
 ## Out of this change
 
-- [ ] **G12** «Календарный план» — отдельный этап (§16). Владелец UX-доков: docs-engineering; владелец UI-подписей: FE shell.
+- [x] **G12** «Календарный план» — отдельный этап (§16). Владелец UX-доков: docs-engineering; владелец UI-подписей: FE shell. Выполнено в продукте (display name); отмечено closeout 2026-11-07.

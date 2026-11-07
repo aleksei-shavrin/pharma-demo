@@ -13,8 +13,8 @@
 - [x] Приёмка: сценарий C, регрессия A/D/F, маршрут C → D → F
 - [x] Интегратор: синхронное раскрытие и вердикт сравнения
 
-## 3. Out of scope
+## 3. Out of scope / closeout
 
-- [ ] E02 — только другой участник
-- [ ] C07 план/факт
-- [ ] Apply/archive living specs — человек
+- [ ] E02 — только другой участник (остаётся open после archive)
+- [x] C07 план/факт — рабочий режим закрыт closeout 2026-11-07 (ОСУП/hue вне критерия)
+- [x] Apply/archive living specs — authorized closeout mandate 2026-11-07 (не подмена review 2026-11-06)

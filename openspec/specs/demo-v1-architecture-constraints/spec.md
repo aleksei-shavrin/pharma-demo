@@ -45,15 +45,28 @@ Backend Demo v1 SHALL хранить narrative-данные через persisten
 - **WHEN** клиент переключает snapshot с F на G
 - **THEN** сервер возвращает самодостаточное состояние G из fixtures
 
-### Requirement: No Activity or WBS entity in enrichment
+### Requirement: No Activity or WBS domain entity; Schedule may include curated work view-model rows
 
-Demo v1 enrichment SHALL NOT добавлять Domain entities Activity, Task, WBS Item, Work Package, Dependency as Must. Schedule SHALL оставаться control points Equipment delivery + Milestone.
+Demo v1 SHALL NOT добавлять Domain entities Activity, Task, WBS Item, Work Package как Must. Schedule MAY включать curated rows `kind: 'work'` и display-only typed dependency links между работами как **view-model / API presentation**, без CPM, auto-schedule и без объявления Domain Dependency engine. Control points Equipment delivery + Milestone остаются обязательной частью Schedule.
 
 #### Scenario: Schedule items are only equipment and milestones
 
-- **WHEN** запрашивается schedule PRJ-01
+- **WHEN** запрашивается schedule PRJ-01 на снимке без curated works
 - **THEN** каждый item — equipment delivery или milestone
 - **AND** Activity entities отсутствуют
+
+#### Scenario: Schedule may return work rows without Domain Activity
+
+- **WHEN** запрашивается schedule PRJ-01 на снимке с curated works
+- **THEN** items могут включать `equipment_delivery`, `milestone` и `work`
+- **AND** Domain model не вводит entity Activity / Task / WBS
+- **AND** `links` при наличии содержат только display-only зависимости между `work:` refs
+
+#### Scenario: Schedule without works remains control-point only
+
+- **WHEN** запрашивается schedule снимка без curated works
+- **THEN** каждый item — equipment delivery или milestone
+- **AND** `links` пуст или отсутствует по контракту пустого массива
 
 ### Requirement: Frontend still API-only with Nest-owned mock under enrichment
 
@@ -87,3 +100,13 @@ Demo v1 enrichment SHALL NOT добавлять Domain entities Activity, Task, 
 
 - **WHEN** читается Issue или Risk entity schema
 - **THEN** поле managementPriority отсутствует
+
+### Requirement: Schedule groups are not a domain WBS
+
+Demo v1 SHALL NOT добавлять Domain entity WBS, Activity или Task ради групп календарного плана. Строки `project_group` и `stage_group` SHALL существовать только в Schedule view-model. Членство портфеля, программ и проектов SHALL оставаться прежним.
+
+#### Scenario: Portfolio routes stay unchanged
+
+- **WHEN** календарный план показывает дерево `AN-08`
+- **THEN** маршруты `/`, `/programs`, `/projects` и `/schedule` не меняются
+- **AND** контейнер снимка остаётся `PRJ-01`
