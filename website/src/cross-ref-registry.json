@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-05",
-  "count": 154,
+  "generatedAt": "2026-11-07",
+  "count": 192,
   "entries": {
     "DOC-PORTAL-004": {
       "href": "/docs/portal/DOC-PORTAL-004",
@@ -437,6 +437,26 @@
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md"
     },
+    "DOC-ADR-0005": {
+      "href": "/docs/architecture/decisions/DOC-ADR-0005",
+      "kind": "doc",
+      "source": "docs/06-architecture/decisions/0005-server-single-origin-compose.md"
+    },
+    "ADR-0005": {
+      "href": "/docs/architecture/decisions/DOC-ADR-0005",
+      "kind": "adr",
+      "source": "docs/06-architecture/decisions/0005-server-single-origin-compose.md"
+    },
+    "DOC-ADR-0006": {
+      "href": "/docs/architecture/decisions/DOC-ADR-0006",
+      "kind": "doc",
+      "source": "docs/06-architecture/decisions/0006-portfolio-program-project-read-model.md"
+    },
+    "ADR-0006": {
+      "href": "/docs/architecture/decisions/DOC-ADR-0006",
+      "kind": "adr",
+      "source": "docs/06-architecture/decisions/0006-portfolio-program-project-read-model.md"
+    },
     "DOC-ADR-README-001": {
       "href": "/docs/architecture/decisions/",
       "kind": "doc",
@@ -451,6 +471,11 @@
       "href": "/docs/delivery/DOC-PHASE-BAPD-001",
       "kind": "doc",
       "source": "docs/07-delivery/ba-pd-phase-plan.md"
+    },
+    "DOC-DEL-E02-PACK": {
+      "href": "/docs/delivery/DOC-DEL-E02-PACK",
+      "kind": "doc",
+      "source": "docs/07-delivery/director-rehearsal.md"
     },
     "DOC-PHASE-DISC-001": {
       "href": "/docs/delivery/DOC-PHASE-DISC-001",
@@ -502,10 +527,65 @@
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-02-r2-u1-closed.md"
     },
+    "DOC-HANDOFF-SERVER-001": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-SERVER-001",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-05-server-compose-gitlab.md"
+    },
+    "DOC-HANDOFF-C07": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-C07",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-06-c07-schedule-work-actual.md"
+    },
+    "DOC-HANDOFF-2026-11-06-SURFACE": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-SURFACE",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-06-page-surface-row-geometry.md"
+    },
+    "DOC-HANDOFF-2026-11-06-XPROJ": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-XPROJ",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-06-schedule-c-cross-project-close.md"
+    },
+    "DOC-HANDOFF-2026-11-06-SCHED-OWN": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-SCHED-OWN",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-06-schedule-file-owners.md"
+    },
+    "DOC-HANDOFF-2026-11-06-ONE-CAL": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-ONE-CAL",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-06-schedule-one-calendar.md"
+    },
+    "DOC-HANDOFF-2026-11-06-SHELL-LABELS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-SHELL-LABELS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-06-shell-label-theme-brand.md"
+    },
+    "DOC-HANDOFF-2026-11-06-SHOW-NOTE": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-SHOW-NOTE",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-06-show-kit-cross-project-note.md"
+    },
+    "DOC-HANDOFF-2026-11-06-STAGE1": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-STAGE1",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-06-stage1-shell-dashboard-docs.md"
+    },
+    "DOC-HANDOFF-2026-11-07-DOCKER-DEV-CLEANUP": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-DOCKER-DEV-CLEANUP",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-07-docker-dev-cleanup.md"
+    },
     "DOC-HANDOFF-README-001": {
       "href": "/docs/delivery/handoffs/",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/README.md"
+    },
+    "DOC-DEL-PHARMA-CALL-001": {
+      "href": "/docs/delivery/DOC-DEL-PHARMA-CALL-001",
+      "kind": "doc",
+      "source": "docs/07-delivery/pharma-demo-call-work-plan.md"
     },
     "DOC-DEL-001": {
       "href": "/docs/delivery/DOC-DEL-001",
@@ -547,6 +627,111 @@
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-10-31-req-openspec-stage1.md"
     },
+    "DOC-DEL-A01-A05": {
+      "href": "/docs/delivery/reports/DOC-DEL-A01-A05",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-a01-a05-analyst-mapping.md"
+    },
+    "DOC-DEL-A06-A09": {
+      "href": "/docs/delivery/reports/DOC-DEL-A06-A09",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-a06-a09-director-scenario.md"
+    },
+    "DOC-DEL-BASELINE-LAB": {
+      "href": "/docs/delivery/reports/DOC-DEL-BASELINE-LAB",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-baseline-over-forecast-lab.md"
+    },
+    "DOC-DEL-C01-C04": {
+      "href": "/docs/delivery/reports/DOC-DEL-C01-C04",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-c01-c04-marker-notifications.md"
+    },
+    "DOC-DEL-C06": {
+      "href": "/docs/delivery/reports/DOC-DEL-C06",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-c06-vis-month-grid.md"
+    },
+    "DOC-DEL-C07-TICK": {
+      "href": "/docs/delivery/reports/DOC-DEL-C07-TICK",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-c07-open-fact-tick-lab.md"
+    },
+    "DOC-DEL-C07-ACCEPT": {
+      "href": "/docs/delivery/reports/DOC-DEL-C07-ACCEPT",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-c07-product-acceptance.md"
+    },
+    "DOC-DEL-C08": {
+      "href": "/docs/delivery/reports/DOC-DEL-C08",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-c08-gantt-interval-lab.md"
+    },
+    "DOC-RPT-C09-C11-001": {
+      "href": "/docs/delivery/reports/DOC-RPT-C09-C11-001",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-c09-c11-timeline-renderer-compare.md"
+    },
+    "DOC-DEL-H05": {
+      "href": "/docs/delivery/reports/DOC-DEL-H05",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-calendar-hierarchy-acceptance.md"
+    },
+    "DOC-DEL-CAL-SHOW-EP": {
+      "href": "/docs/delivery/reports/DOC-DEL-CAL-SHOW-EP",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-calendar-show-episode.md"
+    },
+    "DOC-DEL-CAL-STAB": {
+      "href": "/docs/delivery/reports/DOC-DEL-CAL-STAB",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-calendar-stabilization-walk.md"
+    },
+    "DOC-DEL-CAL-GEOM": {
+      "href": "/docs/delivery/reports/DOC-DEL-CAL-GEOM",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-calendar-unified-geometry.md"
+    },
+    "DOC-DEL-F07-G12": {
+      "href": "/docs/delivery/reports/DOC-DEL-F07-G12",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-f07-g12-shell.md"
+    },
+    "DOC-DEL-G07-Q": {
+      "href": "/docs/delivery/reports/DOC-DEL-G07-Q",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-g07-g11-analyst-questions.md"
+    },
+    "DOC-DEL-G07-INT": {
+      "href": "/docs/delivery/reports/DOC-DEL-G07-INT",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-g07-g11-integrator-check.md"
+    },
+    "DOC-DEL-G07-FIX": {
+      "href": "/docs/delivery/reports/DOC-DEL-G07-FIX",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-g07-g11-schedule-work-fixtures.md"
+    },
+    "DOC-RPT-MILESTONE-CAND-001": {
+      "href": "/docs/delivery/reports/DOC-RPT-MILESTONE-CAND-001",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-milestone-renderer-candidates.md"
+    },
+    "DOC-DEL-SCHED-ORDER": {
+      "href": "/docs/delivery/reports/DOC-DEL-SCHED-ORDER",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-schedule-openspec-order.md"
+    },
+    "DOC-DEL-SHELL-LABELS": {
+      "href": "/docs/delivery/reports/DOC-DEL-SHELL-LABELS",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-shell-labels-theme-brand.md"
+    },
+    "DOC-DEL-SHOW-LAUNCH": {
+      "href": "/docs/delivery/reports/DOC-DEL-SHOW-LAUNCH",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-06-show-readiness-launch.md"
+    },
     "DOC-QA-003": {
       "href": "/docs/quality/DOC-QA-003",
       "kind": "doc",
@@ -581,6 +766,11 @@
       "href": "/docs/operations/",
       "kind": "doc",
       "source": "docs/10-operations/README.md"
+    },
+    "DOC-OPS-003": {
+      "href": "/docs/operations/DOC-OPS-003",
+      "kind": "doc",
+      "source": "docs/10-operations/server-compose-demo.md"
     },
     "DOC-AI-004": {
       "href": "/docs/ai-engineering/DOC-AI-004",
