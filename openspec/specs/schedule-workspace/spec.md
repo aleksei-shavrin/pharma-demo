@@ -1,6 +1,7 @@
 # schedule-workspace Specification
 
 ## Purpose
+
 Контракт и поведение рабочего пространства Schedule Demo v1: контрольные точки, curated интервальные работы, семантические статусы и read-only типизированные зависимости. Не scheduling engine.
 
 > Демо-контракт согласован 2026-11-06. Curated fixture rows — после ответа аналитика.
@@ -20,19 +21,27 @@ Schedule API SHALL допускать items с `kind: 'work'` наряду с `e
 
 ### Requirement: Work interval is a single forecast bar
 
-Система SHALL кодировать основную полосу работы полями `startDate` и `endDate` как прогнозный интервал в календарных днях. Конец SHALL быть включительным. Если заданы оба конца базового интервала, базовая полоса SHALL рисоваться над прогнозной на той же логической строке. Система SHALL NOT заменять прогнозную полосу базовой. Отсутствие базы SHALL оставлять прогнозную полосу без узла базы. Система SHALL NOT рисовать фактическую полосу работы.
+Система SHALL кодировать основную (нижнюю) полосу работы полями `startDate` и `endDate` как прогнозный интервал в календарных днях. Конец SHALL быть включительным. Если заданы оба конца базы, базовая полоса SHALL рисоваться над прогнозной на той же строке. Система SHALL NOT заменять прогнозную полосу базовой. Отсутствие базы SHALL оставлять прогноз без узла базы. Запрет фактической полосы SHALL быть mode-qualified (сценарий Fact painting follows comparison mode).
 
-#### Scenario: Snapshot C does not combine baseline and a dependency
+#### Scenario: Fact painting follows comparison mode
 
-- **WHEN** читается подвыборка снимка C
-- **THEN** нет строки, у которой одновременно есть базовый интервал и зависимость
-- **AND** крепление стрелки в этом сочетании не является сценарием продукта и остаётся только в лаборатории
+- **WHEN** включён режим «Базовый план / прогноз»
+- **THEN** фактическая полоса не рисуется
+- **AND** в режиме «Базовый план / факт» закрытый факт MAY заменить только нижнюю полосу по Comparison uses at most two bars
+- **AND** открытый факт не рисует отдельную фактическую полосу
+
+#### Scenario: Snapshot C allows baseline with scheduling links on WK-01
+
+- **WHEN** читается подвыборка снимка C для `WK-01`
+- **THEN** у работы заданы оба конца базы, совпадающие с прогнозом
+- **AND** существуют scheduling-связи SS и FS с участием `WK-01`
+- **AND** крепление стрелок к нижней отображаемой полосе следует правилу Link edges follow the displayed lower bar
 
 #### Scenario: Baseline bar sits above the forecast when both ends exist
 
 - **WHEN** у работы заданы прогнозный интервал и оба конца базы
 - **THEN** базовая полоса отображается над прогнозной на той же логической строке
-- **AND** прогнозная полоса остаётся
+- **AND** прогнозная полоса остаётся в режиме прогноза
 
 #### Scenario: Inclusive end maps to visible span
 
@@ -57,17 +66,17 @@ Schedule API SHALL допускать items с `kind: 'work'` наряду с `e
 
 ### Requirement: Typed display-only dependency links between works
 
-Schedule API SHALL включать `links` — массив зависимостей с `id`, `sourceRef`, `targetRef`, `type` ∈ {`FS`,`SS`,`FF`,`SF`}. `sourceRef` и `targetRef` SHALL иметь вид `work:<entityId>`. Концы SHALL ссылаться на существующие work items того же ответа. Система SHALL отображать links read-only и SHALL NOT создавать/редактировать их в UI. Система SHALL NOT в G07–G11 допускать ends на `milestone` или `equipment_delivery`.
+Schedule API SHALL включать `links`. Для `kind: scheduling` (или ранний эквивалент без kind) SHALL быть `id`, `sourceRef`, `targetRef`, `type` ∈ {`FS`,`SS`,`FF`,`SF`} с концами `work:<entityId>` того же ответа. Links SHALL быть read-only в UI. Scheduling-связи SHALL NOT иметь ends на `milestone` или `equipment_delivery`. Kind `cross_project_predecessor` SHALL следовать Milestone to work link is an untyped cross-project predecessor.
 
 #### Scenario: Four link types present in demo fixture set
 
-- **WHEN** загружен согласованный демо-снимок с зависимостями
-- **THEN** среди links представлены типы FS, SS, FF и SF
+- **WHEN** загружен согласованный демо-снимок с scheduling-зависимостями
+- **THEN** среди scheduling links представлены типы FS, SS, FF и SF
 - **AND** каждый конец резолвится в work item
 
 #### Scenario: Snapshot without works keeps control-point markers
 
-- **WHEN** schedule снимка не содержит work items и links пуст
+- **WHEN** schedule снимка не содержит work items и scheduling links пуст
 - **THEN** milestone и equipment_delivery продолжают отображаться точечными маркерами как до G07–G11
 
 ### Requirement: Schedule tree rows keep stable identity
@@ -108,7 +117,7 @@ Schedule API SHALL включать `links` — массив зависимос�
 
 ### Requirement: Optional baseline does not replace the forecast bar
 
-Работа SHALL иметь прогнозный интервал `startDate` и включительный `endDate`. Базовый интервал SHALL задаваться парой `baselineStart` и `baselineEnd` либо отсутствовать целиком. Отсутствие базы SHALL оставлять прогнозную полосу, сводку группы, ромб вехи и стрелки. Система SHALL NOT хранить фактический интервал работы в этом change.
+Работа SHALL иметь прогнозный интервал `startDate` и включительный `endDate`. Базовый интервал SHALL задаваться парой `baselineStart` и `baselineEnd` либо отсутствовать целиком. Отсутствие базы SHALL оставлять прогнозную полосу, сводку группы, ромб вехи и стрелки. Фактический интервал, если хранится, SHALL регулироваться требованиями Actual work dates are explicit and inclusive и Comparison uses at most two bars и SHALL NOT подменять определение прогнозной полосы в этом требовании.
 
 #### Scenario: Work without baseline still has a forecast bar
 
@@ -216,12 +225,13 @@ Schedule API SHALL включать `links` — массив зависимос�
 
 ### Requirement: Fact mode names the row
 
-В режиме факта работа SHALL иметь подпись «Факт», «Прогноз — факт не завершён» или «Прогноз — факта нет» соответственно закрытому факту, только началу и отсутствию факта. В режиме прогноза этих подписей SHALL NOT быть.
+В режиме факта работа SHALL иметь подпись «Факт», «Прогноз — факт не завершён» или «Прогноз — факта нет» соответственно закрытому факту, только началу и отсутствию факта. Подпись SHALL быть доступна через accessible name / `title` / поле presentation `factCaption` и/или таблицу. Система SHALL NOT рисовать эти подписи текстом на полосе, ромбе или стрелке. В режиме прогноза этих подписей SHALL NOT быть.
 
 #### Scenario: Three captions follow the stored fields
 
 - **WHEN** режим факта показывает закрытый факт, только начало и работу без факта
 - **THEN** подписи равны «Факт», «Прогноз — факт не завершён» и «Прогноз — факта нет»
+- **AND** на фигурах диаграммы текстовых подписей факта нет
 
 #### Scenario: Default mode has no fact caption
 
@@ -313,7 +323,7 @@ Schedule API SHALL включать `links` — массив зависимос�
 
 ### Requirement: Snapshot C adds collapsed power and HVAC branches
 
-На снимке C Schedule SHALL добавить `project_group` `AN-24` и `AN-09`, свёрнутые по умолчанию, и вложить единственную `MS-UTL-PWR` в `24.1` без смены id и дат. Новые работы SHALL нести синтетический прогноз и `progressPct` `null`. A, D и F SHALL сохранить прежний состав.
+На снимке C Schedule SHALL добавить `project_group` `AN-24` и `AN-09`, свёрнутые по умолчанию, и вложить единственную `MS-UTL-PWR` в `24.1` без смены id и дат. Новые работы SHALL нести синтетический прогноз и `progressPct` `null`. A, D и F SHALL сохранить прежний состав. При раскрытии по умолчанию (открыты `AN-08` и `8.2`, ветки `AN-24`/`AN-09` свёрнуты) видимых строк SHALL быть 106; полный ответ при полном раскрытии SHALL содержать 113 строк.
 
 #### Scenario: Full expansion counts 113 rows
 
@@ -322,6 +332,12 @@ Schedule API SHALL включать `links` — массив зависимос�
 - **AND** среди них ровно три `project_group`: `AN-08`, `AN-24`, `AN-09`
 - **AND** этапы `24.1` и `9.3` присутствуют
 - **AND** работы `24.1.1`, `24.1.2`, `9.3.1`, `9.3.2` присутствуют
+
+#### Scenario: Default expansion shows 106 visible rows
+
+- **WHEN** на снимке C открыт календарный план с раскрытием по умолчанию
+- **THEN** видимы 106 строк
+- **AND** полный ответ Schedule по-прежнему содержит 113 элементов
 
 #### Scenario: Power milestone keeps its identity inside stage 24.1
 
@@ -445,7 +461,7 @@ Schedule API SHALL включать `links` — массив зависимос�
 
 ### Requirement: Chart marks stay compact and unlabeled
 
-Полоса работы SHALL иметь высоту 8px и длину календарного интервала. Ромб вехи SHALL иметь высоту 8.49px. Сводная полоса SHALL быть компактнее прежней полосы 26px. Базовая полоса SHALL рисоваться над основной с зазором, без пересечения. Текст SHALL NOT рисоваться на полосе, ромбе или стрелке. Ствол, поворот и треугольный наконечник одной стрелки SHALL быть одного цвета. Типы SS, FS, FF и SF и линия `LNK-X-PWR-HVAC` SHALL сохранять прежние точки крепления и правило скрытия в режиме факта.
+Полоса работы SHALL иметь высоту 8px и длину календарного интервала. Ромб вехи SHALL иметь высоту 8.49px. Сводная полоса SHALL быть компактнее прежней полосы 26px. Базовая полоса SHALL рисоваться над основной с зазором **2px**, без пересечения. Текст SHALL NOT рисоваться на полосе, ромбе или стрелке. Ствол, поворот и треугольный наконечник одной стрелки SHALL быть одного цвета. Типы SS, FS, FF и SF и линия `LNK-X-PWR-HVAC` SHALL сохранять прежние точки крепления и правило скрытия в режиме факта.
 
 #### Scenario: Progress text stays off the bar
 
