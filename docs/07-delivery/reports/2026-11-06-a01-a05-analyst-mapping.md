@@ -93,7 +93,7 @@ Baseline не зависит от снимка: он в каталоге. На A
 
 ## Состав обзора
 
-Living spec [milestone-readiness](/openspec/milestone-readiness/spec) фиксирует даты и RAG `MS-PS`, инвентарь вех и запрет прямого ребра Equipment—Milestone. Состав из 12 ID там не задан. OpenSpec change для членства шкалы не открывается. Нормативный список обновлён в DOC-UX-022 и DOC-PROD-025 до правки fixtures.
+Living spec `milestone-readiness` (портал `/openspec/milestone-readiness/spec`) фиксирует даты и RAG `MS-PS`, инвентарь вех и запрет прямого ребра Equipment—Milestone. Состав из 12 ID там не задан. OpenSpec change для членства шкалы не открывается. Нормативный список обновлён в DOC-UX-022 и DOC-PROD-025 до правки fixtures.
 
 | Было | Стало | Зачем |
 |------|-------|-------|
