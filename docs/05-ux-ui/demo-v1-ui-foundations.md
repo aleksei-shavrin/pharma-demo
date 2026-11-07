@@ -53,8 +53,8 @@ Foundations add (`approved UI Design decision`):
 | Role | Purpose |
 |------|---------|
 | `canvas` | Application background behind shell chrome |
-| `surface` | Page Surface plate |
-| `surface-raised` | Panels, KPI tiles, Decision panel, popovers |
+| `surface` | Тихое заполнение внутри пластины: поля, вторичные блоки |
+| `surface-raised` | Пластина Page Surface, карточки дашборда, панели, KPI, popover |
 | `surface-sunken` | Table viewport, inset wells |
 | `text` / `text-secondary` / `text-muted` / `text-inverse` | Hierarchy |
 | `border` | Structural edges (must meet UI contrast where required) |
@@ -119,8 +119,8 @@ Each applied semantic role specifies: `*-foreground`, `*-background`, `*-border`
 | Token | HEX | Notes |
 |-------|-----|-------|
 | `canvas` | `#E8EEF2` | Cool gray-blue app chrome |
-| `surface` | `#F7FAFC` | Page Surface |
-| `surface-raised` | `#FFFFFF` | Elevated panels |
+| `surface` | `#F7FAFC` | Тихое заполнение внутри пластины. Не фон Page Surface |
+| `surface-raised` | `#FFFFFF` | Пластина Page Surface и карточки дашборда |
 | `surface-sunken` | `#EEF2F6` | Table / inset |
 | `text` | `#1B2430` | Primary |
 | `text-secondary` | `#3D4A5C` | Secondary |
@@ -431,8 +431,8 @@ Density: enterprise-compact; avoid sub-32px interactive targets for primary cont
 | Token | Width | Role |
 |-------|-------|------|
 | `border-w` | 1px | Default structural |
-| `border-w-strong` | 2px | Focus ring offset companion / selected rail |
-| `rail-w` | 3px | Selected / Red row left rail |
+| `border-w-strong` | 2px | Focus ring offset companion |
+| `rail-w` | 3px | Отметка выбранной или красной строки. Рисуется внутренней тенью, не `border`: рамка меняет коробку строки и сдвигает ячейки |
 
 ### 11.3 Elevation / surface depth (VD-A 0–2)
 
@@ -440,7 +440,7 @@ Density: enterprise-compact; avoid sub-32px interactive targets for primary cont
 |-------|--------------|-----------------|----------------|
 | 0 | `canvas` | Flat `#E8EEF2` | Flat `#0F1419` |
 | 1 | `surface` | Tonal lift; optional hairline border | Tonal lift + `border-subtle` |
-| 2 | `surface-raised` | `#FFFFFF` + soft shadow `0 1px 2px rgb(15 20 25 / 0.06), 0 1px 3px rgb(15 20 25 / 0.04)` | `#1E2630` + softer shadow `0 1px 2px rgb(0 0 0 / 0.35)` |
+| 2 | `surface-raised` | `#FFFFFF` + soft shadow. Пластина Page Surface и карточки дашборда | `#1E2630` + softer shadow. Та же роль: пластина светлее холста `#0F1419`, контраст текста как у карточек |
 | inset | `surface-sunken` | Recess via darker fill, no heavy inner shadow | Darker fill |
 
 No multi-layer marketing shadows. Prefer tonal separation over decoration.

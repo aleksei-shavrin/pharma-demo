@@ -25,8 +25,8 @@ related:
 | Role | Purpose |
 |------|---------|
 | `canvas` | Application background (shell chrome sits on this) |
-| `surface` | Page Surface plate |
-| `surface-raised` | Working panels / KPI tiles / nested blocks |
+| `surface` | Тихое заполнение внутри пластины |
+| `surface-raised` | Пластина Page Surface и карточки / панели |
 | `surface-sunken` | Table body / inset wells |
 | `border` / `border-subtle` | Structural edges; avoid boxing everything equally |
 | `text` / `text-muted` / `text-inverse` | Hierarchy |
@@ -52,8 +52,8 @@ Accent: сдержанный **teal-steel или cool blue-gray** (не indigo-p
 | Level | Token intent | Use |
 |-------|--------------|-----|
 | 0 | `canvas` | App shell background |
-| 1 | `surface` + light elevation | Page Surface |
-| 2 | `surface-raised` | Panels, KPI tiles, Decision panel |
+| 1 | `surface` | Тихое заполнение внутри пластины |
+| 2 | `surface-raised` + light elevation | Page Surface, панели, KPI, Decision panel |
 | inset | `surface-sunken` | Table viewport, nested lists |
 
 Elevation: **0–2** only; soft single shadow or tonal separation — не multi-layer stacks. Borders: prefer one clear edge per region; не обводить каждый cell-like card.
