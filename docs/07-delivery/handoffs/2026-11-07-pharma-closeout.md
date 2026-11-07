@@ -3,7 +3,7 @@ id: DOC-HANDOFF-2026-11-07-PHARMA-CLOSEOUT
 title: 'Handoff: pharma demo closeout (C06/C07 + OpenSpec archive)'
 type: handoff
 status: draft
-version: '0.1.0'
+version: '0.2.0'
 created: '2026-11-07'
 updated: '2026-11-07'
 owner: docs-engineering
@@ -58,6 +58,24 @@ Spot-check vs code: hierarchy/links/actual/baseline/scroll в living; ROW=32, HE
 ### T5
 
 E02 **открыт**. Автопрогон ≠ human.
+
+### Reconciliation (post-merge living contradictions)
+
+**Rationale:** Codex review на целевом ревью living specs после archive пяти calendar changes; пользователь делегировал executor довести правки до конца (**не** fake human approval / не повышение `status`).
+
+**Change:** `reconcile-schedule-living-contract` → archive `2026-11-07-reconcile-schedule-living-contract`.
+
+| Заголовок / сценарий | Правка |
+|---|---|
+| `Work interval is a single forecast bar` | RENAMED→REMOVED→ADDED: mode-qualified fact; сценарий WK-01 вместо «Snapshot C does not combine…» |
+| `Typed display-only dependency links between works` | scope `kind: scheduling` work↔work; не исключает `cross_project_predecessor` |
+| `Optional baseline does not replace the forecast bar` | снят «SHALL NOT хранить фактический интервал» |
+| `Fact mode names the row` | captions via a11y/`factCaption`/table; SHALL NOT paint на фигурах |
+| `Chart marks stay compact and unlabeled` | baseline gap **2px** |
+| `Snapshot C adds collapsed power and HVAC branches` | API 113 + default visible **106** |
+| architecture `No Activity or WBS…` | links: scheduling work refs и/или milestone→work cross-project |
+
+Код/runtime/browser не менялись. Исторические archive пяти calendar changes не переписывались. E02 open; C05/E04 вне scope.
 
 ## Remaining
 
