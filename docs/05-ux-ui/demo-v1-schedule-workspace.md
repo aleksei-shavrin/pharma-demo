@@ -20,17 +20,17 @@ related:
 >
 > D10–D11 = `approved UX decision`; D12 = **RESOLVED** (ADR-0004, I7). Schedule = визуализация хранимых дат, **не** scheduling engine.
 >
-> **Контракт G07–G11 (демо) — согласован 2026-11-06**; curated fixtures на снимке C (+ регрессия A) — [fixtures](../07-delivery/reports/2026-11-06-g07-g11-schedule-work-fixtures.md); приёмка — [integrator](../07-delivery/reports/2026-11-06-g07-g11-integrator-check.md). OpenSpec: demo-v1-schedule-work-bars-links (`openspec/changes/demo-v1-schedule-work-bars-links/proposal.md`).
+> **Контракт G07–G11 (демо) — согласован 2026-11-06**; curated fixtures на снимке C (+ регрессия A) — [fixtures](../07-delivery/reports/2026-11-06-g07-g11-schedule-work-fixtures.md); приёмка — [integrator](../07-delivery/reports/2026-11-06-g07-g11-integrator-check.md). OpenSpec: demo-v1-schedule-work-bars-links (`openspec/changes/archive/2026-11-07-demo-v1-schedule-work-bars-links/proposal.md`).
 >
 > Три режима — видимость частей одного календаря (§1.11). Диаграмму в «Разделении» и на «Временной шкале» рисует один рендерер DHTMLX. Отдельная шкала маркеров доски в «Разделении» не используется.
 >
-> **Единая геометрия (согласовано 2026-11-06):** change (`openspec/changes/schedule-unified-geometry/proposal.md`). Один шаг строки, общие шапки, ИСР, компактные полосы и сохранение позиции. Замер до правки — §1.11. Итог прогона — [отчёт](../07-delivery/reports/2026-11-06-calendar-unified-geometry.md). E02 этим прогоном не закрывается.
+> **Единая геометрия (согласовано 2026-11-06):** change (`openspec/changes/archive/2026-11-07-schedule-unified-geometry/proposal.md`). Один шаг строки, общие шапки, ИСР, компактные полосы и сохранение позиции. Замер до правки — §1.11. Итог прогона — [отчёт](../07-delivery/reports/2026-11-06-calendar-unified-geometry.md). E02 этим прогоном не закрывается.
 >
 > **G12** — пользовательское имя раздела **«Календарный план»**; path `/schedule` без изменений (см. §7).
 >
-> **Иерархия и необязательная база (R1/R2, 2026-11-06):** change (`openspec/changes/schedule-hierarchy-baseline-forecast/proposal.md`). Портфель и маршруты не меняются. Синтетические даты гнезда `8.2` помечены в [narrative](../03-product/demo-v1-mock-narrative-data.md).
+> **Иерархия и необязательная база (R1/R2, 2026-11-06):** change (`openspec/changes/archive/2026-11-07-schedule-hierarchy-baseline-forecast/proposal.md`). Портфель и маршруты не меняются. Синтетические даты гнезда `8.2` помечены в [narrative](../03-product/demo-v1-mock-narrative-data.md).
 >
-> **Факт работы (C07, review принят 2026-11-06):** change (`openspec/changes/schedule-work-actual/proposal.md`), §1.8. В режиме по умолчанию у `WK-01` допустима дополнительная базовая полоса.
+> **Факт работы (C07, review принят 2026-11-06):** change (`openspec/changes/archive/2026-11-07-schedule-work-actual/proposal.md`), §1.8. В режиме по умолчанию у `WK-01` допустима дополнительная базовая полоса.
 
 ## 1. Scope (D11 + расширение G07–G11)
 
@@ -171,13 +171,13 @@ C07 (на созвоне план и под ним факт) остаётся о
 
 `LNK-X-PWR-HVAC` в режиме факта крепится к прогнозной полосе `9.3.2`, потому что у этой работы факта нет. Если у цели позднее появится закрытый факт и прогнозная полоса в этом режиме исчезнет, линия в режиме факта скрывается. В режиме прогноза она остаётся.
 
-Рабочий режим закрывается по критерию в design change (`openspec/changes/schedule-work-actual/design.md`). Сверка с макетом ОСУП, включая цвет отклонения, этим критерием не закрывается.
+Рабочий режим закрыт по критерию design (`openspec/changes/archive/2026-11-07-schedule-work-actual/design.md`) и living `openspec/specs/schedule-workspace/`. Сверка с макетом ОСУП и отдельный hue отклонения **вне** критерия демо (closeout 2026-11-07); макет не утверждается прочитанным.
 
 ## 1.9 Межпроектное предшествование
 
 > **certainty:** assumption
 >
-> Review требования 2 change schedule-c-cross-project-subsample (`openspec/changes/schedule-c-cross-project-subsample/proposal.md`) принят 2026-11-06. Знак `⇢` в исходнике тип FS/SS/FF/SF не задаёт.
+> Review требования 2 change schedule-c-cross-project-subsample (`openspec/changes/archive/2026-11-07-schedule-c-cross-project-subsample/proposal.md`) принят 2026-11-06. Знак `⇢` в исходнике тип FS/SS/FF/SF не задаёт.
 
 На снимке C одна связь `LNK-X-PWR-HVAC`. Вид `cross_project_predecessor`: источник `milestone:MS-UTL-PWR`, цель `work:9.3.2`. Поля типа планирования у записи нет. Четыре связи WK остаются видом `scheduling` с обязательным типом.
 

@@ -3,9 +3,9 @@ id: DOC-DEL-C06
 title: 'C06: месячные линии vis-timeline'
 type: delivery
 status: draft
-version: 0.1.0
+version: 0.1.1
 created: '2026-11-06'
-updated: '2026-11-06'
+updated: '2026-11-07'
 owner: docs-engineering
 related:
   - DOC-UX-004
@@ -28,4 +28,6 @@ related:
 | До, vis, 480px, без программы и со строительством | `before-vis-narrow-noprogram.png`, `before-vis-narrow-program.png` |
 | После временного скрытия, те же четыре сочетания | `after-vis-wide-noprogram.png`, `after-vis-wide-program.png`, `after-vis-narrow-noprogram.png`, `after-vis-narrow-program.png` |
 
-C06 остаётся открытым. Чтобы убрать линию, нужно назвать элемент, который не является осью, месячным делением или датой снимка.
+## Closeout 2026-11-07
+
+**Решение:** сохранить полезные месячные линии `.vis-grid.vis-minor` (и major на узкой ширине). Произвольный hide не вносить; текущий `color-mix` contrast оставить. Элемент «помеха» кроме оси / месяца / asOf не назван — удалять нечего. Чекбокс C06 в [плане работ](../pharma-demo-call-work-plan.md) закрыт этим решением. Макет ОСУП и новые фичи сюда не входят.

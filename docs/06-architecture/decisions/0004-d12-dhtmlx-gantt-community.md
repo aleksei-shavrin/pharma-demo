@@ -75,7 +75,7 @@ This is a Demo v1 **presentation** compromise — not a general-purpose baseline
 
 ## Addendum: расширение G07–G11 (works + links)
 
-> **certainty:** fact (демо-контракт согласован 2026-11-06). Curated fixtures ещё открыты — [запрос аналитику](../../07-delivery/reports/2026-11-06-g07-g11-analyst-questions.md). Реализация API/FE — после подвыборки. Норматив UX: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) v0.3.1-draft. OpenSpec: demo-v1-schedule-work-bars-links (`openspec/changes/demo-v1-schedule-work-bars-links/proposal.md`).
+> **certainty:** fact (демо-контракт согласован 2026-11-06). Curated fixtures ещё открыты — [запрос аналитику](../../07-delivery/reports/2026-11-06-g07-g11-analyst-questions.md). Реализация API/FE — после подвыборки. Норматив UX: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) v0.3.1-draft. OpenSpec: demo-v1-schedule-work-bars-links (`openspec/changes/archive/2026-11-07-demo-v1-schedule-work-bars-links/proposal.md`).
 >
 > **G12** (переименование в «Календарный план») — **вне** этого addendum; см. DOC-UX-005 §7.
 
@@ -113,7 +113,7 @@ I7 зафиксировал только control points (milestone / equipment_d
 
 > **certainty:** assumption
 >
-> Контракт строк согласован 2026-11-06. Перенос базовой полосы в продукт зависит от лаборатории сравнения. Норматив: change (`openspec/changes/schedule-hierarchy-baseline-forecast/proposal.md`), [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.6–§1.7.
+> Контракт строк согласован 2026-11-06. Перенос базовой полосы в продукт зависит от лаборатории сравнения. Норматив: change (`openspec/changes/archive/2026-11-07-schedule-hierarchy-baseline-forecast/proposal.md`), [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.6–§1.7.
 
 Группа календарного плана — view-model `type: "project"` без `render: "split"`. Сводная полоса покрывает прогнозный диапазон детей. Процент группы не вычисляется. Работа остаётся `type: "task"` на прогнозном интервале. `progressPct: 0` рисует контур без внутренней заливки; частичное и полное значения заливают долю полосы. Веха остаётся `type: "milestone"`. Стрелки по-прежнему крепятся к id прогнозной работы.
 
@@ -123,7 +123,7 @@ I7 зафиксировал только control points (milestone / equipment_d
 
 > **certainty:** assumption
 >
-> Review 2026-11-06 принял подвыборку. Норматив: change (`openspec/changes/schedule-work-actual/proposal.md`), [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.8.
+> Review 2026-11-06 принял подвыборку. Норматив: change (`openspec/changes/archive/2026-11-07-schedule-work-actual/proposal.md`), [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.8.
 
 На работе по-прежнему одна задача DHTMLX. В режиме по умолчанию её интервал — прогноз. Если заданы оба конца базы, overlay рисует её и когда даты совпадают с прогнозом: так у `WK-01` на снимке C появляется верхняя полоса без ветки по id. В режиме «Базовый план / факт» интервал задачи равен закрытому фактическому интервалу. Открытый факт (`actualStart` без `actualEnd`) интервал задачи не подменяет: лаборатория отметки начала совпала с линией дня и в продукт не переносится. База остаётся overlay и не становится второй задачей. Split и PRO baselines не используются.
 
@@ -133,7 +133,7 @@ I7 зафиксировал только control points (milestone / equipment_d
 
 > **certainty:** assumption
 >
-> Review 2026-11-06 принял требование 2 change schedule-c-cross-project-subsample (`openspec/changes/schedule-c-cross-project-subsample/proposal.md`). Норматив UX: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.9.
+> Review 2026-11-06 принял требование 2 change schedule-c-cross-project-subsample (`openspec/changes/archive/2026-11-07-schedule-c-cross-project-subsample/proposal.md`). Норматив UX: [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.9.
 
 Пункт 7 addendum G07–G11 остаётся для вида `scheduling`: концы `work:<id>` и доменный тип `FS` | `SS` | `FF` | `SF`. Вид `cross_project_predecessor` этот пункт не расширяет типом. В ответе Schedule у `LNK-X-PWR-HVAC` нет поля типа. Источник `milestone:MS-UTL-PWR`, цель `work:9.3.2`, оба в том же ответе.
 
@@ -145,6 +145,6 @@ I7 зафиксировал только control points (milestone / equipment_d
 
 - [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md), [DOC-UX-018](../../05-ux-ui/demo-v1-ui-data-viz.md)
 - Вопросы аналитику: [2026-11-06-g07-g11-analyst-questions.md](../../07-delivery/reports/2026-11-06-g07-g11-analyst-questions.md)
-- OpenSpec change: demo-v1-schedule-work-bars-links (`openspec/changes/demo-v1-schedule-work-bars-links/proposal.md`), факт: schedule-work-actual (`openspec/changes/schedule-work-actual/proposal.md`), межпроектная связь: schedule-c-cross-project-subsample (`openspec/changes/schedule-c-cross-project-subsample/proposal.md`)
+- OpenSpec change: demo-v1-schedule-work-bars-links (`openspec/changes/archive/2026-11-07-demo-v1-schedule-work-bars-links/proposal.md`), факт: schedule-work-actual (`openspec/changes/archive/2026-11-07-schedule-work-actual/proposal.md`), межпроектная связь: schedule-c-cross-project-subsample (`openspec/changes/archive/2026-11-07-schedule-c-cross-project-subsample/proposal.md`)
 - npm `dhtmlx-gantt@10.0.3`, GitHub release v10.0.0 (Community MIT)
 - DHTMLX: [task types](https://docs.dhtmlx.com/gantt/guides/task-types/), [task_class](https://docs.dhtmlx.com/gantt/api/template/task_class/), [links config](https://docs.dhtmlx.com/gantt/api/config/links/)

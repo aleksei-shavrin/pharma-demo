@@ -20,7 +20,7 @@ related:
 - **От:** Агент №2, черновик C07
 - **Кому:** review, затем параллельные треки API, UI и тестов и один интегратор
 - **Дата:** 2026-11-06
-- **Область изменений:** `openspec/changes/schedule-work-actual/**`, DOC-UX-005 §1.8, addendum ADR-0004, отчёт лаборатории
+- **Область изменений:** `openspec/changes/archive/2026-11-07-schedule-work-actual/**`, DOC-UX-005 §1.8, addendum ADR-0004, отчёт лаборатории
 
 ## Цель волны
 
@@ -45,7 +45,7 @@ related:
 
 | Путь | ID | Примечание |
 |------|-----|------------|
-| `openspec/changes/schedule-work-actual/` | change | proposal, spec, design, tasks |
+| `openspec/changes/archive/2026-11-07-schedule-work-actual/` | change | proposal, spec, design, tasks |
 | `docs/05-ux-ui/demo-v1-schedule-workspace.md` | DOC-UX-005 | §1.8 |
 | `docs/06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md` | DOC-ADR-0004 | addendum C07 |
 | `docs/07-delivery/reports/2026-11-06-c07-open-fact-tick-lab.md` | DOC-DEL-C07-TICK | отметка не читается |

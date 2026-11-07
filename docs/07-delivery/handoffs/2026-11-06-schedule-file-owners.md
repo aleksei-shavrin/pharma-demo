@@ -23,7 +23,7 @@ related:
 
 ## Согласованный порядок
 
-Агент №2 уже открыл `openspec/changes/schedule-work-actual/` и занимает черновики факта. Агент №3 не правит эти черновики и не забирает файлы, пока в них пишется C07.
+Агент №2 уже открыл `openspec/changes/archive/2026-11-07-schedule-work-actual/` и занимает черновики факта. Агент №3 не правит эти черновики и не забирает файлы, пока в них пишется C07.
 
 | Файл | Кто пишет сейчас | Следующий |
 |------|------------------|-----------|
@@ -38,7 +38,7 @@ related:
 
 ## Что уже зафиксировано без общих файлов
 
-- Change schedule-c-cross-project-subsample (`openspec/changes/schedule-c-cross-project-subsample/proposal.md`): требование дерева и отдельное требование стрелки.
+- Change schedule-c-cross-project-subsample (`openspec/changes/archive/2026-11-07-schedule-c-cross-project-subsample/proposal.md`): требование дерева и отдельное требование стрелки.
 - Narrative: [demo-v1-mock-narrative-data.md](../../03-product/demo-v1-mock-narrative-data.md), раздел «Подвыборка AN-24 → AN-09».
 
 ## Передача schedule-works.ts Агенту №2

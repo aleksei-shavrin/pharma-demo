@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-11-07",
-  "count": 195,
+  "count": 197,
   "entries": {
     "DOC-PORTAL-004": {
       "href": "/docs/portal/DOC-PORTAL-004",
@@ -582,6 +582,11 @@
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-07-docker-dev-cleanup.md"
     },
+    "DOC-HANDOFF-2026-11-07-PHARMA-CLOSEOUT": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-PHARMA-CLOSEOUT",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-07-pharma-closeout.md"
+    },
     "DOC-HANDOFF-README-001": {
       "href": "/docs/delivery/handoffs/",
       "kind": "doc",
@@ -976,6 +981,11 @@
       "href": "/openspec/risk-issue-impact/spec",
       "kind": "openspec",
       "source": "openspec/specs/risk-issue-impact/spec.md"
+    },
+    "schedule-workspace": {
+      "href": "/openspec/schedule-workspace/spec",
+      "kind": "openspec",
+      "source": "openspec/specs/schedule-workspace/spec.md"
     }
   }
 }
