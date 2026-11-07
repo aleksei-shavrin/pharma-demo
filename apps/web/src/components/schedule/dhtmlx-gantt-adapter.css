@@ -121,6 +121,12 @@
   border-color: var(--border-subtle);
 }
 
+.ppc-gantt-host .gantt_scale_cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ppc-gantt-host .gantt_scale_line,
 .ppc-gantt-host .gantt_row,
 .ppc-gantt-host .gantt_task_row,

@@ -3,6 +3,11 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ScheduleItem } from '@/lib/api-client';
+import {
+  SCHEDULE_COL_NAME_PX,
+  SCHEDULE_COL_OBJECT_PX,
+  wideTableMinWidthPx,
+} from '@/lib/schedule/schedule-column-geometry';
 import { SCHEDULE_ROW_HEIGHT_PX } from '@/lib/schedule/schedule-geometry';
 import { SCHEDULE_SHIFT_WARNING_LABEL } from '@/lib/schedule/schedule-warning';
 import { ScheduleBoard, type ScheduleTreeRow } from './schedule-board';
@@ -367,11 +372,115 @@ describe('ScheduleBoard', () => {
     expect(viewport?.firstElementChild).toHaveStyle({ minWidth: '520px' });
   });
 
-  it('широкая таблица не сжимает колонки ниже 1040px', () => {
+  it('широкая таблица берёт minWidth из суммы колонок (forecast)', () => {
     render(<ScheduleBoard items={[work]} mode="table" />);
 
     const viewport = document.querySelector('[data-schedule-viewport="true"]');
-    expect(viewport?.firstElementChild).toHaveStyle({ minWidth: '1040px' });
+    expect(viewport?.firstElementChild).toHaveStyle({
+      minWidth: `${wideTableMinWidthPx('forecast')}px`,
+    });
+  });
+
+  it('в режиме факта minWidth учитывает 4×120 fact-колонки', () => {
+    render(<ScheduleBoard items={[work]} mode="table" comparison="actual" />);
+
+    const viewport = document.querySelector('[data-schedule-viewport="true"]');
+    expect(viewport?.firstElementChild).toHaveStyle({
+      minWidth: `${wideTableMinWidthPx('actual')}px`,
+    });
+  });
+
+  it('заголовок и тело колонки name/object делят фиксированную ширину (не min-w-0)', () => {
+    render(
+      <ScheduleBoard
+        items={[work]}
+        mode="table"
+        treeRows={[
+          treeRow({
+            key: 'work:WK-01',
+            visibleOrdinal: 1,
+            name: 'Монтаж AHU',
+            kind: 'work',
+            wbs: '9.1',
+          }),
+        ]}
+      />,
+    );
+
+    const header = document.querySelector('[data-schedule-header="true"]');
+    const nameHeader = header?.querySelector('[data-schedule-col="name"]');
+    const objectHeader = header?.querySelector('[data-schedule-col="object"]');
+    expect(nameHeader).toBeTruthy();
+    expect(objectHeader).toBeTruthy();
+    expect(nameHeader).toHaveStyle({
+      width: `${SCHEDULE_COL_NAME_PX}px`,
+      minWidth: `${SCHEDULE_COL_NAME_PX}px`,
+      maxWidth: `${SCHEDULE_COL_NAME_PX}px`,
+    });
+    expect(objectHeader).toHaveStyle({
+      width: `${SCHEDULE_COL_OBJECT_PX}px`,
+      minWidth: `${SCHEDULE_COL_OBJECT_PX}px`,
+      maxWidth: `${SCHEDULE_COL_OBJECT_PX}px`,
+    });
+    expect(nameHeader?.className).toMatch(/truncate|overflow-hidden/);
+    expect(nameHeader?.className).not.toMatch(/min-w-0/);
+
+    const bodyLeft = document.querySelector(
+      '[data-schedule-row="work:WK-01"] [data-schedule-row-left="true"]',
+    );
+    const nameBody = bodyLeft?.querySelector('[data-schedule-col="name"]');
+    const objectBody = bodyLeft?.querySelector('[data-schedule-col="object"]');
+    expect(nameBody).toHaveStyle({
+      width: `${SCHEDULE_COL_NAME_PX}px`,
+      minWidth: `${SCHEDULE_COL_NAME_PX}px`,
+      maxWidth: `${SCHEDULE_COL_NAME_PX}px`,
+    });
+    expect(objectBody).toHaveStyle({
+      width: `${SCHEDULE_COL_OBJECT_PX}px`,
+      minWidth: `${SCHEDULE_COL_OBJECT_PX}px`,
+      maxWidth: `${SCHEDULE_COL_OBJECT_PX}px`,
+    });
+  });
+
+  it('ячейка Объект — имя и id в одном ряду (не две строки)', () => {
+    render(
+      <ScheduleBoard
+        items={[
+          {
+            ...milestoneItem,
+            id: 'MS-X',
+            name: 'Готовность чистых зон к эксплуатации',
+          },
+        ]}
+        mode="table"
+        treeRows={[
+          treeRow({
+            key: 'milestone:MS-X',
+            visibleOrdinal: 1,
+            name: 'Готовность чистых зон к эксплуатации',
+            kind: 'milestone',
+            wbs: '8.9',
+          }),
+        ]}
+      />,
+    );
+
+    const objectBody = document.querySelector(
+      '[data-schedule-row="milestone:MS-X"] [data-schedule-col="object"]',
+    );
+    expect(objectBody).toBeTruthy();
+    const inline = objectBody?.querySelector('[data-schedule-object="true"]');
+    expect(inline).toBeTruthy();
+    expect(inline?.className).toMatch(/flex/);
+    expect(inline?.className).not.toMatch(/flex-col/);
+    expect(objectBody?.querySelector('.mt-0\\.5, .mt-0\\.5')).toBeNull();
+    expect(objectBody?.querySelector('[class*="mt-0.5"]')).toBeNull();
+    expect(inline?.textContent).toMatch(/Готовность/);
+    expect(inline?.textContent).toMatch(/MS-X/);
+    const link = inline?.querySelector('a');
+    expect(link).toBeTruthy();
+    expect(link).toHaveAttribute('title', expect.stringMatching(/Готовность/));
+    expect(inline?.querySelector('[aria-label*="Идентификатор MS-X"], [title="MS-X"]')).toBeTruthy();
   });
 
   it('в режиме факта называет прогноз и факт отдельно', () => {

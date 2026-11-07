@@ -3,9 +3,9 @@ id: DOC-UX-005
 title: Demo v1 — рабочее пространство Schedule
 type: product
 status: draft
-version: 0.5.5-draft
+version: 0.5.6-draft
 created: '2026-10-31'
-updated: '2026-11-06'
+updated: '2026-11-07'
 owner: docs-engineering
 related:
   - DOC-UX-001
@@ -20,17 +20,17 @@ related:
 >
 > D10–D11 = `approved UX decision`; D12 = **RESOLVED** (ADR-0004, I7). Schedule = визуализация хранимых дат, **не** scheduling engine.
 >
-> **Контракт G07–G11 (демо) — согласован 2026-11-06**; curated fixtures на снимке C (+ регрессия A) — [fixtures](../07-delivery/reports/2026-11-06-g07-g11-schedule-work-fixtures.md); приёмка — [integrator](../07-delivery/reports/2026-11-06-g07-g11-integrator-check.md). OpenSpec: [demo-v1-schedule-work-bars-links](../../openspec/changes/demo-v1-schedule-work-bars-links/proposal.md).
+> **Контракт G07–G11 (демо) — согласован 2026-11-06**; curated fixtures на снимке C (+ регрессия A) — [fixtures](../07-delivery/reports/2026-11-06-g07-g11-schedule-work-fixtures.md); приёмка — [integrator](../07-delivery/reports/2026-11-06-g07-g11-integrator-check.md). OpenSpec: demo-v1-schedule-work-bars-links (`openspec/changes/demo-v1-schedule-work-bars-links/proposal.md`).
 >
 > Три режима — видимость частей одного календаря (§1.11). Диаграмму в «Разделении» и на «Временной шкале» рисует один рендерер DHTMLX. Отдельная шкала маркеров доски в «Разделении» не используется.
 >
-> **Единая геометрия (согласовано 2026-11-06):** [change](../../openspec/changes/schedule-unified-geometry/proposal.md). Один шаг строки, общие шапки, ИСР, компактные полосы и сохранение позиции. Замер до правки — §1.11. Итог прогона — [отчёт](../07-delivery/reports/2026-11-06-calendar-unified-geometry.md). E02 этим прогоном не закрывается.
+> **Единая геометрия (согласовано 2026-11-06):** change (`openspec/changes/schedule-unified-geometry/proposal.md`). Один шаг строки, общие шапки, ИСР, компактные полосы и сохранение позиции. Замер до правки — §1.11. Итог прогона — [отчёт](../07-delivery/reports/2026-11-06-calendar-unified-geometry.md). E02 этим прогоном не закрывается.
 >
 > **G12** — пользовательское имя раздела **«Календарный план»**; path `/schedule` без изменений (см. §7).
 >
-> **Иерархия и необязательная база (R1/R2, 2026-11-06):** [change](../../openspec/changes/schedule-hierarchy-baseline-forecast/proposal.md). Портфель и маршруты не меняются. Синтетические даты гнезда `8.2` помечены в [narrative](../03-product/demo-v1-mock-narrative-data.md).
+> **Иерархия и необязательная база (R1/R2, 2026-11-06):** change (`openspec/changes/schedule-hierarchy-baseline-forecast/proposal.md`). Портфель и маршруты не меняются. Синтетические даты гнезда `8.2` помечены в [narrative](../03-product/demo-v1-mock-narrative-data.md).
 >
-> **Факт работы (C07, review принят 2026-11-06):** [change](../../openspec/changes/schedule-work-actual/proposal.md), §1.8. В режиме по умолчанию у `WK-01` допустима дополнительная базовая полоса.
+> **Факт работы (C07, review принят 2026-11-06):** change (`openspec/changes/schedule-work-actual/proposal.md`), §1.8. В режиме по умолчанию у `WK-01` допустима дополнительная базовая полоса.
 
 ## 1. Scope (D11 + расширение G07–G11)
 
@@ -171,13 +171,13 @@ C07 (на созвоне план и под ним факт) остаётся о
 
 `LNK-X-PWR-HVAC` в режиме факта крепится к прогнозной полосе `9.3.2`, потому что у этой работы факта нет. Если у цели позднее появится закрытый факт и прогнозная полоса в этом режиме исчезнет, линия в режиме факта скрывается. В режиме прогноза она остаётся.
 
-Рабочий режим закрывается по критерию в [design change](../../openspec/changes/schedule-work-actual/design.md). Сверка с макетом ОСУП, включая цвет отклонения, этим критерием не закрывается.
+Рабочий режим закрывается по критерию в design change (`openspec/changes/schedule-work-actual/design.md`). Сверка с макетом ОСУП, включая цвет отклонения, этим критерием не закрывается.
 
 ## 1.9 Межпроектное предшествование
 
 > **certainty:** assumption
 >
-> Review требования 2 change [schedule-c-cross-project-subsample](../../openspec/changes/schedule-c-cross-project-subsample/proposal.md) принят 2026-11-06. Знак `⇢` в исходнике тип FS/SS/FF/SF не задаёт.
+> Review требования 2 change schedule-c-cross-project-subsample (`openspec/changes/schedule-c-cross-project-subsample/proposal.md`) принят 2026-11-06. Знак `⇢` в исходнике тип FS/SS/FF/SF не задаёт.
 
 На снимке C одна связь `LNK-X-PWR-HVAC`. Вид `cross_project_predecessor`: источник `milestone:MS-UTL-PWR`, цель `work:9.3.2`. Поля типа планирования у записи нет. Четыре связи WK остаются видом `scheduling` с обязательным типом.
 
@@ -210,6 +210,10 @@ C07 (на созвоне план и под ним факт) остаётся о
 | Временная шкала | Та же диаграмма на доступную ширину |
 
 Одна модель видимых строк питает таблицу и диаграмму. Общий шаг строки — **32px** для группы, работы и вехи. Шапка таблицы и шкала дат заканчиваются на одной высоте **40px**. Легенда маркеров и служебные подписи не стоят в потоке над диаграммой. Высота видимой области диаграммы совпадает с табличной. Высота содержимого равна числу видимых строк, умноженному на шаг. Выбор, контур фокуса, раскрытие и вторая полоса не меняют коробку строки.
+
+> **certainty:** assumption
+>
+> **Паритет колонок и шкала (2026-11-07).** Ширины столбцов таблицы в «Таблице» и «Разделении» берутся из одного источника: у заголовка и ячейки тела одной колонки совпадают X и width (в т.ч. после горизонтальной прокрутки). `min-width` доски — сумма этих ширин + gaps + padding; в режиме факта в сумму входят четыре колонки по 120px. Подпись месяца на шкале DHTMLX — краткое RU имя и двузначный год в одну строку с ellipsis; полное имя месяца и год — в `title`. `leadOnly` в production-режимах не используется. Ячейка «Объект» держит имя и id в **одном** визуальном ряду с ellipsis; полные имя и id доступны через `title` / aria. Ссылка на карточку сущности и набор столбцов не меняются; высота строки (32px) не растёт.
 
 > **certainty:** fact
 >

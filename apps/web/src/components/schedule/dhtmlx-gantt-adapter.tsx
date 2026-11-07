@@ -7,6 +7,10 @@ import {
   SCHEDULE_ROW_HEIGHT_PX,
 } from '@/lib/schedule/schedule-geometry';
 import {
+  SCHEDULE_GANTT_MIN_COLUMN_WIDTH_PX,
+  scheduleMonthScaleEntry,
+} from '@/lib/schedule/schedule-month-scale';
+import {
   isoFromDate,
   type ScheduleScrollAnchor,
 } from '@/lib/schedule/schedule-scroll-anchor';
@@ -182,10 +186,9 @@ export function DhtmlxGanttAdapter({
       };
       gantt.config.fit_tasks = false;
       // v10: scales[] owns the header (legacy scale_unit is ignored).
-      // Month-only fits May→Oct at desktop width without day/week noise.
-      gantt.config.scales = [{ unit: 'month', step: 1, format: '%F %Y' }];
-      // Narrow enough that Split (~45% pane) still fits May→Oct without H-scroll.
-      gantt.config.min_column_width = 48;
+      // Short RU month + yy; full caption in title. Floor = SCHEDULE_MONTH_COL_PX.
+      gantt.config.scales = [scheduleMonthScaleEntry()];
+      gantt.config.min_column_width = SCHEDULE_GANTT_MIN_COLUMN_WIDTH_PX;
       gantt.config.scale_height = SCHEDULE_HEADER_HEIGHT_PX;
       gantt.config.row_height = SCHEDULE_ROW_HEIGHT_PX;
       /** Work bar geometry; summary rows use `.ppc-summary` height in CSS. */

@@ -1,11 +1,28 @@
 'use client';
 
+import type { CSSProperties, ReactNode } from 'react';
 import { CircleAlert, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import type { ScheduleItem } from '@/lib/api-client';
 import { entityDetailHref } from '@/lib/entity-routes';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
+import {
+  SCHEDULE_COL_CRIT_PX,
+  SCHEDULE_COL_DATE_PX,
+  SCHEDULE_COL_DELTA_PX,
+  SCHEDULE_COL_FACT_PX,
+  SCHEDULE_COL_NAME_PX,
+  SCHEDULE_COL_OBJECT_PX,
+  SCHEDULE_COL_PROGRESS_PX,
+  SCHEDULE_COL_STATUS_PX,
+  SCHEDULE_COL_TYPE_PX,
+  SCHEDULE_COL_WARN_PX,
+  SCHEDULE_COL_WBS_PX,
+  scheduleColBoxStyle,
+  wideTableMinWidthPx,
+  type ScheduleWideColId,
+} from '@/lib/schedule/schedule-column-geometry';
 import {
   SCHEDULE_HEADER_HEIGHT_PX,
   SCHEDULE_ROW_HEIGHT_PX,
@@ -25,7 +42,48 @@ import type { ScheduleViewMode } from './schedule-view-mode';
 import { ScheduleRowMarkers, ScheduleWorkBar } from './schedule-markers';
 
 const linkClass =
-  'block truncate font-medium text-[var(--text)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]';
+  'truncate font-medium text-[var(--text)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]';
+
+/** Wide-table Object cell: name + id on one row; link preserved; no row growth. */
+function ObjectCell({ item }: { item: ScheduleItem }) {
+  const title = displayTitle(item);
+  const href = detailHref(item);
+  const fullLabel = `${title} (${item.id})`;
+  const nameNode = href ? (
+    <Link
+      href={href}
+      className={['min-w-0 flex-1', linkClass].join(' ')}
+      title={title}
+      aria-label={title}
+    >
+      {title}
+    </Link>
+  ) : (
+    <span
+      className="min-w-0 flex-1 truncate font-medium text-[var(--text)]"
+      title={title}
+      aria-label={title}
+    >
+      {title}
+    </span>
+  );
+  return (
+    <span
+      className="flex min-w-0 items-center gap-1 overflow-hidden"
+      data-schedule-object="true"
+      title={fullLabel}
+    >
+      {nameNode}
+      <span
+        className="max-w-[45%] shrink-0 truncate font-mono text-xs text-[var(--text-muted)]"
+        title={item.id}
+        aria-label={`Идентификатор ${item.id}`}
+      >
+        {item.id}
+      </span>
+    </span>
+  );
+}
 
 /** Split information rail — wide enough for RU titles; timeline remains primary. */
 const SPLIT_LEFT_CLASS = 'w-[26rem] shrink-0';
@@ -38,8 +96,34 @@ const GANTT_LEFT_CLASS = 'w-[14rem] shrink-0';
 const TREE_SPLIT_LEFT_CLASS = 'w-[48rem] shrink-0';
 const TREE_GANTT_LEFT_CLASS = 'w-[36rem] shrink-0';
 
-/** Floor for the wide date table so fixed columns do not squeeze the name to zero. */
-const WIDE_TABLE_MIN_WIDTH_PX = 1040;
+function ScheduleCol({
+  id,
+  widthPx,
+  className,
+  title,
+  'aria-label': ariaLabel,
+  children,
+}: {
+  id: ScheduleWideColId;
+  widthPx: number;
+  className?: string;
+  title?: string;
+  'aria-label'?: string;
+  children?: ReactNode;
+}) {
+  const style: CSSProperties = scheduleColBoxStyle(widthPx);
+  return (
+    <span
+      data-schedule-col={id}
+      className={['overflow-hidden', className].filter(Boolean).join(' ')}
+      style={style}
+      title={title}
+      aria-label={ariaLabel}
+    >
+      {children}
+    </span>
+  );
+}
 
 /**
  * Same 0.75rem step as `px-3` / `gap-3` on this board.
@@ -91,23 +175,6 @@ function statusCell(item: ScheduleItem) {
   return <span className="text-[var(--text-muted)]">—</span>;
 }
 
-function ItemTitle({ item }: { item: ScheduleItem }) {
-  const href = detailHref(item);
-  const title = displayTitle(item);
-  if (!href) {
-    return (
-      <span className="block truncate font-medium text-[var(--text)]" title={title} aria-label={title}>
-        {title}
-      </span>
-    );
-  }
-  return (
-    <Link href={href} className={linkClass} title={title} aria-label={title}>
-      {title}
-    </Link>
-  );
-}
-
 function depthIndentClass(depth: number): string {
   const step = Math.max(0, Math.trunc(depth));
   return DEPTH_INDENT_CLASS[Math.min(step, DEPTH_INDENT_CLASS.length - 1)];
@@ -124,12 +191,33 @@ function itemsBySelectionKey(items: ScheduleItem[]): Map<string, ScheduleItem> {
 function TreeLeadHeaders() {
   return (
     <>
-      <span className="min-w-[72px] shrink-0">ИСР</span>
-      <span className="min-w-0 flex-1">Наименование</span>
-      <span className="flex min-w-[48px] shrink-0 items-center justify-center" aria-label="Предупреждение">
+      <ScheduleCol id="wbs" widthPx={SCHEDULE_COL_WBS_PX} className="truncate" title="ИСР">
+        ИСР
+      </ScheduleCol>
+      <ScheduleCol
+        id="name"
+        widthPx={SCHEDULE_COL_NAME_PX}
+        className="truncate"
+        title="Наименование"
+      >
+        Наименование
+      </ScheduleCol>
+      <ScheduleCol
+        id="warn"
+        widthPx={SCHEDULE_COL_WARN_PX}
+        className="flex items-center justify-center"
+        aria-label="Предупреждение"
+      >
         <TriangleAlert className="h-[15px] w-[15px] text-[var(--status-warn-fg)]" aria-hidden />
-      </span>
-      <span className="min-w-[148px] shrink-0">Прогресс</span>
+      </ScheduleCol>
+      <ScheduleCol
+        id="progress"
+        widthPx={SCHEDULE_COL_PROGRESS_PX}
+        className="truncate"
+        title="Прогресс"
+      >
+        Прогресс
+      </ScheduleCol>
     </>
   );
 }
@@ -158,15 +246,18 @@ function TreeLeadCells({
 
   return (
     <>
-      <span
-        className="min-w-[72px] shrink-0 truncate tabular-nums text-[var(--text-secondary)]"
-        data-schedule-wbs={wbsTrimmed.length > 0 ? wbsTrimmed : undefined}
+      <ScheduleCol
+        id="wbs"
+        widthPx={SCHEDULE_COL_WBS_PX}
+        className="truncate tabular-nums text-[var(--text-secondary)]"
         title={wbsTitle}
         aria-label={wbsAria}
       >
-        {wbsDisplay}
-      </span>
-      <span className="min-w-[160px] flex-1 overflow-hidden">
+        <span data-schedule-wbs={wbsTrimmed.length > 0 ? wbsTrimmed : undefined}>
+          {wbsDisplay}
+        </span>
+      </ScheduleCol>
+      <ScheduleCol id="name" widthPx={SCHEDULE_COL_NAME_PX}>
         <span
           className={['flex min-w-0 items-center gap-2', depthIndentClass(row.depth)].join(' ')}
           data-depth={row.depth}
@@ -191,43 +282,49 @@ function TreeLeadCells({
             {row.name}
           </span>
         </span>
-      </span>
-      <span
-        className="flex min-w-[48px] shrink-0 items-center justify-center"
-        data-schedule-warning={row.warning.tone}
+      </ScheduleCol>
+      <ScheduleCol
+        id="warn"
+        widthPx={SCHEDULE_COL_WARN_PX}
+        className="flex items-center justify-center"
       >
-        {row.warning.tone === 'none' ? null : (
-          <span
-            tabIndex={0}
-            className={`inline-flex rounded-[var(--radius-sm)] outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)] ${warningIconColorClass(row.warning.tone)}`}
-            title={row.warning.label}
-            aria-label={row.warning.label}
-          >
-            <CircleAlert className="h-[15px] w-[15px]" stroke="currentColor" aria-hidden />
-          </span>
-        )}
-      </span>
-      <span
-        className="flex min-w-[148px] shrink-0 items-center gap-2 overflow-hidden"
-        data-schedule-progress={progressKnown ? String(progressPct) : 'unknown'}
-      >
-        {progressKnown ? (
-          <>
+        <span data-schedule-warning={row.warning.tone}>
+          {row.warning.tone === 'none' ? null : (
             <span
-              className="relative h-1 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--border-subtle)]"
-              aria-hidden
+              tabIndex={0}
+              className={`inline-flex rounded-[var(--radius-sm)] outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)] ${warningIconColorClass(row.warning.tone)}`}
+              title={row.warning.label}
+              aria-label={row.warning.label}
             >
-              <span
-                className="absolute inset-y-0 left-0 rounded-full bg-[var(--primary)]"
-                style={{ width: `${Math.min(100, Math.max(0, progressPct))}%` }}
-              />
+              <CircleAlert className="h-[15px] w-[15px]" stroke="currentColor" aria-hidden />
             </span>
-            <span className="shrink-0 whitespace-nowrap tabular-nums text-[var(--text)]">{`${progressPct}%`}</span>
-          </>
-        ) : (
-          <span className="truncate text-[var(--text-muted)]">нет данных</span>
-        )}
-      </span>
+          )}
+        </span>
+      </ScheduleCol>
+      <ScheduleCol
+        id="progress"
+        widthPx={SCHEDULE_COL_PROGRESS_PX}
+        className="flex items-center gap-2"
+      >
+        <span data-schedule-progress={progressKnown ? String(progressPct) : 'unknown'} className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+          {progressKnown ? (
+            <>
+              <span
+                className="relative h-1 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--border-subtle)]"
+                aria-hidden
+              >
+                <span
+                  className="absolute inset-y-0 left-0 rounded-full bg-[var(--primary)]"
+                  style={{ width: `${Math.min(100, Math.max(0, progressPct))}%` }}
+                />
+              </span>
+              <span className="shrink-0 whitespace-nowrap tabular-nums text-[var(--text)]">{`${progressPct}%`}</span>
+            </>
+          ) : (
+            <span className="truncate text-[var(--text-muted)]">нет данных</span>
+          )}
+        </span>
+      </ScheduleCol>
     </>
   );
 }
@@ -249,25 +346,34 @@ function factColumnValues(item: ScheduleItem): string[] {
   ];
 }
 
+const FACT_COL_IDS = ['fact-0', 'fact-1', 'fact-2', 'fact-3'] as const;
+
 function FactHeaderCells() {
-  return FACT_COLUMN_LABELS.map((label) => (
-    <span key={label} className="min-w-[120px] shrink-0 normal-case">
+  return FACT_COLUMN_LABELS.map((label, index) => (
+    <ScheduleCol
+      key={label}
+      id={FACT_COL_IDS[index]}
+      widthPx={SCHEDULE_COL_FACT_PX}
+      className="truncate normal-case"
+      title={label}
+    >
       {label}
-    </span>
+    </ScheduleCol>
   ));
 }
 
 function FactValueCells({ item }: { item: ScheduleItem }) {
   return factColumnValues(item).map((value, index) => (
-    <span
+    <ScheduleCol
       key={FACT_COLUMN_LABELS[index]}
-      className="min-w-[120px] shrink-0 truncate tabular-nums text-[var(--text-secondary)]"
-      data-fact-column={FACT_COLUMN_LABELS[index]}
+      id={FACT_COL_IDS[index]}
+      widthPx={SCHEDULE_COL_FACT_PX}
+      className="truncate tabular-nums text-[var(--text-secondary)]"
       title={value}
       aria-label={value}
     >
-      {value}
-    </span>
+      <span data-fact-column={FACT_COLUMN_LABELS[index]}>{value}</span>
+    </ScheduleCol>
   ));
 }
 
@@ -285,14 +391,48 @@ function ModeHeaders({
   if (showWideTable) {
     return (
       <>
-        <span className="min-w-[96px] shrink-0">Тип</span>
-        <span className="min-w-[140px] flex-1">Объект</span>
-        <span className="min-w-[96px] shrink-0">{dateLabels.first}</span>
-        <span className="min-w-[96px] shrink-0">{dateLabels.second}</span>
+        <ScheduleCol id="type" widthPx={SCHEDULE_COL_TYPE_PX} className="truncate" title="Тип">
+          Тип
+        </ScheduleCol>
+        <ScheduleCol
+          id="object"
+          widthPx={SCHEDULE_COL_OBJECT_PX}
+          className="truncate"
+          title="Объект"
+        >
+          Объект
+        </ScheduleCol>
+        <ScheduleCol
+          id="date-first"
+          widthPx={SCHEDULE_COL_DATE_PX}
+          className="truncate"
+          title={dateLabels.first}
+        >
+          {dateLabels.first}
+        </ScheduleCol>
+        <ScheduleCol
+          id="date-second"
+          widthPx={SCHEDULE_COL_DATE_PX}
+          className="truncate"
+          title={dateLabels.second}
+        >
+          {dateLabels.second}
+        </ScheduleCol>
         {comparison === 'actual' ? <FactHeaderCells /> : null}
-        <span className="min-w-[72px] shrink-0">Δ</span>
-        <span className="min-w-[112px] shrink-0">Статус</span>
-        <span className="min-w-[80px] shrink-0">Крит.</span>
+        <ScheduleCol id="delta" widthPx={SCHEDULE_COL_DELTA_PX} className="truncate" title="Δ">
+          Δ
+        </ScheduleCol>
+        <ScheduleCol
+          id="status"
+          widthPx={SCHEDULE_COL_STATUS_PX}
+          className="truncate"
+          title="Статус"
+        >
+          Статус
+        </ScheduleCol>
+        <ScheduleCol id="crit" widthPx={SCHEDULE_COL_CRIT_PX} className="truncate" title="Крит.">
+          Крит.
+        </ScheduleCol>
       </>
     );
   }
@@ -333,84 +473,89 @@ function ModeItemCells({
       item.kind === 'equipment_delivery' ? (item.critical ? 'Да' : 'Нет') : '—';
     return (
       <>
-        <span
-          className="min-w-[96px] shrink-0 truncate text-[var(--text-secondary)]"
+        <ScheduleCol
+          id="type"
+          widthPx={SCHEDULE_COL_TYPE_PX}
+          className="truncate text-[var(--text-secondary)]"
           title={typeLabel}
           aria-label={typeLabel}
         >
           {typeLabel}
-        </span>
-        <span className="min-w-[140px] flex-1 overflow-hidden">
-          <ItemTitle item={item} />
-          <span
-            className="mt-0.5 block truncate font-mono text-xs text-[var(--text-muted)]"
-            title={item.id}
-            aria-label={`Идентификатор ${item.id}`}
-          >
-            {item.id}
-          </span>
-        </span>
-        <span
-          className="min-w-[96px] shrink-0 truncate tabular-nums text-[var(--text-secondary)]"
+        </ScheduleCol>
+        <ScheduleCol id="object" widthPx={SCHEDULE_COL_OBJECT_PX}>
+          <ObjectCell item={item} />
+        </ScheduleCol>
+        <ScheduleCol
+          id="date-first"
+          widthPx={SCHEDULE_COL_DATE_PX}
+          className="truncate tabular-nums text-[var(--text-secondary)]"
           title={dateFirst}
           aria-label={dateFirst}
         >
           {dateFirst}
-        </span>
-        <span
-          className="min-w-[96px] shrink-0 truncate tabular-nums text-[var(--text-secondary)]"
+        </ScheduleCol>
+        <ScheduleCol
+          id="date-second"
+          widthPx={SCHEDULE_COL_DATE_PX}
+          className="truncate tabular-nums text-[var(--text-secondary)]"
           title={dateSecond}
           aria-label={dateSecond}
         >
           {dateSecond}
-        </span>
+        </ScheduleCol>
         {comparison === 'actual' ? <FactValueCells item={item} /> : null}
-        <span
-          className="min-w-[72px] shrink-0 truncate tabular-nums text-[var(--text)]"
+        <ScheduleCol
+          id="delta"
+          widthPx={SCHEDULE_COL_DELTA_PX}
+          className="truncate tabular-nums text-[var(--text)]"
           title={deltaCell}
           aria-label={deltaCell}
         >
           {deltaCell}
-        </span>
-        <span className="min-w-[112px] shrink-0 overflow-hidden">{statusCell(item)}</span>
-        <span
-          className="min-w-[80px] shrink-0 truncate text-[var(--text-secondary)]"
+        </ScheduleCol>
+        <ScheduleCol id="status" widthPx={SCHEDULE_COL_STATUS_PX}>
+          {statusCell(item)}
+        </ScheduleCol>
+        <ScheduleCol
+          id="crit"
+          widthPx={SCHEDULE_COL_CRIT_PX}
+          className="truncate text-[var(--text-secondary)]"
           title={critCell}
           aria-label={critCell}
         >
           {critCell}
-        </span>
+        </ScheduleCol>
       </>
     );
   }
   if (mode === 'gantt') {
     return (
       <span className="min-w-0 flex-1 overflow-hidden">
-        <ItemTitle item={item} />
-        <span className="mt-0.5 block truncate font-mono text-xs text-[var(--text-muted)]">
-          {item.id}
-        </span>
+        <ObjectCell item={item} />
       </span>
     );
   }
   return (
     <>
       <span className="min-w-0 flex-1 overflow-hidden">
-        <ItemTitle item={item} />
-        <span className="mt-0.5 block truncate font-mono text-xs text-[var(--text-muted)]">
-          {item.id}
-        </span>
+        <ObjectCell item={item} />
       </span>
       <span className="w-28 shrink-0">{statusCell(item)}</span>
-      <span className="w-24 shrink-0 text-xs tabular-nums text-[var(--text)]">
-        <span className="block">
-          {formatDateRu(item.kind === 'work' ? dates.first : dates.second)}
-        </span>
-        <span className="text-[var(--text-muted)]">
+      <span className="w-24 shrink-0 truncate text-xs tabular-nums text-[var(--text)]">
+        <span
+          className="truncate"
+          title={
+            item.kind === 'work'
+              ? `${formatDateRu(dates.first)} — ${formatDateRu(dates.second)}`
+              : item.kind === 'milestone' || item.kind === 'equipment_delivery'
+                ? `${formatDateRu(dates.second)} ${formatDeltaDays(item.dateVariance.deltaDays)}`
+                : undefined
+          }
+        >
           {item.kind === 'work'
-            ? `до ${formatDateRu(dates.second)}`
+            ? `${formatDateRu(dates.first)} / ${formatDateRu(dates.second)}`
             : item.kind === 'milestone' || item.kind === 'equipment_delivery'
-              ? formatDeltaDays(item.dateVariance.deltaDays)
+              ? `${formatDateRu(dates.second)} ${formatDeltaDays(item.dateVariance.deltaDays)}`
               : '—'}
         </span>
       </span>
@@ -431,20 +576,34 @@ function ModePlaceholderCells({
   if (showWideTable) {
     return (
       <>
-        <span className="min-w-[96px] shrink-0">{dash}</span>
-        <span className="min-w-[140px] flex-1 overflow-hidden">{dash}</span>
-        <span className="min-w-[96px] shrink-0">{dash}</span>
-        <span className="min-w-[96px] shrink-0">{dash}</span>
+        <ScheduleCol id="type" widthPx={SCHEDULE_COL_TYPE_PX}>
+          {dash}
+        </ScheduleCol>
+        <ScheduleCol id="object" widthPx={SCHEDULE_COL_OBJECT_PX}>
+          {dash}
+        </ScheduleCol>
+        <ScheduleCol id="date-first" widthPx={SCHEDULE_COL_DATE_PX}>
+          {dash}
+        </ScheduleCol>
+        <ScheduleCol id="date-second" widthPx={SCHEDULE_COL_DATE_PX}>
+          {dash}
+        </ScheduleCol>
         {comparison === 'actual'
-          ? FACT_COLUMN_LABELS.map((label) => (
-              <span key={label} className="min-w-[120px] shrink-0">
+          ? FACT_COLUMN_LABELS.map((label, index) => (
+              <ScheduleCol key={label} id={FACT_COL_IDS[index]} widthPx={SCHEDULE_COL_FACT_PX}>
                 {dash}
-              </span>
+              </ScheduleCol>
             ))
           : null}
-        <span className="min-w-[72px] shrink-0">{dash}</span>
-        <span className="min-w-[112px] shrink-0">{dash}</span>
-        <span className="min-w-[80px] shrink-0">{dash}</span>
+        <ScheduleCol id="delta" widthPx={SCHEDULE_COL_DELTA_PX}>
+          {dash}
+        </ScheduleCol>
+        <ScheduleCol id="status" widthPx={SCHEDULE_COL_STATUS_PX}>
+          {dash}
+        </ScheduleCol>
+        <ScheduleCol id="crit" widthPx={SCHEDULE_COL_CRIT_PX}>
+          {dash}
+        </ScheduleCol>
       </>
     );
   }
@@ -530,7 +689,8 @@ export function ScheduleBoard({
     : undefined;
   const boardMinWidth = leadOnly
     ? SCHEDULE_LEAD_MIN_WIDTH_PX
-    : (timelineMinWidth ?? (showWideTable ? WIDE_TABLE_MIN_WIDTH_PX : undefined));
+    : (timelineMinWidth ??
+      (showWideTable ? wideTableMinWidthPx(comparison) : undefined));
 
   const rendered = usingTree
     ? treeRows.map((treeRow) => ({
