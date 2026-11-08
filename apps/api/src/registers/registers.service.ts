@@ -1,9 +1,12 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { calendarDaysDelta } from '../common/calendar-days-delta';
+import { decisionDueState } from '../contracts/decision-due-state';
+import { milestoneMembership, projectById } from '../data/analyst-portfolio';
 import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
 import type { SnapshotFixture } from '../data/fixtures/types';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import type {
+  DecisionsRegisterDto,
   EquipmentRegisterDto,
   IssuesRisksRegisterDto,
   MilestonesRegisterDto,
@@ -20,7 +23,10 @@ export class RegistersService {
     @Inject(DEMO_DATA_SOURCE) private readonly dataSource: DemoDataSource,
   ) {}
 
-  listEquipment(projectId: string, snapshotId: SnapshotId): EquipmentRegisterDto {
+  listEquipment(
+    projectId: string,
+    snapshotId: SnapshotId,
+  ): EquipmentRegisterDto {
     const snapshot = this.requireProjectSnapshot(projectId, snapshotId);
     return {
       snapshotId: snapshot.id,
@@ -123,6 +129,42 @@ export class RegistersService {
           },
           relatedActiveIssueIds: activeIssuesForMilestone(snapshot, ms.id),
           relatedRedRiskIds: redRisksForMilestone(snapshot, ms.id),
+        };
+      }),
+    };
+  }
+
+  listDecisions(
+    projectId: string,
+    snapshotId: SnapshotId,
+  ): DecisionsRegisterDto {
+    const snapshot = this.requireProjectSnapshot(projectId, snapshotId);
+    return {
+      snapshotId: snapshot.id,
+      scenarioAsOfDate: snapshot.scenarioAsOfDate,
+      projectId: snapshot.project.id,
+      items: snapshot.decisions.map((d) => {
+        const member = d.milestoneId
+          ? milestoneMembership(d.milestoneId)
+          : { programId: null, projectId: null };
+        const milestone = d.milestoneId
+          ? (snapshot.milestones.find((m) => m.id === d.milestoneId) ?? null)
+          : null;
+        const analyst = member.projectId ? projectById(member.projectId) : null;
+        return {
+          id: d.id,
+          projectId: d.projectId,
+          milestoneId: d.milestoneId,
+          milestoneName: milestone?.name ?? null,
+          type: d.type,
+          ownerPersonId: d.ownerPersonId,
+          ownerFullNameRu: this.dataSource.personFullNameRu(d.ownerPersonId),
+          dueDate: d.dueDate,
+          note: d.note,
+          dueState: decisionDueState(d.dueDate, snapshot.scenarioAsOfDate),
+          programId: member.programId,
+          analystProjectId: member.projectId,
+          analystProjectName: analyst?.name ?? null,
         };
       }),
     };

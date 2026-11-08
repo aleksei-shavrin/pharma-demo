@@ -11,7 +11,9 @@ const LOCAL_DEFAULTS = [
   'http://127.0.0.1:3010',
 ] as const;
 
-export function resolveCorsOrigins(env: NodeJS.Dict<string> = process.env): string[] {
+export function resolveCorsOrigins(
+  env: NodeJS.Dict<string> = process.env,
+): string[] {
   const primary = (env.WEB_ORIGIN ?? 'http://localhost:3000').trim();
   const extra = (env.CORS_EXTRA_ORIGINS ?? '')
     .split(',')

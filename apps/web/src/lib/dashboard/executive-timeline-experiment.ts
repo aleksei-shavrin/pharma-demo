@@ -12,9 +12,8 @@ import {
 } from './executive-timeline';
 
 /**
- * Shared input for C09–C11 experimental renderers and the default strip.
- * All three variants must use the same milestones, horizon, and as-of date.
- * Integrity / ID order stay in resolveExecutiveTimelinePresentation — do not reimplement.
+ * Shared presentation model for the portfolio milestones ECharts card.
+ * Integrity / ID order stay in resolveExecutiveTimelinePresentation.
  */
 export type ExecutiveTimelineExperimentModel = {
   snapshotId: SnapshotId;
@@ -29,18 +28,6 @@ export type ExecutiveTimelineExperimentModel = {
   monthTicks: MonthTick[];
   textSummary: string;
 };
-
-export type TimelineExperimentVariant = 'current' | 'vis' | 'echarts';
-
-export const TIMELINE_EXPERIMENT_VARIANTS: readonly {
-  id: TimelineExperimentVariant;
-  digit: '1' | '2' | '3';
-  label: string;
-}[] = [
-  { id: 'current', digit: '1', label: 'Текущая шкала' },
-  { id: 'vis', digit: '2', label: 'vis-timeline' },
-  { id: 'echarts', digit: '3', label: 'Apache ECharts' },
-] as const;
 
 export function resolveExecutiveTimelineExperimentModel(
   data: DashboardOverview,

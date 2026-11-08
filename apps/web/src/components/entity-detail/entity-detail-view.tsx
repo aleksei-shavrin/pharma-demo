@@ -34,9 +34,22 @@ export function EntityDetailLoading() {
   return (
     <PageFrame className="p-6">
       <PageContent mode="page">
-        <p className="text-sm text-[var(--text-muted)]" role="status">
-          Загрузка…
-        </p>
+        <div
+          className="space-y-3"
+          role="status"
+          aria-busy="true"
+          aria-live="polite"
+          data-page-state="loading"
+        >
+          <div className="h-5 w-40 animate-pulse rounded bg-[var(--border-subtle)]" />
+          <div className="h-4 w-64 animate-pulse rounded bg-[var(--border-subtle)]" />
+          <div className="mt-4 space-y-2">
+            <div className="h-10 animate-pulse rounded-[var(--radius-sm)] bg-[var(--border-subtle)]" />
+            <div className="h-10 animate-pulse rounded-[var(--radius-sm)] bg-[var(--border-subtle)]" />
+            <div className="h-10 animate-pulse rounded-[var(--radius-sm)] bg-[var(--border-subtle)]" />
+          </div>
+          <span className="sr-only">Загрузка…</span>
+        </div>
       </PageContent>
     </PageFrame>
   );
@@ -90,6 +103,7 @@ export function EntityDetailAbsent({
       <PageContent mode="page">
         <div
           role="status"
+          data-page-state="absent"
           className="max-w-xl rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)] p-6"
         >
           <h1 className="text-lg font-semibold text-[var(--text)]">{entityId}</h1>

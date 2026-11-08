@@ -11,6 +11,8 @@ export function entityDetailHref(type: EntityRefType, id: string): string {
       return `/risks/${encodeURIComponent(id)}`;
     case 'milestone':
       return `/milestones/${encodeURIComponent(id)}`;
+    case 'person':
+      return `/people/${encodeURIComponent(id)}`;
   }
 }
 
@@ -23,6 +25,8 @@ export function registerHrefForEntity(type: EntityRefType): string {
       return '/issues-risks';
     case 'milestone':
       return '/milestones';
+    case 'person':
+      return '/people';
   }
 }
 
@@ -35,5 +39,7 @@ export function registerCtaLabel(type: EntityRefType): string {
       return 'К проблемам и рискам';
     case 'milestone':
       return 'К вехам';
+    case 'person':
+      return 'К участникам';
   }
 }

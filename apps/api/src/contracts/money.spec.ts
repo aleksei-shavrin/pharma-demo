@@ -51,9 +51,7 @@ describe('R2-C1 money contract', () => {
     expect(snapshotA.eacRub).toBe(snapshotA.actualCostRub + snapshotA.etcRub);
     // Double-count formula must differ when committed > 0.
     expect(
-      snapshotA.actualCostRub +
-        snapshotA.committedCostRub +
-        snapshotA.etcRub,
+      snapshotA.actualCostRub + snapshotA.committedCostRub + snapshotA.etcRub,
     ).toBeGreaterThan(snapshotA.eacRub);
   });
 

@@ -2,6 +2,7 @@ import { SCHEDULE_LINK_TYPES } from './dto/schedule.dto';
 
 const WORK_REF_PATTERN = /^work:(.+)$/;
 const MILESTONE_REF_PATTERN = /^milestone:(.+)$/;
+const LEAF_REF_PATTERN = /^(work|milestone):(.+)$/;
 
 export type ScheduleLinkKind = 'scheduling' | 'cross_project_predecessor';
 
@@ -14,8 +15,9 @@ export type ScheduleLinkRuleInput = {
 };
 
 /**
- * `scheduling` stays work↔work with a required planning type.
- * `cross_project_predecessor` is milestone→work and must not carry that type.
+ * Leaf ends may be work or milestone (DHTMLX supports task↔milestone arrows).
+ * `scheduling` requires a planning type (FS/SS/FF/SF).
+ * `cross_project_predecessor` is typed ⇢ without a planning type; direction is preserved.
  * A missing kind stays `scheduling` so older fixture literals keep their meaning.
  */
 export function assertScheduleLink(
@@ -26,34 +28,76 @@ export function assertScheduleLink(
 ): void {
   const kind = link.kind ?? 'scheduling';
   if (kind === 'scheduling') {
-    assertSchedulingLink(link, workIds, fail);
+    assertSchedulingLink(link, workIds, milestoneIds, fail);
     return;
   }
   assertCrossProjectPredecessor(link, workIds, milestoneIds, fail);
 }
 
+function resolveLeafId(
+  ref: string,
+  workIds: ReadonlySet<string>,
+  milestoneIds: ReadonlySet<string>,
+): { kind: 'work' | 'milestone'; id: string } | null {
+  const work = WORK_REF_PATTERN.exec(ref);
+  if (work) {
+    return workIds.has(work[1]) ? { kind: 'work', id: work[1] } : null;
+  }
+  const ms = MILESTONE_REF_PATTERN.exec(ref);
+  if (ms) {
+    return milestoneIds.has(ms[1]) ? { kind: 'milestone', id: ms[1] } : null;
+  }
+  return null;
+}
+
+function assertLeafRef(
+  linkId: string,
+  field: string,
+  ref: string,
+  workIds: ReadonlySet<string>,
+  milestoneIds: ReadonlySet<string>,
+  fail: (message: string) => never,
+): void {
+  if (!LEAF_REF_PATTERN.test(ref)) {
+    fail(
+      `link ${linkId} ${field} "${ref}" must match work:<id> or milestone:<id>`,
+    );
+  }
+  if (!resolveLeafId(ref, workIds, milestoneIds)) {
+    fail(`link ${linkId} ${field} references unknown leaf ${ref}`);
+  }
+}
+
 function assertSchedulingLink(
   link: ScheduleLinkRuleInput,
   workIds: ReadonlySet<string>,
+  milestoneIds: ReadonlySet<string>,
   fail: (message: string) => never,
 ): void {
   if (
     link.type == null ||
-    !SCHEDULE_LINK_TYPES.includes(link.type as (typeof SCHEDULE_LINK_TYPES)[number])
+    !SCHEDULE_LINK_TYPES.includes(
+      link.type as (typeof SCHEDULE_LINK_TYPES)[number],
+    )
   ) {
     fail(`link ${link.id} scheduling requires a type`);
   }
-  for (const [field, ref] of [
-    ['sourceRef', link.sourceRef],
-    ['targetRef', link.targetRef],
-  ] as const) {
-    const match = WORK_REF_PATTERN.exec(ref);
-    if (!match) {
-      fail(`link ${link.id} ${field} "${ref}" must match work:<id>`);
-    } else if (!workIds.has(match[1])) {
-      fail(`link ${link.id} ${field} references unknown work ${match[1]}`);
-    }
-  }
+  assertLeafRef(
+    link.id,
+    'sourceRef',
+    link.sourceRef,
+    workIds,
+    milestoneIds,
+    fail,
+  );
+  assertLeafRef(
+    link.id,
+    'targetRef',
+    link.targetRef,
+    workIds,
+    milestoneIds,
+    fail,
+  );
 }
 
 function assertCrossProjectPredecessor(
@@ -63,19 +107,24 @@ function assertCrossProjectPredecessor(
   fail: (message: string) => never,
 ): void {
   if (link.type != null) {
-    fail(`link ${link.id} cross_project_predecessor must not carry a planning type`);
-  }
-  const source = MILESTONE_REF_PATTERN.exec(link.sourceRef);
-  const target = WORK_REF_PATTERN.exec(link.targetRef);
-  if (!source || !target) {
-    fail(`link ${link.id} direction must be milestone to work`);
-  }
-  if (!milestoneIds.has(source[1])) {
     fail(
-      `link ${link.id} sourceRef references unknown milestone ${source[1]}`,
+      `link ${link.id} cross_project_predecessor must not carry a planning type`,
     );
   }
-  if (!workIds.has(target[1])) {
-    fail(`link ${link.id} targetRef references unknown work ${target[1]}`);
-  }
+  assertLeafRef(
+    link.id,
+    'sourceRef',
+    link.sourceRef,
+    workIds,
+    milestoneIds,
+    fail,
+  );
+  assertLeafRef(
+    link.id,
+    'targetRef',
+    link.targetRef,
+    workIds,
+    milestoneIds,
+    fail,
+  );
 }

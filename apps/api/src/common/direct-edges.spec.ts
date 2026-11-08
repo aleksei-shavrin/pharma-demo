@@ -21,9 +21,7 @@ describe('buildDirectEdges', () => {
       ),
     ).toBe(true);
     expect(
-      edges.some(
-        (e) => e.fromType === 'equipment' && e.toType === 'milestone',
-      ),
+      edges.some((e) => e.fromType === 'equipment' && e.toType === 'milestone'),
     ).toBe(false);
   });
 

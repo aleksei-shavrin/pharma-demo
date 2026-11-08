@@ -38,9 +38,9 @@ describe('Notification fixture integrity (R2-N1 / N1-R1)', () => {
     const ids = all.map((n) => n.id);
     expect(new Set(ids).size).toBe(ids.length);
     for (const id of SNAPSHOT_IDS) {
-      expect(notificationsForSnapshot(id).every((n) => n.snapshotId === id)).toBe(
-        true,
-      );
+      expect(
+        notificationsForSnapshot(id).every((n) => n.snapshotId === id),
+      ).toBe(true);
     }
     expect(notificationsForSnapshot('A')).toHaveLength(0);
     expect(notificationsForSnapshot('C').length).toBeGreaterThanOrEqual(3);
@@ -93,7 +93,7 @@ describe('Notification fixture integrity (R2-N1 / N1-R1)', () => {
             break;
           default: {
             const _exhaustive: never = ref.type;
-            throw new Error(`Unknown ref type ${_exhaustive}`);
+            throw new Error(`Unknown ref type ${String(_exhaustive)}`);
           }
         }
       }

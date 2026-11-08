@@ -1,10 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { calendarDaysDelta } from '../common/calendar-days-delta';
 import { computeDerivedImpact } from '../common/derived-impact';
-import {
-  type EntityLink,
-  linksForEntity,
-} from '../common/direct-edges';
+import { type EntityLink, linksForEntity } from '../common/direct-edges';
 import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
 import type { SnapshotFixture } from '../data/fixtures/types';
 import {
@@ -13,6 +10,7 @@ import {
   findMilestone,
   findRisk,
 } from '../data/snapshot-access';
+import { mergeDemoTree } from '../data/schedule/schedule-demo-tree';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import type {
   EntityImpactDto,
@@ -132,28 +130,67 @@ export class EntityDetailService {
   ): MilestoneDetailDto {
     const snapshot = this.requireProjectSnapshot(projectId, snapshotId);
     const ms = findMilestone(snapshot, entityId);
-    if (!ms) {
+    if (ms) {
+      const deltaDays = calendarDaysDelta(ms.baselineDate, ms.forecastDate);
+      return {
+        snapshotId: snapshot.id,
+        scenarioAsOfDate: snapshot.scenarioAsOfDate,
+        projectId: snapshot.project.id,
+        entity: {
+          id: ms.id,
+          name: ms.name,
+          workstream: ms.workstream,
+          rag: ms.rag,
+          baselineDate: ms.baselineDate,
+          forecastDate: ms.forecastDate,
+          dateVariance: {
+            baselineDate: ms.baselineDate,
+            forecastDate: ms.forecastDate,
+            deltaDays,
+          },
+        },
+        links: this.mapLinks(linksForEntity(snapshot, 'milestone', ms.id)),
+        impact: this.mapImpact(snapshot),
+      };
+    }
+
+    // Imported KT-* / aliased schedule checkpoints — same date/status lifecycle.
+    const base = this.dataSource.getScheduleWorks(snapshotId);
+    const asOf = snapshot.scenarioAsOfDate;
+    const schedule = mergeDemoTree(base, [], asOf, snapshotId);
+    const kt = [
+      ...(schedule.importedCheckpoints ?? []),
+      ...(schedule.aliasedCheckpoints ?? []),
+    ].find((c) => c.id === entityId);
+    if (!kt) {
       throw new NotFoundException(`Milestone ${entityId} not found`);
     }
-    const deltaDays = calendarDaysDelta(ms.baselineDate, ms.forecastDate);
+    const rag = kt.status === 'Delayed' ? 'Red' : 'Green';
+    const deltaDays = calendarDaysDelta(kt.baselineDate, kt.forecastDate);
+    const workstream =
+      kt.workstream === null
+        ? null
+        : (kt.workstream as NonNullable<
+            MilestoneDetailDto['entity']['workstream']
+          >);
     return {
       snapshotId: snapshot.id,
       scenarioAsOfDate: snapshot.scenarioAsOfDate,
       projectId: snapshot.project.id,
       entity: {
-        id: ms.id,
-        name: ms.name,
-        workstream: ms.workstream,
-        rag: ms.rag,
-        baselineDate: ms.baselineDate,
-        forecastDate: ms.forecastDate,
+        id: kt.id,
+        name: kt.name,
+        workstream,
+        rag,
+        baselineDate: kt.baselineDate,
+        forecastDate: kt.forecastDate,
         dateVariance: {
-          baselineDate: ms.baselineDate,
-          forecastDate: ms.forecastDate,
+          baselineDate: kt.baselineDate,
+          forecastDate: kt.forecastDate,
           deltaDays,
         },
       },
-      links: this.mapLinks(linksForEntity(snapshot, 'milestone', ms.id)),
+      links: this.mapLinks(linksForEntity(snapshot, 'milestone', kt.id)),
       impact: this.mapImpact(snapshot),
     };
   }

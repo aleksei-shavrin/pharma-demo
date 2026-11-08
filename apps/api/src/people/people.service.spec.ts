@@ -29,7 +29,9 @@ describe('PeopleService (R2-P1)', () => {
     const d = service.getDetail('PRJ-01', 'PER-08', 'C');
     expect(d.person.id).toBe('PER-08');
     expect(d.person.fullNameRu).toBe('Смирнов Павел Андреевич');
-    expect(d.person.roleTitleRu).toBe('Ведущий направления HVAC');
+    expect(d.person.roleTitleRu).toBe(
+      'Ответственный по направлению (legacy tag) HVAC',
+    );
     expect(d.leadWorkstreamIds).toEqual(['WS-HVAC']);
     // Snapshot C: HVAC issues first appear later (ISS-HVAC-02 @ D); empty Issues OK.
     expect(d.issueIds).not.toContain('ISS-BLD-01');

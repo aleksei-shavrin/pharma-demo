@@ -88,9 +88,9 @@ describe('EntityDetailService', () => {
       expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
       expect(linkIds(d.links, 'risk')).toEqual(['RISK-001']);
       expect(linkIds(d.links, 'milestone')).toEqual(['MS-PS']);
-      expect(d.links.every((l) => l.targetType !== 'decision' as string)).toBe(
-        true,
-      );
+      expect(
+        d.links.every((l) => l.targetType !== ('decision' as string)),
+      ).toBe(true);
       expect(d.impact.kind).toBe('aligned_slip');
       expect(d.impact.productionStartDeltaDays).toBe(21);
       expect(d.impact.riskRag).toBe('Red');
@@ -152,16 +152,24 @@ describe('EntityDetailService', () => {
     });
   });
 
+  it('imported KT-* resolves via schedule lifecycle (not catalog)', () => {
+    const d = service.getMilestone('PRJ-01', 'KT-1.1.3', 'C');
+    expect(d.entity.id).toBe('KT-1.1.3');
+    expect(d.entity.baselineDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(d.entity.forecastDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(['Green', 'Red']).toContain(d.entity.rag);
+  });
+
   it('unknown ids → 404; unknown project → 404', () => {
-    expect(() =>
-      service.getEquipment('PRJ-01', 'EQ-UNKNOWN', 'A'),
-    ).toThrow(NotFoundException);
+    expect(() => service.getEquipment('PRJ-01', 'EQ-UNKNOWN', 'A')).toThrow(
+      NotFoundException,
+    );
     expect(() => service.getIssue('PRJ-01', 'ISS-999', 'C')).toThrow(
       NotFoundException,
     );
-    expect(() =>
-      service.getEquipment('PRJ-99', 'EQ-HVAC-01', 'A'),
-    ).toThrow(NotFoundException);
+    expect(() => service.getEquipment('PRJ-99', 'EQ-HVAC-01', 'A')).toThrow(
+      NotFoundException,
+    );
   });
 
   it('forbids Decision as Issue/Equipment/Risk link target', () => {
@@ -169,9 +177,9 @@ describe('EntityDetailService', () => {
     const eq = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'C');
     const risk = service.getRisk('PRJ-01', 'RISK-001', 'C');
     for (const d of [issue, eq, risk]) {
-      expect(
-        d.links.some((l) => (l.targetType as string) === 'decision'),
-      ).toBe(false);
+      expect(d.links.some((l) => (l.targetType as string) === 'decision')).toBe(
+        false,
+      );
     }
   });
 });

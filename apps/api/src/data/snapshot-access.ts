@@ -49,9 +49,7 @@ export function findDecision(
 }
 
 /** HVAC long-lead / BR-004 spine equipment. */
-export function psDriverEquipment(
-  snapshot: SnapshotFixture,
-): EquipmentFixture {
+export function psDriverEquipment(snapshot: SnapshotFixture): EquipmentFixture {
   const eq = findEquipment(snapshot, PS_DRIVER_EQUIPMENT_ID);
   if (!eq) {
     throw new Error(

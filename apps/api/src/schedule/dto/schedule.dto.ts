@@ -105,6 +105,17 @@ export class ScheduleMilestoneItemDto {
 
   @ApiProperty({ nullable: true, type: Number })
   sourceWeeks!: number | null;
+
+  @ApiPropertyOptional({
+    enum: ['catalog_milestone', 'controlpoint'],
+    description: 'catalog MS vs imported analyst КТ (zero-duration)',
+  })
+  sourceKind?: 'catalog_milestone' | 'controlpoint';
+
+  @ApiPropertyOptional({
+    description: 'Raw analyst source status for imported КТ',
+  })
+  sourceStatus?: string | null;
 }
 
 export const SCHEDULE_GROUP_KINDS = ['project_group', 'stage_group'] as const;
@@ -113,7 +124,7 @@ export type ScheduleGroupKind = (typeof SCHEDULE_GROUP_KINDS)[number];
 
 /**
  * Schedule view-model group. No stored forecast interval: the client
- * summarizes children. progressPct stays null — 0 is not a group summary.
+ * summarizes children. progressPct MAY be an equal-weight rollup of leaves.
  */
 export class ScheduleGroupItemDto {
   @ApiProperty({ enum: SCHEDULE_GROUP_KINDS })
@@ -142,7 +153,8 @@ export class ScheduleGroupItemDto {
   @ApiProperty({
     nullable: true,
     type: Number,
-    description: 'Always null for groups. Unknown progress, not zero.',
+    description:
+      'Equal-weight rollup of known leaf progressPct under this group, or null when no known leaves.',
   })
   progressPct!: number | null;
 
@@ -218,6 +230,13 @@ export class ScheduleWorkItemDto {
   @ApiProperty({ nullable: true, type: Number })
   sourceWeeks!: number | null;
 
+  @ApiPropertyOptional({
+    nullable: true,
+    type: String,
+    description: 'Raw analyst source status when imported',
+  })
+  sourceStatus?: string | null;
+
   @ApiProperty({
     nullable: true,
     type: String,
@@ -256,19 +275,19 @@ export class ScheduleLinkDto {
   @ApiProperty({
     enum: ['scheduling', 'cross_project_predecessor'],
     description:
-      'scheduling is work↔work with a planning type. cross_project_predecessor is milestone→work and has no type.',
+      'scheduling is leaf↔leaf (work|milestone) with a planning type. cross_project_predecessor is typed ⇢ leaf↔leaf with no planning type; direction preserved.',
   })
   kind!: 'scheduling' | 'cross_project_predecessor';
 
   @ApiProperty({
     example: 'work:WK-01',
-    description: 'work:<id> or, for cross_project_predecessor, milestone:<id>',
+    description: 'work:<id> or milestone:<id>',
   })
   sourceRef!: string;
 
   @ApiProperty({
     example: 'work:WK-03',
-    description: 'work:<id>',
+    description: 'work:<id> or milestone:<id>',
   })
   targetRef!: string;
 

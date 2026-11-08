@@ -11,10 +11,7 @@ import {
 } from '../../contracts/money';
 import { WORKSTREAM_IDS } from '../workstream-ids';
 import { EQUIPMENT_CATALOG } from './catalog';
-import {
-  COST_SNAPSHOTS,
-  computeProjectLevelForecastRub,
-} from './build-costs';
+import { COST_SNAPSHOTS, computeProjectLevelForecastRub } from './build-costs';
 import {
   COST_BEARING_EQUIPMENT,
   COST_BEARING_EQUIPMENT_IDS,
@@ -135,7 +132,9 @@ describe('R2-M1 / R1 cost integrity (DOC-PROD-026)', () => {
     expect(wsEac).not.toBe(a.project.eacRub);
     // No artificial +350M WS overrun vs control budgets from unused reserve.
     expect(wsEac - wsBac).toBe(0);
-    expect(a.project.eacRub).toBe(wsEac + a.reconciliation.projectLevelForecastRub);
+    expect(a.project.eacRub).toBe(
+      wsEac + a.reconciliation.projectLevelForecastRub,
+    );
   });
 
   it('requires all money fields to be safe integers (no float/NaN)', () => {

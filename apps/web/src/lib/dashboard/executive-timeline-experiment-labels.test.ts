@@ -5,6 +5,7 @@ import {
   echartsLabelDistance,
   echartsLabelPosition,
   resolveSnapshotLabelAlign,
+  selectLaneAwareMilestoneLabelIds,
   selectVisibleMilestoneLabelIds,
   snapshotDateCaption,
 } from './executive-timeline-experiment-labels';
@@ -48,5 +49,18 @@ describe('executive-timeline-experiment-labels', () => {
     expect(echartsLabelPosition('above')).toBe('top');
     expect(echartsLabelPosition('below')).toBe('bottom');
     expect(echartsLabelDistance(0)).toBeLessThan(echartsLabelDistance(2));
+  });
+
+  it('lane-aware selection caps dense same-program pairs', () => {
+    const model = resolveExecutiveTimelineExperimentModel(
+      dashboardOverviewFixture('C'),
+    );
+    const ids = selectLaneAwareMilestoneLabelIds(model.ordinaryPoints, {
+      narrow: false,
+      maxPerProgram: 2,
+      maxTotal: 8,
+      programIdFor: () => 'PRG-CON',
+    });
+    expect(ids.size).toBeLessThanOrEqual(2);
   });
 });

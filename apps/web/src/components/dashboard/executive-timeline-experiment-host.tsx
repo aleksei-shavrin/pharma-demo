@@ -5,21 +5,14 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { DashboardOverview } from '@/lib/api-client';
+import { resolveExecutiveTimelineExperimentModel } from '@/lib/dashboard/executive-timeline-experiment';
 import {
-  TIMELINE_EXPERIMENT_VARIANTS,
-  resolveExecutiveTimelineExperimentModel,
-  type TimelineExperimentVariant,
-} from '@/lib/dashboard/executive-timeline-experiment';
-import { ExecutiveMilestoneStrip } from './executive-milestone-strip';
+  applyTimelineUniverseScope,
+  programIdsPresent,
+  type TimelineUniverseScope,
+} from '@/lib/dashboard/timeline-universe-scope';
+import { ExecutiveTimelineUniverseChrome } from './executive-timeline-universe-chrome';
 import { ModuleSurface } from './module-surface';
-
-const ExecutiveTimelineVis = dynamic(
-  () =>
-    import('./executive-timeline-vis').then((m) => ({
-      default: m.ExecutiveTimelineVis,
-    })),
-  { ssr: false },
-);
 
 const ExecutiveTimelineEcharts = dynamic(
   () =>
@@ -29,58 +22,20 @@ const ExecutiveTimelineEcharts = dynamic(
   { ssr: false },
 );
 
-function TimelineRendererToggle({
-  value,
-  onChange,
-}: {
-  value: TimelineExperimentVariant;
-  onChange: (next: TimelineExperimentVariant) => void;
-}) {
-  return (
-    <div
-      className="inline-flex items-center gap-1"
-      role="group"
-      aria-label="Вариант рендера шкалы вех"
-      data-timeline-renderer-toggle
-    >
-      {TIMELINE_EXPERIMENT_VARIANTS.map((variant) => {
-        const active = variant.id === value;
-        return (
-          <button
-            key={variant.id}
-            type="button"
-            aria-label={variant.label}
-            aria-pressed={active}
-            data-timeline-renderer-option={variant.id}
-            data-timeline-renderer-digit={variant.digit}
-            onClick={() => onChange(variant.id)}
-            className={`inline-flex h-7 min-w-7 items-center justify-center rounded-[var(--radius-sm)] border px-2 text-xs font-semibold tabular-nums focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)] ${
-              active
-                ? 'border-[var(--primary)] bg-[var(--selected)] text-[var(--text)]'
-                : 'border-[var(--border-subtle)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--border)] hover:text-[var(--text)]'
-            }`}
-          >
-            {variant.digit}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 /**
- * C09–C11 host: one data contract, three renderers, default = current strip.
- * Snapshot stays in SnapshotProvider — toggling renderer must not change it.
+ * Portfolio / program milestones card — Apache ECharts only
+ * (2026-11-08: experiment toggle 1/2/3 removed; default = ECharts).
  */
 export function ExecutiveTimelineExperimentHost({
   data,
 }: {
   data: DashboardOverview;
 }) {
-  const [variant, setVariant] =
-    useState<TimelineExperimentVariant>('current');
+  const [scope, setScope] = useState<TimelineUniverseScope>('all');
+  const [programFilter, setProgramFilter] = useState('all');
   const programId = useSearchParams().get('program');
-  const scoped = useMemo(() => {
+
+  const programScoped = useMemo(() => {
     if (!programId) return data;
     const ids = data.milestones
       .filter((milestone) => milestone.programId === programId)
@@ -91,18 +46,51 @@ export function ExecutiveTimelineExperimentHost({
       timelineScope: 'program' as const,
     };
   }, [data, programId]);
+
   const emptyProgram =
-    scoped.timelineScope === 'program' &&
-    (scoped.executiveMilestoneIds?.length ?? 0) === 0;
+    programScoped.timelineScope === 'program' &&
+    (programScoped.executiveMilestoneIds?.length ?? 0) === 0;
+
+  const totalCount =
+    programScoped.executiveMilestoneIds?.length ??
+    programScoped.milestones.length;
+
+  const filtered = useMemo(
+    () =>
+      emptyProgram
+        ? programScoped
+        : applyTimelineUniverseScope(programScoped, scope, programFilter),
+    [programScoped, scope, programFilter, emptyProgram],
+  );
+
+  const shownCount = filtered.executiveMilestoneIds?.length ?? 0;
   const model = useMemo(
     () =>
-      emptyProgram ? null : resolveExecutiveTimelineExperimentModel(scoped),
-    [scoped, emptyProgram],
+      emptyProgram ? null : resolveExecutiveTimelineExperimentModel(filtered),
+    [filtered, emptyProgram],
+  );
+  const milestoneMeta = useMemo(
+    () =>
+      filtered.milestones.map((m) => ({
+        id: m.id,
+        programId: m.programId ?? null,
+      })),
+    [filtered.milestones],
   );
   const heading = programId ? 'Вехи программы' : 'Вехи портфеля';
-  const toggle = (
-    <TimelineRendererToggle value={variant} onChange={setVariant} />
-  );
+
+  const chrome =
+    emptyProgram || programId ? null : (
+      <ExecutiveTimelineUniverseChrome
+        totalCount={totalCount}
+        shownCount={shownCount}
+        scope={scope}
+        programFilter={programFilter}
+        programIds={programIdsPresent(programScoped)}
+        onScopeChange={setScope}
+        onProgramFilterChange={setProgramFilter}
+      />
+    );
 
   if (emptyProgram) {
     return (
@@ -111,23 +99,20 @@ export function ExecutiveTimelineExperimentHost({
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
             {heading}
           </h2>
-          {toggle}
+          <Link
+            href="/schedule"
+            className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+          >
+            Календарный план
+          </Link>
         </div>
-        <p className="mt-3 text-sm text-[var(--text-secondary)]" data-timeline-empty="program">
+        <p
+          className="mt-3 text-sm text-[var(--text-secondary)]"
+          data-timeline-empty="program"
+        >
           У программы нет вех в этом показе
         </p>
       </ModuleSurface>
-    );
-  }
-
-  if (variant === 'current') {
-    return (
-      <ExecutiveMilestoneStrip
-        data={scoped}
-        toolbar={toggle}
-        dataTimelineRenderer="current"
-        heading={heading}
-      />
     );
   }
 
@@ -140,23 +125,21 @@ export function ExecutiveTimelineExperimentHost({
         >
           {heading}
         </h2>
-        <div className="flex flex-wrap items-center gap-3">
-          {toggle}
-          <Link
-            href="/schedule"
-            className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-          >
-            Календарный план
-          </Link>
-        </div>
+        <Link
+          href="/schedule"
+          className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+        >
+          Календарный план
+        </Link>
       </div>
+      {chrome}
       <p className="sr-only">{model?.textSummary}</p>
-      <div className="mt-3 min-w-0" data-timeline-experiment-body={variant}>
-        {model && variant === 'vis' ? (
-          <ExecutiveTimelineVis model={model} />
-        ) : null}
-        {model && variant === 'echarts' ? (
-          <ExecutiveTimelineEcharts model={model} />
+      <div className="mt-3 min-w-0" data-timeline-body="echarts">
+        {model ? (
+          <ExecutiveTimelineEcharts
+            model={model}
+            milestoneMeta={milestoneMeta}
+          />
         ) : null}
       </div>
     </ModuleSurface>

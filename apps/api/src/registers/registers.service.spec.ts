@@ -5,8 +5,12 @@ import {
   SNAPSHOT_B,
   SNAPSHOT_C,
   SNAPSHOT_E,
+  SNAPSHOT_F,
+  SNAPSHOT_S,
 } from '../data/fixtures';
+import { personFullNameRu } from '../data/fixtures/person-catalog';
 import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
+import type { PersonId } from '../contracts/person-id';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import { RegistersService } from './registers.service';
 
@@ -46,8 +50,8 @@ class FakeDataSource extends DemoDataSource {
   getPerson(): never {
     throw new Error('getPerson not used by RegistersService');
   }
-  personFullNameRu(): never {
-    throw new Error('personFullNameRu not used by RegistersService');
+  personFullNameRu(id: PersonId): string {
+    return personFullNameRu(id);
   }
   leadPersonIdForWorkstream(): never {
     throw new Error('leadPersonIdForWorkstream not used by RegistersService');
@@ -186,7 +190,58 @@ describe('RegistersService', () => {
     });
   });
 
-  it('404 unknown project for equipment, issues-risks, milestones', () => {
+  describe('decisions', () => {
+    it('A: empty decisions register', () => {
+      const r = service.listDecisions('PRJ-01', 'A');
+      expect(r.items).toEqual([]);
+      expect(r.snapshotId).toBe('A');
+      expect(r.projectId).toBe('PRJ-01');
+    });
+
+    it('F: lists DEC-001 with owner name, dueState, MS-PS without fake AN', () => {
+      const svc = new RegistersService(
+        new FakeDataSource({
+          A: SNAPSHOT_A,
+          F: SNAPSHOT_F,
+        }),
+      );
+      const r = svc.listDecisions('PRJ-01', 'F');
+      expect(r.items.some((d) => d.id === 'DEC-001')).toBe(true);
+      const dec = r.items.find((d) => d.id === 'DEC-001')!;
+      expect(dec.type).toBe('PrioritizeRecovery');
+      expect(dec.ownerPersonId).toBe('PER-01');
+      expect(dec.ownerFullNameRu.length).toBeGreaterThan(0);
+      // F asOf 2027-04-20 < due 2027-05-15 → upcoming (not passed)
+      expect(dec.dueState).toBe('upcoming');
+      expect(dec.programId).toBeNull();
+      expect(dec.analystProjectId).toBeNull();
+      expect(dec.analystProjectName).toBeNull();
+      expect(dec.milestoneName).toBeTruthy();
+      expect(dec.milestoneName).not.toBe(dec.milestoneId);
+      expect(dec).not.toHaveProperty('status');
+    });
+
+    it('S: DEC-001 dueState passed vs later asOf; still no fake MS-PS membership', () => {
+      const svc = new RegistersService(
+        new FakeDataSource({
+          A: SNAPSHOT_A,
+          S: SNAPSHOT_S,
+        }),
+      );
+      const r = svc.listDecisions('PRJ-01', 'S');
+      const dec = r.items.find((d) => d.id === 'DEC-001')!;
+      expect(dec.dueState).toBe('passed');
+      expect(dec.programId).toBeNull();
+      expect(dec.analystProjectId).toBeNull();
+      expect(dec.milestoneName?.length).toBeGreaterThan(0);
+      const withAn = r.items.find((d) => d.analystProjectId);
+      if (withAn) {
+        expect(withAn.analystProjectName).toBeTruthy();
+      }
+    });
+  });
+
+  it('404 unknown project for equipment, issues-risks, milestones, decisions', () => {
     expect(() => service.listEquipment('PRJ-99', 'A')).toThrow(
       NotFoundException,
     );
@@ -194,6 +249,9 @@ describe('RegistersService', () => {
       NotFoundException,
     );
     expect(() => service.listMilestones('PRJ-99', 'A')).toThrow(
+      NotFoundException,
+    );
+    expect(() => service.listDecisions('PRJ-99', 'A')).toThrow(
       NotFoundException,
     );
   });

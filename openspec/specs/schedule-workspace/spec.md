@@ -92,23 +92,24 @@ Schedule API SHALL включать `links`. Для связей с явным `
 - **AND** в ответе есть группы `AN-08` и `8.2` и работы `8.2.1`, `8.2.2`
 - **AND** работы `WK-01`…`WK-05` присутствуют с parentKey `null`
 
-#### Scenario: Snapshots A, D and F do not gain the tree
+#### Scenario: Snapshots A–S share topology with overlay state
 
-- **WHEN** клиент запрашивает schedule на снимке A, D или F
-- **THEN** в items нет kind `project_group` и `stage_group`
-- **AND** нет работ `8.2.1` и `8.2.2`
-- **AND** у `MS-CLN-PANEL` parentKey пустой
-- **AND** на A список links пуст
+- **WHEN** клиент запрашивает schedule на любом populated snapshot A–S
+- **THEN** items содержат полные `project_group`/`stage_group` для всех workstream
+- **AND** есть работы `8.2.1` и `8.2.2` с непустым `wbs`
+- **AND** у `MS-CLN-PANEL` parentKey указывает на stage
+- **AND** links содержат scheduling и cross_project_predecessor по всем workstream (не только CLN)
+- **AND** progress/status/actuals MAY отличаться между снимками (authored overlays), без копирования одного frozen C state
 
 ### Requirement: Progress zero is distinct from unknown progress
 
-Поле `progressPct` SHALL быть числом или `null`. Значение `0` SHALL означать известное отсутствие хода. Значение `null` SHALL означать неизвестный ход и подпись «нет данных». Система SHALL NOT вычислять `progressPct` из статуса работы или из эмодзи исходника. У `project_group` и `stage_group` `progressPct` SHALL быть `null`.
+Поле `progressPct` SHALL быть числом или `null`. Значение `0` SHALL означать известный ноль. Значение `null` у работы SHALL означать неизвестный ход и подпись «нет данных». Система SHALL NOT вычислять work `actualStart`/`actualEnd` из forecast. Система SHALL NOT выставлять equipment/milestone `progressPct` из сравнения `forecastDate`/`forecastDelivery` с `scenarioAsOfDate`. Equipment и milestone progress SHALL быть authored fixture facts (demo phase/overrides). У `project_group`/`stage_group` `progressPct` SHALL быть equal-weight rollup листьев с известным % (или null, если листьев с известным % нет). UI SHALL показывать progress control для work, equipment, milestone и групп с известным rollup.
 
-#### Scenario: Group progress stays unknown
+#### Scenario: Group progress shows rollup when API provides a number
 
-- **WHEN** отображается группа `8.2` или `AN-08`
-- **THEN** прогресс показан как неизвестный
-- **AND** в ячейке нет чисел 0 и 100
+- **WHEN** API отдаёт `progressPct` для группы `8.2` или `AN-08`
+- **THEN** таблица показывает числовой прогресс (полоса + %)
+- **AND** значение не подменяется «—» только из-за kind группы
 
 #### Scenario: Work progress zero is visible
 
@@ -130,7 +131,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 - **WHEN** группа `8.2` раскрыта и у детей есть прогнозные границы
 - **THEN** сводная полоса покрывает диапазон от самой ранней до самой поздней прогнозной границы этих детей
-- **AND** прогресс группы остаётся неизвестным
+- **AND** прогресс группы следует API rollup (число или null)
 
 ### Requirement: Schedule warning has an accessible name
 
@@ -143,7 +144,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 ### Requirement: Expand state is shared by table and chart
 
-Один владелец SHALL хранить раскрытие, выбор, фильтры и якорь прокрутки. Раскрытие группы SHALL менять видимые строки таблицы и диаграммы одним списком. Первая колонка SHALL показывать `wbs` строки. Пустой `wbs` SHALL отображаться как пустая ячейка или «—». Система SHALL NOT подменять `wbs` порядковым номером видимой строки. Наименование SHALL стоять в соседней колонке и SHALL NOT дублировать вид строки словами «работа», «веха» или «этап».
+Один владелец SHALL хранить раскрытие, выбор, фильтры и якорь прокрутки. Раскрытие группы SHALL менять видимые строки таблицы и диаграммы одним списком. Колонка «№» / `visibleOrdinal` SHALL NOT отображаться. Колонка ИСР SHALL показывать API `wbs`; для каждого item каждого populated snapshot `wbs` SHALL быть непустым. Система SHALL NOT подменять `wbs` порядковым номером. Наименование SHALL стоять после ИСР и SHALL NOT дублировать вид строки словами «работа», «веха» или «этап».
 
 #### Scenario: Collapse hides children in both surfaces
 
@@ -151,12 +152,14 @@ Schedule API SHALL включать `links`. Для связей с явным `
 - **THEN** таблица и диаграмма скрывают `8.2` и её детей
 - **AND** строка `AN-08` остаётся
 - **AND** код ИСР оставшихся строк не перенумеровывается
+- **AND** колонка «№» отсутствует
 
 #### Scenario: Row without a code shows an empty WBS cell
 
 - **WHEN** у видимой строки нет `wbs`
 - **THEN** ячейка ИСР пустая или содержит «—»
-- **AND** наименование остаётся в соседней колонке
+- **AND** колонка «№» отсутствует
+- **AND** наименование остаётся после ИСР
 
 ### Requirement: Actual work dates are explicit and inclusive
 
@@ -198,11 +201,46 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 ### Requirement: Comparison uses at most two bars
 
-Пользователь SHALL видеть режим «Базовый план / прогноз» по умолчанию и SHALL мочь выбрать «Базовый план / факт». На строке SHALL быть не больше двух полос. Верхняя полоса SHALL быть базой, если заданы оба её конца. Нижняя полоса SHALL быть прогнозом, кроме закрытого факта в режиме факта: тогда нижняя полоса SHALL быть фактическим интервалом.
+Пользователь SHALL видеть режим «Базовый план» (baseline-only) по умолчанию и SHALL мочь выбрать «Базовый план / прогноз» или «Базовый план / факт». В baseline-only на строке SHALL быть не больше одной основной полосы из границ базы, без серых comparison overlays. В режимах прогноза и факта на строке SHALL быть не больше двух полос: верхняя — база (если заданы оба конца), нижняя — прогноз либо закрытый факт.
 
-#### Scenario: Default mode keeps forecast under baseline
+#### Scenario: Default mode is baseline-only
 
-- **WHEN** пользователь не выбирал режим факта и у `8.2.2` заданы оба конца базы
+- **WHEN** пользователь открывает календарный план без `comparison` в URL
+- **THEN** выбран режим «Базовый план»
+- **AND** у работы с обоими концами базы рисуется одна основная полоса по базе
+- **AND** серый overlay / прогнозная полоса не рисуются
+
+#### Scenario: Missing baseline is honest
+
+- **WHEN** режим «Базовый план» и у работы нет обоих `baselineStart`/`baselineEnd`
+- **THEN** прогнозная полоса не подставляется молча
+- **AND** строка остаётся в списке с пустой полосой / подсказкой «Базовый план не задан»
+
+#### Scenario: Baseline-only markers use primary baseline role
+
+- **WHEN** режим «Базовый план» и у EQ/КТ задан `baselineDate`
+- **THEN** primary marker использует `ppc-role-baseline` с видимой semantic geometry
+- **AND** серый comparison ghost не рисуется
+
+#### Scenario: Group summary follows comparison primary
+
+- **WHEN** режим «Базовый план»
+- **THEN** `summaryStart`/`summaryEnd` группы считаются по baseline children (не forecast range)
+
+### Requirement: Split schedule virtualizes DOM under one Y owner
+
+При большом числе строк split-режим SHALL сохранять логическую высоту всех видимых строк и полный link model, но SHALL ограничивать React- и DHTMLX-DOM окном viewport+overscan. Единственный vertical input owner — project scroll owner; vendor ver bar не является input owner. `clearAll`/`parse` SHALL NOT повторяться на scroll/hover.
+
+#### Scenario: Bounded DOM at mid and end scroll
+
+- **WHEN** snapshot C (~688 rows) в split и пользователь прокручивает mid/end
+- **THEN** число React row DOM и Gantt task row DOM ≤ viewport/rowPitch + разумный overscan
+- **AND** логический счётчик строк остаётся полным
+- **AND** last row reachable с обеих pane
+
+#### Scenario: Forecast mode keeps baseline over forecast
+
+- **WHEN** пользователь выбирает «Базовый план / прогноз» и у `8.2.2` заданы оба конца базы
 - **THEN** базовая полоса находится над прогнозной
 - **AND** фактическая полоса не рисуется
 
@@ -322,53 +360,36 @@ Schedule API SHALL включать `links`. Для связей с явным `
 - **WHEN** режим факта показывает закрытый факт под базой
 - **THEN** отдельный цвет отклонения не рисуется
 
-### Requirement: Snapshot C adds collapsed power and HVAC branches
+### Requirement: Full analyst import on populated snapshots A–S
 
-На снимке C Schedule SHALL добавить `project_group` `AN-24` и `AN-09`, свёрнутые по умолчанию, и вложить единственную `MS-UTL-PWR` в `24.1` без смены id и дат. Новые работы SHALL нести синтетический прогноз и `progressPct` `null`. A, D и F SHALL сохранить прежний состав. При раскрытии по умолчанию (открыты `AN-08` и `8.2`, ветки `AN-24`/`AN-09` свёрнуты) видимых строк SHALL быть 106; полный ответ при полном раскрытии SHALL содержать 113 строк.
+На populated snapshots A–S Schedule SHALL публиковать полный analyst import: 25 `project_group`, 145 `stage_group`, 272 source works (+ curated WK showcase), 44 catalog milestones, 145 imported КТ (`sourceKind=controlpoint`, zero-duration), 52 equipment — **688** items при полном раскрытии; links включают scheduling (в т.ч. 4 demo arrow types) и `cross_project_predecessor`. MS aliases `8.2.3`→`MS-CLN-PANEL`, `24.1.3`→`MS-UTL-PWR`. Группы SHALL нести equal-weight rollup; колонка «№» SHALL NOT отображаться. Equipment/milestone progress SHALL быть authored facts, не `forecast ≤ asOf`. Default UI SHALL expand all groups.
 
-#### Scenario: Full expansion counts 113 rows
+#### Scenario: Full expansion counts 688 rows
 
 - **WHEN** клиент запрашивает schedule `PRJ-01` на снимке C и раскрыты все группы
-- **THEN** в ответе 113 строк
-- **AND** среди них ровно три `project_group`: `AN-08`, `AN-24`, `AN-09`
-- **AND** этапы `24.1` и `9.3` присутствуют
+- **THEN** в ответе 688 строк
+- **AND** среди них 25 `project_group` включая `AN-08`, `AN-24`, `AN-09`
+- **AND** 145 `stage_group` и 145 КТ controlpoint
 - **AND** работы `24.1.1`, `24.1.2`, `9.3.1`, `9.3.2` присутствуют
 
-#### Scenario: Default expansion shows 106 visible rows
+#### Scenario: Default expansion shows full tree
 
-- **WHEN** на снимке C открыт календарный план с раскрытием по умолчанию
-- **THEN** видимы 106 строк
-- **AND** полный ответ Schedule по-прежнему содержит 113 элементов
+- **WHEN** на снимке C открыт календарный план без сохранённого collapse
+- **THEN** все `project_group`/`stage_group` раскрыты
+- **AND** полный ответ Schedule содержит 688 элементов
 
 #### Scenario: Power milestone keeps its identity inside stage 24.1
 
 - **WHEN** клиент запрашивает schedule на снимке C
 - **THEN** ровно одна строка имеет id `MS-UTL-PWR` и kind `milestone`
 - **AND** её parentKey равен `stage_group:24.1`, а wbs равен `24.1.3`
-- **AND** baselineDate равен `2027-02-18`, forecastDate равен `2027-04-15`
-
-#### Scenario: New works use synthetic forecasts and unknown progress
-
-- **WHEN** отображаются новые работы снимка C
-- **THEN** `24.1.1` имеет прогноз `2027-02-08`…`2027-03-19`, статус Delayed и `sourceWeeks` 8
-- **AND** `24.1.2` имеет прогноз `2027-02-15`…`2027-03-12` и статус OnSchedule
-- **AND** `9.3.1` имеет прогноз `2027-02-22`…`2027-03-19` и статус OnSchedule
-- **AND** `9.3.2` имеет прогноз `2027-04-16`…`2027-04-30` и статус Waiting
-- **AND** у каждой из этих работ `progressPct` равен `null`, а базовый интервал отсутствует
-- **AND** у этапа `24.1` `sourceWeeks` равен 8, у этапа `9.3` недели не заданы
-
-#### Scenario: New project groups start collapsed
-
-- **WHEN** календарный план снимка C открыт с раскрытием по умолчанию
-- **THEN** открыты `AN-08` и `8.2`
-- **AND** `AN-24` и `AN-09` свёрнуты, их дети не видны
 
 #### Scenario: Existing episode and other snapshots stay
 
 - **WHEN** клиент сравнивает снимок C с A, D и F
-- **THEN** на C сохранены дерево `AN-08`, база `8.2.2` и четыре связи WK
-- **AND** на A, D и F нет групп и работ `AN-24`, `24.1`, `AN-09`, `9.3`
-- **AND** на A, D и F у `MS-UTL-PWR` parentKey пустой
+- **THEN** на C сохранены дерево `AN-08`, база `8.2.2` и связи WK
+- **AND** populated snapshots A–S share the analyst import topology (688 items when fully expanded)
+- **AND** progress/status overlays MAY differ by snapshot; equipment/milestone progress remains authored dates≤asOf (not live forecast≤asOf, not id-rank)
 
 ### Requirement: Milestone to work link is an untyped cross-project predecessor
 
@@ -430,7 +451,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 ### Requirement: Table and chart share one row pitch and header band
 
-В «Разделении» таблица и диаграмма SHALL использовать один шаг строки 32px и одну высоту шапки 40px. Нижний край шапки таблицы и нижний край шкалы дат SHALL совпадать. Легенда и служебные подписи SHALL NOT занимать место над первой строкой диаграммы. Высота видимой области диаграммы SHALL совпадать с видимой областью таблицы. Выбор, фокус, раскрытие и вторая полоса SHALL NOT менять высоту коробки строки.
+В «Разделении» таблица и диаграмма SHALL использовать один шаг строки 32px и одну высоту шапки 40px. Нижний край шапки таблицы и нижний край шкалы дат SHALL совпадать. Легенда и служебные подписи SHALL NOT занимать место над первой строкой диаграммы. Высота видимой области диаграммы SHALL совпадать с видимой областью таблицы. Выбор, фокус, раскрытие и вторая полоса SHALL NOT менять высоту коробки строки. Вертикальная прокрутка SHALL идти через один scroll owner; система SHALL NOT выравнивать две независимые vertical полосы ручной привязкой `scrollTop`. Горизонтальная прокрутка таблицы и диаграммы SHALL оставаться независимой.
 
 #### Scenario: First rows share a vertical origin
 
@@ -440,9 +461,10 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 #### Scenario: Scrolled rows stay paired
 
-- **WHEN** пользователь прокручивает список в «Разделении»
+- **WHEN** пользователь прокручивает список в «Разделении» (колесо над таблицей или диаграммой, либо scrollbar owner)
 - **THEN** строка таблицы и соответствующая строка диаграммы сохраняют общий верх
 - **AND** середина списка не накапливает отдельный шаг диаграммы
+- **AND** вертикальный offset общий для обеих частей
 
 ### Requirement: View and comparison changes keep the scroll anchor
 

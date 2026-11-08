@@ -1,6 +1,7 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CircleAlert, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { StatusPill } from '@/components/dashboard/status-pill';
@@ -23,6 +24,10 @@ import {
   wideTableMinWidthPx,
   type ScheduleWideColId,
 } from '@/lib/schedule/schedule-column-geometry';
+import {
+  scheduleFillToken,
+  type ScheduleFillTone,
+} from '@/lib/schedule/schedule-fill-tone';
 import {
   SCHEDULE_HEADER_HEIGHT_PX,
   SCHEDULE_ROW_HEIGHT_PX,
@@ -94,6 +99,8 @@ const GANTT_LEFT_CLASS = 'w-[14rem] shrink-0';
  * Width follows the same rem rails as the flat board, only wider so the new cells stay readable.
  */
 const TREE_SPLIT_LEFT_CLASS = 'w-[48rem] shrink-0';
+/** Embedded / parent-owned scroll: the rail follows the pane width, so no white gap beside the grid. */
+const TREE_SPLIT_LEFT_FLUID_CLASS = 'w-full min-w-0';
 const TREE_GANTT_LEFT_CLASS = 'w-[36rem] shrink-0';
 
 function ScheduleCol({
@@ -131,16 +138,19 @@ function ScheduleCol({
  */
 const DEPTH_INDENT_CLASS = ['pl-0', 'pl-3', 'pl-6', 'pl-9', 'pl-12', 'pl-16'] as const;
 
+export type { ScheduleFillTone };
+export { scheduleFillToken };
+
 export type ScheduleTreeRow = {
   key: string;
   depth: number;
-  visibleOrdinal: number;
   name: string;
   kind: string;
   wbs: string | null;
   hasChildren: boolean;
   expanded: boolean;
   progressPct: number | null;
+  fillTone: ScheduleFillTone;
   warning: { tone: 'shift' | 'lag' | 'none'; label: string };
 };
 
@@ -237,6 +247,16 @@ function TreeLeadCells({
 }) {
   const progressPct = row.progressPct;
   const progressKnown = typeof progressPct === 'number';
+  // Assumption: progress fill uses schedule FILL tokens (status *fg* text contrast untouched).
+  const fill = scheduleFillToken(row.fillTone);
+  const clampedPct = progressKnown ? Math.min(100, Math.max(0, progressPct)) : 0;
+  const isGroup = row.kind === 'project_group' || row.kind === 'stage_group';
+  // Groups show a bar only when the rollup is a number; work / EQ / MS always apply.
+  const progressApplicable =
+    row.kind === 'work' ||
+    row.kind === 'equipment_delivery' ||
+    row.kind === 'milestone' ||
+    (isGroup && progressKnown);
   const wbsRaw = row.wbs;
   const wbsTrimmed = typeof wbsRaw === 'string' ? wbsRaw.trim() : '';
   const wbsDisplay = wbsTrimmed.length > 0 ? wbsTrimmed : '—';
@@ -306,18 +326,39 @@ function TreeLeadCells({
         widthPx={SCHEDULE_COL_PROGRESS_PX}
         className="flex items-center gap-2"
       >
-        <span data-schedule-progress={progressKnown ? String(progressPct) : 'unknown'} className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
-          {progressKnown ? (
+        <span
+          data-schedule-progress={
+            !progressApplicable
+              ? 'n/a'
+              : progressKnown
+                ? String(progressPct)
+                : 'unknown'
+          }
+          className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden"
+        >
+          {!progressApplicable ? (
+            <span
+              className="truncate text-[var(--text-muted)]"
+              title="Прогресс не применяется"
+              aria-label="Прогресс не применяется"
+              role="img"
+            >
+              —
+            </span>
+          ) : progressKnown ? (
             <>
-              <span
-                className="relative h-1 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--border-subtle)]"
-                aria-hidden
-              >
                 <span
-                  className="absolute inset-y-0 left-0 rounded-full bg-[var(--primary)]"
-                  style={{ width: `${Math.min(100, Math.max(0, progressPct))}%` }}
-                />
-              </span>
+                  className="relative h-1.5 min-w-0 flex-1 overflow-hidden rounded-full border border-[var(--border-subtle)] bg-[var(--border-subtle)]"
+                  aria-hidden
+                  data-schedule-progress-track="true"
+                >
+                  <span
+                    className="absolute inset-y-0 left-0 rounded-full"
+                    style={{ width: `${clampedPct}%`, background: fill }}
+                    data-schedule-progress-fill="true"
+                    data-schedule-fill-tone={row.fillTone}
+                  />
+                </span>
               <span className="shrink-0 whitespace-nowrap tabular-nums text-[var(--text)]">{`${progressPct}%`}</span>
             </>
           ) : (
@@ -634,12 +675,23 @@ type Props = {
    */
   leadOnly?: boolean;
   comparison?: ScheduleComparisonMode;
+  /** Parent presentation owns vertical scroll; board only scrolls horizontally. */
+  verticalScrollOwned?: boolean;
+  /** Drop own chrome when nested in a shared split frame. */
+  embedded?: boolean;
+  /** Shared logical-row hover key (`kind:id`); cleared on leave. */
+  hoveredRowKey?: string | null;
+  onHoverRow?: (key: string | null) => void;
+  /**
+   * When set with verticalScrollOwned, only mount `[startIndex, endIndex)`
+   * and keep full logical height via top/bottom spacers.
+   */
+  rowWindow?: import('@/lib/schedule/schedule-virtual-window').ScheduleVirtualWindow | null;
 };
 
 /**
  * Unified Schedule control board.
- * One vertical+horizontal scroll; sticky header + sticky left rail;
- * fixed 48px rows; no row-selection chrome.
+ * Sticky header + sticky left rail; fixed row pitch; no row-selection chrome.
  */
 export function ScheduleBoard({
   items,
@@ -648,6 +700,11 @@ export function ScheduleBoard({
   onToggleRow,
   leadOnly = false,
   comparison = 'forecast',
+  verticalScrollOwned = false,
+  embedded = false,
+  hoveredRowKey = null,
+  onHoverRow,
+  rowWindow = null,
 }: Props) {
   const horizon = buildScheduleHorizon(items, comparison);
   const monthSpans = monthLabelSpans(horizon.months);
@@ -668,7 +725,9 @@ export function ScheduleBoard({
     ? mode === 'gantt'
       ? TREE_GANTT_LEFT_CLASS
       : mode === 'split'
-        ? TREE_SPLIT_LEFT_CLASS
+        ? verticalScrollOwned || embedded
+          ? TREE_SPLIT_LEFT_FLUID_CLASS
+          : TREE_SPLIT_LEFT_CLASS
         : 'w-full'
     : mode === 'gantt'
       ? GANTT_LEFT_CLASS
@@ -692,7 +751,7 @@ export function ScheduleBoard({
     : (timelineMinWidth ??
       (showWideTable ? wideTableMinWidthPx(comparison) : undefined));
 
-  const rendered = usingTree
+  const allRendered = usingTree
     ? treeRows.map((treeRow) => ({
         keyId: treeRow.key,
         item: keyedItems?.get(treeRow.key) ?? null,
@@ -703,66 +762,101 @@ export function ScheduleBoard({
         item,
         treeRow: null as ScheduleTreeRow | null,
       }));
+  const virtualized =
+    Boolean(rowWindow) &&
+    verticalScrollOwned &&
+    allRendered.length > 0 &&
+    rowWindow!.rowCount === allRendered.length;
+  const rendered = virtualized
+    ? allRendered.slice(rowWindow!.startIndex, rowWindow!.endIndex)
+    : allRendered;
+  const spacerTopPx = virtualized
+    ? rowWindow!.startIndex * rowWindow!.rowHeight
+    : 0;
+  const spacerBottomPx = virtualized
+    ? Math.max(0, rowWindow!.rowCount - rowWindow!.endIndex) *
+      rowWindow!.rowHeight
+    : 0;
 
-  return (
+  const headerHScrollRef = useRef<HTMLDivElement | null>(null);
+  const bodyHScrollRef = useRef<HTMLDivElement | null>(null);
+  const proxyHScrollRef = useRef<HTMLDivElement | null>(null);
+  const [bodyScrollWidth, setBodyScrollWidth] = useState(0);
+
+  /** Keep header, body and the sticky proxy scrollbar on one scrollLeft. */
+  const syncHScroll = useCallback((from: 'header' | 'body' | 'proxy') => {
+    const nodes = {
+      header: headerHScrollRef.current,
+      body: bodyHScrollRef.current,
+      proxy: proxyHScrollRef.current,
+    };
+    const source = nodes[from];
+    if (!source) return;
+    for (const [key, node] of Object.entries(nodes)) {
+      if (key === from || !node) continue;
+      if (node.scrollLeft !== source.scrollLeft) node.scrollLeft = source.scrollLeft;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!verticalScrollOwned) return;
+    const body = bodyHScrollRef.current;
+    if (!body) return;
+    const measure = () => setBodyScrollWidth(body.scrollWidth);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(body);
+    if (body.firstElementChild) observer.observe(body.firstElementChild);
+    return () => observer.disconnect();
+  }, [verticalScrollOwned, boardMinWidth, rendered.length, mode, comparison]);
+
+  const headerInner = (
     <div
-      className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)]"
-      data-schedule-board="true"
-      data-schedule-layout={mode}
-      data-schedule-row-height={rowHeight}
-      data-schedule-lead-only={leadOnly ? 'true' : undefined}
-      data-schedule-bounded="true"
-      data-schedule-tree={usingTree ? 'true' : undefined}
+      className="flex border-b border-[var(--border)] bg-[var(--surface-sunken)] text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]"
+      style={{ height: SCHEDULE_HEADER_HEIGHT_PX, minWidth: boardMinWidth }}
+      data-schedule-header="true"
     >
       <div
-        className="min-h-0 flex-1 overflow-auto"
-        data-schedule-viewport="true"
-        tabIndex={0}
-        aria-label="Прокрутка календарного плана"
+        className={[
+          'sticky left-0 z-30 flex items-center gap-3 border-r border-[var(--border)] bg-[var(--surface-sunken)] px-3',
+          leftWidthClass,
+        ].join(' ')}
       >
-        <div className="min-w-full" style={{ minWidth: boardMinWidth }}>
-          <div
-            className="sticky top-0 z-20 flex border-b border-[var(--border)] bg-[var(--surface-sunken)] text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]"
-            style={{ height: SCHEDULE_HEADER_HEIGHT_PX }}
-            data-schedule-header="true"
-          >
-            <div
-              className={[
-                'sticky left-0 z-30 flex items-center gap-3 border-r border-[var(--border)] bg-[var(--surface-sunken)] px-3',
-                leftWidthClass,
-              ].join(' ')}
+        {usingTree ? <TreeLeadHeaders /> : null}
+        {leadOnly ? null : (
+          <ModeHeaders
+            showWideTable={showWideTable}
+            mode={mode}
+            dateLabels={dateLabels}
+            comparison={comparison}
+          />
+        )}
+      </div>
+      {showTimeline ? (
+        <div
+          className="relative flex-1 overflow-hidden"
+          style={{ width: horizon.widthPx, minWidth: horizon.widthPx }}
+          data-schedule-timeline-header="true"
+        >
+          {monthSpans.map((m) => (
+            <span
+              key={m.iso}
+              className="absolute inset-y-0 flex items-center justify-center overflow-hidden px-1 text-center"
+              style={{ left: `${m.leftPct}%`, width: `${m.widthPct}%` }}
+              data-month-span={m.iso}
             >
-              {usingTree ? <TreeLeadHeaders /> : null}
-              {leadOnly ? null : (
-                <ModeHeaders
-                  showWideTable={showWideTable}
-                  mode={mode}
-                  dateLabels={dateLabels}
-                  comparison={comparison}
-                />
-              )}
-            </div>
-            {showTimeline ? (
-              <div
-                className="relative flex-1 overflow-hidden"
-                style={{ width: horizon.widthPx, minWidth: horizon.widthPx }}
-                data-schedule-timeline-header="true"
-              >
-                {monthSpans.map((m) => (
-                  <span
-                    key={m.iso}
-                    className="absolute inset-y-0 flex items-center justify-center overflow-hidden px-1 text-center"
-                    style={{ left: `${m.leftPct}%`, width: `${m.widthPct}%` }}
-                    data-month-span={m.iso}
-                  >
-                    <span className="truncate">{m.label}</span>
-                  </span>
-                ))}
-              </div>
-            ) : null}
-          </div>
+              <span className="truncate">{m.label}</span>
+            </span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
 
-          {rendered.map((row) => {
+  const bodyRows = (
+    <>
+      {rendered.map((row) => {
             const attention = row.item ? isScheduleAttention(row.item) : false;
             const emphasis = row.item?.id === 'MS-PS' || attention;
 
@@ -773,18 +867,24 @@ export function ScheduleBoard({
                 data-schedule-row={row.keyId}
                 data-row-height={rowHeight}
                 data-emphasis={emphasis ? 'true' : undefined}
+                data-schedule-row-hover={
+                  hoveredRowKey === row.keyId ? 'true' : undefined
+                }
+                onMouseEnter={() => onHoverRow?.(row.keyId)}
+                onMouseLeave={() => onHoverRow?.(null)}
                 className={[
                   'flex border-b border-[var(--border-subtle)] last:border-b-0',
-                  'hover:bg-[var(--interactive)]',
-                  emphasis
-                    ? 'shadow-[inset_2px_0_0_0_var(--border)]'
+                  // Hover background via .ppc-schedule-row-hovered (DOM / optional prop for tests).
+                  hoveredRowKey === row.keyId
+                    ? 'ppc-schedule-row-hovered'
                     : '',
                 ].join(' ')}
                 style={{ height: rowHeight }}
               >
                 <div
                   className={[
-                    'sticky left-0 z-10 flex items-center gap-3 border-r border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 text-sm',
+                    'sticky left-0 z-10 flex items-center gap-3 border-r border-[var(--border-subtle)] px-3 text-sm',
+                    'bg-[var(--surface-raised)]',
                     leftWidthClass,
                   ].join(' ')}
                   data-schedule-row-left="true"
@@ -835,7 +935,11 @@ export function ScheduleBoard({
                         />
                       ) : row.item.kind === 'milestone' ||
                         row.item.kind === 'equipment_delivery' ? (
-                        <ScheduleRowMarkers item={row.item} horizon={horizon} />
+                        <ScheduleRowMarkers
+                          item={row.item}
+                          horizon={horizon}
+                          comparison={comparison}
+                        />
                       ) : null
                     ) : null}
                   </div>
@@ -843,6 +947,107 @@ export function ScheduleBoard({
               </div>
             );
           })}
+    </>
+  );
+
+  if (verticalScrollOwned) {
+    // Sticky band is outside the H-scrollports so top sticks to [data-schedule-scroll-owner].
+    // Header strip: overflow-x hidden, no scrollbar; scrollLeft follows the body.
+    // Body strip keeps wheel / touch H-scroll but hides its native bar (it would sit at the
+    // end of all rows). A proxy bar, position: sticky; bottom: 0 inside the scroll owner,
+    // stays visible and mirrors scrollLeft.
+    return (
+      <div
+        className={[
+          'flex flex-col bg-[var(--surface-raised)]',
+          embedded ? 'min-h-0' : 'min-h-0 flex-1',
+        ].join(' ')}
+        data-schedule-board="true"
+        data-schedule-layout={mode}
+        data-schedule-row-height={rowHeight}
+        data-schedule-lead-only={leadOnly ? 'true' : undefined}
+        data-schedule-bounded="true"
+        data-schedule-tree={usingTree ? 'true' : undefined}
+        data-schedule-v-scroll-owned="true"
+        data-schedule-virtualized={virtualized ? 'true' : undefined}
+        data-schedule-logical-rows={String(allRendered.length)}
+        data-schedule-dom-rows={String(rendered.length)}
+      >
+        <div
+          className="sticky top-0 z-20 bg-[var(--surface-sunken)]"
+          data-schedule-sticky-header="true"
+        >
+          <div
+            ref={headerHScrollRef}
+            className="overflow-x-hidden overflow-y-hidden [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: 'none' }}
+            data-schedule-header-hscroll="true"
+            onScroll={() => syncHScroll('header')}
+            aria-label="Горизонтальная прокрутка шапки таблицы"
+          >
+            {headerInner}
+          </div>
+        </div>
+        <div
+          ref={bodyHScrollRef}
+          className="overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: 'none' }}
+          data-schedule-viewport="true"
+          data-schedule-body-hscroll="true"
+          onScroll={() => syncHScroll('body')}
+          aria-label="Горизонтальная прокрутка таблицы календарного плана"
+        >
+          <div className="min-w-full" style={{ minWidth: boardMinWidth }}>
+            {spacerTopPx > 0 ? (
+              <div
+                aria-hidden
+                data-schedule-virtual-spacer="top"
+                style={{ height: spacerTopPx }}
+              />
+            ) : null}
+            {bodyRows}
+            {spacerBottomPx > 0 ? (
+              <div
+                aria-hidden
+                data-schedule-virtual-spacer="bottom"
+                style={{ height: spacerBottomPx }}
+              />
+            ) : null}
+          </div>
+        </div>
+        <div
+          ref={proxyHScrollRef}
+          className="sticky bottom-0 z-20 overflow-x-auto overflow-y-hidden bg-[var(--surface-raised)]"
+          style={{ position: 'sticky', bottom: 0 }}
+          data-schedule-hscroll-proxy="true"
+          onScroll={() => syncHScroll('proxy')}
+          aria-label="Горизонтальная полоса прокрутки таблицы"
+        >
+          <div style={{ width: bodyScrollWidth, height: 1 }} aria-hidden />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)]"
+      data-schedule-board="true"
+      data-schedule-layout={mode}
+      data-schedule-row-height={rowHeight}
+      data-schedule-lead-only={leadOnly ? 'true' : undefined}
+      data-schedule-bounded="true"
+      data-schedule-tree={usingTree ? 'true' : undefined}
+    >
+      <div
+        className="min-h-0 flex-1 overflow-auto"
+        data-schedule-viewport="true"
+        tabIndex={0}
+        aria-label="Прокрутка календарного плана"
+      >
+        <div className="min-w-full" style={{ minWidth: boardMinWidth }}>
+          <div className="sticky top-0 z-20">{headerInner}</div>
+          {bodyRows}
         </div>
       </div>
     </div>

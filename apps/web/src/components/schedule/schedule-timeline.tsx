@@ -1,11 +1,13 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useRef } from 'react';
 import type { ScheduleItem, ScheduleLink } from '@/lib/api-client';
 import type { ScheduleComparisonMode } from '@/lib/schedule/schedule-comparison';
 import type { ScheduleSelectionKey } from '@/lib/schedule/selection-key';
 import type { ScheduleScrollAnchor } from '@/lib/schedule/schedule-scroll-anchor';
 import { useTheme } from '@/lib/theme/theme-context';
+import { ScheduleChartStickyScale } from './schedule-chart-sticky-scale';
 import './dhtmlx-gantt-adapter.css';
 
 const DhtmlxGanttAdapter = dynamic(
@@ -29,6 +31,16 @@ type Props = {
   selected: ScheduleSelectionKey | null;
   onSelect: (key: ScheduleSelectionKey | null) => void;
   scrollAnchor?: ScheduleScrollAnchor;
+  /**
+   * Parent owns vertical scroll; chart uses bounded viewport + smart_rendering
+   * and receives Y via ownedScrollTop (not a second input scroller).
+   */
+  verticalScrollOwned?: boolean;
+  embedded?: boolean;
+  /** Programmatic Y from the shared scroll owner (rAF). */
+  ownedScrollTop?: number;
+  hoveredRowKey?: string | null;
+  onHoverRow?: (key: string | null) => void;
 };
 
 export function ScheduleTimeline({
@@ -39,24 +51,38 @@ export function ScheduleTimeline({
   selected,
   onSelect,
   scrollAnchor,
+  verticalScrollOwned = false,
+  embedded = false,
+  ownedScrollTop = 0,
+  hoveredRowKey = null,
+  onHoverRow,
 }: Props) {
   const { theme } = useTheme();
+  const chartRootRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col" data-schedule-timeline="live">
-      {/*
-        The pane is a bounded flex column. The viewport fills it; DHTMLX
-        setSizes reads that height. A percentage height on an auto parent
-        previously grew without bound, so the fixed 36rem box stays only
-        outside this pane.
-      */}
+    <div
+      ref={chartRootRef}
+      className={[
+        'flex h-full min-h-0 flex-col',
+        embedded ? 'min-h-0' : 'min-h-0 flex-1',
+      ].join(' ')}
+      data-schedule-timeline="live"
+      data-schedule-v-scroll-owned={verticalScrollOwned ? 'true' : undefined}
+      data-schedule-virtualized={verticalScrollOwned ? 'true' : undefined}
+    >
+      {verticalScrollOwned ? (
+        <ScheduleChartStickyScale syncRootRef={chartRootRef} />
+      ) : null}
       <div
         className={
-          treeRows
-            ? 'ppc-gantt-viewport ppc-gantt-viewport-tree min-h-0 flex-1'
-            : 'ppc-gantt-viewport min-h-0 flex-1'
+          verticalScrollOwned
+            ? 'ppc-gantt-viewport ppc-gantt-viewport-virtual min-h-0 flex-1'
+            : treeRows
+              ? 'ppc-gantt-viewport ppc-gantt-viewport-tree min-h-0 flex-1'
+              : 'ppc-gantt-viewport min-h-0 flex-1'
         }
-        data-gantt-viewport="bounded"
+        data-gantt-viewport={verticalScrollOwned ? 'virtual' : 'bounded'}
       >
         <DhtmlxGanttAdapter
           items={items}
@@ -67,6 +93,10 @@ export function ScheduleTimeline({
           selected={selected}
           onSelect={onSelect}
           scrollAnchor={scrollAnchor}
+          fitVerticalContent={verticalScrollOwned}
+          ownedScrollTop={ownedScrollTop}
+          hoveredRowKey={hoveredRowKey}
+          onHoverRow={onHoverRow}
         />
       </div>
     </div>

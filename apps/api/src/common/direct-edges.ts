@@ -7,11 +7,7 @@ import {
 } from '../data/snapshot-access';
 
 export type EntityRefType =
-  | 'equipment'
-  | 'issue'
-  | 'risk'
-  | 'milestone'
-  | 'decision';
+  'equipment' | 'issue' | 'risk' | 'milestone' | 'decision';
 
 /** DOC-BA-015 directed edge (no EQ—MS; Decision→MS optional; no Decision→EQ/ISS/RISK). */
 export type DirectEdge = {

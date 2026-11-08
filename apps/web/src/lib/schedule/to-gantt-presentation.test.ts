@@ -152,6 +152,12 @@ describe('toGanttPresentation (one logical row)', () => {
     expect(
       presentationIdToSelectionKey('equipment_delivery:EQ-HVAC-01:forecast'),
     ).toEqual(eqKey);
+    expect(
+      presentationIdToSelectionKey('project_group:AN-01:forecast'),
+    ).toEqual({ kind: 'project_group', entityId: 'AN-01' });
+    expect(
+      presentationIdToSelectionKey('stage_group:1.1:actual'),
+    ).toEqual({ kind: 'stage_group', entityId: '1.1' });
     expect(logicalPresentationId(eqKey)).toBe('equipment_delivery:EQ-HVAC-01');
     expect(forecastPresentationId(eqKey)).toBe('equipment_delivery:EQ-HVAC-01');
   });

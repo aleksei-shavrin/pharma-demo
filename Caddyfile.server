@@ -23,7 +23,10 @@
 
 	# Nest routes stay /health, /v1/..., /api, /api-json after strip.
 	handle_path /backend/* {
-		reverse_proxy api:3000
+		reverse_proxy api:3000 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Host {host}
+		}
 	}
 
 	# Docusaurus built with baseUrl=/docs/; strip so nginx serves from /
@@ -31,7 +34,10 @@
 		reverse_proxy docs:80
 	}
 
+	# Strip client-supplied x-middleware-subrequest (CVE middleware bypass).
 	handle {
-		reverse_proxy web:3000
+		reverse_proxy web:3000 {
+			header_up -X-Middleware-Subrequest
+		}
 	}
 }

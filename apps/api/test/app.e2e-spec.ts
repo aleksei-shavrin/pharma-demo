@@ -154,7 +154,11 @@ describe('I2 API snapshot (e2e)', () => {
           project: { productionStartVariance: { deltaDays: number } };
           workstreamRollups: unknown[];
           topExceptions: unknown[];
-          trend: { better: string[]; worse: string[]; unchangedCritical: string[] };
+          trend: {
+            better: string[];
+            worse: string[];
+            unchangedCritical: string[];
+          };
         };
         expect(body.snapshotId).toBe('A');
         expect(body.projectStatus).toBe('Green');
@@ -192,12 +196,12 @@ describe('I2 API snapshot (e2e)', () => {
           topExceptions: { priority: number }[];
         };
         expect(body.projectStatus).toBe('Yellow');
-        expect(
-          body.equipment.find((e) => e.id === 'EQ-HVAC-01')!.status,
-        ).toBe('OnTrack');
-        expect(
-          body.equipment.find((e) => e.id === 'EQ-PKG-01')!.status,
-        ).toBe('Delayed');
+        expect(body.equipment.find((e) => e.id === 'EQ-HVAC-01')!.status).toBe(
+          'OnTrack',
+        );
+        expect(body.equipment.find((e) => e.id === 'EQ-PKG-01')!.status).toBe(
+          'Delayed',
+        );
         expect(body.issues.some((i) => i.id === 'ISS-001')).toBe(false);
         expect(
           body.issues.some((i) => i.id === 'ISS-PKG-01' && i.status === 'Open'),
@@ -381,12 +385,10 @@ describe('I2 API snapshot (e2e)', () => {
                 rag: string | null;
               }[];
             };
-            expect(
-              body.rows.find((r) => r.id === 'ISS-001')?.issueStatus,
-            ).toBe('Open');
-            expect(body.rows.find((r) => r.id === 'RISK-001')?.rag).toBe(
-              'Red',
+            expect(body.rows.find((r) => r.id === 'ISS-001')?.issueStatus).toBe(
+              'Open',
             );
+            expect(body.rows.find((r) => r.id === 'RISK-001')?.rag).toBe('Red');
           }),
       );
   });
@@ -451,9 +453,10 @@ describe('I2 API snapshot (e2e)', () => {
         expect(body.links.filter((l) => l.targetType === 'risk').length).toBe(
           2,
         );
-        expect(
-          body.links.map((l) => l.targetId).sort(),
-        ).toEqual(['RISK-001', 'RISK-HVAC-02']);
+        expect(body.links.map((l) => l.targetId).sort()).toEqual([
+          'RISK-001',
+          'RISK-HVAC-02',
+        ]);
         expect(body.links.some((l) => l.targetType === 'milestone')).toBe(
           false,
         );
@@ -531,8 +534,7 @@ describe('I2 API snapshot (e2e)', () => {
         expect(body.items.length).toBeGreaterThanOrEqual(2);
         expect(
           body.items.every(
-            (i) =>
-              i.kind === 'equipment_delivery' || i.kind === 'milestone',
+            (i) => i.kind === 'equipment_delivery' || i.kind === 'milestone',
           ),
         ).toBe(true);
         const eq = body.items.find((i) => i.id === 'EQ-HVAC-01')!;

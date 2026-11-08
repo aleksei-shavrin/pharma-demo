@@ -2,10 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { WORKSTREAM_IDS, type WorkstreamId } from '../../data/workstream-ids';
 import type { SnapshotId } from '../../snapshot/snapshot-id';
 import { SNAPSHOT_IDS } from '../../snapshot/snapshot-id';
-import {
-  PERSON_ID_API_PROPERTY,
-  type PersonId,
-} from '../person-id';
+import { PERSON_ID_API_PROPERTY, type PersonId } from '../person-id';
 
 /** Person reference entity — not HRIS (DOC-PROD-025). */
 export class PersonDto {

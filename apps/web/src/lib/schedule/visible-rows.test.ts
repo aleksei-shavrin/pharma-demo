@@ -1,10 +1,12 @@
 /** @vitest-environment node */
 import { describe, expect, it } from 'vitest';
 import {
+  allScheduleGroupKeys,
   buildVisibleScheduleRows,
-  DEFAULT_EXPANDED_SCHEDULE_KEYS,
   type ScheduleHierarchyItem,
 } from './visible-rows';
+
+const CURATED = ['project_group:AN-08', 'stage_group:8.2'] as const;
 
 function frozenSnapshotC(): ScheduleHierarchyItem[] {
   return [
@@ -95,16 +97,19 @@ function frozenSnapshotC(): ScheduleHierarchyItem[] {
 }
 
 describe('buildVisibleScheduleRows', () => {
-  it('по умолчанию раскрывает AN-08 и 8.2', () => {
-    expect([...DEFAULT_EXPANDED_SCHEDULE_KEYS]).toEqual([
-      'project_group:AN-08',
-      'stage_group:8.2',
-    ]);
+  it('allScheduleGroupKeys собирает все группы payload', () => {
+    const keys = allScheduleGroupKeys(frozenSnapshotC());
+    expect(keys).toEqual(
+      expect.arrayContaining(['project_group:AN-08', 'stage_group:8.2']),
+    );
+    expect(keys.every((k) => k.startsWith('project_group:') || k.startsWith('stage_group:'))).toBe(
+      true,
+    );
   });
 
   it('ставит группы проекта первыми, детей по siblingOrder, остальные корни во входящем порядке', () => {
     const rows = buildVisibleScheduleRows(frozenSnapshotC(), {
-      expandedKeys: DEFAULT_EXPANDED_SCHEDULE_KEYS,
+      expandedKeys: CURATED,
     });
 
     expect(rows.map((row) => row.id)).toEqual([
@@ -199,7 +204,7 @@ describe('buildVisibleScheduleRows', () => {
           status: 'Waiting',
         },
       ],
-      { expandedKeys: DEFAULT_EXPANDED_SCHEDULE_KEYS },
+      { expandedKeys: CURATED },
     );
 
     expect(rows.map((row) => row.id)).toEqual([
@@ -241,26 +246,74 @@ describe('buildVisibleScheduleRows', () => {
     ).toBe(false);
   });
 
-  it('оставляет прогресс 0 числом, а прогресс группы пустым', () => {
-    const rows = buildVisibleScheduleRows(frozenSnapshotC(), {
-      expandedKeys: DEFAULT_EXPANDED_SCHEDULE_KEYS,
+  it('оставляет прогресс 0 числом и прокидывает rollup группы с API', () => {
+    const base = frozenSnapshotC();
+    const withRollup = base.map((item) =>
+      item.id === '8.2' || item.id === 'AN-08'
+        ? { ...item, progressPct: item.id === '8.2' ? 37 : 41 }
+        : item,
+    );
+    const rows = buildVisibleScheduleRows(withRollup, {
+      expandedKeys: CURATED,
     });
 
     expect(rows.find((row) => row.id === '8.2.1')?.progressPct).toBe(0);
-    expect(rows.find((row) => row.id === '8.2')?.progressPct).toBeNull();
-    expect(rows.find((row) => row.id === 'AN-08')?.progressPct).toBeNull();
+    expect(rows.find((row) => row.id === '8.2')?.progressPct).toBe(37);
+    expect(rows.find((row) => row.id === 'AN-08')?.progressPct).toBe(41);
     expect(rows.find((row) => row.id === 'WK-01')?.progressPct).toBe(100);
   });
 
   it('сводит 8.2 по прогнозу детей 2027-02-25..2027-03-18, включая точку вехи 2027-03-09', () => {
     const rows = buildVisibleScheduleRows(frozenSnapshotC(), {
-      expandedKeys: DEFAULT_EXPANDED_SCHEDULE_KEYS,
+      expandedKeys: CURATED,
     });
     const stage = rows.find((row) => row.id === '8.2');
 
     expect(stage?.summaryStart).toBe('2027-02-25');
     expect(stage?.summaryEnd).toBe('2027-03-18');
-    expect(stage?.progressPct).toBeNull();
+  });
+
+  it('в baseline сводит 8.2 только по baseline детей (не forecast)', () => {
+    const items = frozenSnapshotC().map((item) => {
+      if (item.id === '8.2.1') {
+        return {
+          ...item,
+          baselineStart: '2027-02-20',
+          baselineEnd: '2027-02-28',
+        };
+      }
+      if (item.id === 'MS-CLN-PANEL') {
+        return { ...item, baselineDate: '2027-03-01' };
+      }
+      return item;
+    });
+    const rows = buildVisibleScheduleRows(items, {
+      expandedKeys: CURATED,
+      comparison: 'baseline',
+    });
+    const stage = rows.find((row) => row.id === '8.2');
+    expect(stage?.summaryStart).toBe('2027-02-20');
+    expect(stage?.summaryEnd).toBe('2027-03-08');
+  });
+
+  it('в baseline игнорирует работу с только baselineStart (оба конца обязательны)', () => {
+    const items = frozenSnapshotC().map((item) => {
+      if (item.id === '8.2.1') {
+        return { ...item, baselineStart: '2027-01-01', baselineEnd: null };
+      }
+      if (item.id === 'MS-CLN-PANEL') {
+        return { ...item, baselineDate: null };
+      }
+      return item;
+    });
+    const rows = buildVisibleScheduleRows(items, {
+      expandedKeys: CURATED,
+      comparison: 'baseline',
+    });
+    const stage = rows.find((row) => row.id === '8.2');
+    // Only 8.2.2 full baseline pair remains.
+    expect(stage?.summaryStart).toBe('2027-02-26');
+    expect(stage?.summaryEnd).toBe('2027-03-08');
   });
 
   it('не сжимает сводку 8.2, когда этап свёрнут и дети не видны', () => {
@@ -276,7 +329,7 @@ describe('buildVisibleScheduleRows', () => {
 
   it('ставит на 8.2 недели отставания, а на 8.2.2 сдвиг базы', () => {
     const rows = buildVisibleScheduleRows(frozenSnapshotC(), {
-      expandedKeys: DEFAULT_EXPANDED_SCHEDULE_KEYS,
+      expandedKeys: CURATED,
     });
 
     expect(rows.find((row) => row.id === 'AN-08')?.warning.tone).toBe('shift');
@@ -296,13 +349,13 @@ describe('buildVisibleScheduleRows', () => {
 
   it('фильтр листа оставляет предков, а совпадение группы не тянет чужие листья', () => {
     const leaves = buildVisibleScheduleRows(frozenSnapshotC(), {
-      expandedKeys: DEFAULT_EXPANDED_SCHEDULE_KEYS,
+      expandedKeys: CURATED,
       includeItem: (item) => item.id === '8.2.1',
     });
     expect(leaves.map((row) => row.id)).toEqual(['AN-08', '8.2', '8.2.1']);
 
     const groupHit = buildVisibleScheduleRows(frozenSnapshotC(), {
-      expandedKeys: DEFAULT_EXPANDED_SCHEDULE_KEYS,
+      expandedKeys: CURATED,
       includeItem: (item) => item.kind === 'stage_group' && item.id === '8.2',
     });
     expect(groupHit.map((row) => row.id)).toEqual(['AN-08', '8.2']);

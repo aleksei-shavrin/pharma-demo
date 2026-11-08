@@ -16,6 +16,12 @@ playwright/.cache/
 .env
 .env.local
 .env.*.local
+.env.dev-auth
+.env.server-auth
+.dev-login-password
+.dev-login-password-hash
+.server-login-password
+.server-login-password-hash
 !.env.local.example
 !apps/web/.env.local.example
 
@@ -43,3 +49,7 @@ openspec/**/.tmp/
 /tmp/
 
 # Do NOT ignore .cursor/plans/
+
+# Generated vitest/jest coverage dumps (local evidence; not source)
+apps/api/coverage-*/
+apps/web/coverage-*/

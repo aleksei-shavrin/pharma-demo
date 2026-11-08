@@ -66,6 +66,8 @@ export interface ScheduleWorkFixture {
   /** Inclusive. Both null means no fact. Not derived from status or progress. */
   actualStart?: string | null;
   actualEnd?: string | null;
+  /** Raw analyst source status token mapping when imported. */
+  sourceStatus?: string | null;
 }
 
 export interface ScheduleLinkFixture {
@@ -78,11 +80,33 @@ export interface ScheduleLinkFixture {
   type?: ScheduleLinkFixtureType;
 }
 
+/** Imported analyst КТ as zero-duration schedule milestones (not catalogue MS). */
+export interface ScheduleImportedCheckpointFixture {
+  id: string;
+  name: string;
+  parentKey: string;
+  wbs: string;
+  siblingOrder: number;
+  workstream: string | null;
+  sourceStatus: string;
+  sourceWeeks: number | null;
+  status: ScheduleWorkFixtureStatus;
+  baselineDate: string;
+  forecastDate: string;
+  progressPct: number;
+  rag: 'Green' | 'Red';
+  actualStart?: string | null;
+  actualEnd?: string | null;
+}
+
 export interface ScheduleWorkSnapshotFixture {
   works: readonly ScheduleWorkFixture[];
   links: readonly ScheduleLinkFixture[];
   groups?: readonly ScheduleGroupFixture[];
   milestoneAttachments?: readonly ScheduleMilestoneAttachment[];
+  importedCheckpoints?: readonly ScheduleImportedCheckpointFixture[];
+  /** Catalog MS that alias source КТ — carry controlpoint source metadata. */
+  aliasedCheckpoints?: readonly ScheduleImportedCheckpointFixture[];
 }
 
 const EMPTY_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
@@ -239,6 +263,7 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
     {
       id: '8.2.1',
       name: 'Сэндвич-панели и герметизация',
+      workstream: 'WS-CLN',
       startDate: '2027-02-25',
       endDate: '2027-03-02',
       status: 'Delayed',
@@ -255,6 +280,7 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
     {
       id: '8.2.2',
       name: 'Фальшполы и потолки',
+      workstream: 'WS-CLN',
       startDate: '2027-03-04',
       endDate: '2027-03-18',
       status: 'OnSchedule',
@@ -272,6 +298,7 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
       // Forecast is synthetic. ⚠️8н supplies Delayed and sourceWeeks, not dates.
       id: '24.1.1',
       name: 'Два ввода от сети',
+      workstream: 'WS-UTL',
       startDate: '2027-02-08',
       endDate: '2027-03-19',
       status: 'Delayed',
@@ -286,6 +313,7 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
     {
       id: '24.1.2',
       name: 'Подстанция',
+      workstream: 'WS-UTL',
       startDate: '2027-02-15',
       endDate: '2027-03-12',
       status: 'OnSchedule',
@@ -300,6 +328,7 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
     {
       id: '9.3.1',
       name: 'Установка AHU',
+      workstream: 'WS-HVAC',
       startDate: '2027-02-22',
       endDate: '2027-03-19',
       status: 'OnSchedule',
@@ -315,11 +344,164 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
       // Starts the day after the existing MS-UTL-PWR forecast. Not a computed lag.
       id: '9.3.2',
       name: 'Подключение к сетям',
+      workstream: 'WS-HVAC',
       startDate: '2027-04-16',
       endDate: '2027-04-30',
       status: 'Waiting',
       parentKey: 'stage_group:9.3',
       wbs: '9.3.2',
+      siblingOrder: 1,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    // Demo installation works for remaining workstreams (topology shared A–S;
+    // progress/status come from schedule-work-states overlays).
+    {
+      id: '1.1.1',
+      name: 'Монтаж ограждающих панелей',
+      workstream: 'WS-BLD',
+      startDate: '2027-01-10',
+      endDate: '2027-04-15',
+      status: 'OnSchedule',
+      parentKey: 'stage_group:1.1',
+      wbs: '1.1.1',
+      siblingOrder: 0,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '1.1.2',
+      name: 'Герметизация контура здания',
+      workstream: 'WS-BLD',
+      startDate: '2027-03-01',
+      endDate: '2027-05-20',
+      status: 'Waiting',
+      parentKey: 'stage_group:1.1',
+      wbs: '1.1.2',
+      siblingOrder: 1,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '5.1.1',
+      name: 'Установка технологической линии A',
+      workstream: 'WS-PRD',
+      startDate: '2027-05-01',
+      endDate: '2027-08-01',
+      status: 'Waiting',
+      parentKey: 'stage_group:5.1',
+      wbs: '5.1.1',
+      siblingOrder: 0,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '5.1.2',
+      name: 'Обвязка и FAT линии A',
+      workstream: 'WS-PRD',
+      startDate: '2027-06-15',
+      endDate: '2027-08-20',
+      status: 'Waiting',
+      parentKey: 'stage_group:5.1',
+      wbs: '5.1.2',
+      siblingOrder: 1,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '6.1.1',
+      name: 'Монтаж линии упаковки',
+      workstream: 'WS-PKG',
+      startDate: '2027-05-10',
+      endDate: '2027-08-10',
+      status: 'Waiting',
+      parentKey: 'stage_group:6.1',
+      wbs: '6.1.1',
+      siblingOrder: 0,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '6.1.2',
+      name: 'SAT упаковочной линии',
+      workstream: 'WS-PKG',
+      startDate: '2027-06-20',
+      endDate: '2027-08-25',
+      status: 'Waiting',
+      parentKey: 'stage_group:6.1',
+      wbs: '6.1.2',
+      siblingOrder: 1,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '7.1.1',
+      name: 'Оснащение лабораторных зон',
+      workstream: 'WS-QC',
+      startDate: '2027-03-15',
+      endDate: '2027-07-15',
+      status: 'Waiting',
+      parentKey: 'stage_group:7.1',
+      wbs: '7.1.1',
+      siblingOrder: 0,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '7.1.2',
+      name: 'Квалификация лабораторного оборудования',
+      workstream: 'WS-QC',
+      startDate: '2027-05-01',
+      endDate: '2027-08-01',
+      status: 'Waiting',
+      parentKey: 'stage_group:7.1',
+      wbs: '7.1.2',
+      siblingOrder: 1,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '10.1.1',
+      name: 'Развёртывание BMS',
+      workstream: 'WS-AUT',
+      startDate: '2027-04-01',
+      endDate: '2027-08-15',
+      status: 'Waiting',
+      parentKey: 'stage_group:10.1',
+      wbs: '10.1.1',
+      siblingOrder: 0,
+      progressPct: null,
+      sourceWeeks: null,
+      baselineStart: null,
+      baselineEnd: null,
+    },
+    {
+      id: '10.1.2',
+      name: 'Интеграция EMS и тревог',
+      workstream: 'WS-AUT',
+      startDate: '2027-06-01',
+      endDate: '2027-09-01',
+      status: 'Waiting',
+      parentKey: 'stage_group:10.1',
+      wbs: '10.1.2',
       siblingOrder: 1,
       progressPct: null,
       sourceWeeks: null,
@@ -367,17 +549,137 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
       sourceRef: 'milestone:MS-UTL-PWR',
       targetRef: 'work:9.3.2',
     },
+    // Meaningful installation chains per workstream (FS) + selected MS→work gates.
+    {
+      id: 'LNK-FS-BLD-01',
+      kind: 'scheduling',
+      sourceRef: 'work:1.1.1',
+      targetRef: 'work:1.1.2',
+      type: 'FS',
+    },
+    {
+      id: 'LNK-FS-CLN-PANEL',
+      kind: 'scheduling',
+      sourceRef: 'work:8.2.1',
+      targetRef: 'work:8.2.2',
+      type: 'FS',
+    },
+    {
+      id: 'LNK-FS-UTL-01',
+      kind: 'scheduling',
+      sourceRef: 'work:24.1.1',
+      targetRef: 'work:24.1.2',
+      type: 'FS',
+    },
+    {
+      id: 'LNK-FS-HVAC-01',
+      kind: 'scheduling',
+      sourceRef: 'work:9.3.1',
+      targetRef: 'work:9.3.2',
+      type: 'FS',
+    },
+    {
+      id: 'LNK-FS-PRD-01',
+      kind: 'scheduling',
+      sourceRef: 'work:5.1.1',
+      targetRef: 'work:5.1.2',
+      type: 'FS',
+    },
+    {
+      id: 'LNK-FS-PKG-01',
+      kind: 'scheduling',
+      sourceRef: 'work:6.1.1',
+      targetRef: 'work:6.1.2',
+      type: 'FS',
+    },
+    {
+      id: 'LNK-FS-QC-01',
+      kind: 'scheduling',
+      sourceRef: 'work:7.1.1',
+      targetRef: 'work:7.1.2',
+      type: 'FS',
+    },
+    {
+      id: 'LNK-FS-AUT-01',
+      kind: 'scheduling',
+      sourceRef: 'work:10.1.1',
+      targetRef: 'work:10.1.2',
+      type: 'FS',
+    },
+    {
+      id: 'LNK-X-ENCL-BLD',
+      kind: 'cross_project_predecessor',
+      sourceRef: 'milestone:MS-BLD-ENCL',
+      targetRef: 'work:1.1.2',
+    },
+    {
+      id: 'LNK-X-PANEL-CLN',
+      kind: 'cross_project_predecessor',
+      sourceRef: 'milestone:MS-CLN-PANEL',
+      targetRef: 'work:WK-05',
+    },
+    {
+      id: 'LNK-X-PRD-INST',
+      kind: 'cross_project_predecessor',
+      sourceRef: 'milestone:MS-PRD-INST',
+      targetRef: 'work:5.1.2',
+    },
+    {
+      id: 'LNK-X-PKG-SAT',
+      kind: 'cross_project_predecessor',
+      sourceRef: 'milestone:MS-PKG-SAT',
+      targetRef: 'work:6.1.2',
+    },
   ],
 };
 
-const SCHEDULE_WORKS_BY_SNAPSHOT: Partial<
-  Record<SnapshotId, ScheduleWorkSnapshotFixture>
-> = {
-  C: SNAPSHOT_C_SCHEDULE_WORKS,
-};
+/**
+ * Shared topology (works/links identity) for every populated snapshot.
+ * Per-snapshot progress/status/actuals are applied in mergeDemoTree via
+ * schedule-work-states — not by aliasing one frozen C state onto A–S.
+ */
+export const POPULATED_SCHEDULE_SNAPSHOTS: readonly SnapshotId[] = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+];
 
 export function getScheduleWorkFixture(
   snapshotId: SnapshotId,
 ): ScheduleWorkSnapshotFixture {
-  return SCHEDULE_WORKS_BY_SNAPSHOT[snapshotId] ?? EMPTY_SCHEDULE_WORKS;
+  if (!POPULATED_SCHEDULE_SNAPSHOTS.includes(snapshotId)) {
+    return EMPTY_SCHEDULE_WORKS;
+  }
+  // Topology from analyst import (data layer). Overlays applied in mergeDemoTree.
+  // Lazy require avoids circular init with schedule-analyst-import helpers.
+  const { buildAnalystScheduleFixture } =
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- circular init
+    require('./analyst/schedule-analyst-import') as typeof import('./analyst/schedule-analyst-import');
+  const built = buildAnalystScheduleFixture();
+  return {
+    groups: built.fixture.groups,
+    works: built.fixture.works,
+    links: built.fixture.links,
+    milestoneAttachments: built.fixture.milestoneAttachments,
+    importedCheckpoints: built.fixture.importedCheckpoints,
+    aliasedCheckpoints: built.fixture.aliasedCheckpoints,
+  };
 }
+
+export { SNAPSHOT_C_SCHEDULE_WORKS, EMPTY_SCHEDULE_WORKS };

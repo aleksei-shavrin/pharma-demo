@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-07",
-  "count": 197,
+  "generatedAt": "2026-11-08",
+  "count": 219,
   "entries": {
     "DOC-PORTAL-004": {
       "href": "/docs/portal/DOC-PORTAL-004",
@@ -457,6 +457,16 @@
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0006-portfolio-program-project-read-model.md"
     },
+    "DOC-ADR-0007": {
+      "href": "/docs/architecture/decisions/DOC-ADR-0007",
+      "kind": "doc",
+      "source": "docs/06-architecture/decisions/0007-demo-form-login.md"
+    },
+    "ADR-0007": {
+      "href": "/docs/architecture/decisions/DOC-ADR-0007",
+      "kind": "adr",
+      "source": "docs/06-architecture/decisions/0007-demo-form-login.md"
+    },
     "DOC-ADR-README-001": {
       "href": "/docs/architecture/decisions/",
       "kind": "doc",
@@ -586,6 +596,71 @@
       "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-PHARMA-CLOSEOUT",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-07-pharma-closeout.md"
+    },
+    "DOC-HANDOFF-2026-11-07-PHARMA-FORM-LOGIN": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-PHARMA-FORM-LOGIN",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-07-pharma-form-login.md"
+    },
+    "DOC-HANDOFF-2026-11-07-SCHEDULE-DATA-CHROME": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-SCHEDULE-DATA-CHROME",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-07-schedule-data-chrome.md"
+    },
+    "DOC-HANDOFF-2026-11-07-SCHEDULE-SCROLL-OWNER": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-SCHEDULE-SCROLL-OWNER",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-07-schedule-scroll-owner-ordinal.md"
+    },
+    "DOC-HANDOFF-2026-11-08-ANALYST-MERGE": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-ANALYST-MERGE",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-analyst-schedule-programs.md"
+    },
+    "DOC-HANDOFF-2026-11-08-DASHBOARD-PAGES": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-DASHBOARD-PAGES",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-dashboard-pages-consistency.md"
+    },
+    "DOC-HANDOFF-2026-11-08-DECISIONS-DASHBOARD": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-DECISIONS-DASHBOARD",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-decisions-dashboard.md"
+    },
+    "DOC-HANDOFF-2026-11-08-PROJECTS-PROGRAMS-SEMANTIC-PROGRESS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-PROJECTS-PROGRAMS-SEMANTIC-PROGRESS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-projects-programs-semantic-progress.md"
+    },
+    "DOC-HANDOFF-2026-11-08-REALISTIC-SIM": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-REALISTIC-SIM",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-realistic-simulation-programs.md"
+    },
+    "DOC-HANDOFF-2026-11-08-SCHEDULE-AUTHORED-FACTS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-SCHEDULE-AUTHORED-FACTS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-schedule-authored-facts.md"
+    },
+    "DOC-HANDOFF-2026-11-08-PERF-STYLE": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-PERF-STYLE",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-schedule-perf-style.md"
+    },
+    "DOC-HANDOFF-2026-11-08-SCHEDULE-REFERENCE-FINAL": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-SCHEDULE-REFERENCE-FINAL",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-schedule-reference-final.md"
+    },
+    "DOC-HANDOFF-2026-11-08-TIMELINE-ECHARTS-DECISIONS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-TIMELINE-ECHARTS-DECISIONS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-timeline-echarts-decisions-register.md"
+    },
+    "DOC-HO-2026-11-08-TIMELINE-ONLY-ECHARTS": {
+      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-08-TIMELINE-ONLY-ECHARTS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-timeline-only-echarts.md"
     },
     "DOC-HANDOFF-README-001": {
       "href": "/docs/delivery/handoffs/",
@@ -747,6 +822,31 @@
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-07-demo-recovery-followup.md"
     },
+    "DOC-RPT-2026-11-07-SCHEDULE-DATA-CHROME": {
+      "href": "/docs/delivery/reports/DOC-RPT-2026-11-07-SCHEDULE-DATA-CHROME",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-07-schedule-data-chrome-inventory.md"
+    },
+    "DOC-RPT-2026-11-08-ANALYST-IMPORT": {
+      "href": "/docs/delivery/reports/DOC-RPT-2026-11-08-ANALYST-IMPORT",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-08-analyst-import-audit.md"
+    },
+    "DOC-REPORT-2026-11-08-COMPREHENSIVE-AUDIT": {
+      "href": "/docs/delivery/reports/DOC-REPORT-2026-11-08-COMPREHENSIVE-AUDIT",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-08-comprehensive-audit-findings.md"
+    },
+    "DOC-RPT-2026-11-08-TIMELINE-ECHARTS-DECISIONS": {
+      "href": "/docs/delivery/reports/DOC-RPT-2026-11-08-TIMELINE-ECHARTS-DECISIONS",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-08-timeline-echarts-decisions-execute.md"
+    },
+    "DOC-RPT-2026-11-08-TIMELINE-ONLY-ECHARTS": {
+      "href": "/docs/delivery/reports/DOC-RPT-2026-11-08-TIMELINE-ONLY-ECHARTS",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-08-timeline-only-echarts.md"
+    },
     "DOC-QA-003": {
       "href": "/docs/quality/DOC-QA-003",
       "kind": "doc",
@@ -771,6 +871,11 @@
       "href": "/docs/release/",
       "kind": "doc",
       "source": "docs/09-release/README.md"
+    },
+    "DOC-OPS-FORM-LOGIN-001": {
+      "href": "/docs/operations/DOC-OPS-FORM-LOGIN-001",
+      "kind": "doc",
+      "source": "docs/10-operations/demo-form-login.md"
     },
     "DOC-OPS-002": {
       "href": "/docs/operations/DOC-OPS-002",
@@ -971,6 +1076,11 @@
       "href": "/openspec/milestone-readiness/spec",
       "kind": "openspec",
       "source": "openspec/specs/milestone-readiness/spec.md"
+    },
+    "portfolio-program-project": {
+      "href": "/openspec/portfolio-program-project/spec",
+      "kind": "openspec",
+      "source": "openspec/specs/portfolio-program-project/spec.md"
     },
     "project-status-overview": {
       "href": "/openspec/project-status-overview/spec",

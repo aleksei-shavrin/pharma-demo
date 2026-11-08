@@ -5,6 +5,7 @@ import type {
   ScheduleWorkItem,
 } from '@/lib/api-client';
 import {
+  BASELINE_MISSING_TOOLTIP,
   displayedWorkBounds,
   factCaption,
   type ScheduleComparisonMode,
@@ -236,6 +237,23 @@ function toPresentationTask(
   switch (item.kind) {
     case 'work': {
       const bounds = displayedWorkBounds(item, comparison);
+      if (!bounds) {
+        return {
+          id: selectionKeyId(key),
+          text: itemLabel(item),
+          type: 'task',
+          css: `${css} ppc-baseline-missing`,
+          selectionKey: key,
+          showBaselineGhost: false,
+          baselineStart: null,
+          baselineEnd: null,
+          unscheduled: true,
+          barCaption: BASELINE_MISSING_TOOLTIP,
+        };
+      }
+      const showGhost =
+        comparison !== 'baseline' &&
+        Boolean(item.baselineStart && item.baselineEnd);
       return {
         id: selectionKeyId(key),
         text: itemLabel(item),
@@ -245,8 +263,8 @@ function toPresentationTask(
         css,
         selectionKey: key,
         showBaselineGhost: false,
-        baselineStart: item.baselineStart ?? null,
-        baselineEnd: item.baselineEnd ?? null,
+        baselineStart: showGhost ? item.baselineStart ?? null : null,
+        baselineEnd: showGhost ? item.baselineEnd ?? null : null,
         ...(comparison === 'actual'
           ? { factCaption: factCaption(item.actualStart, item.actualEnd) }
           : {}),
@@ -266,19 +284,39 @@ function toPresentationTask(
         unscheduled: true,
       };
     case 'milestone':
-    case 'equipment_delivery':
+    case 'equipment_delivery': {
+      const primaryDate =
+        comparison === 'baseline'
+          ? item.baselineDate || null
+          : item.forecastDate;
+      if (comparison === 'baseline' && !item.baselineDate) {
+        return {
+          id: selectionKeyId(key),
+          text: itemLabel(item),
+          type: 'milestone',
+          css: `${css} ppc-baseline-missing`,
+          selectionKey: key,
+          showBaselineGhost: false,
+          unscheduled: true,
+          barCaption: BASELINE_MISSING_TOOLTIP,
+        };
+      }
       return {
         id: selectionKeyId(key),
         text: itemLabel(item),
-        start_date: item.forecastDate,
+        start_date: primaryDate!,
         duration: 0,
         type: 'milestone',
-        css: `${css} ppc-role-forecast`,
+        css: `${css} ${comparison === 'baseline' ? 'ppc-role-baseline' : 'ppc-role-forecast'}`,
         selectionKey: key,
         forecastDate: item.forecastDate,
         baselineDate: item.baselineDate,
-        showBaselineGhost: item.baselineDate !== item.forecastDate,
+        showBaselineGhost:
+          comparison !== 'baseline' &&
+          Boolean(item.baselineDate) &&
+          item.baselineDate !== item.forecastDate,
       };
+    }
     default: {
       const unreachable: never = item;
       return unreachable;
@@ -292,25 +330,26 @@ function toPresentationLinks(
   items: readonly ScheduleItem[],
   comparison: ScheduleComparisonMode,
 ): GanttPresentationLink[] {
-  const workIds = new Set(
-    tasks.filter((task) => task.type === 'task').map((task) => task.id),
-  );
-  const milestoneIds = new Set(
-    tasks.filter((task) => task.type === 'milestone').map((task) => task.id),
+  const scheduledIds = new Set(
+    tasks
+      .filter((task) => task.unscheduled !== true)
+      .filter((task) => task.type === 'task' || task.type === 'milestone')
+      .map((task) => task.id),
   );
   const worksById = new Map(
     items.filter((item) => item.kind === 'work').map((item) => [item.id, item]),
   );
   const mapped: GanttPresentationLink[] = [];
+  const isLeafTask = (ref: string) => scheduledIds.has(ref);
   for (const link of links) {
     if (link.kind === 'cross_project_predecessor') {
-      if (
-        !milestoneIds.has(link.sourceRef) ||
-        !workIds.has(link.targetRef)
-      ) {
+      if (!isLeafTask(link.sourceRef) || !isLeafTask(link.targetRef)) {
         continue;
       }
-      const work = worksById.get(link.targetRef.slice('work:'.length));
+      const work =
+        link.targetRef.startsWith('work:')
+          ? worksById.get(link.targetRef.slice('work:'.length))
+          : undefined;
       // Closed fact replaces the forecast bar. The line is not redrawn onto that fact.
       if (
         comparison === 'actual' &&
@@ -329,8 +368,8 @@ function toPresentationLinks(
     }
     if (
       link.type == null ||
-      !workIds.has(link.sourceRef) ||
-      !workIds.has(link.targetRef)
+      !isLeafTask(link.sourceRef) ||
+      !isLeafTask(link.targetRef)
     ) {
       continue;
     }
@@ -442,13 +481,16 @@ function workTreeTask(
   };
 }
 
-function controlPointTreeTask(row: GanttTreeRow): GanttPresentationTask {
+function controlPointTreeTask(
+  row: GanttTreeRow,
+  comparison: ScheduleComparisonMode,
+): GanttPresentationTask {
   if (
     row.item &&
     (row.item.kind === 'milestone' || row.item.kind === 'equipment_delivery') &&
     row.item.kind === row.kind
   ) {
-    const task = toPresentationTask(row.item, 'forecast');
+    const task = toPresentationTask(row.item, comparison);
     return {
       ...task,
       id: rowTaskId(row),
@@ -456,13 +498,15 @@ function controlPointTreeTask(row: GanttTreeRow): GanttPresentationTask {
     };
   }
   const equipment = row.kind === 'equipment_delivery';
+  const roleCss =
+    comparison === 'baseline' ? 'ppc-role-baseline' : 'ppc-role-forecast';
   return {
     id: rowTaskId(row),
     text: rowLabel(row),
     type: 'milestone',
     css: equipment
-      ? 'ppc-eq ppc-eq-ontrack ppc-role-forecast'
-      : 'ppc-ms ppc-ms-red ppc-ms-outline ppc-role-forecast',
+      ? `ppc-eq ppc-eq-ontrack ${roleCss}`
+      : `ppc-ms ppc-ms-red ppc-ms-outline ${roleCss}`,
     selectionKey: {
       kind: equipment ? 'equipment_delivery' : 'milestone',
       entityId: row.id,
@@ -481,7 +525,7 @@ function treeRowToTask(
     return groupPresentationTask(row);
   }
   if (row.kind === 'work') return workTreeTask(row, comparison);
-  return controlPointTreeTask(row);
+  return controlPointTreeTask(row, comparison);
 }
 
 /**
@@ -509,15 +553,20 @@ export function toGanttPresentation(
   };
 }
 
-/** Logical row id (and legacy `:forecast`/`:baseline` ids) → selection key. */
+/** Logical row id (and legacy `:forecast`/`:baseline`/`:actual` ids) → selection key. */
 export function presentationIdToSelectionKey(
   presentationId: string | number,
 ): ScheduleSelectionKey | null {
   const raw = String(presentationId);
-  const legacy =
-    /^(equipment_delivery|milestone|work):(.+):(forecast|baseline)$/.exec(raw);
-  if (legacy) {
-    return { kind: legacy[1] as ScheduleSelectionKey['kind'], entityId: legacy[2] };
+  const layered =
+    /^(equipment_delivery|milestone|work|project_group|stage_group):(.+):(forecast|baseline|actual)$/.exec(
+      raw,
+    );
+  if (layered) {
+    return {
+      kind: layered[1] as ScheduleSelectionKey['kind'],
+      entityId: layered[2],
+    };
   }
   return parseSelectionKeyId(raw);
 }

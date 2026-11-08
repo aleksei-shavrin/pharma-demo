@@ -3,10 +3,7 @@
  * No float money; Committed is never added into EAC.
  */
 
-import {
-  WORKSTREAM_IDS,
-  type WorkstreamId,
-} from '../data/workstream-ids';
+import { WORKSTREAM_IDS, type WorkstreamId } from '../data/workstream-ids';
 
 /** Frozen Demo BAC (R2-D0-R1). Fictional — not a real plant appraisal. */
 export const DEMO_PROJECT_BAC_RUB = 6_200_000_000;
@@ -14,9 +11,7 @@ export const DEMO_WORKSTREAM_BUDGETS_SUM_RUB = 5_850_000_000;
 export const DEMO_PROJECT_CONTINGENCY_TOTAL_RUB = 350_000_000;
 
 /** Frozen CBS approved control budgets (DOC-PROD-026 §4). */
-export const DEMO_WORKSTREAM_CBS_RUB: Readonly<
-  Record<WorkstreamId, number>
-> = {
+export const DEMO_WORKSTREAM_CBS_RUB: Readonly<Record<WorkstreamId, number>> = {
   'WS-BLD': 850_000_000,
   'WS-CLN': 740_000_000,
   'WS-HVAC': 880_000_000,
@@ -53,8 +48,10 @@ export function sumWorkstreamCbsRub(): number {
 
 /** Authoritative: EAC = Actual + ETC (never Actual + Committed + ETC). */
 export function computeEacRub(actualCostRub: number, etcRub: number): number {
-  return assertIntegerRub(actualCostRub, 'actualCostRub') +
-    assertIntegerRub(etcRub, 'etcRub');
+  return (
+    assertIntegerRub(actualCostRub, 'actualCostRub') +
+    assertIntegerRub(etcRub, 'etcRub')
+  );
 }
 
 export function computeVacRub(
@@ -142,7 +139,9 @@ export function assertFrozenDemoBacCbs(): void {
   }
 }
 
-export function assertWorkstreamCostInvariants(m: WorkstreamCostMeasures): void {
+export function assertWorkstreamCostInvariants(
+  m: WorkstreamCostMeasures,
+): void {
   for (const [k, v] of Object.entries(m)) {
     assertIntegerRub(v, k);
   }

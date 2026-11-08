@@ -26,7 +26,7 @@ related:
 | Подготовка к эксперименту §13 [pharma-demo-call-work-plan.md](../pharma-demo-call-work-plan.md) | **C10** (переключатель 1/2/3), **C11** (протокол сравнения) — только после выбора libs и установки |
 | | **Выбор библиотек и `npm install`** — ждут явного решения человека |
 
-Базовый рендерер (вариант «1»): [`ExecutiveMilestoneStrip`](../../../apps/web/src/components/dashboard/executive-milestone-strip.tsx) + [`executive-timeline.ts`](../../../apps/web/src/lib/dashboard/executive-timeline.ts).
+Базовый рендерер эксперимента (вариант «1», later removed 2026-11-08): historical `ExecutiveMilestoneStrip` + [`executive-timeline.ts`](../../../apps/web/src/lib/dashboard/executive-timeline.ts). Current dashboard card: [`executive-timeline-echarts.tsx`](../../../apps/web/src/components/dashboard/executive-timeline-echarts.tsx).
 
 Норматив UX: [demo-v1-r2-ux-delta.md](../../05-ux-ui/demo-v1-r2-ux-delta.md) — 12 стабильных ID, горизонт `01.02.2027–30.09.2027`, RAG, маркер снимка, кластер Production Start (baseline ↔ forecast).
 

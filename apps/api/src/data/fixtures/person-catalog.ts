@@ -52,56 +52,57 @@ export const PERSON_CATALOG: readonly PersonFixture[] = [
   {
     id: 'PER-06',
     fullNameRu: 'Васильев Игорь Николаевич',
-    roleTitleRu: 'Ведущий направления «Строительство»',
+    roleTitleRu: 'Ответственный по направлению (legacy tag) «Строительство»',
     primaryWorkstreamId: 'WS-BLD',
     active: true,
   },
   {
     id: 'PER-07',
     fullNameRu: 'Лебедева Ольга Викторовна',
-    roleTitleRu: 'Ведущий направления «Чистые помещения»',
+    roleTitleRu: 'Ответственный по направлению (legacy tag) «Чистые помещения»',
     primaryWorkstreamId: 'WS-CLN',
     active: true,
   },
   {
     id: 'PER-08',
     fullNameRu: 'Смирнов Павел Андреевич',
-    roleTitleRu: 'Ведущий направления HVAC',
+    roleTitleRu: 'Ответственный по направлению (legacy tag) HVAC',
     primaryWorkstreamId: 'WS-HVAC',
     active: true,
   },
   {
     id: 'PER-09',
     fullNameRu: 'Фёдоров Сергей Михайлович',
-    roleTitleRu: 'Ведущий направления «Инженерные системы»',
+    roleTitleRu:
+      'Ответственный по направлению (legacy tag) «Инженерные системы»',
     primaryWorkstreamId: 'WS-UTL',
     active: true,
   },
   {
     id: 'PER-10',
     fullNameRu: 'Козлова Наталья Ивановна',
-    roleTitleRu: 'Ведущий направления «Производство»',
+    roleTitleRu: 'Ответственный по направлению (legacy tag) «Производство»',
     primaryWorkstreamId: 'WS-PRD',
     active: true,
   },
   {
     id: 'PER-11',
     fullNameRu: 'Попов Алексей Дмитриевич',
-    roleTitleRu: 'Ведущий направления «Упаковка»',
+    roleTitleRu: 'Ответственный по направлению (legacy tag) «Упаковка»',
     primaryWorkstreamId: 'WS-PKG',
     active: true,
   },
   {
     id: 'PER-12',
     fullNameRu: 'Никитина Мария Александровна',
-    roleTitleRu: 'Ведущий направления QC',
+    roleTitleRu: 'Ответственный по направлению (legacy tag) QC',
     primaryWorkstreamId: 'WS-QC',
     active: true,
   },
   {
     id: 'PER-13',
     fullNameRu: 'Григорьев Артём Владимирович',
-    roleTitleRu: 'Ведущий направления «Автоматизация»',
+    roleTitleRu: 'Ответственный по направлению (legacy tag) «Автоматизация»',
     primaryWorkstreamId: 'WS-AUT',
     active: true,
   },
@@ -126,18 +127,17 @@ export const PERSON_BY_ID: ReadonlyMap<PersonId, PersonFixture> = new Map(
 );
 
 /** Exactly one lead per Workstream (DOC-PROD-025). */
-export const WORKSTREAM_LEAD_PERSON: Readonly<
-  Record<WorkstreamId, PersonId>
-> = {
-  'WS-BLD': 'PER-06',
-  'WS-CLN': 'PER-07',
-  'WS-HVAC': 'PER-08',
-  'WS-UTL': 'PER-09',
-  'WS-PRD': 'PER-10',
-  'WS-PKG': 'PER-11',
-  'WS-QC': 'PER-12',
-  'WS-AUT': 'PER-13',
-};
+export const WORKSTREAM_LEAD_PERSON: Readonly<Record<WorkstreamId, PersonId>> =
+  {
+    'WS-BLD': 'PER-06',
+    'WS-CLN': 'PER-07',
+    'WS-HVAC': 'PER-08',
+    'WS-UTL': 'PER-09',
+    'WS-PRD': 'PER-10',
+    'WS-PKG': 'PER-11',
+    'WS-QC': 'PER-12',
+    'WS-AUT': 'PER-13',
+  };
 
 export function personFullNameRu(id: PersonId): string {
   const p = PERSON_BY_ID.get(id);

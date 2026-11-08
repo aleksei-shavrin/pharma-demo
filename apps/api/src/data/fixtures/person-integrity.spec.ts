@@ -49,7 +49,9 @@ describe('Person catalogue integrity (R2-P1)', () => {
       expect(eqId.startsWith('EQ-')).toBe(true);
       expect(personId).toBeDefined();
       if (personId === undefined) {
-        throw new Error(`EQUIPMENT_RESPONSIBLE_PERSON missing person for ${eqId}`);
+        throw new Error(
+          `EQUIPMENT_RESPONSIBLE_PERSON missing person for ${eqId}`,
+        );
       }
       expect(PERSON_BY_ID.has(personId)).toBe(true);
     }
@@ -57,13 +59,7 @@ describe('Person catalogue integrity (R2-P1)', () => {
 
   it('SH_TO_PER covers legacy roles and public snapshots have no SH owners', () => {
     expect(Object.keys(SH_TO_PER).sort()).toEqual(
-      [
-        'SH-DIR-01',
-        'SH-ENG-01',
-        'SH-PKG-01',
-        'SH-PM-01',
-        'SH-QC-01',
-      ].sort(),
+      ['SH-DIR-01', 'SH-ENG-01', 'SH-PKG-01', 'SH-PM-01', 'SH-QC-01'].sort(),
     );
     // SH_TO_PER is migration aid only — not semantic ownership of all ENG records.
     expect(SH_TO_PER['SH-ENG-01']).toBe('PER-08');

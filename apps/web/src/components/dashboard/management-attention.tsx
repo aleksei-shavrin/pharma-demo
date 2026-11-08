@@ -23,36 +23,39 @@ export function managementAttentionItems(
   const delayedCritical = data.equipment.filter(
     (e) => e.critical && e.status === 'Delayed',
   ).length;
-  const milestonesAtRisk = data.milestones.filter((m) => m.rag === 'Red').length;
+  // Catalog register (/milestones) excludes imported KT-* universe rows.
+  const milestonesAtRisk = data.milestones.filter(
+    (m) => m.rag === 'Red' && !m.id.startsWith('KT-'),
+  ).length;
 
   return [
     {
       id: 'issues',
       label: 'Активные проблемы',
       count: activeIssues,
-      href: '/issues-risks',
-      hrefLabel: 'К проблемам и рискам',
+      href: '/issues-risks?type=Issue&issueStatus=active',
+      hrefLabel: 'К активным проблемам',
     },
     {
       id: 'risks',
       label: 'Красные риски',
       count: redRisks,
-      href: '/issues-risks',
-      hrefLabel: 'К проблемам и рискам',
+      href: '/issues-risks?type=Risk&rag=Red',
+      hrefLabel: 'К красным рискам',
     },
     {
       id: 'equipment',
       label: 'Крит. оборудование с задержкой',
       count: delayedCritical,
-      href: '/equipment',
-      hrefLabel: 'К оборудованию',
+      href: '/equipment?critical=1&status=Delayed',
+      hrefLabel: 'К задержанному критическому оборудованию',
     },
     {
       id: 'milestones',
       label: 'Вехи под риском',
       count: milestonesAtRisk,
-      href: '/milestones',
-      hrefLabel: 'К вехам',
+      href: '/milestones?rag=Red',
+      hrefLabel: 'К вехам с RAG Red',
     },
   ];
 }

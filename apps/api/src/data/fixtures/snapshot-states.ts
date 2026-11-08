@@ -166,7 +166,8 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-B-PKG',
         title: 'Прогноз срыва FAT упаковки',
-        causeImpact: 'Локальное отклонение упаковки без влияния на старт производства',
+        causeImpact:
+          'Локальное отклонение упаковки без влияния на старт производства',
         links: [
           { type: 'equipment', id: 'EQ-PKG-01' },
           { type: 'issue', id: 'ISS-PKG-01' },
@@ -187,10 +188,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     ],
     trend: {
       better: [],
-      worse: [
-        'Упаковка: прогноз срыва FAT',
-        'Оболочка: замечания по дверям',
-      ],
+      worse: ['Упаковка: прогноз срыва FAT', 'Оболочка: замечания по дверям'],
       unchangedCritical: [],
     },
   },
@@ -224,7 +222,8 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-C-HVAC-PS',
         title: 'Критический прогноз сдвига AHU',
-        causeImpact: 'Задержка long-lead HVAC угрожает старту производства (+21 дн.)',
+        causeImpact:
+          'Задержка long-lead HVAC угрожает старту производства (+21 дн.)',
         links: [
           { type: 'equipment', id: 'EQ-HVAC-01' },
           { type: 'issue', id: 'ISS-001' },
@@ -823,7 +822,8 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-I-HVAC-PS',
         title: 'Остаточный HVAC / PS +14',
-        causeImpact: 'Авторитетные отклонения HVAC и старта производства остаются +14',
+        causeImpact:
+          'Авторитетные отклонения HVAC и старта производства остаются +14',
         links: [
           { type: 'equipment', id: 'EQ-HVAC-01' },
           { type: 'risk', id: 'RISK-001' },
@@ -1116,8 +1116,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-L-AUT',
         title: 'BMS/EMS интеграция',
-        causeImpact:
-          'Автоматизация в отклонении; проблемы EMS и BMS открыты',
+        causeImpact: 'Автоматизация в отклонении; проблемы EMS и BMS открыты',
         links: [
           { type: 'issue', id: 'ISS-AUT-03' },
           { type: 'risk', id: 'RISK-AUT-03' },
@@ -1301,7 +1300,8 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
       {
         id: 'TEX-N-DEC',
         title: 'Решения по пусконаладке зафиксированы',
-        causeImpact: 'DEC-COM-*; прогнозы HVAC/старта без автоизменения (BR-006)',
+        causeImpact:
+          'DEC-COM-*; прогнозы HVAC/старта без автоизменения (BR-006)',
         links: [
           { type: 'risk', id: 'RISK-001' },
           { type: 'milestone', id: 'MS-PS' },
@@ -1736,7 +1736,6 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
       unchangedCritical: [],
     },
   },
-
 };
 
 export const SNAPSHOT_STATES = holdPanelPowerSlip(SNAPSHOT_STATES_BASE);

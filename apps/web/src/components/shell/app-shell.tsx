@@ -25,6 +25,7 @@ const MENU_TAB_SELECTOR = 'a[href], button:not([disabled])';
  */
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const isLogin = pathname === '/login' || pathname.startsWith('/login/');
   const isDashboard = pathname === '/';
   const narrow = useNarrowShell();
   const menuId = useId();
@@ -89,6 +90,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   }
 
   const showOverlay = narrow && menuOpen;
+
+  if (isLogin) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="fixed inset-0 flex min-h-0 overflow-hidden bg-[var(--canvas)] text-[var(--text)]">

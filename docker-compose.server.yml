@@ -35,6 +35,9 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/backend}
+    environment:
+      # Middleware session verify (Nest internal). Not a browser secret.
+      API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:3000}
     expose:
       - "3000"
     depends_on:
@@ -48,11 +51,19 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
+    env_file:
+      - path: .env.server-auth
+        required: false
     environment:
       PORT: "3000"
       WEB_ORIGIN: ${WEB_ORIGIN:-http://127.0.0.1:8080}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://127.0.0.1:8080}
       PUBLIC_API_PREFIX: ${PUBLIC_API_PREFIX:-/backend}
       CORS_EXTRA_ORIGINS: ${CORS_EXTRA_ORIGINS:-}
+      # bcrypt hash mounted as a file (Compose interpolates `$` in env values).
+      LOGIN_PASSWORD_HASH_FILE: /run/secrets/login-password-hash
+    volumes:
+      - ./.server-login-password-hash:/run/secrets/login-password-hash:ro
     expose:
       - "3000"
     networks:

@@ -24,10 +24,7 @@ export function workstreamStatus(
   if (hasRedRisk) return 'Red';
 
   const hasDelayedCritical = snapshot.equipment.some(
-    (e) =>
-      e.workstream === workstream &&
-      e.critical &&
-      e.status === 'Delayed',
+    (e) => e.workstream === workstream && e.critical && e.status === 'Delayed',
   );
   const hasActiveIssue = snapshot.issues.some(
     (i) =>
@@ -53,9 +50,7 @@ export function computeWorkstreamRollups(
  * YELLOW: not Red AND management attention.
  * GREEN: otherwise.
  */
-export function computeProjectStatus(
-  snapshot: SnapshotFixture,
-): ProjectStatus {
+export function computeProjectStatus(snapshot: SnapshotFixture): ProjectStatus {
   const msPs = productionStartMilestone(snapshot);
   const risk001 = productionStartRisk(snapshot);
   if (msPs.rag === 'Red' || risk001.rag === 'Red') {

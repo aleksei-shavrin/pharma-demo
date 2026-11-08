@@ -9,6 +9,7 @@ import {
 import { SNAPSHOT_IDS, type SnapshotId } from '../snapshot/snapshot-id';
 import { SnapshotQueryPipe } from '../snapshot/snapshot-query.pipe';
 import {
+  DecisionsRegisterDto,
   EquipmentRegisterDto,
   IssuesRisksRegisterDto,
   MilestonesRegisterDto,
@@ -78,5 +79,26 @@ export class RegistersController {
     @Query('snapshot', SnapshotQueryPipe) snapshot: SnapshotId,
   ): MilestonesRegisterDto {
     return this.registersService.listMilestones(id, snapshot);
+  }
+
+  @Get(':id/decisions')
+  @ApiOperation({
+    summary: 'Decisions register read model (Demo v1; no write/edit)',
+  })
+  @ApiQuery({
+    name: 'snapshot',
+    required: false,
+    enum: SNAPSHOT_IDS,
+    description:
+      'Discrete Demo snapshot context. Omitted defaults to A. Invalid → 400.',
+    schema: { default: 'A' },
+  })
+  @ApiOkResponse({ type: DecisionsRegisterDto })
+  @ApiNotFoundResponse({ description: 'Project not found in that snapshot' })
+  listDecisions(
+    @Param('id') id: string,
+    @Query('snapshot', SnapshotQueryPipe) snapshot: SnapshotId,
+  ): DecisionsRegisterDto {
+    return this.registersService.listDecisions(id, snapshot);
   }
 }

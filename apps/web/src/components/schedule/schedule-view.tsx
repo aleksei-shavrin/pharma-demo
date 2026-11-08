@@ -1,6 +1,16 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   RegisterEmpty,
   RegisterError,
@@ -19,36 +29,46 @@ import {
   DEFAULT_REGISTER_FILTERS,
   filtersActive,
   matchesSearch,
-  matchesWorkstream,
+  matchesProgram,
   normalizeQuery,
   type RegisterFilterState,
 } from '@/lib/registers/register-filters';
 import { useRegisterQuery } from '@/lib/registers/use-register-query';
+import { GANTT_VERTICAL_SCROLL_SELECTOR } from '@/lib/schedule/bind-schedule-pane-scroll';
 import {
-  bindSchedulePaneScroll,
-  copyScrollTop,
-  GANTT_DATA_AREA_SELECTOR,
-  GANTT_VERTICAL_SCROLL_SELECTOR,
-} from '@/lib/schedule/bind-schedule-pane-scroll';
+  isScheduleAttention,
+  SCHEDULE_ROW_HEIGHT_PX,
+} from '@/lib/schedule/schedule-geometry';
 import {
+  captureChartPaneScroll,
   captureRowAnchor,
   emptyScheduleScrollAnchor,
+  forwardWheelDeltaToOwner,
+  restoreChartPaneScroll,
   restoreRowAnchor,
   restoreScrollLeft,
 } from '@/lib/schedule/schedule-scroll-anchor';
-import { isScheduleAttention } from '@/lib/schedule/schedule-geometry';
 import type { ScheduleSelectionKey } from '@/lib/schedule/selection-key';
 import { parseSelectionKeyId } from '@/lib/schedule/selection-key';
 import type { GanttTreeRow } from '@/lib/schedule/to-gantt-presentation';
 import {
+  allScheduleGroupKeys,
   buildVisibleScheduleRows,
-  DEFAULT_EXPANDED_SCHEDULE_KEYS,
   type ScheduleHierarchyItem,
   type VisibleScheduleRow,
 } from '@/lib/schedule/visible-rows';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 import { presentMilestoneName } from '@/lib/ui-labels';
-import type { ScheduleComparisonMode } from '@/lib/schedule/schedule-comparison';
+import {
+  parseScheduleComparisonMode,
+  type ScheduleComparisonMode,
+} from '@/lib/schedule/schedule-comparison';
+import { resolveScheduleFillTone } from '@/lib/schedule/schedule-fill-tone';
+import { applyScheduleRowHover } from '@/lib/schedule/schedule-row-hover';
+import {
+  computeScheduleVirtualWindow,
+  type ScheduleVirtualWindow,
+} from '@/lib/schedule/schedule-virtual-window';
 import { ScheduleBoard, type ScheduleTreeRow } from './schedule-board';
 import { ScheduleComparisonToggle } from './schedule-comparison-toggle';
 import { ScheduleTimeline } from './schedule-timeline';
@@ -96,16 +116,25 @@ function legacyScheduleItems<T extends ScheduleHierarchyItem>(
 function toBoardTreeRow<T extends ScheduleHierarchyItem>(
   row: VisibleScheduleRow<T>,
 ): ScheduleTreeRow {
+  const item = row.item as {
+    status?: string | null;
+    rag?: string | null;
+  };
   return {
     key: row.key,
     depth: row.depth,
-    visibleOrdinal: row.visibleOrdinal,
     name: displayTitle(row),
     kind: row.kind,
     wbs: row.wbs,
     hasChildren: row.hasChildren,
     expanded: row.expanded,
     progressPct: row.progressPct,
+    fillTone: resolveScheduleFillTone({
+      kind: row.kind,
+      status: item.status,
+      rag: item.rag,
+      warningTone: row.warning.tone,
+    }),
     warning: row.warning,
   };
 }
@@ -127,7 +156,42 @@ function toGanttTreeRow<T extends ScheduleHierarchyItem>(
   };
 }
 
-type KindFilter = 'all' | 'equipment' | 'milestone' | 'work';
+/** Split pane list width bounds: min 20rem (320px at 16px root), max 70% of the split row. */
+const SPLIT_LIST_MIN_PX = 320;
+const SPLIT_LIST_MAX_FRACTION = 0.7;
+/** ~640px on typical 1920 content — not the max drag width. */
+const SPLIT_LIST_DEFAULT_WIDTH = 'min(40rem, 40%)';
+const SPLIT_KEY_STEP_PX = 24;
+const SPLIT_KEY_STEP_LARGE_PX = 96;
+
+function clampSplitListWidth(widthPx: number, containerPx: number): number {
+  const max = Math.max(SPLIT_LIST_MIN_PX, containerPx * SPLIT_LIST_MAX_FRACTION);
+  return Math.round(Math.min(max, Math.max(SPLIT_LIST_MIN_PX, widthPx)));
+}
+
+type KindFilter = 'all' | 'equipment' | 'milestone' | 'controlpoint' | 'work';
+
+function isControlPointMilestone(item: ScheduleHierarchyItem): boolean {
+  return (
+    item.kind === 'milestone' &&
+    ((item as { sourceKind?: string }).sourceKind === 'controlpoint' ||
+      item.id.startsWith('KT-'))
+  );
+}
+
+function matchesProjectScope(
+  projectFilter: string | null,
+  item: ScheduleHierarchyItem,
+): boolean {
+  if (!projectFilter) return true;
+  const no = Number(projectFilter.replace(/^AN-/, ''));
+  if (!Number.isFinite(no)) return true;
+  const prefix = `${no}.`;
+  const root = String(no);
+  if (item.kind === 'project_group') return item.id === projectFilter;
+  const wbs = item.wbs ?? '';
+  return wbs === root || wbs.startsWith(prefix);
+}
 
 function displayTitle(item: { kind: string; id: string; name: string }): string {
   if (item.kind === 'milestone') {
@@ -155,11 +219,16 @@ function includeScheduleItem(
   item: ScheduleHierarchyItem,
   filters: RegisterFilterState,
   kindFilter: KindFilter,
+  projectFilter: string | null,
 ): boolean {
+  if (!matchesProjectScope(projectFilter, item)) return false;
   const group =
     item.kind === 'project_group' || item.kind === 'stage_group';
   if (group) {
-    if (normalizeQuery(filters.query).length === 0) return false;
+    if (normalizeQuery(filters.query).length === 0) {
+      // Keep project/stage groups as seeds when scoping to a project.
+      return projectFilter != null;
+    }
     return matchesSearch(filters.query, [
       displayTitle(item),
       item.id,
@@ -169,8 +238,11 @@ function includeScheduleItem(
   if (kindFilter === 'equipment' && item.kind !== 'equipment_delivery') {
     return false;
   }
-  if (kindFilter === 'milestone' && item.kind !== 'milestone') {
-    return false;
+  if (kindFilter === 'milestone') {
+    if (item.kind !== 'milestone' || isControlPointMilestone(item)) return false;
+  }
+  if (kindFilter === 'controlpoint') {
+    if (!isControlPointMilestone(item)) return false;
   }
   if (kindFilter === 'work' && item.kind !== 'work') {
     return false;
@@ -181,7 +253,7 @@ function includeScheduleItem(
   if (filters.attention === 'normal' && isLeafAttention(item)) {
     return false;
   }
-  if (!matchesWorkstream(filters.workstream, item.workstream)) {
+  if (!matchesProgram(filters.program, item.workstream)) {
     return false;
   }
   return matchesSearch(filters.query, [displayTitle(item), item.id, item.wbs]);
@@ -189,53 +261,170 @@ function includeScheduleItem(
 
 export function ScheduleView() {
   const { active } = useSnapshot();
+  const searchParams = useSearchParams();
+  const projectFilter = searchParams.get('project');
   const { data, status, error, retry } = useRegisterQuery(fetchSchedule);
   const [mode, setMode] = useState<ScheduleViewMode>(SCHEDULE_VIEW_DEFAULT);
-  const [comparison, setComparison] = useState<ScheduleComparisonMode>('forecast');
+  const [comparison, setComparison] = useState<ScheduleComparisonMode>(() =>
+    parseScheduleComparisonMode(searchParams.get('comparison')),
+  );
   const [filters, setFilters] = useState<RegisterFilterState>(
     DEFAULT_REGISTER_FILTERS,
   );
   const [kindFilter, setKindFilter] = useState<KindFilter>('all');
   const [expandedKeys, setExpandedKeys] = useState<ReadonlySet<string>>(
-    () => new Set(DEFAULT_EXPANDED_SCHEDULE_KEYS),
+    () => new Set(),
   );
+  const expandSeedRef = useRef<string | null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const listPaneRef = useRef<HTMLDivElement>(null);
   const chartPaneRef = useRef<HTMLDivElement>(null);
+  const scrollOwnerRef = useRef<HTMLDivElement>(null);
+  const hoverKeyRef = useRef<string | null>(null);
   const scrollAnchorRef = useRef(emptyScheduleScrollAnchor());
+  const splitRowRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startWidth: number;
+  } | null>(null);
+  const splitDragCleanupRef = useRef<(() => void) | null>(null);
+  /** null = default `min(40rem, 40%)`; set after the user resizes the list pane. */
+  const [listWidthPx, setListWidthPx] = useState<number | null>(null);
+  const [splitDragging, setSplitDragging] = useState(false);
+  const [ownedScrollTop, setOwnedScrollTop] = useState(0);
+  const [ownedViewportHeight, setOwnedViewportHeight] = useState(0);
+  const scrollSyncRafRef = useRef(0);
+
+  const splitMetrics = () => {
+    const container = splitRowRef.current?.getBoundingClientRect().width ?? 0;
+    const current =
+      listPaneRef.current?.getBoundingClientRect().width ?? SPLIT_LIST_MIN_PX;
+    return { container, current };
+  };
+
+  const endSplitDrag = () => {
+    splitDragCleanupRef.current?.();
+    splitDragCleanupRef.current = null;
+    dragRef.current = null;
+    setSplitDragging(false);
+  };
+
+  const onSplitPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.currentTarget.focus();
+    const { current } = splitMetrics();
+    const pointerId = event.pointerId;
+    endSplitDrag();
+    dragRef.current = {
+      pointerId,
+      startX: event.clientX,
+      startWidth: current,
+    };
+    setSplitDragging(true);
+
+    // Window listeners (not element capture): Playwright mouse + lostpointercapture
+    // otherwise end the drag before the first move.
+    const onMove = (move: PointerEvent) => {
+      const drag = dragRef.current;
+      if (!drag || drag.pointerId !== move.pointerId) return;
+      const { container } = splitMetrics();
+      setListWidthPx(
+        clampSplitListWidth(
+          drag.startWidth + move.clientX - drag.startX,
+          container,
+        ),
+      );
+    };
+    const onUp = (up: PointerEvent) => {
+      if (dragRef.current?.pointerId !== up.pointerId) return;
+      endSplitDrag();
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    splitDragCleanupRef.current = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+  };
+
+  const onSplitKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    const { container, current } = splitMetrics();
+    const step = event.shiftKey ? SPLIT_KEY_STEP_LARGE_PX : SPLIT_KEY_STEP_PX;
+    let next: number | null = null;
+    if (event.key === 'ArrowLeft') next = current - step;
+    else if (event.key === 'ArrowRight') next = current + step;
+    else if (event.key === 'Home') next = SPLIT_LIST_MIN_PX;
+    else if (event.key === 'End') next = container * SPLIT_LIST_MAX_FRACTION;
+    if (next == null) return;
+    event.preventDefault();
+    setListWidthPx(clampSplitListWidth(next, container));
+  };
+
+  // Drop an in-flight drag if the split unmounts (mode switch) mid-gesture.
+  useEffect(() => {
+    if (mode !== 'split') {
+      endSplitDrag();
+    }
+  }, [mode]);
+
+  useEffect(() => () => endSplitDrag(), []);
+
+  const publishHover = useCallback((key: string | null) => {
+    if (hoverKeyRef.current === key) return;
+    hoverKeyRef.current = key;
+    applyScheduleRowHover(
+      [listPaneRef.current, chartPaneRef.current, scrollOwnerRef.current],
+      key,
+    );
+  }, []);
+
+  // Stale hover must not survive filter / expand / mode remount.
+  useEffect(() => {
+    publishHover(null);
+  }, [mode, filters, kindFilter, expandedKeys, comparison, active, publishHover]);
 
   const rememberScroll = () => {
     const anchor = scrollAnchorRef.current;
+    const owner = scrollOwnerRef.current;
     const list = listPaneRef.current?.querySelector<HTMLElement>(
       '[data-schedule-viewport="true"]',
     );
     const chartPane = chartPaneRef.current;
-    const chart = chartPane?.querySelector<HTMLElement>(
-      GANTT_VERTICAL_SCROLL_SELECTOR,
-    );
+    /** Keep prior Y when the active scroller is not yet scrollable (layout race / mode hop). */
+    const writeVertical = (el: HTMLElement) => {
+      const max = el.scrollHeight - el.clientHeight;
+      if (max > 0 || el.scrollTop > 0) {
+        anchor.verticalScrollTop = el.scrollTop;
+      }
+    };
+    if (owner) {
+      const row = captureRowAnchor(owner);
+      anchor.rowKey = row.rowKey;
+      anchor.rowOffsetPx = row.rowOffsetPx;
+      writeVertical(owner);
+      if (list) anchor.tableScrollLeft = list.scrollLeft;
+      return;
+    }
     if (list) {
       const row = captureRowAnchor(list);
       anchor.rowKey = row.rowKey;
       anchor.rowOffsetPx = row.rowOffsetPx;
       anchor.tableScrollLeft = list.scrollLeft;
-      anchor.verticalScrollTop = list.scrollTop;
+      writeVertical(list);
       return;
     }
-    if (!chartPane || !chart) return;
-    // Rows live in the task pane, not inside the scrollbar element.
-    const taskPane =
-      chartPane.querySelector<HTMLElement>('.gantt_task') ?? chart;
-    const row = captureRowAnchor(
-      taskPane,
-      chartPane,
-      '.gantt_task_row',
-      'task_id',
-    );
-    if (row.rowKey) {
-      anchor.rowKey = row.rowKey;
-      anchor.rowOffsetPx = row.rowOffsetPx;
+    if (!chartPane) return;
+    const captured = captureChartPaneScroll(chartPane);
+    if (!captured) return;
+    if (captured.rowKey) {
+      anchor.rowKey = captured.rowKey;
+      anchor.rowOffsetPx = captured.rowOffsetPx;
     }
-    anchor.verticalScrollTop = chart.scrollTop;
+    anchor.verticalScrollTop = captured.verticalScrollTop;
   };
 
   const changeMode = (next: ScheduleViewMode) => {
@@ -249,35 +438,28 @@ export function ScheduleView() {
   };
 
   useEffect(() => {
-    let list: HTMLElement | null = null;
-    let chart: HTMLElement | null = null;
+    let scroller: HTMLElement | null = null;
     let timer = 0;
     let attempts = 0;
     let stopped = false;
     const onScroll = () => rememberScroll();
     const attach = () => {
       if (stopped) return;
-      const nextList =
+      const next =
+        scrollOwnerRef.current ??
         listPaneRef.current?.querySelector<HTMLElement>(
           '[data-schedule-viewport="true"]',
-        ) ?? null;
-      const nextChart =
+        ) ??
         chartPaneRef.current?.querySelector<HTMLElement>(
           GANTT_VERTICAL_SCROLL_SELECTOR,
-        ) ?? null;
-      if (nextList && nextList !== list) {
-        list?.removeEventListener('scroll', onScroll);
-        list = nextList;
-        list.addEventListener('scroll', onScroll, { passive: true });
+        ) ??
+        null;
+      if (next && next !== scroller) {
+        scroller?.removeEventListener('scroll', onScroll);
+        scroller = next;
+        scroller.addEventListener('scroll', onScroll, { passive: true });
       }
-      if (nextChart && nextChart !== chart && !nextList) {
-        chart?.removeEventListener('scroll', onScroll);
-        chart = nextChart;
-        chart.addEventListener('scroll', onScroll, { passive: true });
-      }
-      const waitingForList = mode !== 'gantt' && !nextList;
-      const waitingForChart = mode !== 'table' && !nextChart;
-      if ((waitingForList || waitingForChart) && attempts < 20) {
+      if (!next && attempts < 20) {
         attempts += 1;
         timer = window.setTimeout(attach, 200);
       }
@@ -286,8 +468,36 @@ export function ScheduleView() {
     return () => {
       stopped = true;
       window.clearTimeout(timer);
-      list?.removeEventListener('scroll', onScroll);
-      chart?.removeEventListener('scroll', onScroll);
+      scroller?.removeEventListener('scroll', onScroll);
+    };
+  }, [mode, status, data]);
+
+  const forwardChartWheelToOwnerRef = useRef((event: WheelEvent) => {
+    const owner = scrollOwnerRef.current;
+    if (!owner) return;
+    const target = event.target;
+    // Nested H-scrollports (table body / gantt data area) can swallow vertical
+    // wheel; forward any vertical gesture that originates under the Y owner.
+    if (!(target instanceof Node) || !owner.contains(target)) return;
+    forwardWheelDeltaToOwner(event, owner, SCHEDULE_ROW_HEIGHT_PX);
+  });
+
+  const setChartPaneNode = useCallback((node: HTMLDivElement | null) => {
+    chartPaneRef.current = node;
+    if (node) {
+      node.setAttribute('data-schedule-chart-wheel', 'owner');
+    }
+  }, []);
+
+  // Listen on the Y owner (capture) so vendor/chart subtree wheels still forward
+  // even when the pointer is over nested gantt layers or overlays.
+  useEffect(() => {
+    const owner = scrollOwnerRef.current;
+    if (!owner || mode !== 'split') return;
+    const onWheel = forwardChartWheelToOwnerRef.current;
+    owner.addEventListener('wheel', onWheel, { passive: false, capture: true });
+    return () => {
+      owner.removeEventListener('wheel', onWheel, true);
     };
   }, [mode, status, data]);
 
@@ -302,33 +512,39 @@ export function ScheduleView() {
         anchor.tableScrollLeft > 0 ||
         anchor.verticalScrollTop > 0;
       if (!hasAnchor) return;
+      const owner = scrollOwnerRef.current;
       const list = listPaneRef.current?.querySelector<HTMLElement>(
         '[data-schedule-viewport="true"]',
       );
-      const chart = chartPaneRef.current?.querySelector<HTMLElement>(
-        GANTT_VERTICAL_SCROLL_SELECTOR,
-      );
-      if (list) {
-        restoreRowAnchor(list, anchor.rowKey, anchor.rowOffsetPx);
-        restoreScrollLeft(list, anchor.tableScrollLeft);
-      }
-      if (list && chart) {
-        chart.scrollTop = list.scrollTop;
-        copyScrollTop(
-          chart,
-          chartPaneRef.current?.querySelector<HTMLElement>(GANTT_DATA_AREA_SELECTOR) ??
-            null,
-        );
-      } else if (chart) {
-        const max = chart.scrollHeight - chart.clientHeight;
-        chart.scrollTop = Math.min(
+      if (owner) {
+        const max = owner.scrollHeight - owner.clientHeight;
+        owner.scrollTop = Math.min(
           Math.max(anchor.verticalScrollTop, 0),
           Math.max(max, 0),
         );
-        copyScrollTop(
-          chart,
-          chartPaneRef.current?.querySelector<HTMLElement>(GANTT_DATA_AREA_SELECTOR) ??
-            null,
+        if (list) {
+          restoreRowAnchor(owner, anchor.rowKey, anchor.rowOffsetPx);
+          restoreScrollLeft(list, anchor.tableScrollLeft);
+        }
+        return;
+      }
+      if (list) {
+        const max = list.scrollHeight - list.clientHeight;
+        list.scrollTop = Math.min(
+          Math.max(anchor.verticalScrollTop, 0),
+          Math.max(max, 0),
+        );
+        restoreRowAnchor(list, anchor.rowKey, anchor.rowOffsetPx);
+        restoreScrollLeft(list, anchor.tableScrollLeft);
+        return;
+      }
+      const chartPane = chartPaneRef.current;
+      if (chartPane) {
+        restoreChartPaneScroll(
+          chartPane,
+          anchor.verticalScrollTop,
+          anchor.rowKey,
+          anchor.rowOffsetPx,
         );
       }
     };
@@ -342,33 +558,6 @@ export function ScheduleView() {
     loop();
     return () => window.clearTimeout(timer);
   }, [mode, comparison, status, data]);
-
-  useEffect(() => {
-    if (mode !== 'split') return;
-    const listPane = listPaneRef.current;
-    const chartPane = chartPaneRef.current;
-    if (!listPane || !chartPane) return;
-    let release = () => {};
-    let timer = 0;
-    const attach = () => {
-      const list = listPane.querySelector<HTMLElement>(
-        '[data-schedule-viewport="true"]',
-      );
-      const chart = chartPane.querySelector<HTMLElement>(
-        GANTT_VERTICAL_SCROLL_SELECTOR,
-      );
-      if (!list || !chart) {
-        timer = window.setTimeout(attach, 200);
-        return;
-      }
-      release = bindSchedulePaneScroll(list, chart);
-    };
-    attach();
-    return () => {
-      window.clearTimeout(timer);
-      release();
-    };
-  }, [mode, status, data]);
 
   const resetAll = () => {
     setFilters(DEFAULT_REGISTER_FILTERS);
@@ -388,11 +577,16 @@ export function ScheduleView() {
     if (!data) return [];
     return buildVisibleScheduleRows(data.items, {
       expandedKeys,
-      includeItem: (item) => includeScheduleItem(item, filters, kindFilter),
+      comparison,
+      includeItem: (item) =>
+        includeScheduleItem(item, filters, kindFilter, projectFilter),
     });
-  }, [data, expandedKeys, filters, kindFilter]);
+  }, [data, expandedKeys, filters, kindFilter, projectFilter, comparison]);
 
-  const legacyItems = legacyScheduleItems(visibleRows);
+  const legacyItems = useMemo(
+    () => legacyScheduleItems(visibleRows),
+    [visibleRows],
+  );
 
   const visibleLinks = useMemo(
     () => linksForVisibleRows(data?.links ?? [], visibleRows),
@@ -403,19 +597,54 @@ export function ScheduleView() {
     ? parseSelectionKeyId(selectedKey)
     : null;
 
+  // Expand every group on first payload and when snapshot/dataset identity changes.
+  // Do not reset on retry/hover/selected-work/ordinary re-render.
+  useEffect(() => {
+    if (!data?.items?.length) return;
+    const seed = `${active}:${data.items.length}:${data.scenarioAsOfDate}`;
+    if (expandSeedRef.current === seed) return;
+    expandSeedRef.current = seed;
+    setExpandedKeys(new Set(allScheduleGroupKeys(data.items)));
+  }, [active, data]);
+
+  const collapsedHiddenCount = useMemo(() => {
+    if (!data) return 0;
+    const filtered = data.items.filter((item) =>
+      includeScheduleItem(item, filters, kindFilter, projectFilter),
+    );
+    const visibleIds = new Set(visibleRows.map((row) => row.key));
+    // Rows present after filter but omitted solely because an ancestor is collapsed.
+    return filtered.filter((item) => {
+      const key = `${item.kind}:${item.id}`;
+      if (visibleIds.has(key)) return false;
+      if (item.kind === 'project_group' || item.kind === 'stage_group') {
+        return !expandedKeys.has(key);
+      }
+      return true;
+    }).length;
+  }, [data, visibleRows, filters, kindFilter, expandedKeys, projectFilter]);
+
   const counters = useMemo(() => {
     if (!data) return [];
     const eq = data.items.filter((i) => i.kind === 'equipment_delivery').length;
-    const ms = data.items.filter((i) => i.kind === 'milestone').length;
+    const kt = data.items.filter((i) => isControlPointMilestone(i)).length;
+    const ms = data.items.filter(
+      (i) => i.kind === 'milestone' && !isControlPointMilestone(i),
+    ).length;
     const works = data.items.filter((i) => i.kind === 'work').length;
     const attn = data.items.filter(isScheduleAttention).length;
-    return [
+    const rows = [
       { label: 'Оборудование', value: eq },
       { label: 'Вехи', value: ms },
+      ...(kt > 0 ? [{ label: 'КТ', value: kt }] : []),
       ...(works > 0 ? [{ label: 'Работы', value: works }] : []),
       { label: 'Внимание', value: attn },
     ];
-  }, [data]);
+    if (collapsedHiddenCount > 0) {
+      rows.push({ label: 'Свёрнуто', value: collapsedHiddenCount });
+    }
+    return rows;
+  }, [data, collapsedHiddenCount]);
 
   const hasWorks = useMemo(
     () => data?.items.some((item) => item.kind === 'work') ?? false,
@@ -427,14 +656,67 @@ export function ScheduleView() {
     if (!hasWorks && kindFilter === 'work') {
       setKindFilter('all');
     }
-    if (!hasWorks) setComparison('forecast');
-  }, [hasWorks, kindFilter]);
+    if (!hasWorks && comparison !== 'baseline') setComparison('baseline');
+  }, [hasWorks, kindFilter, comparison]);
 
   const anyFilter =
     filtersActive({ ...filters, type: 'all' }) || kindFilter !== 'all';
 
-  const boardRows = visibleRows.map(toBoardTreeRow);
-  const ganttRows = visibleRows.map(toGanttTreeRow);
+  const boardRows = useMemo(
+    () => visibleRows.map(toBoardTreeRow),
+    [visibleRows],
+  );
+  const ganttRows = useMemo(
+    () => visibleRows.map(toGanttTreeRow),
+    [visibleRows],
+  );
+
+  const rowWindow: ScheduleVirtualWindow | null = useMemo(() => {
+    // Before the owner has a real clientHeight, mount the full list (tests / first paint).
+    if (mode !== 'split' || ownedViewportHeight <= 0) return null;
+    return computeScheduleVirtualWindow({
+      scrollTop: ownedScrollTop,
+      viewportHeight: ownedViewportHeight,
+      rowCount: boardRows.length,
+      rowHeight: SCHEDULE_ROW_HEIGHT_PX,
+    });
+  }, [mode, ownedScrollTop, ownedViewportHeight, boardRows.length]);
+
+  const syncOwnedScrollMetrics = useCallback(() => {
+    const owner = scrollOwnerRef.current;
+    if (!owner) return;
+    setOwnedScrollTop(owner.scrollTop);
+    setOwnedViewportHeight(owner.clientHeight);
+  }, []);
+
+  useEffect(() => {
+    if (mode !== 'split') return;
+    const owner = scrollOwnerRef.current;
+    if (!owner) return;
+    const onScroll = () => {
+      if (scrollSyncRafRef.current) return;
+      scrollSyncRafRef.current = window.requestAnimationFrame(() => {
+        scrollSyncRafRef.current = 0;
+        syncOwnedScrollMetrics();
+        rememberScroll();
+      });
+    };
+    syncOwnedScrollMetrics();
+    owner.addEventListener('scroll', onScroll, { passive: true });
+    const ro =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => syncOwnedScrollMetrics())
+        : null;
+    ro?.observe(owner);
+    return () => {
+      owner.removeEventListener('scroll', onScroll);
+      ro?.disconnect();
+      if (scrollSyncRafRef.current) {
+        window.cancelAnimationFrame(scrollSyncRafRef.current);
+        scrollSyncRafRef.current = 0;
+      }
+    };
+  }, [mode, status, data, syncOwnedScrollMetrics]);
 
   const onTimelineSelect = (key: ScheduleSelectionKey | null) => {
     setSelectedKey(key ? `${key.kind}:${key.entityId}` : null);
@@ -450,12 +732,6 @@ export function ScheduleView() {
         <p className="text-sm text-[var(--text-secondary)]">
           Контрольные точки поставки оборудования и вех
         </p>
-        <div className="flex flex-wrap items-center gap-2">
-          {hasWorks ? (
-            <ScheduleComparisonToggle mode={comparison} onChange={changeComparison} />
-          ) : null}
-          <ScheduleViewToggle mode={mode} onChange={changeMode} />
-        </div>
       </div>
 
       {status === 'loading' ? <RegisterLoading /> : null}
@@ -472,53 +748,180 @@ export function ScheduleView() {
               total={data.items.length}
               visible={visibleRows.length}
               counters={counters}
+              foundLabel
             />
-            <div className="flex flex-wrap items-end gap-2">
-              <div className="min-w-0 flex-1">
+            <div
+              className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2"
+              data-schedule-toolbar="true"
+            >
+              <div
+                className="flex min-w-0 flex-wrap items-end gap-2"
+                data-schedule-toolbar-left="true"
+              >
                 <RegisterToolbar
                   filters={{ ...filters, type: 'all' }}
                   onChange={(next) => setFilters({ ...next, type: 'all' })}
                   onReset={resetAll}
                   showType={false}
+                  showWorkstream
+                  showReset={false}
+                  compactSearch
+                  layout="schedule"
                 />
-              </div>
-              <label className="flex flex-col gap-1 text-xs text-[var(--text-muted)]">
-                Тип точки
-                <select
-                  className="h-8 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm text-[var(--text)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
-                  value={kindFilter}
-                  aria-label="Фильтр типа контрольной точки"
-                  onChange={(e) => setKindFilter(e.target.value as KindFilter)}
+                <label className="flex flex-col gap-1 text-xs text-[var(--text-muted)]">
+                  Тип точки
+                  <select
+                    className="h-8 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm text-[var(--text)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
+                    value={kindFilter}
+                    aria-label="Фильтр типа контрольной точки"
+                    onChange={(e) => setKindFilter(e.target.value as KindFilter)}
+                  >
+                    <option value="all">Все</option>
+                    <option value="equipment">Оборудование</option>
+                    <option value="milestone">Вехи</option>
+                    <option value="controlpoint">КТ</option>
+                    {hasWorks ? <option value="work">Работы</option> : null}
+                  </select>
+                </label>
+                <button
+                  type="button"
+                  onClick={resetAll}
+                  className="h-8 rounded-[var(--radius-sm)] border border-[var(--border)] px-3 text-sm text-[var(--text-secondary)] outline-none hover:bg-[var(--interactive)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
                 >
-                  <option value="all">Все</option>
-                  <option value="equipment">Оборудование</option>
-                  <option value="milestone">Вехи</option>
-                  {hasWorks ? <option value="work">Работы</option> : null}
-                </select>
-              </label>
+                  Сбросить фильтры
+                </button>
+              </div>
+              <div
+                className="flex shrink-0 items-center gap-2"
+                data-schedule-toolbar-right="true"
+              >
+                {hasWorks ? (
+                  <ScheduleComparisonToggle
+                    mode={comparison}
+                    onChange={changeComparison}
+                  />
+                ) : null}
+                <ScheduleViewToggle mode={mode} onChange={changeMode} />
+              </div>
             </div>
           </div>
 
           {visibleRows.length === 0 && anyFilter ? (
             <RegisterFilteredEmpty onReset={resetAll} />
+          ) : mode === 'split' ? (
+            <div
+              data-schedule-presentation={mode}
+              className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)]"
+            >
+              <div
+                ref={scrollOwnerRef}
+                data-schedule-scroll-owner="true"
+                className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden"
+                tabIndex={0}
+                aria-label="Прокрутка календарного плана"
+                onKeyDown={(event) => {
+                  if (event.target !== event.currentTarget) return;
+                  const el = event.currentTarget;
+                  if (event.key === 'Home') {
+                    event.preventDefault();
+                    el.scrollTop = 0;
+                  } else if (event.key === 'End') {
+                    event.preventDefault();
+                    el.scrollTop = el.scrollHeight;
+                  }
+                }}
+              >
+                <div ref={splitRowRef} className="flex min-w-0 flex-row items-start">
+                  <div
+                    ref={listPaneRef}
+                    data-schedule-pane="table"
+                    className="min-w-0 shrink-0"
+                    style={{
+                      width: listWidthPx ?? SPLIT_LIST_DEFAULT_WIDTH,
+                      minWidth: `${SPLIT_LIST_MIN_PX / 16}rem`,
+                      maxWidth: `${SPLIT_LIST_MAX_FRACTION * 100}%`,
+                    }}
+                    data-schedule-list-width={listWidthPx ?? undefined}
+                  >
+                    <ScheduleBoard
+                      items={legacyItems}
+                      mode="table"
+                      treeRows={boardRows}
+                      onToggleRow={toggleExpanded}
+                      comparison={comparison}
+                      verticalScrollOwned
+                      embedded
+                      rowWindow={rowWindow}
+                      onHoverRow={publishHover}
+                    />
+                  </div>
+                  <div
+                    role="separator"
+                    aria-orientation="vertical"
+                    aria-label="Ширина списка и диаграммы"
+                    aria-valuemin={SPLIT_LIST_MIN_PX}
+                    aria-valuenow={listWidthPx ?? undefined}
+                    tabIndex={0}
+                    data-schedule-split-divider="true"
+                    data-dragging={splitDragging ? 'true' : undefined}
+                    className="group relative z-20 w-px shrink-0 self-stretch cursor-col-resize touch-none bg-[var(--border)] outline-none"
+                    onPointerDown={onSplitPointerDown}
+                    onKeyDown={onSplitKeyDown}
+                  >
+                    {/* 10px transparent hit area centred on the 1px rule. */}
+                    <span
+                      className="absolute inset-y-0 left-1/2 w-[10px] -translate-x-1/2"
+                      aria-hidden
+                    />
+                    {/* ~4px helper on hover / focus / drag. */}
+                    <span
+                      className={[
+                        'pointer-events-none absolute inset-y-0 left-1/2 w-1 -translate-x-1/2 bg-[var(--status-info-border)] opacity-0 transition-opacity',
+                        'group-hover:opacity-40 group-focus-visible:opacity-40 group-data-[dragging=true]:opacity-40',
+                      ].join(' ')}
+                      aria-hidden
+                      data-schedule-split-helper="true"
+                    />
+                  </div>
+                  <div
+                    ref={setChartPaneNode}
+                    data-schedule-pane="chart"
+                    data-schedule-chart-virtual="true"
+                    className="sticky top-0 min-w-0 flex-1 self-start"
+                    style={{
+                      height:
+                        ownedViewportHeight > 0
+                          ? ownedViewportHeight
+                          : undefined,
+                    }}
+                  >
+                    <ScheduleTimeline
+                      items={legacyItems}
+                      links={visibleLinks}
+                      treeRows={ganttRows}
+                      comparison={comparison}
+                      selected={selectedSelection}
+                      onSelect={onTimelineSelect}
+                      scrollAnchor={scrollAnchorRef.current}
+                      verticalScrollOwned
+                      embedded
+                      ownedScrollTop={ownedScrollTop}
+                      onHoverRow={publishHover}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <div
               data-schedule-presentation={mode}
-              className={
-                mode === 'split'
-                  ? 'flex min-h-0 flex-1 flex-row gap-2 overflow-hidden'
-                  : 'flex min-h-0 flex-1 flex-col overflow-hidden'
-              }
+              className="flex min-h-0 flex-1 flex-col overflow-hidden"
             >
               {mode === 'gantt' ? null : (
                 <div
                   ref={listPaneRef}
                   data-schedule-pane="table"
-                  className={
-                    mode === 'split'
-                      ? 'flex min-h-0 min-w-0 w-[42rem] max-w-[46%] shrink-0 flex-col overflow-hidden'
-                      : 'flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden'
-                  }
+                  className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
                 >
                   <ScheduleBoard
                     items={legacyItems}
@@ -526,6 +929,7 @@ export function ScheduleView() {
                     treeRows={boardRows}
                     onToggleRow={toggleExpanded}
                     comparison={comparison}
+                    onHoverRow={publishHover}
                   />
                 </div>
               )}
@@ -543,6 +947,7 @@ export function ScheduleView() {
                     selected={selectedSelection}
                     onSelect={onTimelineSelect}
                     scrollAnchor={scrollAnchorRef.current}
+                    onHoverRow={publishHover}
                   />
                 </div>
               )}

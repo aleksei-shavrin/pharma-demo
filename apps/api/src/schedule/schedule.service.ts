@@ -15,6 +15,15 @@ import type {
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import { assertScheduleLink } from './schedule-link-rules';
 import {
+  equipmentProgressPct,
+  milestoneProgressPct,
+} from '../data/schedule/schedule-control-progress';
+import {
+  buildEquipmentAttachments,
+  mergeDemoTree,
+  rollupProgress,
+} from '../data/schedule/schedule-demo-tree';
+import {
   SCHEDULE_LINK_TYPES,
   type ScheduleDto,
   type ScheduleEquipmentItemDto,
@@ -27,14 +36,6 @@ import {
 
 const GROUP_KEY_PATTERN = /^(?:project_group|stage_group):.+$/;
 const PANEL_MILESTONE_ID = 'MS-CLN-PANEL';
-
-const UNNESTED_TREE = {
-  parentKey: null,
-  wbs: null,
-  siblingOrder: null,
-  progressPct: null,
-  sourceWeeks: null,
-} as const;
 
 /**
  * Schedule read model: control points (Milestone + Equipment delivery, D11),
@@ -55,12 +56,40 @@ export class ScheduleService {
       throw new NotFoundException(`Project ${projectId} not found`);
     }
 
+    const rawWorks = this.dataSource.getScheduleWorks(snapshot.id);
+    const scheduleWorks = mergeDemoTree(
+      rawWorks,
+      snapshot.milestones.map((m) => ({ id: m.id, workstream: m.workstream })),
+      snapshot.scenarioAsOfDate,
+      snapshot.id,
+    );
+    const catalogueMilestoneIds = snapshot.milestones.map(
+      (milestone) => milestone.id,
+    );
+    validateScheduleWorks(
+      snapshot.id,
+      scheduleWorks,
+      catalogueMilestoneIds,
+      snapshot.scenarioAsOfDate,
+    );
+
+    const equipmentAttachments = buildEquipmentAttachments(
+      snapshot.equipment.map((eq) => ({
+        id: eq.id,
+        workstream: eq.workstream,
+      })),
+    );
+    const equipmentById = new Map(
+      equipmentAttachments.map((a) => [a.id, a] as const),
+    );
+
     const equipmentItems: ScheduleEquipmentItemDto[] = snapshot.equipment.map(
       (eq) => {
         const eqDelta = calendarDaysDelta(
           eq.baselineDelivery,
           eq.forecastDelivery,
         );
+        const attachment = equipmentById.get(eq.id);
         return {
           kind: 'equipment_delivery',
           id: eq.id,
@@ -75,20 +104,16 @@ export class ScheduleService {
             forecastDate: eq.forecastDelivery,
             deltaDays: eqDelta,
           },
-          ...UNNESTED_TREE,
+          parentKey: attachment?.parentKey ?? null,
+          wbs: attachment?.wbs ?? null,
+          siblingOrder: attachment?.siblingOrder ?? null,
+          progressPct: equipmentProgressPct({
+            id: eq.id,
+            scenarioAsOfDate: snapshot.scenarioAsOfDate,
+          }),
+          sourceWeeks: null,
         };
       },
-    );
-
-    const scheduleWorks = this.dataSource.getScheduleWorks(snapshot.id);
-    const catalogueMilestoneIds = snapshot.milestones.map(
-      (milestone) => milestone.id,
-    );
-    validateScheduleWorks(
-      snapshot.id,
-      scheduleWorks,
-      catalogueMilestoneIds,
-      snapshot.scenarioAsOfDate,
     );
 
     const attachmentById = new Map<string, ScheduleMilestoneAttachment>();
@@ -96,10 +121,42 @@ export class ScheduleService {
       attachmentById.set(attachment.id, attachment);
     }
 
+    const aliasedById = new Map(
+      (scheduleWorks.aliasedCheckpoints ?? []).map((a) => [a.id, a] as const),
+    );
     const milestoneItems: ScheduleMilestoneItemDto[] = snapshot.milestones.map(
       (ms) => {
-        const msDelta = calendarDaysDelta(ms.baselineDate, ms.forecastDate);
         const attachment = attachmentById.get(ms.id);
+        const alias = aliasedById.get(ms.id);
+        if (alias) {
+          // Source КТ aliased to catalog MS: controlpoint metadata wins.
+          const delta = calendarDaysDelta(
+            alias.baselineDate,
+            alias.forecastDate,
+          );
+          return {
+            kind: 'milestone',
+            id: ms.id,
+            name: alias.name,
+            workstream: alias.workstream ?? ms.workstream,
+            rag: alias.rag,
+            baselineDate: alias.baselineDate,
+            forecastDate: alias.forecastDate,
+            dateVariance: {
+              baselineDate: alias.baselineDate,
+              forecastDate: alias.forecastDate,
+              deltaDays: delta,
+            },
+            parentKey: alias.parentKey,
+            wbs: alias.wbs,
+            siblingOrder: alias.siblingOrder,
+            progressPct: alias.progressPct,
+            sourceWeeks: alias.sourceWeeks,
+            sourceKind: 'controlpoint',
+            sourceStatus: alias.sourceStatus,
+          };
+        }
+        const msDelta = calendarDaysDelta(ms.baselineDate, ms.forecastDate);
         return {
           kind: 'milestone',
           id: ms.id,
@@ -116,32 +173,85 @@ export class ScheduleService {
           parentKey: attachment?.parentKey ?? null,
           wbs: attachment?.wbs ?? null,
           siblingOrder: attachment?.siblingOrder ?? null,
-          progressPct: null,
+          progressPct: milestoneProgressPct({
+            id: ms.id,
+            scenarioAsOfDate: snapshot.scenarioAsOfDate,
+          }),
           sourceWeeks: null,
+          sourceKind: 'catalog_milestone',
+          sourceStatus: null,
         };
       },
     );
 
-    const groupItems: ScheduleGroupItemDto[] = (scheduleWorks.groups ?? []).map(
-      (group) => ({
+    const importedCheckpointItems: ScheduleMilestoneItemDto[] = (
+      scheduleWorks.importedCheckpoints ?? []
+    ).map((kt) => {
+      const delta = calendarDaysDelta(kt.baselineDate, kt.forecastDate);
+      return {
+        kind: 'milestone',
+        id: kt.id,
+        name: kt.name,
+        workstream: kt.workstream,
+        rag: kt.rag,
+        baselineDate: kt.baselineDate,
+        forecastDate: kt.forecastDate,
+        dateVariance: {
+          baselineDate: kt.baselineDate,
+          forecastDate: kt.forecastDate,
+          deltaDays: delta,
+        },
+        parentKey: kt.parentKey,
+        wbs: kt.wbs,
+        siblingOrder: kt.siblingOrder,
+        progressPct: kt.progressPct,
+        sourceWeeks: kt.sourceWeeks,
+        sourceKind: 'controlpoint',
+        sourceStatus: kt.sourceStatus,
+      };
+    });
+
+    const workItems: ScheduleWorkItemDto[] = scheduleWorks.works.map((work) =>
+      toWorkItem(work),
+    );
+
+    const draftItems: ScheduleItemDto[] = [
+      ...equipmentItems,
+      ...milestoneItems,
+      ...importedCheckpointItems,
+      ...(scheduleWorks.groups ?? []).map((group): ScheduleGroupItemDto => ({
         kind: group.kind,
         id: group.id,
         name: group.name,
         parentKey: group.parentKey,
         wbs: group.wbs,
         siblingOrder: group.siblingOrder,
-        progressPct: group.progressPct,
+        progressPct: null,
         sourceWeeks: group.sourceWeeks,
-      }),
-    );
+      })),
+      ...workItems,
+    ];
 
-    const workItems: ScheduleWorkItemDto[] = scheduleWorks.works.map((work) =>
-      toWorkItem(work),
+    const groupKeys = new Set(
+      draftItems
+        .filter(isScheduleGroup)
+        .map((group) => `${group.kind}:${group.id}`),
     );
+    const groupItems: ScheduleGroupItemDto[] = draftItems
+      .filter(isScheduleGroup)
+      .map((group) => ({
+        ...group,
+        progressPct: rollupProgress(
+          `${group.kind}:${group.id}`,
+          draftItems,
+          groupKeys,
+        ),
+      }));
 
     const items: ScheduleItemDto[] = [
       ...equipmentItems,
       ...milestoneItems,
+      ...importedCheckpointItems,
       ...groupItems,
       ...workItems,
     ].sort(compareScheduleItems);
@@ -195,6 +305,7 @@ function toWorkItem(work: ScheduleWorkFixture): ScheduleWorkItemDto {
     // `??` keeps a known 0. Do not use `||`.
     progressPct: work.progressPct ?? null,
     sourceWeeks: work.sourceWeeks ?? null,
+    sourceStatus: work.sourceStatus ?? null,
     baselineStart: work.baselineStart ?? null,
     baselineEnd: work.baselineEnd ?? null,
     actualStart: actual.actualStart ?? null,
@@ -283,10 +394,10 @@ export function validateScheduleWorks(
     if (group.id === PANEL_MILESTONE_ID) fail('second MS-CLN-PANEL');
     if (rowIds.has(group.id)) fail(`duplicate group id ${group.id}`);
     rowIds.add(group.id);
-    if (group.progressPct !== null) {
-      fail(`group ${group.id} progressPct must be null`);
-    }
     assertProgressPct(fail, group.progressPct, `group ${group.id}`);
+    if (group.wbs == null || String(group.wbs).trim() === '') {
+      fail(`group ${group.id} missing wbs`);
+    }
   }
 
   const workIds = new Set<string>();
@@ -359,13 +470,20 @@ export function validateScheduleWorks(
 
   const linkIds = new Set<string>();
   const milestoneIds = new Set(catalogueMilestoneIds);
+  for (const kt of fixture.importedCheckpoints ?? []) {
+    milestoneIds.add(kt.id);
+  }
   for (const link of links) {
     if (linkIds.has(link.id)) fail(`duplicate link id ${link.id}`);
     linkIds.add(link.id);
     assertScheduleLink(link, workIds, milestoneIds, fail);
   }
 
-  if (snapshotId === 'C') {
+  // Full demo tree (AN-08…) requires all four scheduling arrow types.
+  const hasDemoTree = groups.some(
+    (group) => group.kind === 'project_group' && group.id === 'AN-08',
+  );
+  if (hasDemoTree) {
     const presentTypes = new Set(
       links.flatMap((link) =>
         (link.kind ?? 'scheduling') === 'scheduling' && link.type
@@ -438,7 +556,6 @@ function assertSnapshotCTree(
     !panels ||
     panels.parentKey !== 'stage_group:8.2' ||
     panels.wbs !== '8.2.1' ||
-    panels.progressPct !== 0 ||
     !floors ||
     floors.parentKey !== 'stage_group:8.2' ||
     floors.wbs !== '8.2.2' ||
@@ -451,6 +568,7 @@ function assertSnapshotCTree(
   ) {
     fail('missing schedule tree');
   }
+  // progressPct is snapshot-overlay authored (A–S); not asserted here.
 }
 
 /**
@@ -481,8 +599,8 @@ function assertAssembledSchedule(
     }
     seenIds.add(item.id);
     assertProgressPct(fail, item.progressPct, `${item.kind}:${item.id}`);
-    if (isScheduleGroup(item) && item.progressPct !== null) {
-      fail(`group ${item.id} progressPct must be null`);
+    if (item.wbs == null || String(item.wbs).trim() === '') {
+      fail(`${item.kind}:${item.id} missing wbs`);
     }
     if (item.kind === 'work') {
       if (item.endDate < item.startDate) {

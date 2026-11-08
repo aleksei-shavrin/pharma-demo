@@ -134,26 +134,47 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
     expect(localStorage.getItem(NOTIFICATION_POPUP_PREF_KEY)).toBe('false');
   });
 
-  it('shows ≤3 top-right semantic toasts after successful B→C commit; not on bootstrap', async () => {
+  it('shows exactly 1 compact top-right toast after successful B→C commit; not on bootstrap; rest in bell', async () => {
     const user = userEvent.setup();
     await renderBar();
     expect(document.querySelector('[data-notification-toasts]')).toBeNull();
     await selectDemoSnapshot(user, 'C');
     await waitFor(() =>
       expect(document.querySelectorAll('[data-notification-toast]').length).toBe(
-        3,
+        1,
       ),
     );
     const host = document.querySelector('[data-notification-toasts]');
     expect(host).toHaveAttribute('data-toast-placement', 'top-right');
+    expect(host).toHaveAttribute('aria-live', 'polite');
     expect(host?.className).not.toMatch(/bottom-/);
     expect(
-      document.querySelectorAll('[data-notification-toast]').length,
-    ).toBeLessThanOrEqual(3);
+      document.querySelector('[data-toast-compact="true"]'),
+    ).toBeTruthy();
     expect(
       document.querySelector('[data-toast-tone]'),
     ).toBeTruthy();
-    // toast does not auto-mark read
+    // toast does not auto-mark read; full set still available via bell
+    expect(isNotificationRead('NTF-C-001')).toBe(false);
+    await user.click(document.querySelector('[data-notification-bell]')!);
+    await waitFor(() =>
+      expect(
+        document.querySelectorAll('[data-notification-id]').length,
+      ).toBeGreaterThanOrEqual(5),
+    );
+  });
+
+  it('dismisses compact toast via Скрыть without marking read', async () => {
+    const user = userEvent.setup();
+    await renderBar();
+    await selectDemoSnapshot(user, 'C');
+    await waitFor(() =>
+      expect(document.querySelector('[data-notification-toast]')).toBeTruthy(),
+    );
+    await user.click(screen.getByRole('button', { name: 'Скрыть' }));
+    await waitFor(() =>
+      expect(document.querySelector('[data-notification-toast]')).toBeNull(),
+    );
     expect(isNotificationRead('NTF-C-001')).toBe(false);
   });
 

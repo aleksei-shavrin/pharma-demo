@@ -5,7 +5,7 @@ type: product
 status: draft
 version: 0.2.0
 created: '2026-11-02'
-updated: '2026-11-06'
+updated: '2026-11-08'
 owner: docs-engineering
 related:
   - DOC-UX-021
@@ -117,8 +117,10 @@ No GL, invoices, or contractor ledgers.
 - Bell + unread badge + popover list
 - Read/unread (sessionStorage key `ppc.demo.notificationRead`; per notification id)
 - Switch: «Показывать уведомления при смене снимка» (localStorage key `ppc.demo.notificationPopup`; **default on**)
-- On **successful** atomic snapshot commit: ≤3 prioritized toasts; remainder in tray
-- Toast stack: **top-right**, below AppBar (`--topbar-height` offset); stacks downward; does not cover selector/AppBar controls
+- On **successful** atomic snapshot commit: **at most 1** compact, short-lived toast (highest priority item); **remainder only in the bell tray/popover** (not a multi-toast wall over Dashboard controls)
+  - **certainty:** assumption — r10 UX refinement vs earlier «≤3 toasts» wording: three large persistent danger cards blocked status/timeline chrome after snapshot change; information must remain reachable via bell, not deleted
+- Toast placement: **top-right**, below AppBar (`--topbar-height` offset); single card; does not cover selector/AppBar; must not persistently obscure program status / timeline toolbar
+- Safe announce: toast host `aria-live="polite"`; unread/history via sessionStorage unchanged; do **not** re-fire the same toast on rerender of an already-committed snapshot
 - Semantic toast surfaces from authoritative severity (+ recovery/readiness taxonomy for positive info): critical→danger, attention→warn, info+recovery/readiness→ok, other info→neutral; subtle tinted surface + accent (not consumer-bright alerts); light/dark parity
 - Failed/stale/bootstrap switch: **no** toast; toast appearance does **not** auto-mark read
 - Fixtures authored per snapshot (not generic diff); Notification not SoT; entityRefs soft only
@@ -145,3 +147,15 @@ Preserve enrichment expectations: contrast for RAG, focus rings, no theme-specif
 ## 9. Russian presentation
 
 Director-facing RU prose; retain technical acronyms (HVAC, WFI, BMS/EMS, IQ/OQ/PQ as демо-гейты). IQ/OQ/PQ: no real GMP/CSV claims.
+
+## 10. Decisions register + Dashboard pair (2026-11-08)
+
+> **certainty:** assumption
+
+- Nav / breadcrumb / page / Dashboard block title: **«Решения»** (route `/decisions` unchanged).
+- Record honesty: summary «Записано»; copy «Данные об исполнении не указаны…» (не Demo/v1). Due calendar separate via StatusPill-style badge in column «Срок»: «Срок прошёл» / «Срок впереди» / «Сегодня» (`dueDate == asOf`) / «Срок не задан». Passed ≠ failed/неисполнение. Color is secondary to text.
+- Milestone cell: human `milestoneName` from register DTO (snapshot milestones); technical id muted under title. AN context may show catalog name when API provides it.
+- Portfolio column for `PRJ-01` → dashboard `/`; program/AN only via milestone membership (no MS-PS fake project).
+- `RegisterToolbar` search compact (~240px); placeholder «Поиск решений». ID column `whitespace-nowrap` + min-width.
+- Lower Dashboard pair: shared `max-h-[28rem]` + list flex-1 / min-h-0; scroll when overflowing; no empty 14.25rem pocket.
+- Decision panel: portfolio forecast honesty once in header; no gray bottom callout; no ×N «РЕШЕНИЕ ЗАПИСАНО» spam.

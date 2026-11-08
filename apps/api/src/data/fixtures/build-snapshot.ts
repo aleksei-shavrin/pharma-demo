@@ -1,7 +1,10 @@
 /**
  * Builds discrete SnapshotFixture A–S from catalog + snapshot-states overlays.
  */
-import { SNAPSHOT_IDS, type PopulatedSnapshotId } from '../../snapshot/snapshot-id';
+import {
+  SNAPSHOT_IDS,
+  type PopulatedSnapshotId,
+} from '../../snapshot/snapshot-id';
 import {
   DECISION_CATALOG,
   DECISION_IDS,
@@ -41,9 +44,7 @@ function isAtOrAfter(current: SnapshotId, first: SnapshotId): boolean {
   return snapshotIndex(current) >= snapshotIndex(first);
 }
 
-function buildEquipment(
-  snapshotId: PopulatedSnapshotId,
-): EquipmentFixture[] {
+function buildEquipment(snapshotId: PopulatedSnapshotId): EquipmentFixture[] {
   const state = SNAPSHOT_STATES[snapshotId];
   const { eqDelta, eqStatus } = state;
   return EQUIPMENT_IDS.map((id) => {

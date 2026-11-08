@@ -9,7 +9,9 @@ import {
 } from '@/components/shell/page-frame';
 import { entityDetailHref } from '@/lib/entity-routes';
 import { formatDateRu } from '@/lib/format/ru';
-import { presentWorkstream } from '@/lib/ui-labels';
+import { programLabelForWorkstream } from '@/lib/registers/program-filter';
+import { hrefForWorkstreamTag } from '@/lib/registers/ws-redirect';
+import { presentRoleTitleRu } from '@/lib/people/present-role-title';
 
 const PREVIEW = 5;
 
@@ -29,7 +31,7 @@ function PreviewSection({
       <h2 className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
         {title}
       </h2>
-      <div className="mt-2 overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)]">
+      <div className="mt-2 overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)]">
         {ids.length === 0 ? (
           <p className="px-3 py-3 text-sm text-[var(--text-muted)]">Нет записей</p>
         ) : (
@@ -72,13 +74,16 @@ export function PersonDetailView({ data }: { data: PersonDetail }) {
         <h1 className="mt-1 text-xl font-semibold tracking-tight text-[var(--text)]">
           {p.fullNameRu}
         </h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">{p.roleTitleRu}</p>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          {presentRoleTitleRu(p.roleTitleRu)}
+        </p>
         <p className="mt-2 text-sm text-[var(--text-secondary)]">
           <Link
             href="/people"
+            aria-label="К списку участников"
             className="underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
           >
-            ← К списку людей
+            ← К списку участников
           </Link>
         </p>
       </PageHeader>
@@ -86,24 +91,23 @@ export function PersonDetailView({ data }: { data: PersonDetail }) {
       <PageContent mode="page" className="mt-4 flex flex-col gap-4">
         <section className="min-w-0">
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
-            Руководитель направлений
+            Ответственность по программам
           </h2>
-          <div className="mt-2 overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)]">
+          <div className="mt-2 overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)]">
             {data.leadWorkstreamIds.length === 0 ? (
               <p className="px-3 py-3 text-sm text-[var(--text-muted)]">
-                Не является руководителем направления
+                Нет назначенной ответственности по программе
               </p>
             ) : (
               <ul className="divide-y divide-[var(--border)]">
                 {data.leadWorkstreamIds.map((ws) => (
                   <li key={ws} className="px-3 py-2 text-sm">
                     <Link
-                      href={`/workstreams/${encodeURIComponent(ws)}`}
+                      href={hrefForWorkstreamTag(ws)}
                       className="font-medium text-[var(--text)] underline-offset-2 hover:underline"
                     >
-                      {presentWorkstream(ws)}
+                      {programLabelForWorkstream(ws)}
                     </Link>
-                    <div className="text-xs text-[var(--text-muted)]">{ws}</div>
                   </li>
                 ))}
               </ul>

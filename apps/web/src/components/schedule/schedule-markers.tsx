@@ -28,6 +28,7 @@ import {
 type Props = {
   item: ScheduleControlPointItem;
   horizon: ScheduleHorizon;
+  comparison?: ScheduleComparisonMode;
 };
 
 function titleOf(item: ScheduleControlPointItem): string {
@@ -60,17 +61,27 @@ type WorkBarProps = {
   comparison?: ScheduleComparisonMode;
 };
 
-/** Нижняя полоса — прогноз или закрытый факт. Верхняя — база, если заданы оба конца. */
+/** Нижняя/единственная полоса по режиму. В baseline — без серого overlay. */
 export function ScheduleWorkBar({
   item,
   horizon,
   comparison = 'forecast',
 }: WorkBarProps) {
   const bounds = displayedWorkBounds(item, comparison);
+  if (!bounds) {
+    return (
+      <div
+        className="relative h-full w-full"
+        data-schedule-markers={item.id}
+        title="Базовый план не задан"
+        data-baseline-missing="true"
+      />
+    );
+  }
   const shown = { ...item, startDate: bounds.start, endDate: bounds.end };
   const geom = workBarGeometry(shown, horizon);
   const baseline =
-    item.baselineStart && item.baselineEnd
+    comparison !== 'baseline' && item.baselineStart && item.baselineEnd
       ? workBarGeometry(
           { ...item, startDate: item.baselineStart, endDate: item.baselineEnd },
           horizon,
@@ -114,7 +125,11 @@ type TipPos = { left: number; top: number; placeAbove: boolean };
  * Forecast/baseline point markers. Tooltip portals to document.body so the
  * board overflow viewport does not clip it.
  */
-export function ScheduleRowMarkers({ item, horizon }: Props) {
+export function ScheduleRowMarkers({
+  item,
+  horizon,
+  comparison = 'forecast',
+}: Props) {
   const geom = markerGeometry(item, horizon);
   const tipId = useId();
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -125,12 +140,21 @@ export function ScheduleRowMarkers({ item, horizon }: Props) {
     item.kind === 'equipment_delivery'
       ? item.status === 'Delayed'
       : item.rag === 'Red';
+  const baselineOnly = comparison === 'baseline';
+  const primaryIso = baselineOnly
+    ? item.baselineDate || null
+    : item.forecastDate;
+  const primaryXPct = baselineOnly
+    ? geom.baselineXPct
+    : geom.forecastXPct;
+  const showGhost = !baselineOnly && geom.showBaseline;
 
-  const forecastClass = attention
-    ? 'border-[var(--status-danger-border)] bg-[var(--status-danger-fg)]'
+  // Schedule FILL tokens (not status *fg* text contrast).
+  const primaryClass = attention
+    ? 'border-[var(--schedule-fill-danger)] bg-[var(--schedule-fill-danger)]'
     : isEq
       ? 'border-[var(--border)] bg-[var(--text-secondary)]'
-      : 'border-[var(--status-success-border)] bg-[var(--status-success-fg)]';
+      : 'border-[var(--schedule-fill-ok)] bg-[var(--schedule-fill-ok)]';
 
   useLayoutEffect(() => {
     if (!open || !btnRef.current) {
@@ -146,13 +170,24 @@ export function ScheduleRowMarkers({ item, horizon }: Props) {
     });
   }, [open]);
 
+  if (baselineOnly && !primaryIso) {
+    return (
+      <div
+        className="relative h-full w-full"
+        data-schedule-markers={item.id}
+        data-baseline-missing="true"
+        title="Базовый план не задан"
+      />
+    );
+  }
+
   return (
     <div
       className="relative h-full w-full"
       data-schedule-markers={item.id}
       onMouseLeave={() => setOpen(false)}
     >
-      {geom.showBaseline ? (
+      {showGhost ? (
         <>
           <div
             className="absolute top-1/2 h-px -translate-y-1/2 bg-[var(--border)]"
@@ -182,12 +217,12 @@ export function ScheduleRowMarkers({ item, horizon }: Props) {
           'absolute top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 border-2 outline-none',
           'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-1',
           isEq ? 'size-3 rounded-full' : 'size-3 rotate-45',
-          forecastClass,
+          primaryClass,
         ].join(' ')}
-        style={{ left: `${geom.forecastXPct}%` }}
-        aria-label={`${titleOf(item)}: прогноз ${formatDateRu(item.forecastDate)}, ${statusLabel(item)}`}
+        style={{ left: `${primaryXPct}%` }}
+        aria-label={`${titleOf(item)}: ${baselineOnly ? 'база' : 'прогноз'} ${formatDateRu(primaryIso!)}, ${statusLabel(item)}`}
         aria-describedby={open ? tipId : undefined}
-        data-marker="forecast"
+        data-marker={baselineOnly ? 'baseline-primary' : 'forecast'}
         data-kind={item.kind}
         onMouseEnter={() => setOpen(true)}
         onFocus={() => setOpen(true)}

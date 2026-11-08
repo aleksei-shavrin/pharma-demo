@@ -22,6 +22,11 @@
   --primary-foreground: #ffffff;
   --link: #1a4f5c;
   --focus-ring: #1a4f5c;
+  /* Soft tonal green for login submit only (not global primary). */
+  --login-accent: oklch(0.945 0.035 150);
+  --login-accent-foreground: oklch(0.28 0.1 150);
+  --login-accent-hover: oklch(0.9 0.05 150);
+  --login-accent-ring: oklch(0.7 0.1 150);
   --status-danger-fg: #7a1710;
   --status-danger-bg: #fcebea;
   --status-danger-border: #b42318;
@@ -34,6 +39,11 @@
   --status-warn-fg: #7a4b0f;
   --status-warn-bg: #fdf3e3;
   --status-warn-border: #c48a2a;
+  /* Schedule chart/table progress FILL (from reference screenshot grass green). */
+  --schedule-fill-ok: #549733;
+  --schedule-fill-warn: #d4922e;
+  --schedule-fill-danger: #ff0000;
+  --schedule-row-hover: color-mix(in srgb, var(--schedule-fill-ok) 8%, var(--surface-raised));
   --sidebar-width: 240px;
   --topbar-height: 52px;
   --radius-sm: 6px;
@@ -71,7 +81,15 @@
   --status-warn-fg: #f0d09a;
   --status-warn-bg: #3a2a14;
   --status-warn-border: #d4a04a;
+  --schedule-fill-ok: #6fb85a;
+  --schedule-fill-warn: #e0b35a;
+  --schedule-fill-danger: #e56b60;
+  --schedule-row-hover: color-mix(in srgb, var(--schedule-fill-ok) 14%, var(--surface-raised));
   --elevation-1: 0 1px 2px rgb(0 0 0 / 35%);
+  --login-accent: oklch(0.32 0.05 150);
+  --login-accent-foreground: oklch(0.92 0.04 150);
+  --login-accent-hover: oklch(0.38 0.06 150);
+  --login-accent-ring: oklch(0.55 0.08 150);
   color-scheme: dark;
 }
 
@@ -113,4 +131,28 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Autofill: keep raised surface (browser yellow wash). */
+.login-field:-webkit-autofill,
+.login-field:-webkit-autofill:hover,
+.login-field:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  box-shadow: inset 0 0 0 1000px var(--surface-raised);
+  transition: background-color 99999s ease-out;
+}
+
+.login-field:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1000px var(--surface-raised),
+    0 0 0 1px var(--login-accent-ring);
+}
+
+/* DOM-driven schedule hover (no React setState on mousemove). */
+.ppc-schedule-row-hovered {
+  background: var(--schedule-row-hover) !important;
+}
+.ppc-schedule-row-hovered [data-schedule-row-left='true'] {
+  background: var(--schedule-row-hover) !important;
 }

@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -32,11 +32,54 @@ vi.mock('@/lib/api-client', async () => {
 });
 
 /** Avoid loading real dhtmlx-gantt in jsdom when Timeline mode mounts. */
-vi.mock('@/components/schedule/dhtmlx-gantt-adapter', () => ({
-  DhtmlxGanttAdapter: () => (
-    <div data-testid="dhtmlx-gantt-stub" data-gantt-stub="true" />
-  ),
-}));
+vi.mock('@/components/schedule/dhtmlx-gantt-adapter', () => {
+  function patchScrollBox(el: HTMLDivElement | null) {
+    if (!el || el.dataset.scrollPatched === 'true') return;
+    el.dataset.scrollPatched = 'true';
+    let top = 0;
+    Object.defineProperty(el, 'scrollHeight', {
+      configurable: true,
+      get: () => 2400,
+    });
+    Object.defineProperty(el, 'clientHeight', {
+      configurable: true,
+      get: () => 120,
+    });
+    Object.defineProperty(el, 'scrollTop', {
+      configurable: true,
+      get: () => top,
+      set: (v: number) => {
+        top = Number(v) || 0;
+      },
+    });
+  }
+
+  return {
+    DhtmlxGanttAdapter: () => (
+      <div data-testid="dhtmlx-gantt-stub" data-gantt-stub="true">
+        <div
+          ref={patchScrollBox}
+          className="gantt_ver_scroll"
+          data-gantt-ver-scroll="true"
+          style={{ height: 120, overflow: 'auto' }}
+        >
+          <div style={{ height: 2400 }} />
+        </div>
+        <div className="gantt_task">
+          <div
+            className="gantt_task_row"
+            {...{ task_id: 'equipment_delivery:EQ-HVAC-01' }}
+          />
+          <div
+            className="gantt_task_row"
+            {...{ task_id: 'milestone:MS-PS' }}
+          />
+        </div>
+        <div ref={patchScrollBox} className="gantt_data_area" />
+      </div>
+    ),
+  };
+});
 
 function dash(snapshotId: SnapshotId) {
   return dashboardOverviewFixture(snapshotId);
@@ -169,11 +212,14 @@ describe('E5 Schedule control board', () => {
   it('loads 23 EQ + 14 MS; unified board; detail links; C +21', async () => {
     const user = userEvent.setup();
     render(wrap(<SchedulePage />));
-    await waitFor(() => {
-      expect(screen.getByText('37 / 37')).toBeInTheDocument();
-      expect(document.querySelector('[data-schedule-board="true"]')).toBeTruthy();
-      expect(document.querySelector('[data-gantt-stub="true"]')).toBeTruthy();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('37 из 37')).toBeInTheDocument();
+        expect(document.querySelector('[data-schedule-board="true"]')).toBeTruthy();
+        expect(document.querySelector('[data-gantt-stub="true"]')).toBeTruthy();
+      },
+      { timeout: 5000 },
+    );
 
     const board = document.querySelector('[data-schedule-board="true"]');
     expect(board).toBeTruthy();
@@ -194,21 +240,47 @@ describe('E5 Schedule control board', () => {
     );
     expect(pageContent?.className).toMatch(/overflow-hidden/);
     expect(pageContent?.className).not.toMatch(/overflow-y-auto/);
+    const scrollOwner = document.querySelector(
+      '[data-schedule-scroll-owner="true"]',
+    );
+    expect(scrollOwner?.className).toMatch(/overflow-y-auto/);
+    expect(
+      document.querySelector('[data-schedule-sticky-header="true"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-schedule-chart-sticky-header="true"]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-schedule-chart-sticky-scale="true"]'),
+    ).toBeTruthy();
+    // Stub gantt does not publish vendor geometry; live browser proves matching.
     expect(
       document.querySelector('[data-schedule-viewport="true"]')?.className,
-    ).toMatch(/overflow-auto/);
+    ).toMatch(/overflow-x-auto/);
+    expect(
+      document.querySelector('[data-schedule-viewport="true"]')?.className,
+    ).not.toMatch(/(^|\s)overflow-auto(\s|$)/);
     expect(
       document.querySelectorAll('[data-schedule-row]').length,
     ).toBe(37);
 
     // Split opens the same table as Table mode, plus the shared chart.
     const splitHeader = document.querySelector('[data-schedule-header="true"]');
+    expect(splitHeader?.textContent).not.toMatch(/№/);
+    expect(splitHeader?.textContent).toMatch(/ИСР/);
     expect(splitHeader?.textContent).toMatch(/Объект/);
     expect(splitHeader?.textContent).toMatch(/Тип/);
     expect(
       document.querySelector('[data-schedule-presentation="split"]'),
     ).toBeTruthy();
     expect(document.querySelector('[data-schedule-pane="chart"]')).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'Разделение' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    // Snapshot without curated works hides comparison; view toggle stays in toolbar.
+    expect(
+      screen.queryByRole('button', { name: 'Базовый план / прогноз' }),
+    ).toBeNull();
     await waitFor(() => {
       expect(document.querySelector('[data-gantt-stub="true"]')).toBeTruthy();
     });
@@ -259,7 +331,7 @@ describe('E5 Schedule control board', () => {
     const user = userEvent.setup();
     render(wrap(<SchedulePage />));
     await waitFor(() => {
-      expect(screen.getByText('37 / 37')).toBeInTheDocument();
+      expect(screen.getByText('37 из 37')).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole('button', { name: 'Таблица' }));
@@ -293,7 +365,7 @@ describe('E5 Schedule control board', () => {
     const user = userEvent.setup();
     render(wrap(<SchedulePage />));
     await waitFor(() => {
-      expect(screen.getByText('37 / 37')).toBeInTheDocument();
+      expect(screen.getByText('37 из 37')).toBeInTheDocument();
     });
 
     await selectDemoSnapshot(user, 'C');
@@ -335,7 +407,7 @@ describe('E5 Schedule control board', () => {
 
     await user.click(screen.getByRole('button', { name: 'Сбросить фильтры' }));
     await waitFor(() => {
-      expect(screen.getByText('37 / 37')).toBeInTheDocument();
+      expect(screen.getByText('37 из 37')).toBeInTheDocument();
     });
 
     await user.type(screen.getByPlaceholderText(/Поиск/), 'MS-PS');
@@ -383,7 +455,7 @@ describe('E5 Schedule control board', () => {
     }));
     render(wrap(<SchedulePage />));
     await waitFor(() => {
-      expect(screen.getByText('39 / 39')).toBeInTheDocument();
+      expect(screen.getByText('39 из 39')).toBeInTheDocument();
     });
     expect(
       document.querySelector('[data-schedule-row="work:WK-01"]'),
@@ -470,7 +542,7 @@ describe('E5 Schedule control board', () => {
     }));
     render(wrap(<SchedulePage />));
     await waitFor(() => {
-      expect(screen.getByText(/39 \/ 39|2 \/ /)).toBeTruthy();
+      expect(screen.getByText(/39 из 39|2 из /)).toBeTruthy();
     });
     await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
     await waitFor(() => {
@@ -500,17 +572,55 @@ describe('E5 Schedule control board', () => {
   it('does not invent RAG labels from English machine values in UI', async () => {
     render(wrap(<SchedulePage />));
     await waitFor(() => {
-      expect(screen.getByText('37 / 37')).toBeInTheDocument();
+      expect(screen.getByText('37 из 37')).toBeInTheDocument();
     });
     expect(screen.queryByText(/\bOnTrack\b/)).not.toBeInTheDocument();
     expect(screen.queryByText(/\bDelayed\b/)).not.toBeInTheDocument();
+  });
+
+  it('chart-only: Y диаграммы сохраняется при gantt → table → gantt', async () => {
+    const user = userEvent.setup();
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText('37 из 37')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-schedule-presentation="gantt"]'),
+      ).toBeTruthy();
+      expect(document.querySelector('.gantt_ver_scroll')).toBeTruthy();
+    });
+
+    const chartScroll = document.querySelector<HTMLElement>('.gantt_ver_scroll');
+    expect(chartScroll).toBeTruthy();
+    chartScroll!.scrollTop = 480;
+    chartScroll!.dispatchEvent(new Event('scroll'));
+
+    await user.click(screen.getByRole('button', { name: 'Таблица' }));
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-schedule-presentation="table"]'),
+      ).toBeTruthy();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Временная шкала' }));
+    await waitFor(
+      () => {
+        const restored = document.querySelector<HTMLElement>('.gantt_ver_scroll');
+        expect(restored).toBeTruthy();
+        expect(restored!.scrollTop).toBe(480);
+      },
+      { timeout: 3000 },
+    );
   });
 
   it('переключение режима сохраняет снимок и показывает одни и те же части', async () => {
     const user = userEvent.setup();
     render(wrap(<SchedulePage />));
     await waitFor(() => {
-      expect(screen.getByText('37 / 37')).toBeInTheDocument();
+      expect(screen.getByText('37 из 37')).toBeInTheDocument();
     });
     await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
@@ -540,5 +650,95 @@ describe('E5 Schedule control board', () => {
     expect(document.querySelector('[data-schedule-pane="table"]')).toBeTruthy();
     expect(document.querySelector('[data-schedule-pane="chart"]')).toBeTruthy();
     expect(screen.getAllByText('+21 день').length).toBeGreaterThan(0);
+  });
+
+  it('панель: слева поиск (компактный) и тип точки, справа только переключатели одного размера', async () => {
+    fetchSchedule.mockImplementation(async (_id: string, s: SnapshotId) => ({
+      ...schedule(s),
+      items: [
+        ...buildItems(s),
+        {
+          kind: 'work' as const,
+          id: 'WK-01',
+          name: 'Монтаж AHU',
+          startDate: '2027-06-01',
+          endDate: '2027-06-10',
+          status: 'Delayed' as const,
+        },
+      ],
+    }));
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText('38 из 38')).toBeInTheDocument();
+    });
+
+    const toolbar = document.querySelector<HTMLElement>('[data-schedule-toolbar="true"]')!;
+    expect(toolbar.className).toMatch(/justify-between/);
+    const left = toolbar.querySelector<HTMLElement>('[data-schedule-toolbar-left="true"]')!;
+    const right = toolbar.querySelector<HTMLElement>('[data-schedule-toolbar-right="true"]')!;
+
+    const search = within(left).getByPlaceholderText(/Поиск/);
+    expect(search.closest('label')?.className).toMatch(/w-\[240px\]/);
+    expect(search.closest('label')?.className).not.toMatch(/flex-1/);
+    expect(left.querySelector('[data-register-toolbar-layout="schedule"]')).toBeTruthy();
+    const typeFilter = within(left).getByLabelText('Фильтр типа контрольной точки');
+    expect(typeFilter).toBeTruthy();
+    const reset = within(left).getByRole('button', { name: 'Сбросить фильтры' });
+    expect(
+      typeFilter.compareDocumentPosition(reset) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+
+    const groups = right.querySelectorAll('[role="group"]');
+    expect(groups).toHaveLength(2);
+    expect(right.querySelector('select, input')).toBeNull();
+    for (const group of groups) {
+      expect(group.className).toMatch(/\bh-8\b/);
+      expect(group.className).toMatch(/\bp-1\b/);
+      for (const btn of group.querySelectorAll('button')) {
+        expect(btn.className).toMatch(/\bh-6\b/);
+        expect(btn.className).toMatch(/\bw-6\b/);
+      }
+    }
+  });
+
+  it('split: разделитель двигается мышью и стрелками в пределах min/max', async () => {
+    render(wrap(<SchedulePage />));
+    await waitFor(() => {
+      expect(screen.getByText('37 из 37')).toBeInTheDocument();
+    });
+
+    const list = document.querySelector<HTMLElement>('[data-schedule-pane="table"]')!;
+    const row = list.parentElement!;
+    const sep = screen.getByRole('separator');
+    expect(sep).toHaveAttribute('aria-orientation', 'vertical');
+    expect(sep).toHaveAttribute('tabindex', '0');
+    // Default width is CSS min(40rem, 40%) (jsdom drops min()); no user width yet.
+    expect(list).not.toHaveAttribute('data-schedule-list-width');
+
+    row.getBoundingClientRect = () => ({ width: 1000 }) as DOMRect;
+    list.getBoundingClientRect = () => ({ width: 460 }) as DOMRect;
+
+    fireEvent.keyDown(sep, { key: 'ArrowRight' });
+    expect(list.style.width).toBe('484px');
+    fireEvent.keyDown(sep, { key: 'End' });
+    expect(list.style.width).toBe('700px');
+    fireEvent.keyDown(sep, { key: 'Home' });
+    expect(list.style.width).toBe('320px');
+
+    list.getBoundingClientRect = () => ({ width: 320 }) as DOMRect;
+    fireEvent.pointerDown(sep, { button: 0, pointerId: 1, clientX: 400 });
+    expect(sep).toHaveAttribute('data-dragging', 'true');
+    fireEvent.pointerMove(window, { pointerId: 1, clientX: 500 });
+    expect(list.style.width).toBe('420px');
+    fireEvent.pointerMove(window, { pointerId: 1, clientX: 5000 });
+    expect(list.style.width).toBe('700px');
+    fireEvent.pointerUp(window, { pointerId: 1 });
+    expect(sep).not.toHaveAttribute('data-dragging');
+    fireEvent.pointerMove(window, { pointerId: 1, clientX: 450 });
+    expect(list.style.width).toBe('700px');
+
+    fireEvent.pointerDown(sep, { button: 0, pointerId: 2, clientX: 400 });
+    fireEvent.pointerCancel(window, { pointerId: 2 });
+    expect(sep).not.toHaveAttribute('data-dragging');
   });
 });

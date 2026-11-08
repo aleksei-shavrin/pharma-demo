@@ -113,6 +113,7 @@ export type DashboardOverview = {
     ownerFullNameRu: string;
     dueDate: string | null;
     note: string;
+    dueState?: 'none' | 'upcoming' | 'passed';
     approvedCostImpactRub?: number;
   }[];
   workstreamRollups: { workstream: WorkstreamId; status: ProjectStatus }[];
@@ -164,9 +165,26 @@ function apiBaseUrl(): string {
   return resolveApiBaseUrl(process.env.NEXT_PUBLIC_API_BASE_URL);
 }
 
-async function getJson<T>(path: string): Promise<T> {
+/**
+ * Browser callers use credentials:'include' so the HttpOnly session cookie is sent.
+ * All current app pages are `'use client'` — credentials alone is enough.
+ * If a Server Component later calls this module, pass `cookie` from the
+ * incoming request via a server-only helper (never import next/headers here).
+ */
+async function getJson<T>(
+  path: string,
+  init?: { cookie?: string },
+): Promise<T> {
   const url = joinApiUrl(apiBaseUrl(), path);
-  const res = await fetch(url, { cache: 'no-store' });
+  const headers = new Headers();
+  if (init?.cookie) {
+    headers.set('cookie', init.cookie);
+  }
+  const res = await fetch(url, {
+    cache: 'no-store',
+    credentials: init?.cookie ? 'omit' : 'include',
+    headers,
+  });
   if (!res.ok) {
     throw new ApiClientError(
       `API ${path} failed: ${res.status} ${res.statusText}`,
@@ -200,14 +218,37 @@ export function fetchDashboardOverview(
   );
 }
 
+export type ResponsiblePerson = {
+  personId: string;
+  fullNameRu: string;
+  role: string;
+};
+
+export type ProgressFillTone = 'ok' | 'warn' | 'danger';
+
 export type AnalystProjectRow = {
   id: string;
   name: string;
   programId: string;
   status: ProjectStatus;
   ownerLabel: string;
+  ownerPersonId: string | null;
   progressLabel: string;
-  depth: 'deep' | 'thin';
+  /** Schedule project_group rollup; null when no leaves / unavailable. */
+  progressPct: number | null;
+  leafCompleted: number;
+  leafTotal: number;
+  progressFillTone: ProgressFillTone;
+};
+
+export type ProgramCostSummary = {
+  approvedControlBudgetRub: number;
+  actualCostRub: number;
+  committedCostRub: number;
+  etcRub: number;
+  eacRub: number;
+  vacRub: number;
+  workstreamIds: string[];
 };
 
 export type ProgramDetail = {
@@ -215,7 +256,23 @@ export type ProgramDetail = {
   id: string;
   name: string;
   status: ProjectStatus;
+  projectCount: number;
+  ownerLabel: string;
+  ownerPersonId: string | null;
+  responsiblePeople: ResponsiblePerson[];
+  progressLabel: string;
+  progressPct: number | null;
+  leafCompleted: number;
+  leafTotal: number;
+  progressFillTone: ProgressFillTone;
   projects: AnalystProjectRow[];
+  cost: ProgramCostSummary | null;
+  attention: {
+    redRiskCount: number;
+    delayedCriticalEquipmentCount: number;
+    openOrMitigatingIssueCount: number;
+    redMilestoneCount: number;
+  };
   issues: {
     id: string;
     title: string;
@@ -230,6 +287,26 @@ export type ProgramDetail = {
     forecastDate: string;
     projectId: string | null;
   }[];
+  equipment: {
+    id: string;
+    name: string;
+    status: string;
+    critical: boolean;
+    baselineDelivery: string;
+    forecastDelivery: string;
+  }[];
+  risks: {
+    id: string;
+    title: string;
+    rag: 'Green' | 'Red';
+  }[];
+  decisions: {
+    id: string;
+    type: string;
+    note: string;
+    dueDate: string | null;
+    milestoneId: string | null;
+  }[];
 };
 
 export type AnalystProjectCard = {
@@ -243,11 +320,34 @@ export type AnalystProjectCard = {
   ownerLabel: string;
   progressLabel: string;
   datesLabel: string;
+  composition: {
+    stages: number;
+    works: number;
+    checkpoints: number;
+    catalogMilestones: number;
+    equipment: number;
+  };
+  datesNote: string | null;
   issues: { id: string; title: string; status: string }[];
+  risks: { id: string; title: string; rag: 'Green' | 'Red' }[];
+  decisions: {
+    id: string;
+    type: string;
+    note: string;
+    dueDate: string | null;
+    milestoneId: string | null;
+  }[];
+  attention: {
+    redRiskCount: number;
+    delayedCriticalEquipmentCount: number;
+    openOrMitigatingIssueCount: number;
+    redMilestoneCount: number;
+  };
   equipment: {
     id: string;
     name: string;
     status: string;
+    critical: boolean;
     forecastDelivery: string;
     deltaDays: number;
   }[];
@@ -265,7 +365,18 @@ export type AnalystProjectCard = {
 export function fetchProgramList(
   projectId: string,
   snapshot: SnapshotId,
-): Promise<{ snapshotId: SnapshotId; items: { id: string; name: string; status: ProjectStatus }[] }> {
+): Promise<{
+  snapshotId: SnapshotId;
+  items: {
+    id: string;
+    name: string;
+    status: ProjectStatus;
+    projectCount: number;
+    ownerLabel: string;
+    ownerPersonId: string | null;
+    responsiblePeople: ResponsiblePerson[];
+  }[];
+}> {
   const qs = new URLSearchParams({ snapshot });
   return getJson(
     `/v1/projects/${encodeURIComponent(projectId)}/programs?${qs.toString()}`,
@@ -472,7 +583,43 @@ export function fetchMilestonesRegister(
   );
 }
 
-export type EntityRefType = 'equipment' | 'issue' | 'risk' | 'milestone';
+export type DecisionsRegister = {
+  snapshotId: SnapshotId;
+  scenarioAsOfDate: string;
+  projectId: string;
+  items: {
+    id: string;
+    projectId: string;
+    milestoneId: string | null;
+    milestoneName: string | null;
+    type: 'PrioritizeRecovery' | 'AcceptDateSlip';
+    ownerPersonId: PersonId;
+    ownerFullNameRu: string;
+    dueDate: string | null;
+    note: string;
+    dueState: 'none' | 'upcoming' | 'passed';
+    programId: string | null;
+    analystProjectId: string | null;
+    analystProjectName: string | null;
+  }[];
+};
+
+export function fetchDecisionsRegister(
+  projectId: string,
+  snapshot: SnapshotId,
+): Promise<DecisionsRegister> {
+  const qs = new URLSearchParams({ snapshot });
+  return getJson<DecisionsRegister>(
+    `/v1/projects/${encodeURIComponent(projectId)}/decisions?${qs.toString()}`,
+  );
+}
+
+export type EntityRefType =
+  | 'equipment'
+  | 'issue'
+  | 'risk'
+  | 'milestone'
+  | 'person';
 
 export type EntityLink = {
   targetType: EntityRefType;
@@ -637,6 +784,9 @@ export type ScheduleMilestoneItem = ScheduleTreeFields & {
   baselineDate: string;
   forecastDate: string;
   dateVariance: RegisterVariance;
+  /** catalog MS vs imported analyst КТ */
+  sourceKind?: 'catalog_milestone' | 'controlpoint';
+  sourceStatus?: string | null;
 };
 
 export type ScheduleGroupKind = 'project_group' | 'stage_group';

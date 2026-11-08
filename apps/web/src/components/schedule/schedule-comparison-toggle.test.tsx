@@ -9,31 +9,33 @@ afterEach(() => {
 });
 
 describe('ScheduleComparisonToggle', () => {
-  it('оставляет подписи «Базовый план / прогноз» и «Базовый план / факт» как доступные имена', () => {
-    render(<ScheduleComparisonToggle mode="forecast" onChange={() => {}} />);
-    expect(
-      screen.getByRole('button', { name: 'Базовый план / прогноз' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Базовый план / факт' }),
-    ).toBeInTheDocument();
+  it('первая кнопка — Базовый план; затем прогноз и факт', () => {
+    render(<ScheduleComparisonToggle mode="baseline" onChange={() => {}} />);
+    const baseline = screen.getByRole('button', { name: 'Базовый план' });
+    const forecast = screen.getByRole('button', {
+      name: 'Базовый план / прогноз',
+    });
+    const actual = screen.getByRole('button', { name: 'Базовый план / факт' });
+    expect(baseline).toHaveAttribute('aria-pressed', 'true');
+    expect(forecast).toBeInTheDocument();
+    expect(actual).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Сравнение полос' })).toBeInTheDocument();
   });
 
   it('ставит aria-pressed на выбранный режим сравнения', () => {
     const { rerender } = render(
-      <ScheduleComparisonToggle mode="forecast" onChange={() => {}} />,
+      <ScheduleComparisonToggle mode="baseline" onChange={() => {}} />,
     );
-    expect(
-      screen.getByRole('button', { name: 'Базовый план / прогноз' }),
-    ).toHaveAttribute('aria-pressed', 'true');
-    expect(
-      screen.getByRole('button', { name: 'Базовый план / факт' }),
-    ).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Базовый план' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
 
     rerender(<ScheduleComparisonToggle mode="actual" onChange={() => {}} />);
-    expect(
-      screen.getByRole('button', { name: 'Базовый план / прогноз' }),
-    ).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Базовый план' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
     expect(
       screen.getByRole('button', { name: 'Базовый план / факт' }),
     ).toHaveAttribute('aria-pressed', 'true');

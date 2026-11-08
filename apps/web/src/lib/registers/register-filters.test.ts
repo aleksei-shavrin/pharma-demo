@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_REGISTER_FILTERS,
   filtersActive,
+  matchesProgram,
   matchesSearch,
   matchesWorkstream,
 } from './register-filters';
@@ -21,6 +22,14 @@ describe('register filters', () => {
     expect(matchesWorkstream('WS-HVAC', null)).toBe(false);
   });
 
+  it('matches program filter via WS bridge', () => {
+    expect(matchesProgram('all', 'WS-HVAC')).toBe(true);
+    expect(matchesProgram('PRG-ENG', 'WS-HVAC')).toBe(true);
+    expect(matchesProgram('PRG-ENG', 'WS-UTL')).toBe(true);
+    expect(matchesProgram('PRG-CON', 'WS-HVAC')).toBe(false);
+    expect(matchesProgram('PRG-EQP', 'WS-PKG')).toBe(true);
+  });
+
   it('detects active filters', () => {
     expect(filtersActive(DEFAULT_REGISTER_FILTERS)).toBe(false);
     expect(
@@ -28,6 +37,9 @@ describe('register filters', () => {
     ).toBe(true);
     expect(
       filtersActive({ ...DEFAULT_REGISTER_FILTERS, query: 'ISS' }),
+    ).toBe(true);
+    expect(
+      filtersActive({ ...DEFAULT_REGISTER_FILTERS, program: 'PRG-CON' }),
     ).toBe(true);
   });
 });

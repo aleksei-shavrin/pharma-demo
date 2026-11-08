@@ -15,7 +15,7 @@ export default function ProjectPage() {
   const { data, status, error, retry } = useEntityDetailQuery(id, fetchAnalystProject);
 
   if (!id || status === 'loading') return <EntityDetailLoading />;
-  if (status === 'absent') return <RecordMissing id={id} />;
+  if (status === 'absent') return <RecordMissing id={id} kind="project" />;
   if (status === 'error' || !data) {
     return <EntityDetailError message={error ?? 'Ошибка'} onRetry={retry} />;
   }

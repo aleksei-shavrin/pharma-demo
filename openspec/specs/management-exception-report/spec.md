@@ -128,3 +128,31 @@ Requirements этой capability SHALL NOT предписывать конкре
 - **AND** forecast PRJ/MS остаётся 2027-10-06
 - **AND** ISS-001 Mitigating без recovery execution
 - **AND** auto-reforecast не выполняется
+
+### Requirement: Decision register honesty (Demo v1 read model)
+
+> **certainty:** assumption — wave 2026-11-08 decisions dashboard
+
+Система SHALL представлять Decision в реестре/Dashboard как **записанное** управленческое решение без модели исполнения. Поле `projectId=PRJ-01` SHALL трактоваться как **портфель**, не analyst project. Срок (`dueDate`) SHALL быть отдельным измерением от факта записи: `dueState` = `none` \| `upcoming` \| `passed` относительно `scenarioAsOfDate` (`dueDate == asOf` → не `passed`). UI SHALL показывать календарный badge срока (нейтральный StatusPill-style; «Сегодня» при `dueDate == asOf`) и SHALL NOT трактовать прошедший срок как failed/неисполнение. UI SHALL NOT выводить % complete / Completed из RAG вехи. Register Decision item SHALL включать `milestoneName` из snapshot milestones (human title), не только id.
+
+#### Scenario: Past dueDate is calendar, not execution failure
+
+- **WHEN** Decision имеет `dueDate` раньше `scenarioAsOfDate` и исполнение не моделируется
+- **THEN** read model помечает dueState=`passed` с director label «Срок прошёл»
+- **AND** record остаётся «Записано»; UI сообщает что данные об исполнении не указаны
+
+#### Scenario: dueDate equals asOf is not passed
+
+- **WHEN** Decision `dueDate` равен `scenarioAsOfDate`
+- **THEN** dueState=`upcoming` и director badge label «Сегодня» (не «Срок впереди» и не «Срок прошёл»)
+
+#### Scenario: Milestone title from snapshot
+
+- **WHEN** Decision привязан к milestone в snapshot
+- **THEN** register item exposes milestoneName from that milestone's name for human title beside technical id
+
+#### Scenario: Portfolio context for PRJ-01
+
+- **WHEN** Decision.projectId = PRJ-01
+- **THEN** UI ссылается на портфельный dashboard `/`, не на `/projects/PRJ-01`
+- **AND** program/AN context появляется только из canonical milestone membership (MS-PS → null/null, без fake fallback)

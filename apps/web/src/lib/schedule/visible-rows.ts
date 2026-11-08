@@ -38,11 +38,20 @@ export type VisibleScheduleRow<T extends ScheduleHierarchyItem = ScheduleHierarc
     item: T;
   };
 
-/** На снимке C открыты проект AN-08 и этап 8.2. */
-export const DEFAULT_EXPANDED_SCHEDULE_KEYS = [
-  'project_group:AN-08',
-  'stage_group:8.2',
-] as const;
+/**
+ * @deprecated Prefer `allScheduleGroupKeys(items)` — curated subset caused
+ * false “no Y-scroll” (26/133). Kept as empty marker for old imports.
+ */
+export const DEFAULT_EXPANDED_SCHEDULE_KEYS: readonly string[] = [];
+
+/** All project/stage group keys from the current payload. */
+export function allScheduleGroupKeys(
+  items: readonly { kind: string; id: string }[],
+): string[] {
+  return items
+    .filter((item) => item.kind === 'project_group' || item.kind === 'stage_group')
+    .map((item) => scheduleRowKey(item));
+}
 
 export function scheduleRowKey(item: { kind: string; id: string }): string {
   return `${item.kind}:${item.id}`;
@@ -52,6 +61,8 @@ export function isScheduleGroupKind(kind: string): boolean {
   return kind === 'project_group' || kind === 'stage_group';
 }
 
+export type ScheduleSummaryComparison = 'baseline' | 'forecast' | 'actual';
+
 export type BuildVisibleScheduleRowsOptions<T extends ScheduleHierarchyItem> = {
   expandedKeys: ReadonlySet<string> | readonly string[];
   /**
@@ -60,6 +71,11 @@ export type BuildVisibleScheduleRowsOptions<T extends ScheduleHierarchyItem> = {
    * не раскрывает чужие листья, а лист удерживает цепочку групп.
    */
   includeItem?: (item: T) => boolean;
+  /**
+   * Bounds for group summary / horizon seed.
+   * baseline → child baseline dates; actual → shown fact or forecast; forecast → forecast.
+   */
+  comparison?: ScheduleSummaryComparison;
 };
 
 function compareSiblings(
@@ -75,30 +91,65 @@ function compareSiblings(
 }
 
 function readProgress(item: ScheduleHierarchyItem): number | null {
-  if (isScheduleGroupKind(item.kind)) return null;
   return typeof item.progressPct === 'number' && Number.isFinite(item.progressPct)
     ? item.progressPct
     : null;
 }
 
-/** Работа — интервал, веха и поставка — точка прогноза. Пустые значения пропускаем. */
-function collectForecastBounds(item: ScheduleHierarchyItem, bounds: string[]) {
+type LeafBoundsItem = ScheduleHierarchyItem & {
+  baselineStart?: string | null;
+  baselineEnd?: string | null;
+  actualStart?: string | null;
+  actualEnd?: string | null;
+  baselineDate?: string | null;
+};
+
+/** Leaf dates for group rollup — follow the visible comparison primary. */
+export function collectLeafBounds(
+  item: LeafBoundsItem,
+  comparison: ScheduleSummaryComparison,
+  bounds: string[],
+) {
   if (item.kind === 'work') {
+    if (comparison === 'baseline') {
+      // Both ends required — partial baseline must not seed summary/horizon.
+      if (item.baselineStart && item.baselineEnd) {
+        bounds.push(item.baselineStart, item.baselineEnd);
+      }
+      return;
+    }
+    if (
+      comparison === 'actual' &&
+      item.actualStart &&
+      item.actualEnd
+    ) {
+      bounds.push(item.actualStart, item.actualEnd);
+      return;
+    }
     if (item.startDate) bounds.push(item.startDate);
     if (item.endDate) bounds.push(item.endDate);
     return;
   }
   if (item.kind === 'milestone' || item.kind === 'equipment_delivery') {
+    if (comparison === 'baseline') {
+      if (item.baselineDate) bounds.push(item.baselineDate);
+      return;
+    }
     if (item.forecastDate) bounds.push(item.forecastDate);
   }
 }
 
-function summaryBounds(descendants: readonly ScheduleHierarchyItem[]): {
+function summaryBounds(
+  descendants: readonly ScheduleHierarchyItem[],
+  comparison: ScheduleSummaryComparison,
+): {
   summaryStart: string | null;
   summaryEnd: string | null;
 } {
   const bounds: string[] = [];
-  for (const descendant of descendants) collectForecastBounds(descendant, bounds);
+  for (const descendant of descendants) {
+    collectLeafBounds(descendant, comparison, bounds);
+  }
   if (bounds.length === 0) return { summaryStart: null, summaryEnd: null };
   bounds.sort();
   return { summaryStart: bounds[0], summaryEnd: bounds[bounds.length - 1] };
@@ -137,6 +188,7 @@ export function buildVisibleScheduleRows<T extends ScheduleHierarchyItem>(
     options.expandedKeys instanceof Set
       ? options.expandedKeys
       : new Set(options.expandedKeys);
+  const comparison = options.comparison ?? 'forecast';
 
   const byKey = new Map<string, T>();
   for (const item of items) {
@@ -192,7 +244,7 @@ export function buildVisibleScheduleRows<T extends ScheduleHierarchyItem>(
       (child) => !keep || keep.has(scheduleRowKey(child)),
     );
     const summary = isScheduleGroupKind(item.kind)
-      ? summaryBounds(descendants)
+      ? summaryBounds(descendants, comparison)
       : { summaryStart: null, summaryEnd: null };
 
     rows.push({

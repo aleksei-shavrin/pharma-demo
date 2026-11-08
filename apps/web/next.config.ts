@@ -13,8 +13,8 @@ const nextConfig: NextConfig = {
   devIndicators: {
     appIsrStatus: false,
   },
-  /** C09: vis-timeline / echarts ship modern ESM that Turbopack must transpile. */
-  transpilePackages: ["vis-timeline", "vis-data", "echarts"],
+  /** ECharts ships modern ESM that Turbopack must transpile. */
+  transpilePackages: ["echarts"],
 };
 
 export default nextConfig;

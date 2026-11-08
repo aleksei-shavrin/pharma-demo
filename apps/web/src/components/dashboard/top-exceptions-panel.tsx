@@ -8,7 +8,6 @@ import {
 } from '@/lib/ui-labels';
 import { formatDeltaDays } from '@/lib/format/ru';
 import {
-  DASHBOARD_PAIR_LIST_MAX_HEIGHT,
   DASHBOARD_PAIR_LIST_SCROLL_CLASS,
   DASHBOARD_PAIR_SURFACE_CLASS,
 } from '@/lib/dashboard/dashboard-layout';
@@ -112,7 +111,8 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
   return (
     <ModuleSurface
       data-dashboard-block="top-exceptions"
-      className={DASHBOARD_PAIR_SURFACE_CLASS}
+      /* Tailwind scans this file — keep max-h literal (lib alone is not enough). */
+      className={`${DASHBOARD_PAIR_SURFACE_CLASS} max-h-[28rem] overflow-hidden`}
     >
       <h2
         id="top-exceptions-heading"
@@ -132,8 +132,7 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
         <ol
           className={DASHBOARD_PAIR_LIST_SCROLL_CLASS}
           data-top-exceptions="list"
-          data-exceptions-scroll="bounded"
-          style={{ maxHeight: DASHBOARD_PAIR_LIST_MAX_HEIGHT }}
+          data-exceptions-scroll="fill"
         >
           {items.map((ex, index) => {
             const accent =

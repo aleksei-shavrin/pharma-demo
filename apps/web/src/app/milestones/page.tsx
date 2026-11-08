@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import {
   RegisterCell,
@@ -25,13 +26,16 @@ import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import {
   DEFAULT_REGISTER_FILTERS,
   filtersActive,
+  filtersFromSearchParams,
   matchesSearch,
-  matchesWorkstream,
+  matchesProgram,
+  searchParamsFromFilters,
   type RegisterFilterState,
 } from '@/lib/registers/register-filters';
+import { programLabelForWorkstream } from '@/lib/registers/program-filter';
 import { useRegisterQuery } from '@/lib/registers/use-register-query';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
-import { presentMilestoneName, presentWorkstream } from '@/lib/ui-labels';
+import { presentMilestoneName } from '@/lib/ui-labels';
 
 type Item = MilestonesRegister['items'][number];
 
@@ -53,30 +57,44 @@ function sortMilestones(items: Item[]): Item[] {
   });
 }
 
-export default function MilestonesPage() {
+function MilestonesPage() {
   const { active } = useSnapshot();
   const { data, status, error, retry } = useRegisterQuery(
     fetchMilestonesRegister,
   );
-  const [filters, setFilters] = useState<RegisterFilterState>(
-    DEFAULT_REGISTER_FILTERS,
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [filters, setFilters] = useState<RegisterFilterState>(() =>
+    filtersFromSearchParams(new URLSearchParams(searchParams.toString())),
   );
 
-  const reset = () => setFilters(DEFAULT_REGISTER_FILTERS);
+  const searchKey = searchParams.toString();
+  useEffect(() => {
+    setFilters(filtersFromSearchParams(new URLSearchParams(searchKey)));
+  }, [searchKey]);
+
+  const applyFilters = (next: RegisterFilterState) => {
+    setFilters(next);
+    const q = searchParamsFromFilters(next).toString();
+    router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+  };
+
+  const reset = () => applyFilters(DEFAULT_REGISTER_FILTERS);
 
   const filtered = useMemo(() => {
     if (!data) return [];
     return sortMilestones(
       data.items.filter((item) => {
+        if (filters.rag !== 'all' && item.rag !== filters.rag) return false;
         if (filters.attention === 'attention' && !isAttention(item)) {
           return false;
         }
         if (filters.attention === 'normal' && isAttention(item)) {
           return false;
         }
-        // MS-PS has null workstream — only match when filter is all,
-        // or when searching (workstream filter excludes null unless all).
-        if (!matchesWorkstream(filters.workstream, item.workstream)) {
+        // MS-PS has null workstream — only match when filter is all.
+        if (!matchesProgram(filters.program, item.workstream)) {
           return false;
         }
         return matchesSearch(filters.query, [
@@ -118,7 +136,7 @@ export default function MilestonesPage() {
           />
           <RegisterToolbar
             filters={filters}
-            onChange={setFilters}
+            onChange={applyFilters}
             onReset={reset}
           />
           {filtered.length === 0 && filtersActive(filters) ? (
@@ -128,7 +146,7 @@ export default function MilestonesPage() {
               caption="Реестр вех"
               columns={[
                 'Веха',
-                'Направление',
+                'Программа',
                 'Статус',
                 'Базовая дата',
                 'Прогноз',
@@ -150,7 +168,7 @@ export default function MilestonesPage() {
                     />
                     <RegisterCell className="whitespace-nowrap">
                       {item.workstream
-                        ? presentWorkstream(item.workstream)
+                        ? programLabelForWorkstream(item.workstream)
                         : 'Проект'}
                     </RegisterCell>
                     <RegisterCell>
@@ -185,5 +203,13 @@ export default function MilestonesPage() {
         </>
       ) : null}
     </RegisterShell>
+  );
+}
+
+export default function MilestonesPageRoute() {
+  return (
+    <Suspense fallback={<RegisterLoading />}>
+      <MilestonesPage />
+    </Suspense>
   );
 }

@@ -3,6 +3,16 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": false
+    "deleteOutDir": false,
+    "assets": [
+      {
+        "include": "data/fixtures/analyst/*.md",
+        "watchAssets": true
+      },
+      {
+        "include": "data/fixtures/analyst/*.sha256",
+        "watchAssets": true
+      }
+    ]
   }
 }

@@ -2,6 +2,7 @@
 
 import type { RefObject } from 'react';
 import { Menu, X } from 'lucide-react';
+import { LogoutButton } from '@/components/auth/logout-button';
 import { SnapshotSelector } from '@/components/snapshot/snapshot-selector';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { NotificationBell } from '@/components/notifications/notification-bell';
@@ -51,6 +52,7 @@ export function TopAppBar({ menu }: { menu?: ShellMenuControl }) {
         <NotificationBell />
         <ThemeToggle />
         <SnapshotSelector />
+        <LogoutButton />
       </div>
     </header>
   );

@@ -33,7 +33,7 @@ import type { WorkstreamId } from './workstream-ids';
 export class MockDemoDataSource extends DemoDataSource {
   getSnapshot(id: SnapshotId): SnapshotFixture {
     if (!isPopulatedSnapshotId(id)) {
-      throw new NotFoundException(`Unknown snapshot: ${id}`);
+      throw new NotFoundException(`Unknown snapshot: ${String(id)}`);
     }
     return SNAPSHOTS[id];
   }
@@ -57,7 +57,7 @@ export class MockDemoDataSource extends DemoDataSource {
 
   getCosts(snapshotId: SnapshotId): BuiltProjectCosts {
     if (!isPopulatedSnapshotId(snapshotId)) {
-      throw new NotFoundException(`Unknown snapshot: ${snapshotId}`);
+      throw new NotFoundException(`Unknown snapshot: ${String(snapshotId)}`);
     }
     return COST_SNAPSHOTS[snapshotId];
   }
@@ -84,7 +84,7 @@ export class MockDemoDataSource extends DemoDataSource {
 
   listNotifications(snapshotId: SnapshotId): NotificationFixture[] {
     if (!isPopulatedSnapshotId(snapshotId)) {
-      throw new NotFoundException(`Unknown snapshot: ${snapshotId}`);
+      throw new NotFoundException(`Unknown snapshot: ${String(snapshotId)}`);
     }
     return notificationsForSnapshot(snapshotId);
   }

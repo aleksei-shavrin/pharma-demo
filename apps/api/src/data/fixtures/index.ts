@@ -1,9 +1,5 @@
 import { buildAllSnapshots } from './build-snapshot';
-import type {
-  PopulatedSnapshotId,
-  SnapshotFixture,
-  SnapshotId,
-} from './types';
+import type { PopulatedSnapshotId, SnapshotFixture, SnapshotId } from './types';
 
 export * from './types';
 export {

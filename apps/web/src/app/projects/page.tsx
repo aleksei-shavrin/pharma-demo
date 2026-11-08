@@ -1,29 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { ProjectListView } from '@/components/portfolio/portfolio-views';
-import { fetchAnalystProjects, type AnalystProjectRow } from '@/lib/api-client';
-import { useSnapshot } from '@/lib/snapshot/snapshot-context';
+import {
+  PageListError,
+  PageListLoading,
+} from '@/components/shell/page-list-states';
+import { fetchAnalystProjects } from '@/lib/api-client';
+import { useSnapshotResource } from '@/lib/snapshot/use-snapshot-resource';
 
 export default function ProjectsPage() {
-  const { active, status } = useSnapshot();
-  const [items, setItems] = useState<AnalystProjectRow[]>([]);
+  const fetcher = useCallback(
+    (
+      projectId: string,
+      snapshotId: Parameters<typeof fetchAnalystProjects>[1],
+    ) => fetchAnalystProjects(projectId, snapshotId),
+    [],
+  );
+  const { data, status, error, retry } = useSnapshotResource(fetcher);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    let cancelled = false;
-    void fetchAnalystProjects('PRJ-01', active)
-      .then((payload) => {
-        if (!cancelled) setItems(payload.items);
-      })
-      .catch((error: unknown) => {
-        console.error('[ProjectsPage] Failed to load analyst projects:', error);
-        if (!cancelled) setItems([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [active, status]);
-
-  return <ProjectListView items={items} />;
+  if (status === 'loading') return <PageListLoading label="Загрузка проектов" />;
+  if (status === 'error') {
+    return (
+      <PageListError message={error ?? 'Не удалось загрузить проекты'} onRetry={retry} />
+    );
+  }
+  return <ProjectListView items={data?.items ?? []} />;
 }

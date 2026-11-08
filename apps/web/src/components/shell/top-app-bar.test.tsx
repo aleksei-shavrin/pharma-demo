@@ -72,7 +72,7 @@ describe('TopAppBar (F04–F06)', () => {
     expect(bar?.className).not.toMatch(/\bpy-/);
   });
 
-  it('порядок справа: колокол → тема → снимок', async () => {
+  it('порядок справа: колокол → тема → снимок → выход', async () => {
     renderBar();
     await waitFor(() =>
       expect(document.querySelector('[data-snapshot-trigger]')).toBeTruthy(),
@@ -80,7 +80,7 @@ describe('TopAppBar (F04–F06)', () => {
     const controls = document.querySelector('[data-top-app-bar-controls]');
     expect(controls).toBeTruthy();
     const slots = Array.from(controls!.children);
-    expect(slots.length).toBe(3);
+    expect(slots.length).toBe(4);
     expect(
       slots[0]?.querySelector('[data-notification-bell]'),
     ).toBeTruthy();
@@ -88,6 +88,7 @@ describe('TopAppBar (F04–F06)', () => {
     expect(
       slots[2]?.querySelector('[data-snapshot-trigger]'),
     ).toBeTruthy();
+    expect(slots[3]?.matches('[data-logout-control]')).toBe(true);
   });
 
   it('переключатель темы того же внешнего размера, что колокол', async () => {

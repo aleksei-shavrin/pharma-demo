@@ -18,7 +18,7 @@ export default function ProgramCompositionPage() {
   const { data, status, error, retry } = useEntityDetailQuery(id, fetchProgramDetail);
 
   if (!id || status === 'loading') return <EntityDetailLoading />;
-  if (status === 'absent') return <RecordMissing id={id} />;
+  if (status === 'absent') return <RecordMissing id={id} kind="program" />;
   if (status === 'error' || !data) {
     return <EntityDetailError message={error ?? 'Ошибка'} onRetry={retry} />;
   }

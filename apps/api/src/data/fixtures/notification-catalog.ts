@@ -44,9 +44,7 @@ const TAXONOMY_RANK: Record<NotificationTaxonomy, number> = {
   readiness: 6,
 };
 
-function hrefFor(
-  refs: NotificationEntityRefFixture[],
-): string | null {
+function hrefFor(refs: NotificationEntityRefFixture[]): string | null {
   for (const ref of refs) {
     switch (ref.type) {
       case 'equipment':
@@ -142,7 +140,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'critical',
       taxonomy: 'milestone',
       titleRu: 'Production Start: прогноз +21 день',
-      bodyRu: 'Базовый срок 15.09.2027 → прогноз 06.10.2027. Драйвер: EQ-HVAC-01.',
+      bodyRu:
+        'Базовый срок 15.09.2027 → прогноз 06.10.2027. Драйвер: EQ-HVAC-01.',
       refs: [
         { type: 'milestone', id: 'MS-PS' },
         { type: 'equipment', id: 'EQ-HVAC-01' },
@@ -172,7 +171,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'cost',
       titleRu: 'Рост прогнозной стоимости на фоне срыва HVAC',
-      bodyRu: 'EAC повышен относительно BAC; детализация — в контроле стоимости.',
+      bodyRu:
+        'EAC повышен относительно BAC; детализация — в контроле стоимости.',
       refs: [{ type: 'workstream', id: 'WS-HVAC' }],
     },
   ]),
@@ -182,7 +182,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'critical',
       taxonomy: 'critical_risk',
       titleRu: 'Каскад давления после срыва HVAC',
-      bodyRu: 'Production Start остаётся +21; добавляется давление по чистым зонам.',
+      bodyRu:
+        'Production Start остаётся +21; добавляется давление по чистым зонам.',
       refs: [
         { type: 'risk', id: 'RISK-001' },
         { type: 'workstream', id: 'WS-CLN' },
@@ -210,7 +211,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       n: 1,
       severity: 'critical',
       taxonomy: 'critical_risk',
-      titleRu: 'Параллельное давление по инженерным системам, QC и производству',
+      titleRu:
+        'Параллельное давление по инженерным системам, QC и производству',
       bodyRu: 'Мультиконтурное давление при сохранении PS +21.',
       refs: [{ type: 'risk', id: 'RISK-001' }],
     },
@@ -275,7 +277,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'info',
       taxonomy: 'recovery',
       titleRu: 'Ожидание фактического эффекта от мер',
-      bodyRu: 'Прогноз HVAC и Production Start остаётся +21 до явного восстановления на поздних снимках.',
+      bodyRu:
+        'Прогноз HVAC и Production Start остаётся +21 до явного восстановления на поздних снимках.',
       refs: [{ type: 'equipment', id: 'EQ-HVAC-01' }],
     },
   ]),
@@ -296,7 +299,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'recovery',
       titleRu: 'Частичное восстановление HVAC-контура',
-      bodyRu: 'Отклонение HVAC снижено до +14 дней; полный возврат к базовому сроку не достигнут.',
+      bodyRu:
+        'Отклонение HVAC снижено до +14 дней; полный возврат к базовому сроку не достигнут.',
       refs: [{ type: 'equipment', id: 'EQ-HVAC-01' }],
     },
     {
@@ -322,7 +326,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       n: 1,
       severity: 'critical',
       taxonomy: 'critical_risk',
-      titleRu: 'Остаточные HVAC и Production Start +14; растёт давление автоматизации',
+      titleRu:
+        'Остаточные HVAC и Production Start +14; растёт давление автоматизации',
       bodyRu: 'Параллельно усиливается контур автоматизации.',
       refs: [
         { type: 'risk', id: 'RISK-001' },
@@ -361,7 +366,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'critical',
       taxonomy: 'critical_risk',
       titleRu: 'Production Start +14 при восстановлении инженерных систем',
-      bodyRu: 'Инженерные системы улучшаются; драйвер HVAC и Production Start остаётся +14.',
+      bodyRu:
+        'Инженерные системы улучшаются; драйвер HVAC и Production Start остаётся +14.',
       refs: [{ type: 'milestone', id: 'MS-PS' }],
     },
     {
@@ -387,7 +393,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'critical',
       taxonomy: 'milestone',
       titleRu: 'Волна монтажа производства; PS всё ещё +14',
-      bodyRu: 'Пик монтажных работ производства не меняет драйвер Production Start.',
+      bodyRu:
+        'Пик монтажных работ производства не меняет драйвер Production Start.',
       refs: [
         { type: 'workstream', id: 'WS-PRD' },
         { type: 'milestone', id: 'MS-PS' },
@@ -428,7 +435,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'recovery',
       titleRu: 'Сериализация упаковки закрыта',
-      bodyRu: 'Остаточный контур упаковки закрыт в сценарии; Production Start не восстановлен.',
+      bodyRu:
+        'Остаточный контур упаковки закрыт в сценарии; Production Start не восстановлен.',
       refs: [{ type: 'workstream', id: 'WS-PKG' }],
     },
     {
@@ -446,7 +454,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'critical',
       taxonomy: 'critical_risk',
       titleRu: 'Критическое давление BMS/EMS',
-      bodyRu: 'Автоматизация в красном статусе; интеграция под давлением при Production Start +14.',
+      bodyRu:
+        'Автоматизация в красном статусе; интеграция под давлением при Production Start +14.',
       refs: [{ type: 'workstream', id: 'WS-AUT' }],
     },
     {
@@ -462,7 +471,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'cost',
       titleRu: 'Рост стоимостной экспозиции по автоматизации',
-      bodyRu: 'Использование резерва проекта продолжается согласно стоимостной истории.',
+      bodyRu:
+        'Использование резерва проекта продолжается согласно стоимостной истории.',
       refs: [{ type: 'workstream', id: 'WS-AUT' }],
     },
   ]),
@@ -480,7 +490,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'milestone',
       titleRu: 'Production Start остаётся +14',
-      bodyRu: 'Фокус смещается к пусконаладке; драйвер Production Start не снят.',
+      bodyRu:
+        'Фокус смещается к пусконаладке; драйвер Production Start не снят.',
       refs: [{ type: 'milestone', id: 'MS-PS' }],
     },
     {
@@ -514,8 +525,10 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       n: 3,
       severity: 'info',
       taxonomy: 'readiness',
-      titleRu: 'Проблемы переведены в статус «В работе по снижению» там, где это задано сценарием',
-      bodyRu: 'Состояние проблемы не равно автоматическому зелёному статусу риска.',
+      titleRu:
+        'Проблемы переведены в статус «В работе по снижению» там, где это задано сценарием',
+      bodyRu:
+        'Состояние проблемы не равно автоматическому зелёному статусу риска.',
       refs: [{ type: 'risk', id: 'RISK-001' }],
     },
   ]),
@@ -537,7 +550,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'critical_risk',
       titleRu: 'RISK-001 ещё не в зелёном статусе',
-      bodyRu: 'Восстановление прогноза не закрывает риск автоматически (BR-007).',
+      bodyRu:
+        'Восстановление прогноза не закрывает риск автоматически (BR-007).',
       refs: [{ type: 'risk', id: 'RISK-001' }],
     },
     {
@@ -545,7 +559,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'readiness',
       titleRu: 'Начинается волна OQ-готовности',
-      bodyRu: 'Общий статус проекта остаётся красным до поздней фазы завершения.',
+      bodyRu:
+        'Общий статус проекта остаётся красным до поздней фазы завершения.',
       refs: [{ type: 'issue', id: 'ISS-COM-02' }],
     },
     {
@@ -601,7 +616,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'readiness',
       titleRu: 'Критическая цепочка больше не красная, старт ещё впереди',
-      bodyRu: 'Контролируемая готовность и остаточное внимание до решения Go/No-Go.',
+      bodyRu:
+        'Контролируемая готовность и остаточное внимание до решения Go/No-Go.',
       refs: [{ type: 'risk', id: 'RISK-001' }],
     },
     {
@@ -609,7 +625,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'info',
       taxonomy: 'recovery',
       titleRu: 'Прогноз PS удерживается на +7',
-      bodyRu: 'Честность: базовая дата пройдена, но запуск производства ещё не достигнут.',
+      bodyRu:
+        'Честность: базовая дата пройдена, но запуск производства ещё не достигнут.',
       refs: [{ type: 'milestone', id: 'MS-PS' }],
     },
   ]),
@@ -628,7 +645,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'attention',
       taxonomy: 'issue',
       titleRu: 'ISS-001 закрыт (состояние задано сценарием)',
-      bodyRu: 'Закрытая проблема не означает автоматический зелёный статус для RISK-001.',
+      bodyRu:
+        'Закрытая проблема не означает автоматический зелёный статус для RISK-001.',
       refs: [
         { type: 'issue', id: 'ISS-001' },
         { type: 'risk', id: 'RISK-001' },
@@ -649,7 +667,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'info',
       taxonomy: 'readiness',
       titleRu: 'Production Start достигнут 22.09.2027',
-      bodyRu: 'Фактический старт совпадает с прогнозом; MS-PS зелёный; общий статус зелёный.',
+      bodyRu:
+        'Фактический старт совпадает с прогнозом; MS-PS зелёный; общий статус зелёный.',
       refs: [{ type: 'milestone', id: 'MS-PS' }],
     },
     {
@@ -665,7 +684,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'info',
       taxonomy: 'cost',
       titleRu: 'Финальная стоимостная история',
-      bodyRu: 'Фактические затраты = EAC; ETC = 0; VAC −80 млн ₽ согласно DOC-PROD-026.',
+      bodyRu:
+        'Фактические затраты = EAC; ETC = 0; VAC −80 млн ₽ согласно DOC-PROD-026.',
       refs: [{ type: 'workstream', id: 'WS-HVAC' }],
     },
     {
@@ -673,7 +693,8 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'info',
       taxonomy: 'recovery',
       titleRu: 'Драйвер HVAC возвращён в статус «По плану»',
-      bodyRu: 'Историческое отклонение срока +7 дней сохранено; дата снимка не означает факт поставки.',
+      bodyRu:
+        'Историческое отклонение срока +7 дней сохранено; дата снимка не означает факт поставки.',
       refs: [{ type: 'equipment', id: 'EQ-HVAC-01' }],
     },
   ]),

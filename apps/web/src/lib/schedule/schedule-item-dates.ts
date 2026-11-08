@@ -39,6 +39,11 @@ export function scheduleCoveredDates(
   comparison: ScheduleComparisonMode = 'forecast',
 ): string[] {
   if (isScheduleWork(item)) {
+    if (comparison === 'baseline') {
+      return item.baselineStart && item.baselineEnd
+        ? [item.baselineStart, item.baselineEnd]
+        : [];
+    }
     const dates = [item.startDate, item.endDate];
     if (item.baselineStart) dates.push(item.baselineStart);
     if (item.baselineEnd) dates.push(item.baselineEnd);
@@ -48,6 +53,9 @@ export function scheduleCoveredDates(
     return dates;
   }
   if (isScheduleGroup(item)) return [];
+  if (comparison === 'baseline') {
+    return item.baselineDate ? [item.baselineDate] : [];
+  }
   return [item.baselineDate, item.forecastDate];
 }
 

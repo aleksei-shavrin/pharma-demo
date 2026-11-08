@@ -240,6 +240,19 @@ Selection/pagination **off** by default (DOC-UX-016). D12 **RESOLVED** (ADR-0004
 | Navigation / interactions | Row → D-MS. |
 | Traceability | REQ-MILE-001; BR-003/004. |
 
+### 4.6b P-Decisions — Управленческие решения (register)
+
+> **certainty:** assumption
+> Добавлено change `timeline-echarts-decisions-register` (явный запрос 2026-11-08). AI не ставит approved.
+
+| Field | Spec |
+|-------|------|
+| Purpose | Список Decision records снимка (read-only). |
+| Entry | Sidebar «Управленческие решения» `/decisions`; ссылка с Dashboard Decision panel. |
+| Columns | ID · Тип · Суть · Владелец · Срок · Веха · Проект |
+| Data | Existing Decision fields only; empty on A; rows on F. No invented status/edit. |
+| Links | Owner → `/people/:id`; milestone → existing milestone detail when id present. |
+
 ### 4.7 D-\* — Entity Detail (shared pattern)
 
 | Field | Spec |

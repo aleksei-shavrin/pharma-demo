@@ -1,5 +1,5 @@
 /* OpenAPI document typings from @nestjs/swagger are intentionally loose. */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test } from '@nestjs/testing';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -130,12 +130,11 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
       '/v1/projects/{id}/equipment',
       '/v1/projects/{id}/issues-risks',
       '/v1/projects/{id}/milestones',
+      '/v1/projects/{id}/decisions',
     ] as const) {
       const op = document.paths[path]?.get;
       expect(op).toBeDefined();
-      expect(jsonResponseSchema(op)?.$ref).toMatch(
-        /#\/components\/schemas\//,
-      );
+      expect(jsonResponseSchema(op)?.$ref).toMatch(/#\/components\/schemas\//);
       const snap = findQueryParam(op, 'snapshot');
       expect(paramSchema(snap)?.enum).toEqual(
         expect.arrayContaining(['A', 'B', 'C']),
@@ -146,6 +145,7 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     expect(document.components?.schemas?.EquipmentRegisterDto).toBeDefined();
     expect(document.components?.schemas?.IssuesRisksRegisterDto).toBeDefined();
     expect(document.components?.schemas?.MilestonesRegisterDto).toBeDefined();
+    expect(document.components?.schemas?.DecisionsRegisterDto).toBeDefined();
 
     for (const path of [
       '/v1/projects/{id}/equipment/{entityId}',
@@ -155,9 +155,7 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     ] as const) {
       const op = document.paths[path]?.get;
       expect(op).toBeDefined();
-      expect(jsonResponseSchema(op)?.$ref).toMatch(
-        /#\/components\/schemas\//,
-      );
+      expect(jsonResponseSchema(op)?.$ref).toMatch(/#\/components\/schemas\//);
       const snap = findQueryParam(op, 'snapshot');
       expect(paramSchema(snap)?.enum).toEqual(
         expect.arrayContaining(['A', 'B', 'C']),
@@ -173,8 +171,7 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     expect(document.components?.schemas?.EntityImpactDto).toBeDefined();
 
     const eqDetail = document.components?.schemas?.EquipmentDetailDto as
-      | JsonSchema
-      | undefined;
+      JsonSchema | undefined;
     expect(eqDetail?.properties).toEqual(
       expect.objectContaining({
         entity: expect.any(Object),
@@ -269,8 +266,7 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     }
 
     const projectCost = document.components?.schemas?.ProjectCostDto as
-      | JsonSchema
-      | undefined;
+      JsonSchema | undefined;
     expect(projectCost?.properties).toEqual(
       expect.objectContaining({
         approvedBudgetRub: expect.any(Object),
@@ -294,26 +290,21 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     );
 
     const personDto = document.components?.schemas?.PersonDto as
-      | JsonSchema
-      | undefined;
+      JsonSchema | undefined;
     const personIdSchema = personDto?.properties?.id as JsonSchema | undefined;
     expect(personIdSchema?.pattern).toBe('^PER-\\d{2,}$');
 
     const wsCatalog = document.components?.schemas?.WorkstreamCatalogItemDto as
-      | JsonSchema
-      | undefined;
+      JsonSchema | undefined;
     const leadPerson = wsCatalog?.properties?.leadPersonId as
-      | JsonSchema
-      | undefined;
+      JsonSchema | undefined;
     expect(leadPerson?.pattern).toBe('^PER-\\d{2,}$');
     expect(leadPerson?.nullable).toBe(true);
 
     const personDetail = document.components?.schemas?.PersonDetailDto as
-      | JsonSchema
-      | undefined;
+      JsonSchema | undefined;
     const leadWs = personDetail?.properties?.leadWorkstreamIds as
-      | JsonSchema
-      | undefined;
+      JsonSchema | undefined;
     expect(leadWs?.type).toBe('array');
     expect(leadWs?.items?.enum).toEqual(
       expect.arrayContaining(['WS-HVAC', 'WS-BLD']),

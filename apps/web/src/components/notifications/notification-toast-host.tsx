@@ -12,8 +12,9 @@ import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { resolveNotificationHref } from '@/lib/notifications/notification-href';
 
 const DEMO_PROJECT_ID = 'PRJ-01';
-const MAX_TOASTS = 3;
-const TOAST_MS = 8000;
+/** r10 UX: one compact toast; remainder only in bell tray. */
+const MAX_TOASTS = 1;
+const TOAST_MS = 3500;
 
 type ToastItem = Notification & { key: string };
 
@@ -146,7 +147,8 @@ export function NotificationToastHost({
             data-notification-toast={n.id}
             data-toast-severity={n.severity}
             data-toast-tone={tone}
-            className={`pointer-events-auto relative overflow-hidden rounded-[var(--radius-md)] border px-3 py-2.5 shadow-[var(--elevation-1)] ${toastSurface(tone)}`}
+            data-toast-compact="true"
+            className={`pointer-events-auto relative overflow-hidden rounded-[var(--radius-md)] border px-2.5 py-2 shadow-[var(--elevation-1)] ${toastSurface(tone)}`}
           >
             <span
               className={`absolute inset-y-0 left-0 w-1 ${toastAccent(tone)}`}
@@ -155,15 +157,13 @@ export function NotificationToastHost({
             <p className="pl-1.5 text-[10px] uppercase tracking-wide text-[var(--text-muted)]">
               Снимок {n.snapshotId}
             </p>
-            <p className="pl-1.5 text-sm font-medium text-[var(--text)]">
+            <p className="pl-1.5 text-sm font-medium leading-snug text-[var(--text)]">
               {n.titleRu}
             </p>
-            {n.bodyRu ? (
-              <p className="mt-0.5 line-clamp-2 pl-1.5 text-xs text-[var(--text-secondary)]">
-                {n.bodyRu}
-              </p>
-            ) : null}
-            <div className="mt-2 flex items-center gap-3 pl-1.5">
+            <p className="mt-0.5 pl-1.5 text-[11px] text-[var(--text-secondary)]">
+              Остальные — в центре уведомлений
+            </p>
+            <div className="mt-1.5 flex items-center gap-3 pl-1.5">
               {href ? (
                 <Link
                   href={href}

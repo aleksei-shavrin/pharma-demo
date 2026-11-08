@@ -16,10 +16,52 @@ import {
   personFullNameRu,
   type PersonFixture,
 } from '../data/fixtures/person-catalog';
+import type {
+  ScheduleImportedCheckpointFixture,
+  ScheduleWorkSnapshotFixture,
+} from '../data/fixtures/schedule-works';
 import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
 import type { WorkstreamId } from '../data/workstream-ids';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import { DashboardService } from './dashboard.service';
+
+const FAKE_IMPORTED_CHECKPOINTS: readonly ScheduleImportedCheckpointFixture[] =
+  [
+    {
+      id: 'KT-1.1.3',
+      name: 'Бизнес-кейс одобрен',
+      parentKey: '1.1',
+      wbs: '1.1.3',
+      siblingOrder: 0,
+      workstream: null,
+      sourceStatus: 'Delayed',
+      sourceWeeks: null,
+      status: 'Delayed',
+      baselineDate: '2026-09-01',
+      forecastDate: '2026-09-15',
+      progressPct: 0,
+      rag: 'Red',
+      actualStart: null,
+      actualEnd: null,
+    },
+    {
+      id: 'KT-9.9.9',
+      name: '',
+      parentKey: '9.9',
+      wbs: '9.9.9',
+      siblingOrder: 0,
+      workstream: null,
+      sourceStatus: 'Waiting',
+      sourceWeeks: null,
+      status: 'Waiting',
+      baselineDate: '2027-01-01',
+      forecastDate: '2027-01-01',
+      progressPct: 0,
+      rag: 'Green',
+      actualStart: null,
+      actualEnd: null,
+    },
+  ];
 
 class FakeDataSource extends DemoDataSource {
   constructor(
@@ -71,8 +113,17 @@ class FakeDataSource extends DemoDataSource {
     return leadWorkstreamIdsForPerson(id);
   }
 
-  getScheduleWorks(): never {
-    throw new Error('getScheduleWorks not used by DashboardService');
+  getScheduleWorks(snapshotId: SnapshotId): ScheduleWorkSnapshotFixture {
+    void snapshotId;
+    return {
+      groups: [],
+      works: [],
+      links: [],
+      milestoneAttachments: [],
+      importedCheckpoints: FAKE_IMPORTED_CHECKPOINTS,
+      // undefined exercises ?? [] on aliased path when merge returns no field
+      aliasedCheckpoints: undefined,
+    };
   }
 
   listNotifications(): never {
@@ -101,28 +152,45 @@ describe('DashboardService (E1-R1 collection contracts)', () => {
     const dto = service.getOverview('PRJ-01', 'B');
     expect(dto.projectStatus).toBe('Yellow');
     expect(dto.project.forecastProductionStart).toBe('2027-09-15');
-    expect(
-      dto.equipment.find((e) => e.id === 'EQ-HVAC-01')?.status,
-    ).toBe('OnTrack');
-    expect(
-      dto.equipment.find((e) => e.id === 'EQ-PKG-01')?.status,
-    ).toBe('Delayed');
+    expect(dto.equipment.find((e) => e.id === 'EQ-HVAC-01')?.status).toBe(
+      'OnTrack',
+    );
+    expect(dto.equipment.find((e) => e.id === 'EQ-PKG-01')?.status).toBe(
+      'Delayed',
+    );
     expect(dto.risks.find((r) => r.id === 'RISK-001')?.rag).toBe('Green');
     expect(dto.milestones.find((m) => m.id === 'MS-PS')?.rag).toBe('Green');
-    expect(dto.issues.some((i) => i.id === 'ISS-PKG-01' && i.status === 'Open')).toBe(
-      true,
-    );
+    expect(
+      dto.issues.some((i) => i.id === 'ISS-PKG-01' && i.status === 'Open'),
+    ).toBe(true);
     expect(dto.issues.some((i) => i.id === 'ISS-001')).toBe(false);
     expect(dto.decisions).toEqual([]);
     expect(dto.decisionPanelState).toBe('absent');
     expect(dto.topExceptions[0]?.priority).toBe(1);
   });
 
+  it('throws when plant project missing', () => {
+    expect(() => service.getOverview('PRJ-MISSING', 'A')).toThrow(
+      /PRJ-MISSING/,
+    );
+  });
+
   it('A inventory scale and F decisions without heal', () => {
     const a = service.getOverview('PRJ-01', 'A');
     expect(a.equipment).toHaveLength(52);
-    expect(a.milestones).toHaveLength(44);
+    expect(a.milestones.length).toBeGreaterThanOrEqual(44);
+    expect(a.executiveMilestoneIds).toHaveLength(189);
     expect(a.executiveMilestoneIds).toContain('MS-PS');
+    // Stable baseline order: consecutive ids non-decreasing by baselineDate.
+    for (let i = 1; i < a.executiveMilestoneIds.length; i += 1) {
+      const prev = a.milestones.find(
+        (m) => m.id === a.executiveMilestoneIds[i - 1],
+      )!;
+      const cur = a.milestones.find(
+        (m) => m.id === a.executiveMilestoneIds[i],
+      )!;
+      expect(prev.baselineDate <= cur.baselineDate).toBe(true);
+    }
 
     const svc = new DashboardService(
       new FakeDataSource({

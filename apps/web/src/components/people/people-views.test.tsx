@@ -59,7 +59,7 @@ afterEach(() => cleanup());
 describe('People UI (R2-P1 / P1-R1)', () => {
   it('lists people in Russian without SH ids or EN role fragments', () => {
     render(<PeopleListView data={list} />);
-    expect(screen.getByRole('heading', { name: 'Персоны' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Участники' })).toBeInTheDocument();
     expect(screen.getByText('Смирнов Павел Андреевич')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Смирнов Павел Андреевич' }),
@@ -81,7 +81,7 @@ describe('People UI (R2-P1 / P1-R1)', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Ведущий направления HVAC')).toBeInTheDocument();
     expect(
-      document.querySelector('a[href="/workstreams/WS-HVAC"]'),
+      document.querySelector('a[href="/projects/AN-09"]'),
     ).toBeTruthy();
     expect(screen.queryByText('ISS-BLD-01')).not.toBeInTheDocument();
     expect(screen.queryByText('ISS-BLD-02')).not.toBeInTheDocument();
@@ -92,8 +92,8 @@ describe('People UI (R2-P1 / P1-R1)', () => {
     ).toBeTruthy();
   });
 
-  it('sidebar IA includes Персоны and not Workstreams top-level', () => {
-    expect(NAV_ITEMS.some((n) => n.href === '/people' && n.label === 'Персоны')).toBe(
+  it('sidebar IA includes Участники and not Workstreams top-level', () => {
+    expect(NAV_ITEMS.some((n) => n.href === '/people' && n.label === 'Участники')).toBe(
       true,
     );
     expect(NAV_ITEMS.some((n) => n.href === '/workstreams')).toBe(false);

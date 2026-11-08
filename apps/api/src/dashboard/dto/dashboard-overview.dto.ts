@@ -194,6 +194,9 @@ export class DashboardDecisionDto {
   @ApiProperty()
   note!: string;
 
+  @ApiProperty({ enum: ['none', 'upcoming', 'passed'] })
+  dueState!: 'none' | 'upcoming' | 'passed';
+
   @ApiPropertyOptional({
     description:
       'Recorded cost intent; alone does not mutate project EAC (BR-006 analogue)',

@@ -6,7 +6,6 @@ import {
   waitFor,
   within,
 } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { useEffect, useState, type ComponentType } from 'react';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
@@ -15,20 +14,27 @@ import { ExecutiveTimelineExperimentHost } from './executive-timeline-experiment
 vi.mock('next/dynamic', () => ({
   default: (
     loader: () => Promise<
-      | ComponentType<{ model: { snapshotId: string } }>
-      | { default: ComponentType<{ model: { snapshotId: string } }> }
+      | ComponentType<{ model: { snapshotId: string }; milestoneMeta: unknown }>
+      | {
+          default: ComponentType<{
+            model: { snapshotId: string };
+            milestoneMeta: unknown;
+          }>;
+        }
     >,
   ) => {
-    function Lazy(props: { model: { snapshotId: string } }) {
+    function Lazy(props: {
+      model: { snapshotId: string };
+      milestoneMeta: unknown;
+    }) {
       const [Comp, setComp] = useState<ComponentType<{
         model: { snapshotId: string };
+        milestoneMeta: unknown;
       }> | null>(null);
       useEffect(() => {
         void loader().then((mod) => {
           const resolved =
-            typeof mod === 'function'
-              ? mod
-              : mod.default;
+            typeof mod === 'function' ? mod : mod.default;
           setComp(() => resolved);
         });
       }, []);
@@ -39,23 +45,12 @@ vi.mock('next/dynamic', () => ({
   },
 }));
 
-vi.mock('./executive-timeline-vis', () => ({
-  ExecutiveTimelineVis: ({
-    model,
-  }: {
-    model: { snapshotId: string };
-  }) => (
-    <div data-timeline-renderer="vis" data-testid="vis-renderer">
-      vis:{model.snapshotId}
-    </div>
-  ),
-}));
-
 vi.mock('./executive-timeline-echarts', () => ({
   ExecutiveTimelineEcharts: ({
     model,
   }: {
     model: { snapshotId: string };
+    milestoneMeta: unknown;
   }) => (
     <div data-timeline-renderer="echarts" data-testid="echarts-renderer">
       echarts:{model.snapshotId}
@@ -73,58 +68,46 @@ function renderHost(snapshotId: 'A' | 'C' = 'A') {
   );
 }
 
-describe('ExecutiveTimelineExperimentHost', () => {
+describe('ExecutiveTimelineExperimentHost (ECharts-only)', () => {
   afterEach(() => {
     cleanup();
   });
 
-  it('по умолчанию показывает текущую шкалу (вариант 1)', () => {
+  it('renders ECharts without renderer toggle', async () => {
     renderHost('A');
     const section = document.querySelector(
       '[data-dashboard-block="executive-timeline"]',
     ) as HTMLElement;
+    expect(section).toBeTruthy();
     expect(
-      section.querySelector('[data-timeline-renderer="current"]'),
-    ).toBeTruthy();
+      section.querySelector('[data-timeline-renderer-toggle]'),
+    ).toBeNull();
     expect(
-      within(section).getByRole('button', {
-        name: 'Текущая шкала',
-      }),
-    ).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  it('переключает 1→2→3 без смены блока секции', async () => {
-    const user = userEvent.setup();
-    renderHost('C');
-    const section = () =>
-      document.querySelector(
-        '[data-dashboard-block="executive-timeline"]',
-      ) as HTMLElement;
-
-    await user.click(
-      within(section()).getByRole('button', { name: 'vis-timeline' }),
-    );
+      within(section).queryByRole('button', { name: 'Текущая шкала' }),
+    ).toBeNull();
+    expect(
+      within(section).queryByRole('button', { name: 'vis-timeline' }),
+    ).toBeNull();
     await waitFor(() => {
       expect(
-        document.querySelector('[data-testid="vis-renderer"]'),
-      ).toHaveTextContent('vis:C');
+        document.querySelector('[data-testid="echarts-renderer"]'),
+      ).toHaveTextContent('echarts:A');
     });
-    expect(section()).toBeTruthy();
+    expect(section.querySelector('[data-timeline-scope-filter]')).toBeTruthy();
+  });
 
-    await user.click(
-      within(section()).getByRole('button', { name: 'Apache ECharts' }),
-    );
+  it('keeps universe chrome filters with ECharts body', async () => {
+    renderHost('C');
     await waitFor(() => {
       expect(
         document.querySelector('[data-testid="echarts-renderer"]'),
       ).toHaveTextContent('echarts:C');
     });
-
-    await user.click(
-      within(section()).getByRole('button', { name: 'Текущая шкала' }),
-    );
     expect(
-      document.querySelector('[data-timeline-renderer="current"]'),
+      document.querySelector('[data-timeline-phase-context]'),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-timeline-body="echarts"]'),
     ).toBeTruthy();
   });
 });

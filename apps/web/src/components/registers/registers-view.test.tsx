@@ -319,7 +319,7 @@ describe('E4 Equipment register', () => {
       screen.getByRole('link', { name: 'Центральный AHU чистых зон' }),
     ).toHaveAttribute('href', '/equipment/EQ-HVAC-01');
     expect(screen.getByText('EQ-HVAC-01')).toBeInTheDocument();
-    expect(screen.getAllByText('HVAC').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Инженерия').length).toBeGreaterThan(0);
 
     await selectDemoSnapshot(user, 'C');
     await waitFor(() => {
@@ -338,8 +338,8 @@ describe('E4 Equipment register', () => {
     expect(screen.queryByText('EQ-PAD-04')).not.toBeInTheDocument();
 
     await user.selectOptions(
-      screen.getByLabelText('Фильтр направления'),
-      'WS-PKG',
+      screen.getByLabelText('Фильтр программы'),
+      'PRG-EQP',
     );
     await waitFor(() => {
       expect(screen.getByText(/Нет записей, соответствующих/)).toBeInTheDocument();

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { AppProviders } from '@/components/providers';
 import { AppShell } from '@/components/shell/app-shell';
 import './globals.css';
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="ru" data-theme="light" suppressHydrationWarning>
       <body>
         <AppProviders>
-          <AppShell>{children}</AppShell>
+          <AppShell>
+            <Suspense fallback={null}>{children}</Suspense>
+          </AppShell>
         </AppProviders>
       </body>
     </html>

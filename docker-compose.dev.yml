@@ -64,6 +64,7 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/backend}
+      API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:3000}
       NEXT_TELEMETRY_DISABLED: "1"
       CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
       WATCHPACK_POLLING: ${WATCHPACK_POLLING:-true}
@@ -82,10 +83,15 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile.dev
+    env_file:
+      - path: .env.dev-auth
+        required: false
     environment:
       PORT: "3000"
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3080}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:3080}
       PUBLIC_API_PREFIX: ${PUBLIC_API_PREFIX:-/backend}
+      LOGIN_PASSWORD_HASH_FILE: /run/secrets/login-password-hash
       CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
       WATCHPACK_POLLING: ${WATCHPACK_POLLING:-true}
     volumes:
@@ -95,6 +101,7 @@ services:
       # Named volume makes /app/dist a mount point — Nest deleteOutDir:true
       # fails with EBUSY; apps/api/nest-cli.json keeps deleteOutDir:false.
       - ppc_dev_api_dist:/app/dist
+      - ./.dev-login-password-hash:/run/secrets/login-password-hash:ro
     expose:
       - "3000"
     networks:

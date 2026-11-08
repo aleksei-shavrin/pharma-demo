@@ -1,0 +1,145 @@
+{
+  "warningCases": [
+    {
+      "id": "shift-over-lag",
+      "item": {
+        "kind": "work",
+        "id": "W-SHIFT",
+        "status": "Delayed",
+        "sourceWeeks": 2,
+        "baselineStart": "2027-02-26",
+        "baselineEnd": "2027-03-08",
+        "startDate": "2027-03-04",
+        "endDate": "2027-03-18"
+      },
+      "descendants": [],
+      "expectTone": "shift"
+    },
+    {
+      "id": "lag-delayed-no-weeks",
+      "item": {
+        "kind": "work",
+        "id": "W-DELAY",
+        "status": "Delayed",
+        "sourceWeeks": null,
+        "baselineStart": "2027-02-20",
+        "baselineEnd": "2027-02-24",
+        "startDate": "2027-02-20",
+        "endDate": "2027-02-24"
+      },
+      "descendants": [],
+      "expectTone": "lag"
+    },
+    {
+      "id": "lag-weeks-zero",
+      "item": {
+        "kind": "work",
+        "id": "W-0",
+        "status": "OnSchedule",
+        "sourceWeeks": 0,
+        "baselineStart": "2027-02-20",
+        "baselineEnd": "2027-02-24",
+        "startDate": "2027-02-20",
+        "endDate": "2027-02-24"
+      },
+      "descendants": [],
+      "expectTone": "lag"
+    },
+    {
+      "id": "no-warning-aligned",
+      "item": {
+        "kind": "work",
+        "id": "W-OK",
+        "status": "Completed",
+        "sourceWeeks": null,
+        "baselineStart": "2027-02-20",
+        "baselineEnd": "2027-02-24",
+        "startDate": "2027-02-20",
+        "endDate": "2027-02-24"
+      },
+      "descendants": [],
+      "expectTone": "none"
+    },
+    {
+      "id": "group-child-shift-beats-lag",
+      "item": { "kind": "project_group", "id": "G1" },
+      "descendants": [
+        {
+          "kind": "work",
+          "id": "W-LAG",
+          "status": "OnSchedule",
+          "sourceWeeks": 3,
+          "baselineStart": "2027-01-01",
+          "baselineEnd": "2027-01-02",
+          "startDate": "2027-01-01",
+          "endDate": "2027-01-02"
+        },
+        {
+          "kind": "work",
+          "id": "W-SHIFT",
+          "status": "OnSchedule",
+          "sourceWeeks": null,
+          "baselineStart": "2027-01-01",
+          "baselineEnd": "2027-01-10",
+          "startDate": "2027-01-02",
+          "endDate": "2027-01-12"
+        }
+      ],
+      "expectTone": "shift"
+    },
+    {
+      "id": "group-child-lag-only",
+      "item": { "kind": "project_group", "id": "G2" },
+      "descendants": [
+        {
+          "kind": "work",
+          "id": "W-L",
+          "status": "Delayed",
+          "sourceWeeks": null,
+          "baselineStart": "2027-01-01",
+          "baselineEnd": "2027-01-02",
+          "startDate": "2027-01-01",
+          "endDate": "2027-01-02"
+        }
+      ],
+      "expectTone": "lag"
+    }
+  ],
+  "fillCases": [
+    {
+      "id": "lag-danger",
+      "input": { "kind": "work", "status": "OnSchedule", "warningTone": "lag" },
+      "expect": "danger"
+    },
+    {
+      "id": "shift-warn",
+      "input": { "kind": "work", "status": "Delayed", "warningTone": "shift" },
+      "expect": "warn"
+    },
+    {
+      "id": "waiting-warn",
+      "input": { "kind": "work", "status": "Waiting", "warningTone": "none" },
+      "expect": "warn"
+    },
+    {
+      "id": "delayed-danger",
+      "input": { "kind": "work", "status": "Delayed", "warningTone": "none" },
+      "expect": "danger"
+    },
+    {
+      "id": "completed-ok",
+      "input": { "kind": "work", "status": "Completed", "warningTone": "none" },
+      "expect": "ok"
+    },
+    {
+      "id": "group-rag-ignored",
+      "input": {
+        "kind": "project_group",
+        "status": null,
+        "rag": "Yellow",
+        "warningTone": "none"
+      },
+      "expect": "ok"
+    }
+  ]
+}

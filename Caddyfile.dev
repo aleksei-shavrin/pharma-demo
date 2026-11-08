@@ -24,8 +24,12 @@
 	redir @portalAssetsLegacy /docs/assets{re.portalAssetsLegacy.suffix} 308
 
 	# Nest routes stay /health, /v1/..., /api after strip.
+	# X-Real-IP is set by the proxy (not client) for auth rate-limit buckets.
 	handle_path /backend/* {
-		reverse_proxy api:3000
+		reverse_proxy api:3000 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Host {host}
+		}
 	}
 
 	# Docusaurus dev expects the /docs prefix (no strip — unlike static nginx server).
@@ -34,7 +38,10 @@
 	}
 
 	# Next.js UI + HMR / Turbopack websockets under /
+	# Strip client-supplied x-middleware-subrequest (CVE middleware bypass).
 	handle {
-		reverse_proxy web:3000
+		reverse_proxy web:3000 {
+			header_up -X-Middleware-Subrequest
+		}
 	}
 }

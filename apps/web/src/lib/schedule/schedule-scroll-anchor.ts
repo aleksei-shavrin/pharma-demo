@@ -79,6 +79,86 @@ export function restoreScrollLeft(element: HTMLElement, left: number): void {
   element.scrollLeft = clampScroll(left, max);
 }
 
+const GANTT_VER = '.gantt_ver_scroll';
+const GANTT_DATA = '.gantt_data_area';
+
+/** Chart-only mode: read Y from the vendor vertical scroller. */
+export function captureChartPaneScroll(chartPane: HTMLElement): {
+  rowKey: string | null;
+  rowOffsetPx: number;
+  verticalScrollTop: number;
+} | null {
+  const chart = chartPane.querySelector<HTMLElement>(GANTT_VER);
+  if (!chart) return null;
+  const taskPane =
+    chartPane.querySelector<HTMLElement>('.gantt_task') ?? chart;
+  const row = captureRowAnchor(
+    taskPane,
+    chartPane,
+    '.gantt_task_row',
+    'task_id',
+  );
+  return {
+    rowKey: row.rowKey,
+    rowOffsetPx: row.rowOffsetPx,
+    verticalScrollTop: chart.scrollTop,
+  };
+}
+
+/** Chart-only mode: restore Y onto the vendor scroller + task pane. */
+export function restoreChartPaneScroll(
+  chartPane: HTMLElement,
+  verticalScrollTop: number,
+  rowKey: string | null,
+  rowOffsetPx: number,
+): void {
+  const chart = chartPane.querySelector<HTMLElement>(GANTT_VER);
+  if (!chart) return;
+  const max = chart.scrollHeight - chart.clientHeight;
+  chart.scrollTop = clampScroll(verticalScrollTop, max);
+  const data = chartPane.querySelector<HTMLElement>(GANTT_DATA);
+  if (data && data.scrollTop !== chart.scrollTop) {
+    data.scrollTop = chart.scrollTop;
+  }
+  if (!rowKey) return;
+  const taskPane =
+    chartPane.querySelector<HTMLElement>('.gantt_task') ?? chart;
+  restoreRowAnchor(
+    chart,
+    rowKey,
+    rowOffsetPx,
+    taskPane,
+    '.gantt_task_row',
+    'task_id',
+  );
+}
+
+/**
+ * Forward vertical wheel from chart pane to the outer schedule Y owner.
+ * Skips ctrl/meta (browser zoom), horizontal-dominant gestures, and zero delta.
+ */
+export function forwardWheelDeltaToOwner(
+  event: Pick<
+    WheelEvent,
+    'ctrlKey' | 'metaKey' | 'deltaX' | 'deltaY' | 'deltaMode' | 'preventDefault'
+  >,
+  owner: HTMLElement,
+  lineHeightPx: number,
+): boolean {
+  if (event.ctrlKey || event.metaKey) return false;
+  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return false;
+  let delta = event.deltaY;
+  if (event.deltaMode === 1) {
+    delta *= lineHeightPx;
+  } else if (event.deltaMode === 2) {
+    delta *= owner.clientHeight;
+  }
+  if (delta === 0) return false;
+  event.preventDefault();
+  owner.scrollTop += delta;
+  return true;
+}
+
 function findRowByKey(
   root: ParentNode,
   selector: string,

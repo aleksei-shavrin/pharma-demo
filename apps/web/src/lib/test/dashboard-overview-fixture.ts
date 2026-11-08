@@ -670,7 +670,19 @@ export function dashboardOverviewFixture(
         : null,
   };
 
-  return { ...base, ...overrides };
+  const withDue = {
+    ...base,
+    decisions: base.decisions.map((d) => ({
+      ...d,
+      dueState: !d.dueDate
+        ? ('none' as const)
+        : d.dueDate < base.scenarioAsOfDate
+          ? ('passed' as const)
+          : ('upcoming' as const),
+    })),
+  };
+
+  return { ...withDue, ...overrides };
 }
 
 function decisionsState(

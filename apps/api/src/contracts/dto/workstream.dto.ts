@@ -1,10 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { WORKSTREAM_IDS, type WorkstreamId } from '../../data/workstream-ids';
 import { SNAPSHOT_IDS, type SnapshotId } from '../../snapshot/snapshot-id';
-import {
-  PERSON_ID_API_PROPERTY,
-  type PersonId,
-} from '../person-id';
+import { PERSON_ID_API_PROPERTY, type PersonId } from '../person-id';
 import { WorkstreamCostDto } from './cost.dto';
 
 /**

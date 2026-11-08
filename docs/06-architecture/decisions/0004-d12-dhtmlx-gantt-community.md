@@ -141,10 +141,34 @@ I7 зафиксировал только control points (milestone / equipment_d
 
 В режиме факта цель без факта сохраняет прогнозную полосу, и линия крепится к ней. Если закрытый факт заменяет прогнозную полосу цели, адаптер не рисует эту линию в режиме факта. Свёрнутый конец тоже убирает линию.
 
+## Addendum: единый vertical scroll owner (Demo v1)
+
+> **certainty:** assumption
+>
+> Норматив: change `openspec/changes/schedule-scroll-owner-ordinal-progress/`, [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md) §1.11.
+
+В hierarchical mode таблица остаётся React-owned (`show_grid = false`). Вертикальная прокрутка «Разделения» — **project-owned** один scroll owner вокруг таблицы и chart. Горизонтальный scroll timeline остаётся у виджета. Community API `autosize` / layout / scrolling: [Configuration](https://docs.dhtmlx.com/gantt/api__refs__gantt_props.html), [Scrolling](https://docs.dhtmlx.com/gantt/desktop__common_config.html). PRO scroll sync / dual layers не используются.
+
+## Addendum: virtualization for N≈688 (Demo v1)
+
+> **certainty:** assumption
+>
+> Норматив: `openspec/changes/schedule-perf-baseline-style/`. Supersedes full-height host (`N×row_height`) for split mode at large N.
+
+- **One Y input owner:** `[data-schedule-scroll-owner]`; vendor ver scrollbar remains hidden and is **not** an input owner.
+- **Full logical model:** one `clearAll`/`parse` of all rows + links on data/mode/filter change; **no** window-slice parse on scroll (offscreen link endpoints stay in the model).
+- **React table:** `computeScheduleVirtualWindow` + top/bottom spacers; DOM mounts only the visible band + overscan.
+- **DHTMLX:** sticky/bounded chart viewport; `smart_rendering = true`; programmatic Y via vendor scrollY view (`.gantt_ver_scroll` kept mounted with scroll range — **not** `display:none`) + `gantt.scrollTo(x, ownedScrollTop)` from owner (rAF). Hidden ver bar is not an input owner (`pointer-events: none`, width 0).
+- **Overlays:** project-owned baseline/fact/cross layers cull to the visible Y band.
+- **Overlays:** coalesced visible-window paint on render **and** scroll (smart_rendering often skips `onGanttRender`). baseline-only clears comparison ghosts; forecast/actual paints visible band only (viewport-local tops under smart_rendering).
+- **Y range:** one scroll rail — vendor inner **or** a single project spacer, never both stacked. Healthy max ≈ `N×row − viewport` (±tolerance); half/double rejected.
+- **Diagnostics (dev/query):** minimal `data-gantt-native-y|ymax|aligned` always; heavy visible-ids / scale JSON only with `ppcGanttPerf` / `ppcGanttYDiag`.
+- **Preserve:** sticky month scale, bottom H scroll, divider, shared hover, expand/filter/snapshot/selection/scroll-anchor.
+
 ## Ссылки
 
 - [DOC-UX-005](../../05-ux-ui/demo-v1-schedule-workspace.md), [DOC-UX-018](../../05-ux-ui/demo-v1-ui-data-viz.md)
 - Вопросы аналитику: [2026-11-06-g07-g11-analyst-questions.md](../../07-delivery/reports/2026-11-06-g07-g11-analyst-questions.md)
-- OpenSpec change: demo-v1-schedule-work-bars-links (`openspec/changes/archive/2026-11-07-demo-v1-schedule-work-bars-links/proposal.md`), факт: schedule-work-actual (`openspec/changes/archive/2026-11-07-schedule-work-actual/proposal.md`), межпроектная связь: schedule-c-cross-project-subsample (`openspec/changes/archive/2026-11-07-schedule-c-cross-project-subsample/proposal.md`)
+- OpenSpec change: demo-v1-schedule-work-bars-links (`openspec/changes/archive/2026-11-07-demo-v1-schedule-work-bars-links/proposal.md`), факт: schedule-work-actual (`openspec/changes/archive/2026-11-07-schedule-work-actual/proposal.md`), межпроектная связь: schedule-c-cross-project-subsample (`openspec/changes/archive/2026-11-07-schedule-c-cross-project-subsample/proposal.md`), scroll/ordinal: schedule-scroll-owner-ordinal-progress (`openspec/changes/schedule-scroll-owner-ordinal-progress/proposal.md`)
 - npm `dhtmlx-gantt@10.0.3`, GitHub release v10.0.0 (Community MIT)
-- DHTMLX: [task types](https://docs.dhtmlx.com/gantt/guides/task-types/), [task_class](https://docs.dhtmlx.com/gantt/api/template/task_class/), [links config](https://docs.dhtmlx.com/gantt/api/config/links/)
+- DHTMLX: [task types](https://docs.dhtmlx.com/gantt/guides/task-types/), [task_class](https://docs.dhtmlx.com/gantt/api/template/task_class/), [links config](https://docs.dhtmlx.com/gantt/api/config/links/), [config props](https://docs.dhtmlx.com/gantt/api__refs__gantt_props.html)

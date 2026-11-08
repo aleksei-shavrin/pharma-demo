@@ -16,5 +16,10 @@ tmp
 .env
 .env.*
 !.env.example
+.dev-login-password
+.dev-login-password-hash
+.server-login-password
+.server-login-password-hash
+.env.server-auth
 apps/web/.env.local
 **/.DS_Store

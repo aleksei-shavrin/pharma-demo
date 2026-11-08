@@ -15,14 +15,18 @@ export const DASHBOARD_LOWER_GRID_CLASS =
 export const DASHBOARD_LOWER_GRID_ATTR = '1fr_1fr';
 
 /**
- * Bounded scroll viewport for paired management lists (~3 items).
- * Exceptions and Decisions share this contract so outer surfaces match.
- * max-height is also applied via inline style for reliability.
+ * Pair lists fill remaining card height (flex-1); scroll only when overflowing.
+ * Surface caps height so 18 decisions do not explode the lower grid; list uses
+ * the remainder (no short 14.25rem pocket under a taller stretched card).
+ * @deprecated kept for tests that assert historical constant presence.
  */
-export const DASHBOARD_PAIR_LIST_MAX_HEIGHT = '14.25rem';
+export const DASHBOARD_PAIR_LIST_MAX_HEIGHT = '100%';
+
+/** Shared bound for Exceptions ↔ Decisions pair (~448px). */
+export const DASHBOARD_PAIR_SURFACE_MAX_CLASS = 'max-h-[28rem]';
 
 export const DASHBOARD_PAIR_LIST_SCROLL_CLASS =
-  'mt-2 min-h-0 overflow-y-auto overscroll-contain [scrollbar-gutter:stable]';
+  'mt-2 min-h-0 flex-1 overflow-y-auto overscroll-contain [scrollbar-gutter:stable]';
 
 export const DASHBOARD_PAIR_SURFACE_CLASS =
-  'flex h-full min-h-0 min-w-0 flex-col';
+  'flex h-full max-h-[28rem] min-h-0 min-w-0 flex-col overflow-hidden';

@@ -1,11 +1,23 @@
 import type { ScheduleWorkItem } from '@/lib/api-client';
 
-/** Две пары сравнения. По умолчанию нижняя полоса — прогноз. */
-export type ScheduleComparisonMode = 'forecast' | 'actual';
+/**
+ * Три режима полос. Default = baseline-only (одна основная полоса).
+ * forecast/actual сохраняют max 2 bars (база поверх нижней).
+ */
+export type ScheduleComparisonMode = 'baseline' | 'forecast' | 'actual';
+
+export const BASELINE_MISSING_TOOLTIP = 'Базовый план не задан';
 
 export const FACT_CAPTION_CLOSED = 'Факт';
 export const FACT_CAPTION_OPEN = 'Прогноз — факт не завершён';
 export const FACT_CAPTION_NONE = 'Прогноз — факта нет';
+
+export function parseScheduleComparisonMode(
+  raw: string | null | undefined,
+): ScheduleComparisonMode {
+  if (raw === 'forecast' || raw === 'actual' || raw === 'baseline') return raw;
+  return 'baseline';
+}
 
 /**
  * Подпись только для режима факта.
@@ -21,17 +33,31 @@ export function factCaption(
   return FACT_CAPTION_NONE;
 }
 
+export function hasWorkBaseline(
+  work: Pick<ScheduleWorkItem, 'baselineStart' | 'baselineEnd'>,
+): boolean {
+  return Boolean(work.baselineStart && work.baselineEnd);
+}
+
 /**
- * Нижняя полоса. Факт заменяет прогноз только когда заданы оба конца.
- * Открытый факт оставляет прогноз: отметки одного начала на диаграмме нет.
+ * Нижняя / единственная полоса по режиму.
+ * baseline: только оба конца базы; иначе null (пустая полоса, не silent forecast).
+ * actual: закрытый факт заменяет прогноз.
+ * forecast: прогноз.
  */
 export function displayedWorkBounds(
   work: Pick<
     ScheduleWorkItem,
-    'startDate' | 'endDate' | 'actualStart' | 'actualEnd'
+    'startDate' | 'endDate' | 'actualStart' | 'actualEnd' | 'baselineStart' | 'baselineEnd'
   >,
   mode: ScheduleComparisonMode,
-): { start: string; end: string } {
+): { start: string; end: string } | null {
+  if (mode === 'baseline') {
+    if (work.baselineStart && work.baselineEnd) {
+      return { start: work.baselineStart, end: work.baselineEnd };
+    }
+    return null;
+  }
   if (mode === 'actual' && work.actualStart && work.actualEnd) {
     return { start: work.actualStart, end: work.actualEnd };
   }
@@ -54,11 +80,12 @@ export function linkEdgeRole(
 export function displayedEdge(
   work: Pick<
     ScheduleWorkItem,
-    'startDate' | 'endDate' | 'actualStart' | 'actualEnd'
+    'startDate' | 'endDate' | 'actualStart' | 'actualEnd' | 'baselineStart' | 'baselineEnd'
   >,
   mode: ScheduleComparisonMode,
   role: 'start' | 'finish',
-): string {
+): string | null {
   const bounds = displayedWorkBounds(work, mode);
+  if (!bounds) return null;
   return role === 'start' ? bounds.start : bounds.end;
 }

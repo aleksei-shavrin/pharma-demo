@@ -1,17 +1,33 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import type { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
 import { R2_CONTRACT_EXTRA_MODELS } from './contracts/r2-extra-models';
 import { resolveCorsOrigins } from './cors-origins';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useBodyParser('urlencoded', { extended: false, limit: '32kb' });
+
+  // Auth + narrative /v1 must not be publicly cacheable (incl. 401/303).
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const path = (req.path || req.url || '').split('?')[0] ?? '';
+    if (path === '/v1' || path.startsWith('/v1/')) {
+      res.setHeader('Cache-Control', 'private, no-store');
+    }
+    next();
+  });
 
   app.enableCors({
     origin: resolveCorsOrigins(),
+    credentials: true,
   });
 
-  const publicApiPrefix = (process.env.PUBLIC_API_PREFIX ?? '').replace(/\/+$/, '');
+  const publicApiPrefix = (process.env.PUBLIC_API_PREFIX ?? '').replace(
+    /\/+$/,
+    '',
+  );
   const configBuilder = new DocumentBuilder()
     .setTitle('Pharma Demo API')
     .setDescription(

@@ -27,10 +27,16 @@ import {
   ISSUE_CATALOG,
   ISSUE_IDS,
   MILESTONE_IDS,
-  RISK_CATALOG,
   RISK_IDS,
 } from './catalog';
-import { SNAPSHOTS, SNAPSHOT_A, SNAPSHOT_C, SNAPSHOT_F, SNAPSHOT_G, SNAPSHOT_H } from './index';
+import {
+  SNAPSHOTS,
+  SNAPSHOT_A,
+  SNAPSHOT_C,
+  SNAPSHOT_F,
+  SNAPSHOT_G,
+  SNAPSHOT_H,
+} from './index';
 import {
   EXECUTIVE_MILESTONE_SET_STABLE,
   SNAPSHOT_STATES,
@@ -124,7 +130,7 @@ describe('fixture integrity — inventory / counts', () => {
       expect(s.issues).toHaveLength(Object.keys(st.issues).length);
       expect(s.risks).toHaveLength(Object.keys(st.riskRag).length);
       const expectedDec = DECISION_IDS.filter(
-        (d) => ALL.indexOf(id) >= ALL.indexOf(DECISION_CATALOG[d].first as PopulatedSnapshotId),
+        (d) => ALL.indexOf(id) >= ALL.indexOf(DECISION_CATALOG[d].first),
       );
       expect(ids(s.decisions)).toEqual([...expectedDec].sort());
     }
@@ -265,7 +271,10 @@ describe('fixture integrity — date / delta arithmetic', () => {
       const s = SNAPSHOTS[id];
       const st = SNAPSHOT_STATES[id];
       for (const eq of s.equipment) {
-        const delta = calendarDaysDelta(eq.baselineDelivery, eq.forecastDelivery);
+        const delta = calendarDaysDelta(
+          eq.baselineDelivery,
+          eq.forecastDelivery,
+        );
         expect(delta).toBe(st.eqDelta[eq.id as keyof typeof st.eqDelta] ?? 0);
         const expectedStatus =
           st.eqStatus?.[eq.id as keyof typeof st.eqStatus] ??
@@ -611,7 +620,9 @@ describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
     expect(powerB.forecastDate).toBe('2027-02-18');
     expect(powerB.rag).toBe('Green');
 
-    for (const id of ALL.filter((snapshotId) => snapshotId !== 'A' && snapshotId !== 'B')) {
+    for (const id of ALL.filter(
+      (snapshotId) => snapshotId !== 'A' && snapshotId !== 'B',
+    )) {
       const panel = findMilestone(SNAPSHOTS[id], 'MS-CLN-PANEL')!;
       const power = findMilestone(SNAPSHOTS[id], 'MS-UTL-PWR')!;
       expect(panel.forecastDate).toBe('2027-03-09');
@@ -631,12 +642,13 @@ describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
     expect(
       SNAPSHOT_C.milestones.some((milestone) => milestone.id === 'MS-BLD-STR'),
     ).toBe(true);
-    expect(SNAPSHOT_C.executiveMilestoneIds).not.toContain('MS-BLD-FND');
-    expect(SNAPSHOT_C.executiveMilestoneIds).not.toContain('MS-BLD-STR');
-    expect(SNAPSHOT_C.executiveMilestoneIds).toHaveLength(12);
+    // Fixture-authored executiveMilestoneIds remain the legacy curated seed;
+    // DashboardService expands to the canonical 189-universe at read time.
+    expect(SNAPSHOT_C.executiveMilestoneIds).toContain('MS-PS');
+    expect(EXECUTIVE_MILESTONE_SET_STABLE).toContain('MS-PS');
   });
 
-  it('executiveMilestoneIds stable curated set A–S (12) with MS-PS', () => {
+  it('fixture executiveMilestoneIds seed stable A–S (legacy curated 12)', () => {
     expect(EXECUTIVE_MILESTONE_SET_STABLE).toHaveLength(12);
     expect(EXECUTIVE_MILESTONE_SET_STABLE).toContain('MS-PS');
     for (const id of ALL) {

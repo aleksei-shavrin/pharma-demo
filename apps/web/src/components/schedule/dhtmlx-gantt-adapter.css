@@ -31,6 +31,177 @@
   flex: 1 1 auto;
 }
 
+/* Shared outer scroll owner (legacy fit): chart grew with rows. */
+.ppc-gantt-viewport.ppc-gantt-viewport-fit {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+/* Virtual Y: sticky chart pane supplies definite height; smart_rendering paints a window. */
+.ppc-gantt-viewport.ppc-gantt-viewport-virtual {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+  flex: 1 1 auto;
+}
+
+[data-schedule-pane='chart'][data-schedule-chart-virtual='true'] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+[data-schedule-pane='chart'][data-schedule-chart-virtual='true']
+  .ppc-gantt-viewport.ppc-gantt-viewport-virtual {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  flex: 1 1 auto;
+}
+
+/*
+ * Fit mode under outer Y owner: month labels live in [data-schedule-chart-sticky-header]
+ * (outside vendor overflow ancestry). Host has no internal scale (scale_height=0).
+ * Horizontal owner is vendor `.gantt_hor_scroll` + gantt.scrollTo — not `.gantt_data_area`.
+ * Pin hor_scroll to the bottom of the visible [data-schedule-scroll-owner] viewport.
+ */
+[data-schedule-scroll-owner] .ppc-gantt-host[data-gantt-fit-vertical='true'] {
+  overflow: visible;
+  border: none;
+  border-radius: 0;
+}
+
+/*
+ * Legacy full-height fit: ver bar unused (Y max was 0 by design).
+ * Virtual/smart: keep ver scroller mounted for scrollSize — never display:none.
+ */
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-fit-vertical='true']:not([data-gantt-smart-rendering='true'])
+  .gantt_ver_scroll,
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-fit-vertical='true']:not([data-gantt-smart-rendering='true'])
+  .scrollVer_cell {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-smart-rendering='true']
+  .gantt_ver_scroll,
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-smart-rendering='true']
+  .scrollVer_cell {
+  display: block !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Collapse leftover vendor right spacer (empty layout cell after timeline). */
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-fit-vertical='true']:not([data-gantt-smart-rendering='true'])
+  .gantt_layout_cell.gantt_ver_scroll,
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-fit-vertical='true']:not([data-gantt-smart-rendering='true'])
+  .gantt_layout_cell.scrollVer_cell,
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-fit-vertical='true']
+  .gantt_layout_x
+  > .gantt_layout_cell:last-child:not(.timeline_cell):not(.scrollHor_cell):not(.scrollVer_cell):not(.gantt_ver_scroll) {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+
+/*
+ * Vendor grid/task resizer must not steal pointer events from the React
+ * split divider (1px + 10px hit area) that sits between table and chart panes.
+ */
+[data-schedule-pane='chart'] .gantt_resizer,
+[data-schedule-pane='chart'] .gantt_resizer_x,
+[data-schedule-pane='chart'] .gantt_grid_resize_wrap {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/*
+ * Fit layout cells open for outer Y owner — but:
+ * - never .gantt_hor_scroll (native H scrollbar / scrollLeft);
+ * - .gantt_task must keep overflow-x hidden so vendor scrollTo can pan bars
+ *   via programmatic scrollLeft (overflow:visible makes scrollLeft a no-op).
+ */
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-fit-vertical='true']
+  .gantt_layout_cell:not(.gantt_hor_scroll):not(.scrollHor_cell):not(.gantt_task) {
+  overflow: visible !important;
+}
+
+[data-schedule-scroll-owner] .ppc-gantt-host[data-gantt-fit-vertical='true'] .gantt_task,
+[data-schedule-scroll-owner] .ppc-gantt-host[data-gantt-fit-vertical='true'] .timeline_cell {
+  /*
+   * Both axes hidden. Host height fits all rows → nested Y max stays 0, so the
+   * outer [data-schedule-scroll-owner] owns wheel/PageDown. Do NOT use
+   * overflow-y:visible with overflow-x:hidden — CSS computes y as auto and the
+   * vendor may keep a dead nested scroller / reserved ver gutter.
+   */
+  overflow: hidden !important;
+  width: 100%;
+}
+
+[data-schedule-scroll-owner] .ppc-gantt-host[data-gantt-fit-vertical='true'] .gantt_data_area,
+[data-schedule-scroll-owner] .ppc-gantt-host[data-gantt-fit-vertical='true'] .gantt_task_bg {
+  overflow: hidden !important;
+}
+
+/*
+ * Pin vendor H scrollbar to the visible owner bottom (not end of 100+ rows).
+ * Sticky on .scrollHor_cell (tall parent = .gantt_container). Native H API stays
+ * on .gantt_hor_scroll (scrollLeft / scroll / gantt.scrollTo).
+ */
+[data-schedule-scroll-owner] .ppc-gantt-host[data-gantt-fit-vertical='true'] .scrollHor_cell {
+  position: sticky !important;
+  bottom: 0;
+  z-index: 6;
+  overflow: visible !important;
+  background: var(--surface-raised);
+}
+
+[data-schedule-scroll-owner]
+  .ppc-gantt-host[data-gantt-fit-vertical='true']
+  .scrollHor_cell
+  > .gantt_layout_content {
+  overflow: visible !important;
+}
+
+[data-schedule-scroll-owner] .ppc-gantt-host[data-gantt-fit-vertical='true'] .gantt_hor_scroll {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  background: var(--surface-raised);
+}
+
+[data-schedule-scroll-owner] .ppc-gantt-host[data-gantt-fit-vertical='true'] .gantt_task_scale {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
 .baseline-overlay-bar {
   background: var(--text-muted);
   border-radius: 2px;
@@ -190,18 +361,23 @@
   box-sizing: border-box;
 }
 
-/* Forecast primary — use border token as fill in Dark for stronger marker weight. */
-.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-ontrack .gantt_task_content {
-  background: var(--status-ok-fg);
+/*
+ * Forecast primary. Assumption: ok FILL uses --status-ok-border (a saturated green);
+ * --status-ok-fg is a text-contrast token and stays untouched.
+ */
+.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-ontrack .gantt_task_content,
+.ppc-gantt-host .gantt_task_line.ppc-role-baseline.ppc-eq-ontrack .gantt_task_content {
+  background: var(--status-ok-border);
   border-color: var(--status-ok-border);
   border-radius: 999px;
   transform: translate(-50%, -50%);
 }
 
 /* Green milestone: filled diamond. Not a one-day work rectangle. */
-.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-green .gantt_task_content {
-  background: var(--status-ok-fg);
-  border-color: var(--status-ok-border);
+.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-green .gantt_task_content,
+.ppc-gantt-host .gantt_task_line.ppc-role-baseline.ppc-ms-green .gantt_task_content {
+  background: var(--schedule-fill-ok);
+  border-color: var(--schedule-fill-ok);
   border-style: solid;
   border-width: 1px;
   border-radius: 1px;
@@ -209,7 +385,8 @@
 }
 
 /* Red / incomplete milestone: outline diamond. */
-.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-red .gantt_task_content {
+.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-red .gantt_task_content,
+.ppc-gantt-host .gantt_task_line.ppc-role-baseline.ppc-ms-red .gantt_task_content {
   background: var(--surface-raised);
   border-color: var(--status-danger-border);
   border-style: solid;
@@ -218,7 +395,8 @@
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-delayed .gantt_task_content {
+.ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-delayed .gantt_task_content,
+.ppc-gantt-host .gantt_task_line.ppc-role-baseline.ppc-eq-delayed .gantt_task_content {
   background: var(--status-danger-fg);
   border-color: var(--status-danger-border);
   border-radius: 1px;
@@ -226,18 +404,22 @@
 }
 
 [data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-ontrack .gantt_task_content,
-[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-green .gantt_task_content {
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-green .gantt_task_content,
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-baseline.ppc-eq-ontrack .gantt_task_content,
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-baseline.ppc-ms-green .gantt_task_content {
   background: var(--status-ok-border);
   border-color: var(--status-ok-fg);
 }
 
-[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-delayed .gantt_task_content {
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-eq-delayed .gantt_task_content,
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-baseline.ppc-eq-delayed .gantt_task_content {
   background: var(--status-danger-border);
   border-color: var(--status-danger-fg);
 }
 
 /* Dark theme keeps the red milestone as an outline, not a filled marker. */
-[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-red .gantt_task_content {
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-forecast.ppc-ms-red .gantt_task_content,
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-role-baseline.ppc-ms-red .gantt_task_content {
   background: var(--surface);
   border-color: var(--status-danger-fg);
 }
@@ -257,10 +439,18 @@
  * Work bars (type: 'task'). The generic `.gantt_task_content` rule above is
  * sized for point markers; bars reset it so the line itself is the visual.
  */
+/*
+ * Reference style: thin ~8px bars, grass-green outline, white hollow remainder,
+ * filled progress from the left. No end-tick/cap. Semantic warn/danger on problems.
+ */
 .ppc-gantt-host .gantt_task_line.ppc-work {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  height: 8px !important;
+  min-height: 8px;
+  border: 1px solid var(--schedule-fill-ok);
+  border-radius: 2px;
   box-shadow: none;
+  background: #ffffff;
+  box-sizing: border-box;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work .gantt_task_content {
@@ -277,62 +467,61 @@
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-waiting {
-  background: var(--status-warn-bg);
-  border-color: var(--status-warn-border);
-  color: var(--status-warn-fg);
+  border-color: var(--schedule-fill-warn);
+  background: #ffffff;
+  color: transparent;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-onschedule {
-  background: var(--status-info-bg);
-  border-color: var(--status-info-border);
-  color: var(--status-info-fg);
+  border-color: var(--schedule-fill-ok);
+  background: #ffffff;
+  color: transparent;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-delayed {
-  background: var(--status-danger-bg);
-  border-color: var(--status-danger-border);
-  color: var(--status-danger-fg);
+  border-color: var(--schedule-fill-danger);
+  background: #ffffff;
+  color: transparent;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-completed {
-  background: var(--status-ok-bg);
-  border-color: var(--status-ok-border);
-  color: var(--status-ok-fg);
+  border-color: var(--schedule-fill-ok);
+  background: var(--schedule-fill-ok);
+  color: transparent;
 }
 
-/*
- * Known 0%: hollow forecast track (status border stays) and a zero-width
- * progress edge. Unknown progress keeps the status fill and hides the slab.
- */
 .ppc-gantt-host .gantt_task_line.ppc-work.ppc-progress-zero {
-  background: transparent;
+  background: #ffffff;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-progress-zero .gantt_task_progress {
   background: transparent;
-  border-right: 2px solid var(--text);
-  box-sizing: content-box;
+  border: none;
+  width: 0 !important;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-progress-zero .gantt_task_progress_wrapper {
-  overflow: visible;
+  overflow: hidden;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-waiting.ppc-progress-known .gantt_task_progress {
-  background: var(--status-warn-fg);
+  background: var(--schedule-fill-warn);
+  border: none;
 }
 
-/* On-schedule work: the track stays info; the known-progress fill is the green ok token. */
 .ppc-gantt-host .gantt_task_line.ppc-work-onschedule.ppc-progress-known .gantt_task_progress {
-  background: var(--status-ok-fg);
+  background: var(--schedule-fill-ok);
+  border: none;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-delayed.ppc-progress-known .gantt_task_progress {
-  background: var(--status-danger-fg);
+  background: var(--schedule-fill-danger);
+  border: none;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-work-completed.ppc-progress-known .gantt_task_progress {
-  background: var(--status-ok-fg);
+  background: var(--schedule-fill-ok);
+  border: none;
 }
 
 /*
@@ -340,29 +529,29 @@
  * fill plus a text-colored border, still not the vendor project green.
  */
 .ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary {
-  height: 16px !important;
-  min-height: 16px;
-  /* Re-center in the 32px row: default layout assumes 8px bar (offset 12); 16px needs offset 8. */
-  margin-top: -4px;
+  height: 10px !important;
+  min-height: 10px;
+  margin-top: -1px;
   box-sizing: border-box;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-summary {
-  background: var(--text-secondary);
-  border: 1px solid var(--text);
-  border-radius: var(--radius-sm);
+  /* Reference: near-black summary bracket. */
+  background: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  border-radius: 1px;
   box-shadow: none;
   color: transparent;
-  --dhx-gantt-task-background: var(--text-secondary);
-  --dhx-gantt-project-background: var(--text-secondary);
+  --dhx-gantt-task-background: #1a1a1a;
+  --dhx-gantt-project-background: #1a1a1a;
 }
 
 [data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-summary {
-  background: var(--surface-sunken);
-  border-color: var(--text);
-  color: var(--text);
-  --dhx-gantt-task-background: var(--surface-sunken);
-  --dhx-gantt-project-background: var(--surface-sunken);
+  background: #e8eef2;
+  border-color: #e8eef2;
+  color: transparent;
+  --dhx-gantt-task-background: #e8eef2;
+  --dhx-gantt-project-background: #e8eef2;
 }
 
 .ppc-gantt-host .gantt_task_line.ppc-summary .gantt_task_content {
@@ -378,21 +567,22 @@
   overflow: hidden;
 }
 
-/* Typed dependency links — single token for shaft, corners, and icon arrow (::before). */
+/* Typed dependency links — thin neutral grey orthogonal shafts + short arrows. */
 .ppc-gantt-host .gantt_task_link .gantt_line_wrapper div {
-  background-color: var(--text-muted) !important;
+  background-color: #8a93a0 !important;
 }
 
 .ppc-gantt-host .gantt_task_link .gantt_link_corner {
-  border-color: var(--text-muted) !important;
+  border-color: #8a93a0 !important;
+  border-radius: 2px;
 }
 
 .ppc-gantt-host .gantt_task_link .gantt_link_arrow {
-  color: var(--text-muted) !important;
+  color: #8a93a0 !important;
 }
 
 .ppc-gantt-host .gantt_task_link .gantt_link_arrow::before {
-  color: var(--text-muted) !important;
+  color: #8a93a0 !important;
 }
 
 .ppc-gantt-host .gantt_task_link:hover,
@@ -400,11 +590,17 @@
 .ppc-gantt-host .gantt_task_link:hover .gantt_link_corner,
 .ppc-gantt-host .gantt_task_link:hover .gantt_link_arrow,
 .ppc-gantt-host .gantt_task_link:hover .gantt_link_arrow::before {
-  --dhx-gantt-link-background: var(--text-muted);
-  --dhx-gantt-link-background-hover: var(--text-muted);
-  color: var(--text-muted) !important;
-  border-color: var(--text-muted) !important;
-  background-color: var(--text-muted) !important;
+  --dhx-gantt-link-background: #6b7785;
+  --dhx-gantt-link-background-hover: #6b7785;
+  color: #6b7785 !important;
+  border-color: #6b7785 !important;
+  background-color: #6b7785 !important;
+}
+
+/* Shared logical-row hover (table + chart), not selected state. */
+.ppc-gantt-host .gantt_task_row[data-schedule-row-hover='true'],
+.ppc-gantt-host .gantt_task_bg .gantt_task_row[data-schedule-row-hover='true'] {
+  background: var(--schedule-row-hover) !important;
 }
 
 .ppc-gantt-host .gantt_task_link .gantt_link_arrow_right,

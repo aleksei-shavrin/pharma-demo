@@ -1,12 +1,23 @@
 import { SNAPSHOT_IDS } from '../snapshot/snapshot-id';
-import { WORKSTREAM_IDS, WORKSTREAM_NAME_RU, WORKSTREAM_SORT_ORDER } from '../data/workstream-ids';
+import {
+  WORKSTREAM_IDS,
+  WORKSTREAM_NAME_RU,
+  WORKSTREAM_SORT_ORDER,
+} from '../data/workstream-ids';
 import {
   DEMO_PROJECT_BAC_RUB,
   DEMO_PROJECT_CONTINGENCY_TOTAL_RUB,
 } from './money';
 import { R2_CONTRACT_EXTRA_MODELS } from './r2-extra-models';
-import { NOTIFICATION_SEVERITIES, NOTIFICATION_TAXONOMIES } from './dto/notification.dto';
-import type { PersonDto, PersonListDto, PersonDetailDto } from './dto/person.dto';
+import {
+  NOTIFICATION_SEVERITIES,
+  NOTIFICATION_TAXONOMIES,
+} from './dto/notification.dto';
+import type {
+  PersonDto,
+  PersonListDto,
+  PersonDetailDto,
+} from './dto/person.dto';
 import type {
   WorkstreamCatalogItemDto,
   WorkstreamDetailDto,
@@ -18,7 +29,10 @@ import type {
   ProjectCostsOverviewDto,
   WorkstreamCostDto,
 } from './dto/cost.dto';
-import type { NotificationDto, NotificationListDto } from './dto/notification.dto';
+import type {
+  NotificationDto,
+  NotificationListDto,
+} from './dto/notification.dto';
 
 describe('R2-C1 contract shapes', () => {
   it('registers OpenAPI extraModels for R2 entities', () => {
@@ -158,14 +172,16 @@ describe('R2-C1 contract shapes', () => {
         projectLevelForecastRub: DEMO_PROJECT_CONTINGENCY_TOTAL_RUB,
       },
     };
-    expect(overview.project.eacRub).toBe(overview.project.actualCostRub + overview.project.etcRub);
+    expect(overview.project.eacRub).toBe(
+      overview.project.actualCostRub + overview.project.etcRub,
+    );
     expect(overview.project.eacRub).toBe(
       overview.reconciliation.workstreamEacSumRub +
         overview.reconciliation.projectLevelForecastRub,
     );
-    expect(Object.values(overview.project).every((v) => Number.isInteger(v))).toBe(
-      true,
-    );
+    expect(
+      Object.values(overview.project).every((v) => Number.isInteger(v)),
+    ).toBe(true);
   });
 
   it('Notification contract shape: read-model only', () => {

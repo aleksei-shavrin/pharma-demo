@@ -1,31 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { ProgramListView } from '@/components/portfolio/portfolio-views';
+import {
+  PageListError,
+  PageListLoading,
+} from '@/components/shell/page-list-states';
 import { fetchProgramList } from '@/lib/api-client';
-import { useSnapshot } from '@/lib/snapshot/snapshot-context';
+import { useSnapshotResource } from '@/lib/snapshot/use-snapshot-resource';
 
 export default function ProgramsPage() {
-  const { active, status } = useSnapshot();
-  const [items, setItems] = useState<
-    { id: string; name: string; status: 'Green' | 'Yellow' | 'Red' }[]
-  >([]);
+  const fetcher = useCallback(
+    (projectId: string, snapshotId: Parameters<typeof fetchProgramList>[1]) =>
+      fetchProgramList(projectId, snapshotId),
+    [],
+  );
+  const { data, status, error, retry } = useSnapshotResource(fetcher);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    let cancelled = false;
-    void fetchProgramList('PRJ-01', active)
-      .then((payload) => {
-        if (!cancelled) setItems(payload.items);
-      })
-      .catch((error: unknown) => {
-        console.error('[ProgramsPage] Failed to load programs:', error);
-        if (!cancelled) setItems([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [active, status]);
-
-  return <ProgramListView items={items} />;
+  if (status === 'loading') return <PageListLoading label="Загрузка программ" />;
+  if (status === 'error') {
+    return (
+      <PageListError message={error ?? 'Не удалось загрузить программы'} onRetry={retry} />
+    );
+  }
+  return <ProgramListView items={data?.items ?? []} />;
 }

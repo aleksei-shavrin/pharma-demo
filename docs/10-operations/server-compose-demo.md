@@ -5,11 +5,12 @@ type: delivery
 status: draft
 version: 0.3.0
 created: '2026-11-05'
-updated: '2026-11-06'
+updated: '2026-11-07'
 owner: docs-engineering
 related:
   - DOC-ADR-0005
   - DOC-OPS-002
+  - DOC-OPS-FORM-LOGIN-001
 ---
 # Server Compose Demo
 
@@ -71,6 +72,18 @@ Browser вызывает API только как `/backend/...` на **том ж
 
 На целевом сервере с меньшим RAM ограничьте параллелизм BuildKit и заложите запас диска под layers.
 
+## Auth bootstrap (после form-login)
+
+Перед первым `server:up` создайте **отдельные** server secrets (не DX `.env.dev-auth`):
+
+```bash
+npm run server:auth:ensure
+# gitignored: .env.server-auth, .server-login-password, .server-login-password-hash
+# report password path only: .server-login-password
+```
+
+`PUBLIC_ORIGIN` / `WEB_ORIGIN` в `.env` = URL браузера. Caddy снимает клиентский `X-Middleware-Subrequest` и выставляет `X-Real-IP` на `/backend`. Подробнее: [demo-form-login](./demo-form-login.md).
+
 ## Запуск (основной способ — Docker Compose)
 
 ```bash
@@ -81,8 +94,9 @@ cp .env.example .env
 #   WEB_ORIGIN=http://SERVER_IP:8080
 #   PUBLIC_ORIGIN=http://SERVER_IP:8080
 # Префиксы оставьте как в примере: /backend и /docs/
-
-docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
+npm run server:auth:ensure
+npm run server:up
+# или: docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
 ```
 
 Логи:

@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import {
   RegisterCell,
@@ -25,13 +26,15 @@ import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import {
   DEFAULT_REGISTER_FILTERS,
   filtersActive,
+  filtersFromSearchParams,
   matchesSearch,
-  matchesWorkstream,
+  matchesProgram,
+  searchParamsFromFilters,
   type RegisterFilterState,
 } from '@/lib/registers/register-filters';
+import { programLabelForWorkstream } from '@/lib/registers/program-filter';
 import { useRegisterQuery } from '@/lib/registers/use-register-query';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
-import { presentWorkstream } from '@/lib/ui-labels';
 
 function isAttention(item: EquipmentRegister['items'][number]): boolean {
   return item.status === 'Delayed';
@@ -49,26 +52,47 @@ function sortEquipment(
   });
 }
 
-export default function EquipmentPage() {
+function EquipmentPage() {
   const { active } = useSnapshot();
   const { data, status, error, retry } = useRegisterQuery(fetchEquipmentRegister);
-  const [filters, setFilters] = useState<RegisterFilterState>(
-    DEFAULT_REGISTER_FILTERS,
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [filters, setFilters] = useState<RegisterFilterState>(() =>
+    filtersFromSearchParams(new URLSearchParams(searchParams.toString())),
   );
 
-  const reset = () => setFilters(DEFAULT_REGISTER_FILTERS);
+  const searchKey = searchParams.toString();
+  useEffect(() => {
+    setFilters(filtersFromSearchParams(new URLSearchParams(searchKey)));
+  }, [searchKey]);
+
+  const applyFilters = (next: RegisterFilterState) => {
+    setFilters(next);
+    const q = searchParamsFromFilters(next).toString();
+    router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+  };
+
+  const reset = () => applyFilters(DEFAULT_REGISTER_FILTERS);
 
   const filtered = useMemo(() => {
     if (!data) return [];
     return sortEquipment(
       data.items.filter((item) => {
+        if (filters.critical === '1' && !item.critical) return false;
+        if (
+          filters.equipmentStatus !== 'all' &&
+          item.status !== filters.equipmentStatus
+        ) {
+          return false;
+        }
         if (filters.attention === 'attention' && !isAttention(item)) {
           return false;
         }
         if (filters.attention === 'normal' && isAttention(item)) {
           return false;
         }
-        if (!matchesWorkstream(filters.workstream, item.workstream)) {
+        if (!matchesProgram(filters.program, item.workstream)) {
           return false;
         }
         return matchesSearch(filters.query, [item.name, item.id]);
@@ -108,7 +132,7 @@ export default function EquipmentPage() {
           />
           <RegisterToolbar
             filters={filters}
-            onChange={setFilters}
+            onChange={applyFilters}
             onReset={reset}
           />
           {filtered.length === 0 && filtersActive(filters) ? (
@@ -118,7 +142,7 @@ export default function EquipmentPage() {
               caption="Реестр оборудования"
               columns={[
                 'Объект',
-                'Направление',
+                'Программа',
                 'Статус',
                 'Базовая дата',
                 'Прогноз',
@@ -135,7 +159,7 @@ export default function EquipmentPage() {
                     id={item.id}
                   />
                   <RegisterCell className="whitespace-nowrap text-[var(--text-secondary)]">
-                    {presentWorkstream(item.workstream)}
+                    {programLabelForWorkstream(item.workstream)}
                   </RegisterCell>
                   <RegisterCell>
                     <StatusPill family="equipment" value={item.status} />
@@ -173,5 +197,13 @@ export default function EquipmentPage() {
         </>
       ) : null}
     </RegisterShell>
+  );
+}
+
+export default function EquipmentPageRoute() {
+  return (
+    <Suspense fallback={<RegisterLoading />}>
+      <EquipmentPage />
+    </Suspense>
   );
 }

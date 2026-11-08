@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { StatusPill } from '@/components/dashboard/status-pill';
 import {
   RegisterCell,
@@ -25,15 +26,17 @@ import { formatDateRu } from '@/lib/format/ru';
 import {
   DEFAULT_REGISTER_FILTERS,
   filtersActive,
+  filtersFromSearchParams,
   matchesSearch,
-  matchesWorkstream,
+  matchesProgram,
+  searchParamsFromFilters,
   type RegisterFilterState,
 } from '@/lib/registers/register-filters';
+import { programLabelForWorkstream } from '@/lib/registers/program-filter';
 import { useRegisterQuery } from '@/lib/registers/use-register-query';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 import {
   presentIssueTitle,
-  presentWorkstream,
   registerRowTypeLabel,
 } from '@/lib/ui-labels';
 
@@ -72,29 +75,55 @@ function displayTitle(row: Row): string {
     : row.title;
 }
 
-export default function IssuesRisksPage() {
+function IssuesRisksPage() {
   const { active } = useSnapshot();
   const { data, status, error, retry } = useRegisterQuery(
     fetchIssuesRisksRegister,
   );
-  const [filters, setFilters] = useState<RegisterFilterState>(
-    DEFAULT_REGISTER_FILTERS,
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [filters, setFilters] = useState<RegisterFilterState>(() =>
+    filtersFromSearchParams(new URLSearchParams(searchParams.toString())),
   );
 
-  const reset = () => setFilters(DEFAULT_REGISTER_FILTERS);
+  const searchKey = searchParams.toString();
+  useEffect(() => {
+    setFilters(filtersFromSearchParams(new URLSearchParams(searchKey)));
+  }, [searchKey]);
+
+  const applyFilters = (next: RegisterFilterState) => {
+    setFilters(next);
+    const q = searchParamsFromFilters(next).toString();
+    router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+  };
+
+  const reset = () => applyFilters(DEFAULT_REGISTER_FILTERS);
 
   const filtered = useMemo(() => {
     if (!data) return [];
     return sortRows(
       data.rows.filter((row) => {
         if (filters.type !== 'all' && row.type !== filters.type) return false;
+        if (filters.issueStatus === 'active') {
+          if (row.type !== 'Issue') return false;
+          if (row.issueStatus !== 'Open' && row.issueStatus !== 'Mitigating') {
+            return false;
+          }
+        }
+        if (filters.issueStatus === 'Closed') {
+          if (row.type !== 'Issue' || row.issueStatus !== 'Closed') return false;
+        }
+        if (filters.rag !== 'all') {
+          if (row.type !== 'Risk' || row.rag !== filters.rag) return false;
+        }
         if (filters.attention === 'attention' && !isAttention(row)) {
           return false;
         }
         if (filters.attention === 'normal' && isAttention(row)) {
           return false;
         }
-        if (!matchesWorkstream(filters.workstream, row.workstream)) {
+        if (!matchesProgram(filters.program, row.workstream)) {
           return false;
         }
         return matchesSearch(filters.query, [
@@ -150,7 +179,7 @@ export default function IssuesRisksPage() {
           />
           <RegisterToolbar
             filters={filters}
-            onChange={setFilters}
+            onChange={applyFilters}
             onReset={reset}
             showType
           />
@@ -162,7 +191,7 @@ export default function IssuesRisksPage() {
               columns={[
                 'Тип',
                 'Объект',
-                'Направление',
+                'Программа',
                 'Статус',
                 'Оборудование',
                 'Связи',
@@ -185,7 +214,7 @@ export default function IssuesRisksPage() {
                     id={row.id}
                   />
                   <RegisterCell className="whitespace-nowrap">
-                    {presentWorkstream(row.workstream)}
+                    {programLabelForWorkstream(row.workstream)}
                   </RegisterCell>
                   <RegisterCell>
                     {row.type === 'Issue' && row.issueStatus ? (
@@ -220,5 +249,13 @@ export default function IssuesRisksPage() {
         </>
       ) : null}
     </RegisterShell>
+  );
+}
+
+export default function IssuesRisksPageRoute() {
+  return (
+    <Suspense fallback={<RegisterLoading />}>
+      <IssuesRisksPage />
+    </Suspense>
   );
 }

@@ -25,7 +25,8 @@ export function ScheduleViewToggle({ mode, onChange }: Props) {
     <div
       role="group"
       aria-label="Режим представления календарного плана"
-      className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-sunken)] p-1"
+      data-schedule-view-toggle="true"
+      className="inline-flex h-8 items-stretch gap-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-sunken)] p-1"
     >
       {MODES.map((m) => {
         const selected = mode === m.id;
@@ -34,11 +35,12 @@ export function ScheduleViewToggle({ mode, onChange }: Props) {
           <button
             key={m.id}
             type="button"
+            title={m.label}
             aria-label={m.label}
             aria-pressed={selected}
             onClick={() => onChange(m.id)}
             className={[
-              'inline-flex size-8 shrink-0 items-center justify-center p-0 outline-none transition-colors',
+              'inline-flex h-6 w-6 shrink-0 items-center justify-center outline-none transition-colors',
               'rounded-[var(--radius-sm)]',
               'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-sunken)]',
               selected

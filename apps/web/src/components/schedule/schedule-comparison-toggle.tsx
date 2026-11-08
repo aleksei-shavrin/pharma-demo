@@ -1,10 +1,16 @@
 'use client';
 
+import { CalendarRange, CircleCheck, TrendingUp } from 'lucide-react';
 import type { ScheduleComparisonMode } from '@/lib/schedule/schedule-comparison';
 
-const MODES: { id: ScheduleComparisonMode; label: string }[] = [
-  { id: 'forecast', label: 'Базовый план / прогноз' },
-  { id: 'actual', label: 'Базовый план / факт' },
+const MODES: {
+  id: ScheduleComparisonMode;
+  label: string;
+  Icon: typeof TrendingUp;
+}[] = [
+  { id: 'baseline', label: 'Базовый план', Icon: CalendarRange },
+  { id: 'forecast', label: 'Базовый план / прогноз', Icon: TrendingUp },
+  { id: 'actual', label: 'Базовый план / факт', Icon: CircleCheck },
 ];
 
 type Props = {
@@ -12,25 +18,28 @@ type Props = {
   onChange: (mode: ScheduleComparisonMode) => void;
 };
 
-/** Две пары сравнения. Третья одновременная полоса не включается. */
+/** Три режима; baseline-only — первая кнопка и default. Max 2 bars в compare. */
 export function ScheduleComparisonToggle({ mode, onChange }: Props) {
   return (
     <div
       role="group"
       aria-label="Сравнение полос"
-      className="inline-flex min-h-8 items-stretch gap-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-sunken)] p-1"
+      className="inline-flex h-8 items-stretch gap-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-sunken)] p-1"
       data-schedule-comparison={mode}
     >
       {MODES.map((item) => {
         const selected = mode === item.id;
+        const Icon = item.Icon;
         return (
           <button
             key={item.id}
             type="button"
+            aria-label={item.label}
+            title={item.label}
             aria-pressed={selected}
             onClick={() => onChange(item.id)}
             className={[
-              'flex min-h-8 min-w-0 flex-1 items-center justify-center px-2 py-0 text-center text-xs font-medium leading-tight outline-none transition-colors',
+              'inline-flex h-6 w-6 shrink-0 items-center justify-center outline-none transition-colors',
               'rounded-[var(--radius-sm)]',
               'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-sunken)]',
               selected
@@ -38,7 +47,7 @@ export function ScheduleComparisonToggle({ mode, onChange }: Props) {
                 : 'text-[var(--text-secondary)] hover:bg-[var(--interactive)] hover:text-[var(--text)]',
             ].join(' ')}
           >
-            {item.label}
+            <Icon className="size-[18px]" aria-hidden />
           </button>
         );
       })}

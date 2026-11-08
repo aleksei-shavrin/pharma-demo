@@ -94,9 +94,11 @@ describe('WorkstreamsService (R2-W1)', () => {
     expect(hvac.equipmentIds).toContain('EQ-HVAC-01');
     expect(hvac.issueIds).toContain('ISS-001');
     expect(hvac.riskIds).toContain('RISK-001');
-    expect(hvac.equipment.every((e) => e.id.startsWith('EQ-HVAC') || e.id.startsWith('EQ-'))).toBe(
-      true,
-    );
+    expect(
+      hvac.equipment.every(
+        (e) => e.id.startsWith('EQ-HVAC') || e.id.startsWith('EQ-'),
+      ),
+    ).toBe(true);
     for (const eq of hvac.equipment) {
       const cat = SNAPSHOTS.C.equipment.find((e) => e.id === eq.id);
       expect(cat?.workstream).toBe('WS-HVAC');
@@ -118,9 +120,9 @@ describe('WorkstreamsService (R2-W1)', () => {
   it('cost summary matches M1 cost read model; no WS-09 / contingency allocation', () => {
     const listCosts = COST_SNAPSHOTS.A.workstreams;
     expect(listCosts).toHaveLength(8);
-    expect(
-      listCosts.reduce((s, w) => s + w.approvedControlBudgetRub, 0),
-    ).toBe(DEMO_WORKSTREAM_BUDGETS_SUM_RUB);
+    expect(listCosts.reduce((s, w) => s + w.approvedControlBudgetRub, 0)).toBe(
+      DEMO_WORKSTREAM_BUDGETS_SUM_RUB,
+    );
 
     for (const id of WORKSTREAM_IDS) {
       const detail = service.getDetail('PRJ-01', id, 'A');

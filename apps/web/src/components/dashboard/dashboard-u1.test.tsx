@@ -1,6 +1,20 @@
 /** @vitest-environment jsdom */
-import { cleanup, render, screen, within } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import { useEffect, useState, type ComponentType } from 'react';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import { DashboardView } from '@/components/dashboard/dashboard-view';
 import { WorkstreamStatusMatrix } from '@/components/dashboard/workstream-readiness';
@@ -11,8 +25,12 @@ import {
   EXECUTIVE_TIMELINE_SHORT_LABEL,
   requireExecutiveShortLabel,
 } from '@/lib/dashboard/executive-timeline-ids';
-import { resolveExecutiveMilestones } from '@/lib/dashboard/executive-timeline';
+import {
+  resolveExecutiveMilestones,
+  resolveProductionStartBand,
+} from '@/lib/dashboard/executive-timeline';
 import { DASHBOARD_LOWER_GRID_ATTR } from '@/lib/dashboard/dashboard-layout';
+import { formatDateRu } from '@/lib/format/ru';
 
 const fetchDashboardOverview = vi.fn();
 const fetchProjectCosts = vi.fn();
@@ -32,6 +50,87 @@ vi.mock('@/lib/api-client', async () => {
     fetchHealth: vi.fn(),
   };
 });
+
+vi.mock('next/dynamic', () => ({
+  default: (
+    loader: () => Promise<
+      | ComponentType<{ model: { snapshotId: string; band: { deltaLabel: string; baselineDate: string; forecastDate: string; coincident: boolean } }; milestoneMeta: unknown }>
+      | {
+          default: ComponentType<{
+            model: {
+              snapshotId: string;
+              band: {
+                deltaLabel: string;
+                baselineDate: string;
+                forecastDate: string;
+                coincident: boolean;
+              };
+            };
+            milestoneMeta: unknown;
+          }>;
+        }
+    >,
+  ) => {
+    function Lazy(props: {
+      model: {
+        snapshotId: string;
+        band: {
+          deltaLabel: string;
+          baselineDate: string;
+          forecastDate: string;
+          coincident: boolean;
+        };
+      };
+      milestoneMeta: unknown;
+    }) {
+      const [Comp, setComp] = useState<ComponentType<{
+        model: typeof props.model;
+        milestoneMeta: unknown;
+      }> | null>(null);
+      useEffect(() => {
+        void loader().then((mod) => {
+          const resolved =
+            typeof mod === 'function' ? mod : mod.default;
+          setComp(() => resolved);
+        });
+      }, []);
+      if (!Comp) return <div data-testid="dynamic-loading" />;
+      return <Comp {...props} />;
+    }
+    return Lazy;
+  },
+}));
+
+vi.mock('./executive-timeline-echarts', () => ({
+  ExecutiveTimelineEcharts: ({
+    model,
+  }: {
+    model: {
+      snapshotId: string;
+      band: {
+        deltaLabel: string;
+        baselineDate: string;
+        forecastDate: string;
+        coincident: boolean;
+      };
+      textSummary?: string;
+    };
+  }) => (
+    <div
+      data-timeline-renderer="echarts"
+      data-timeline-layout="experiment-echarts-lanes"
+      data-testid="echarts-renderer"
+    >
+      <div data-snapshot-label>Дата снимка</div>
+      <div data-timeline-ps-legend="true">
+        План запуска: {formatDateRu(model.band.baselineDate)} Прогноз:{' '}
+        {formatDateRu(model.band.forecastDate)} Δ: {model.band.deltaLabel}
+        {model.band.coincident ? ' По плану' : ''}
+      </div>
+      <div role="img" aria-label={model.textSummary ?? `echarts:${model.snapshotId}`} />
+    </div>
+  ),
+}));
 
 function renderView(snapshotId: SnapshotId) {
   return render(
@@ -223,7 +322,7 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     expect(document.querySelector('[data-ps-achieved]')).toBeTruthy();
   });
 
-  it('stable executive map A/O/S: same 12 IDs + deliberate short labels', () => {
+  it('stable executive map A/O/S: same 12 IDs + deliberate short labels', async () => {
     const expected = [
       'MS-BLD-EXC',
       'MS-CLN-PANEL',
@@ -251,32 +350,29 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     const stripA = document.querySelector(
       '[data-dashboard-block="executive-timeline"]',
     )!;
-    expect(stripA.querySelector('[data-milestone-label="MS-BLD-EXC"]')).toBeTruthy();
-    expect(stripA.querySelector('[data-milestone-label="MS-COM-GO"]')).toBeTruthy();
-    expect(stripA.querySelector('[data-milestone-label="MS-PS"]')).toBeTruthy();
-    expect(stripA.textContent).toMatch(/Котлован/);
-    expect(stripA.textContent).toMatch(/Контур здания/);
-    expect(stripA.textContent).toMatch(/Решение о запуске/);
+    expect(stripA.querySelector('[data-timeline-scope-filter]')).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        stripA.querySelector('[data-timeline-renderer="echarts"]'),
+      ).toBeTruthy();
+    });
+    expect(stripA.querySelector('[data-timeline-renderer-toggle]')).toBeNull();
+    expect(stripA.textContent).toMatch(/Предпроект|План запуска/);
     expect(stripA.textContent).not.toMatch(/Go\/No-Go/);
-    expect(stripA.textContent).toMatch(/Готовность HVAC/);
-    expect(stripA.textContent).toMatch(/Вода WFI/);
-    expect(stripA.textContent).toMatch(/SAT упаковки/);
-    expect(stripA.textContent).toMatch(/Квалификация OQ/);
-    expect(stripA.textContent).toMatch(/Запуск производства/);
     cleanup();
 
     renderView('O');
     const strip = document.querySelector(
       '[data-dashboard-block="executive-timeline"]',
     )!;
-    expect(strip.querySelector('[data-milestone-label="MS-BLD-EXC"]')).toBeTruthy();
-    expect(strip.querySelector('[data-ps-cluster]')).toBeTruthy();
-    expect(strip.querySelector('[data-milestone-label="MS-PS"]')).toBeTruthy();
-    expect(
-      strip.querySelector('[data-milestone-label="MS-COM-GO"]'),
-    ).toBeTruthy();
-    expect(strip.querySelector('[data-marker-stem="true"]')).toBeTruthy();
-    expect(strip.querySelector('[data-stem-attached="marker"]')).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        strip.querySelector('[data-timeline-ps-legend="true"]'),
+      ).toBeTruthy();
+    });
+    expect(strip.querySelector('[data-timeline-ps-legend]')?.textContent).toMatch(
+      /\+7/,
+    );
 
     const points = resolveExecutiveMilestones(dashboardOverviewFixture('A'));
     for (const p of points) {
@@ -290,101 +386,59 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     );
   });
 
-  it('R2-U1-R9: PS cluster on S — actual, historical +7, Green project', () => {
+  it('R2-U1-R9: PS legend on S — historical +7, Green project', async () => {
     renderView('S');
-    const track = document.querySelector('[data-timeline-track]')!;
-    expect(track).toHaveAttribute('data-timeline-layout', 'r2-u1-r9');
-    expect(track.className).toMatch(/overflow-x-hidden/);
-    expect(track.className).not.toMatch(/overflow-x-auto/);
-
-    const snap = document.querySelector('[data-snapshot-label]')!;
-    expect(snap).toHaveAttribute('data-label-lane', '2');
-    expect(snap).toHaveAttribute('data-label-side', 'above');
-
-    const clusters = document.querySelectorAll('[data-ps-cluster]');
-    expect(clusters).toHaveLength(1);
-    const cluster = clusters[0]!;
-    expect(cluster).toHaveAttribute('data-ps-cluster-state', 'actual');
-    expect(cluster).toHaveAttribute('data-ps-delta-tone', 'historical');
-    expect(cluster.textContent).toMatch(/Запуск производства/);
-    expect(cluster.textContent).toMatch(/План 15\.09\.2027/);
-    expect(cluster.textContent).toMatch(/факт 22\.09\.2027/);
-    expect(cluster.textContent).toMatch(/\+7 дней/);
-    expect(cluster.textContent).not.toMatch(/прогноз/i);
-    expect(
-      document.querySelectorAll('[data-timeline-marker="ps-baseline"]'),
-    ).toHaveLength(0);
-    expect(
-      document.querySelectorAll('[data-timeline-marker="ps-forecast"]'),
-    ).toHaveLength(0);
-    expect(
-      document.querySelector('[data-ps-connector="baseline-current"]'),
-    ).toBeTruthy();
-    const stem = document.querySelector('[data-ps-cluster-stem]');
-    expect(stem).toBeTruthy();
-    expect(stem).toHaveAttribute('data-ps-leader-attached', 'current');
-    expect(
-      document.querySelector('[data-milestone-label="MS-COM-GO"]'),
-    ).toBeTruthy();
-    expect(
-      document.querySelector('[data-ps-delta-line]')?.className,
-    ).not.toMatch(/status-danger/);
-    // Achieved S remains overall Green — historical +7 must not read as active danger.
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-timeline-renderer="echarts"]'),
+      ).toBeTruthy();
+    });
+    expect(document.querySelector('[data-snapshot-label]')).toBeTruthy();
+    const legend = document.querySelector('[data-timeline-ps-legend]')!;
+    expect(legend.textContent).toMatch(/15\.09\.2027/);
+    expect(legend.textContent).toMatch(/22\.09\.2027/);
+    expect(legend.textContent).toMatch(/\+7/);
+    const band = resolveProductionStartBand(dashboardOverviewFixture('S'));
+    expect(band.deltaDays).toBe(7);
     expect(
       document.querySelector('[data-summary-zone="condition"]')?.textContent,
     ).toMatch(/Зелён/i);
   });
 
-  it('R2-U1-R9: O delayed PS cluster — forecast, connector, leader attached', () => {
+  it('R2-U1-R9: O delayed PS legend — forecast +7', async () => {
     renderView('O');
-    const clusters = document.querySelectorAll('[data-ps-cluster]');
-    expect(clusters).toHaveLength(1);
-    const cluster = clusters[0]!;
-    expect(cluster).toHaveAttribute('data-ps-cluster-state', 'forecast');
-    expect(cluster).toHaveAttribute('data-ps-delta-tone', 'active');
-    expect(cluster.textContent).toMatch(/Запуск производства/);
-    expect(cluster.textContent).toMatch(/План 15\.09\.2027/);
-    expect(cluster.textContent).toMatch(/прогноз 22\.09\.2027/);
-    expect(cluster.textContent).toMatch(/\+7 дней/);
-    expect(document.querySelector('[data-ps-baseline-marker="true"]')).toBeTruthy();
-    expect(document.querySelector('[data-ps-current-marker="true"]')).toBeTruthy();
-    expect(document.querySelector('[data-ps-forecast-marker="true"]')).toBeTruthy();
-    expect(
-      document.querySelector('[data-ps-connector="baseline-current"]'),
-    ).toBeTruthy();
-    const stem = document.querySelector('[data-ps-cluster-stem]');
-    expect(stem).toHaveAttribute('data-ps-leader-attached', 'current');
-    expect(document.querySelector('[data-ps-cluster-label]')).toBeTruthy();
-    expect(document.querySelector('[data-ps-delta-label]')?.textContent).toMatch(
-      /\+7 дней/,
-    );
-    expect(document.querySelector('[data-timeline-marker="ps-baseline"]')).toBeNull();
-    expect(document.querySelector('[data-timeline-marker="ps-forecast"]')).toBeNull();
-    expect(
-      document.querySelector('[data-milestone-label="MS-COM-GO"]')?.textContent,
-    ).toMatch(/Решение о запуске/);
-    expect(
-      document.querySelector('[data-milestone-label="MS-COM-GO"]'),
-    ).toHaveAttribute('data-label-side', 'above');
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-timeline-ps-legend]'),
+      ).toBeTruthy();
+    });
+    const legend = document.querySelector('[data-timeline-ps-legend]')!;
+    expect(legend.textContent).toMatch(/15\.09\.2027/);
+    expect(legend.textContent).toMatch(/22\.09\.2027/);
+    expect(legend.textContent).toMatch(/\+7/);
+    const band = resolveProductionStartBand(dashboardOverviewFixture('O'));
+    expect(band.coincident).toBe(false);
+    expect(band.deltaDays).toBe(7);
+    const points = resolveExecutiveMilestones(dashboardOverviewFixture('O'));
+    expect(points.some((p) => p.id === 'MS-COM-GO')).toBe(true);
   });
 
-  it('R2-U1-R9: coincident A — one point, no connector, По плану, no +0', () => {
+  it('R2-U1-R9: coincident A — по плану, no +0', async () => {
     renderView('A');
-    const cluster = document.querySelector('[data-ps-cluster]')!;
-    expect(cluster).toHaveAttribute('data-ps-cluster-state', 'baseline');
-    expect(cluster).toHaveAttribute('data-ps-delta-tone', 'none');
-    expect(cluster.textContent).toMatch(/Запуск производства/);
-    expect(cluster.textContent).toMatch(/По плану/);
-    expect(cluster.textContent).toMatch(/15\.09\.2027/);
-    expect(cluster.textContent).not.toMatch(/\+0/);
-    expect(document.querySelector('[data-ps-connector]')).toBeNull();
-    expect(document.querySelectorAll('[data-ps-current-marker]')).toHaveLength(1);
-    expect(
-      document.querySelector('[data-ps-forecast-marker="coincident"]'),
-    ).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-timeline-ps-legend]'),
+      ).toBeTruthy();
+    });
+    const legend = document.querySelector('[data-timeline-ps-legend]')!;
+    expect(legend.textContent).toMatch(/По плану|по плану/i);
+    expect(legend.textContent).toMatch(/15\.09\.2027/);
+    expect(legend.textContent).not.toMatch(/\+0/);
+    const band = resolveProductionStartBand(dashboardOverviewFixture('A'));
+    expect(band.coincident).toBe(true);
   });
 
-  it('R2-U1-R7: single lower grid siblings + bounded pair scroll', () => {
+  it('R2-U1-R7: single lower grid siblings + fill pair scroll', () => {
     renderView('C');
     expect(
       document.querySelector('[data-attention-layout="matrix-2x2"]'),
@@ -400,17 +454,29 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     expect(lower.className).toMatch(/\blg:grid-cols-2\b/);
     expect(lower.className).toMatch(/\bgrid-cols-1\b/);
 
+    const exCard = document.querySelector(
+      '[data-dashboard-block="top-exceptions"]',
+    );
     const exList = document.querySelector('[data-top-exceptions="list"]');
-    expect(exList).toHaveAttribute('data-exceptions-scroll', 'bounded');
+    expect(exCard?.className).toMatch(/max-h-\[28rem\]/);
+    expect(exList).toHaveAttribute('data-exceptions-scroll', 'fill');
     expect(exList?.className).toMatch(/overflow-y-auto/);
-    expect(exList?.getAttribute('style')).toMatch(/14\.25rem/);
+    expect(exList?.className).toMatch(/flex-1/);
+    expect(exList?.className).toMatch(/min-h-0/);
+    expect(exList?.getAttribute('style') ?? '').not.toMatch(/14\.25rem/);
 
     cleanup();
     renderView('G');
+    const decCard = document.querySelector(
+      '[data-dashboard-block="decisions"]',
+    );
     const decisions = document.querySelector('[data-decisions="list"]');
-    expect(decisions).toHaveAttribute('data-decisions-scroll', 'bounded');
+    expect(decCard?.className).toMatch(/max-h-\[28rem\]/);
+    expect(decisions).toHaveAttribute('data-decisions-scroll', 'fill');
     expect(decisions?.className).toMatch(/overflow-y-auto/);
-    expect(decisions?.getAttribute('style')).toMatch(/14\.25rem/);
+    expect(decisions?.className).toMatch(/flex-1/);
+    expect(decisions?.className).toMatch(/min-h-0/);
+    expect(decisions?.getAttribute('style') ?? '').not.toMatch(/14\.25rem/);
   });
 });
 

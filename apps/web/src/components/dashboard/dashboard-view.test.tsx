@@ -2,6 +2,7 @@
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useEffect, useState, type ComponentType } from 'react';
 import type { DashboardOverview } from '@/lib/api-client';
 import { SnapshotProvider } from '@/lib/snapshot/snapshot-context';
 import DashboardPage from '@/app/page';
@@ -11,6 +12,8 @@ import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture'
 import { projectCostFixture } from '@/lib/test/project-cost-fixture';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { selectDemoSnapshot } from '@/lib/test/select-snapshot';
+import { resolveProductionStartBand } from '@/lib/dashboard/executive-timeline';
+import { formatDateRu } from '@/lib/format/ru';
 
 const fetchDashboardOverview = vi.fn();
 const fetchProjectCosts = vi.fn();
@@ -28,6 +31,89 @@ vi.mock('@/lib/api-client', async () => {
     fetchHealth: vi.fn(),
   };
 });
+
+vi.mock('next/dynamic', () => ({
+  default: (
+    loader: () => Promise<
+      | ComponentType<{ model: { snapshotId: string; band: { deltaLabel: string; baselineDate: string; forecastDate: string; coincident: boolean }; textSummary?: string }; milestoneMeta: unknown }>
+      | {
+          default: ComponentType<{
+            model: {
+              snapshotId: string;
+              band: {
+                deltaLabel: string;
+                baselineDate: string;
+                forecastDate: string;
+                coincident: boolean;
+              };
+              textSummary?: string;
+            };
+            milestoneMeta: unknown;
+          }>;
+        }
+    >,
+  ) => {
+    function Lazy(props: {
+      model: {
+        snapshotId: string;
+        band: {
+          deltaLabel: string;
+          baselineDate: string;
+          forecastDate: string;
+          coincident: boolean;
+        };
+        textSummary?: string;
+      };
+      milestoneMeta: unknown;
+    }) {
+      const [Comp, setComp] = useState<ComponentType<{
+        model: typeof props.model;
+        milestoneMeta: unknown;
+      }> | null>(null);
+      useEffect(() => {
+        void loader().then((mod) => {
+          const resolved =
+            typeof mod === 'function' ? mod : mod.default;
+          setComp(() => resolved);
+        });
+      }, []);
+      if (!Comp) return <div data-testid="dynamic-loading" />;
+      return <Comp {...props} />;
+    }
+    return Lazy;
+  },
+}));
+
+vi.mock('./executive-timeline-echarts', () => ({
+  ExecutiveTimelineEcharts: ({
+    model,
+  }: {
+    model: {
+      snapshotId: string;
+      band: {
+        deltaLabel: string;
+        baselineDate: string;
+        forecastDate: string;
+        coincident: boolean;
+      };
+      textSummary?: string;
+    };
+  }) => (
+    <div
+      data-timeline-renderer="echarts"
+      data-timeline-layout="experiment-echarts-lanes"
+      data-testid="echarts-renderer"
+    >
+      <div data-snapshot-label>Дата снимка</div>
+      <div data-timeline-ps-legend="true">
+        План запуска: {formatDateRu(model.band.baselineDate)} Прогноз:{' '}
+        {formatDateRu(model.band.forecastDate)} Δ: {model.band.deltaLabel}
+        {model.band.coincident ? ' По плану' : ''}
+      </div>
+      <div role="img" aria-label={model.textSummary ?? `echarts:${model.snapshotId}`} />
+    </div>
+  ),
+}));
 
 function overview(
   snapshotId: SnapshotId,
@@ -319,11 +405,11 @@ describe('E3 Decisions', () => {
     cleanup();
     renderView('F');
     expect(
-      screen.getByRole('heading', { name: 'Управленческие решения' }),
+      screen.getByRole('heading', { name: 'Решения' }),
     ).toBeInTheDocument();
-    expect(screen.getAllByText('Решение записано').length).toBeGreaterThanOrEqual(
-      1,
-    );
+    expect(screen.getByText(/Записанные решения/)).toBeInTheDocument();
+    expect(screen.queryByText('Решение записано')).not.toBeInTheDocument();
+    expect(document.querySelector('[data-decision-honesty]')).toBeNull();
     expect(
       screen.getAllByText('Приоритизировать восстановление сроков').length,
     ).toBeGreaterThanOrEqual(1);
@@ -332,9 +418,9 @@ describe('E3 Decisions', () => {
     expect(screen.getByText('Фёдоров Сергей Михайлович')).toBeInTheDocument();
     expect(screen.queryByText('Смирнов Павел Андреевич')).not.toBeInTheDocument();
     expect(
-      screen.getByText(/не означает автоматическое устранение/i),
+      screen.getByText(/не снимает отклонение автоматически/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/ещё не устранение задержки/i)).toBeInTheDocument();
+    expect(screen.getByText(/исполнение не отслеживается/i)).toBeInTheDocument();
     expect(
       within(projectStatusBlock()).getByText('Красный'),
     ).toBeInTheDocument();
@@ -369,46 +455,61 @@ describe('E3-R2 Management Attention (in Summary)', () => {
 });
 
 describe('E3-R2 Executive Timeline', () => {
-  it('renders fixed subset with WFI, excludes AUT-BMS; asOf + PS bands', () => {
+  it('renders ECharts card with asOf chrome + PS legend; excludes AUT-BMS from model', async () => {
     renderView('A');
     const strip = document.querySelector(
       '[data-dashboard-block="executive-timeline"]',
     ) as HTMLElement;
     expect(strip).toBeTruthy();
+    await waitFor(() => {
+      expect(strip.querySelector('[data-timeline-renderer="echarts"]')).toBeTruthy();
+    });
     expect(strip.querySelector('[data-snapshot-label]')).toBeTruthy();
-    expect(strip.querySelector('[data-snapshot-marker]')).toBeTruthy();
-    expect(strip.querySelector('[data-milestone-label="MS-UTL-WFI"]')).toBeTruthy();
-
-    expect(strip.querySelector('[data-milestone-label="MS-PS"]')).toBeTruthy();
-    expect(
-      strip.querySelector('[data-milestone-label="MS-AUT-BMS"]'),
-    ).toBeNull();
-    expect(strip.querySelector('[data-ps-delta-label]')).toHaveTextContent(
+    expect(strip.querySelector('[data-timeline-ps-legend]')?.textContent).toMatch(
       /по плану/i,
     );
-    expect(strip.querySelector('[data-ps-variance-span]')).toBeNull();
+    expect(strip.querySelector('[data-timeline-renderer-toggle]')).toBeNull();
+    const idsA = overview('A').executiveMilestoneIds ?? [];
+    expect(idsA).toContain('MS-UTL-WFI');
+    expect(idsA).not.toContain('MS-AUT-BMS');
 
     cleanup();
     renderView('C');
     const stripC = document.querySelector(
       '[data-dashboard-block="executive-timeline"]',
     ) as HTMLElement;
-    expect(stripC.querySelector('[data-ps-variance-span]')).toBeTruthy();
-    expect(stripC.querySelector('[data-ps-delta-label]')).toHaveTextContent(
-      /\+21/,
-    );
-    expect(
-      stripC.querySelector('[data-milestone-marker="MS-BLD-ENCL"]'),
-    ).toHaveAttribute('data-milestone-rag', 'Green');
+    await waitFor(() => {
+      expect(
+        stripC.querySelector('[data-timeline-ps-legend]')?.textContent,
+      ).toMatch(/\+21/);
+    });
+    expect(resolveProductionStartBand(overview('C')).deltaDays).toBe(21);
 
     cleanup();
     renderView('G');
     const stripG = document.querySelector(
       '[data-dashboard-block="executive-timeline"]',
     ) as HTMLElement;
-    expect(stripG.querySelector('[data-ps-delta-label]')).toHaveTextContent(
-      /\+14/,
-    );
+    await waitFor(() => {
+      expect(
+        stripG.querySelector('[data-timeline-ps-legend]')?.textContent,
+      ).toMatch(/\+14/);
+    });
+  });
+
+  it('ECharts host keeps universe chrome; chart body is echarts', async () => {
+    renderView('C');
+    const strip = document.querySelector(
+      '[data-dashboard-block="executive-timeline"]',
+    ) as HTMLElement;
+    expect(strip.querySelector('[data-timeline-scope-filter]')).toBeTruthy();
+    expect(strip.querySelector('[data-timeline-phase-context]')).toBeTruthy();
+    await waitFor(() => {
+      expect(strip.querySelector('[data-timeline-body="echarts"]')).toBeTruthy();
+      expect(
+        strip.querySelector('[data-timeline-layout="experiment-echarts-lanes"]'),
+      ).toBeTruthy();
+    });
   });
 });
 
@@ -433,137 +534,65 @@ describe('E3-R5 Dashboard canvas + timeline interaction', () => {
     ).toBeTruthy();
   });
 
-  it('uses fixed-html marker triggers for approved subset (not SVG polygons)', () => {
+  it('ECharts-only timeline: no strip markers / toggle', async () => {
     renderView('A');
-    const subset = [
-      'MS-BLD-EXC',
-      'MS-CLN-PANEL',
-      'MS-UTL-PWR',
-      'MS-BLD-ENCL',
-      'MS-CLN-RDY',
-      'MS-HVAC-IQ',
-      'MS-UTL-WFI',
-      'MS-PRD-INST',
-      'MS-PKG-SAT',
-      'MS-COM-OQ',
-      'MS-COM-GO',
-      'MS-PS',
-    ];
-    for (const id of subset) {
-      const trigger = document.querySelector(
-        `[data-milestone-marker="${id}"]`,
-      ) as HTMLElement | null;
-      expect(trigger).toBeTruthy();
-      expect(trigger?.tagName).toBe('BUTTON');
+    await waitFor(() => {
       expect(
-        trigger?.closest('[data-marker-geometry="fixed-html"]'),
+        document.querySelector('[data-timeline-renderer="echarts"]'),
       ).toBeTruthy();
-      expect(trigger?.closest('svg')).toBeNull();
-    }
+    });
+    expect(document.querySelector('[data-timeline-renderer-toggle]')).toBeNull();
+    expect(document.querySelector('[data-milestone-marker]')).toBeNull();
+    expect(document.querySelector('[data-ps-cluster]')).toBeNull();
   });
 
-  it('A/B coincident PS; C baseline+forecast +21; G/H +14', () => {
+  it('A/B coincident PS; C baseline+forecast +21; G +14 via legend/model', async () => {
     renderView('A');
-    expect(
-      document.querySelector('[data-ps-forecast-marker="coincident"]'),
-    ).toBeTruthy();
-    expect(document.querySelector('[data-ps-variance-span]')).toBeNull();
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-timeline-ps-legend]')?.textContent,
+      ).toMatch(/по плану/i);
+    });
+    expect(resolveProductionStartBand(overview('A')).coincident).toBe(true);
 
     cleanup();
     renderView('B');
-    expect(
-      document.querySelector('[data-ps-forecast-marker="coincident"]'),
-    ).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-timeline-ps-legend]')?.textContent,
+      ).toMatch(/по плану/i);
+    });
 
     cleanup();
     renderView('C');
-    expect(
-      document.querySelector('[data-ps-baseline-marker="true"]'),
-    ).toBeTruthy();
-    expect(
-      document.querySelector('[data-ps-forecast-marker="true"]'),
-    ).toBeTruthy();
-    expect(
-      document.querySelector('[data-ps-delta-label]'),
-    ).toHaveTextContent(/\+21/);
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-timeline-ps-legend]')?.textContent,
+      ).toMatch(/\+21/);
+    });
+    expect(resolveProductionStartBand(overview('C')).deltaDays).toBe(21);
 
     cleanup();
     renderView('G');
-    expect(
-      document.querySelector('[data-ps-delta-label]'),
-    ).toHaveTextContent(/\+14/);
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-timeline-ps-legend]')?.textContent,
+      ).toMatch(/\+14/);
+    });
   });
 
-  it('focus shows tooltip; click opens popover with entity and schedule links', async () => {
-    const user = userEvent.setup();
+  it('timeline section keeps schedule cross-link', async () => {
     renderView('C');
-    const hvac = document.querySelector(
-      '[data-milestone-marker="MS-HVAC-IQ"]',
-    ) as HTMLButtonElement;
-    expect(hvac).toBeTruthy();
-
-    hvac.focus();
     await waitFor(() => {
-      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-timeline-renderer="echarts"]'),
+      ).toBeTruthy();
     });
-    expect(screen.getByRole('tooltip')).toHaveTextContent(/Готовность HVAC/);
-    expect(screen.getByRole('tooltip')).toHaveTextContent(/В норме/);
-
-    await user.click(hvac);
-    await waitFor(() => {
-      expect(document.querySelector('[data-timeline-popover]')).toBeTruthy();
-    });
-    expect(document.querySelector('[data-timeline-tooltip]')).toBeNull();
-    const pop = document.querySelector(
-      '[data-timeline-popover]',
-    ) as HTMLElement;
-    expect(pop.getAttribute('role')).not.toBe('dialog');
-    expect(within(pop).getByRole('link', { name: /Открыть веху/i })).toHaveAttribute(
-      'href',
-      '/milestones/MS-HVAC-IQ',
-    );
     expect(
-      within(pop).getByRole('link', { name: /Календарный план/i }),
-    ).toHaveAttribute('href', '/schedule');
-    expect(hvac).toHaveAttribute('aria-expanded', 'true');
-  });
-
-  it('keyboard Enter/Space open popover; Escape closes and returns focus; outside closes', async () => {
-    const user = userEvent.setup();
-    renderView('C');
-    const ps = document.querySelector(
-      '[data-ps-forecast-marker="true"]',
-    ) as HTMLButtonElement;
-    ps.focus();
-    await user.keyboard('{Enter}');
-    await waitFor(() => {
-      expect(document.querySelector('[data-timeline-popover]')).toBeTruthy();
-    });
-    let pop = document.querySelector('[data-timeline-popover]') as HTMLElement;
-    expect(pop).toHaveTextContent(/Запуск производства/);
-    expect(pop).toHaveTextContent(/\+21/);
-    expect(within(pop).getByRole('link', { name: /Открыть веху/i })).toHaveAttribute(
-      'href',
-      '/milestones/MS-PS',
-    );
-
-    await user.keyboard('{Escape}');
-    await waitFor(() => {
-      expect(document.querySelector('[data-timeline-popover]')).toBeNull();
-    });
-    expect(document.activeElement).toBe(ps);
-
-    await user.keyboard(' ');
-    await waitFor(() => {
-      expect(document.querySelector('[data-timeline-popover]')).toBeTruthy();
-    });
-    pop = document.querySelector('[data-timeline-popover]') as HTMLElement;
-    expect(pop).toBeTruthy();
-
-    await user.click(document.body);
-    await waitFor(() => {
-      expect(document.querySelector('[data-timeline-popover]')).toBeNull();
-    });
+      document.querySelector(
+        '[data-dashboard-block="executive-timeline"] a[href="/schedule"]',
+      ),
+    ).toBeTruthy();
   });
 });
 

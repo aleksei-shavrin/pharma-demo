@@ -6,10 +6,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  PersonDetailDto,
-  PersonListDto,
-} from '../contracts/dto/person.dto';
+import { PersonDetailDto, PersonListDto } from '../contracts/dto/person.dto';
 import { SNAPSHOT_IDS, type SnapshotId } from '../snapshot/snapshot-id';
 import { SnapshotQueryPipe } from '../snapshot/snapshot-query.pipe';
 import { PeopleService } from './people.service';
@@ -42,8 +39,7 @@ export class PeopleController {
 
   @Get(':id/people/:personId')
   @ApiOperation({
-    summary:
-      'Person detail with responsibility projections (Demo v1 R2-P1)',
+    summary: 'Person detail with responsibility projections (Demo v1 R2-P1)',
   })
   @ApiQuery({
     name: 'snapshot',

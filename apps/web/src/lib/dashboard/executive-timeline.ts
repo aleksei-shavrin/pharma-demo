@@ -2,16 +2,22 @@ import type { DashboardOverview } from '@/lib/api-client';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import {
   EXECUTIVE_TIMELINE_MILESTONE_IDS,
-  requireExecutiveShortLabel,
+  shortLabelForMilestone,
 } from './executive-timeline-ids';
 
 /**
- * Demo horizon covers early execution through Production Start (S: 22.09).
- * R2-U1: end of September 2027 (DOC-PROD-024 close-out).
- * Horizon frozen — do not extend for late-label density.
+ * Full demo horizon: minimal pre-project epoch through Production Start month.
+ * certainty: assumption — source MD has no dates; Feb-only start is infeasible vs PS.
  */
-export const TIMELINE_HORIZON_START = '2027-02-01';
+/** Covers ALAP earliestNecessaryStart (see r6-dating-feasibility). */
+export const TIMELINE_HORIZON_START = '2026-09-01';
 export const TIMELINE_HORIZON_END = '2027-09-30';
+
+/** Phase divider (assumption): pre-project ends; execution preference begins. */
+export const EXECUTION_PHASE_START = '2027-02-01';
+
+/** Bonus overview density — not a substitute for the full 189 universe. */
+export const OVERVIEW_MILESTONE_IDS = EXECUTIVE_TIMELINE_MILESTONE_IDS;
 
 /** Neighbour distance below this (~80px on ~1280px track) triggers side flip. */
 export const LABEL_COLLISION_RATIO = 80 / 1280;
@@ -76,21 +82,20 @@ export type TimelineAnnotationLayout = {
 };
 
 /**
- * Chrome layout (R2-U1-R8): snapshot + reserved PS cluster zone.
- * Baseline/forecast/actual captions are consolidated in ProductionStartCluster —
- * not independent TimelineMarker labels.
+ * Chrome layout (R2-U1-R8): snapshot + reserved PS zone for presentation model.
+ * Dashboard FE renders PS via ECharts legend/endpoints (not a separate cluster component).
  */
 export type TimelineChromeLayout = {
   snapshot: TimelineAnnotationLayout;
   /** Reserved below-right zone for the consolidated PS annotation. */
   psCluster: TimelineAnnotationLayout;
-  /** @deprecated R8 — kept null; use ProductionStartCluster */
+  /** @deprecated R8 — kept null; PS copy lives in ECharts legend */
   baseline: TimelineAnnotationLayout | null;
-  /** @deprecated R8 — kept null; use ProductionStartCluster */
+  /** @deprecated R8 — kept null; PS copy lives in ECharts legend */
   forecast: TimelineAnnotationLayout | null;
-  /** @deprecated R8 — kept null; use ProductionStartCluster */
+  /** @deprecated R8 — kept null; PS copy lives in ECharts legend */
   coincident: TimelineAnnotationLayout | null;
-  /** @deprecated R8 — delta lives inside PS cluster copy */
+  /** @deprecated R8 — delta lives in ECharts PS legend */
   delta: TimelineAnnotationLayout & { band: 'axis-mid' };
 };
 
@@ -145,18 +150,21 @@ const RU_MONTH_SHORT = [
   'дек',
 ] as const;
 
-/** Month starts from Mar 2027 through Sep 2027 inside horizon (Feb at start). */
+/** Month ticks across full horizon (2026-08 → 2027-09). */
 export function timelineMonthTicks(): MonthTick[] {
-  const ticks: MonthTick[] = [
-    { date: TIMELINE_HORIZON_START, ratio: 0, label: RU_MONTH_SHORT[1] },
-  ];
-  for (let month = 2; month <= 8; month += 1) {
-    const date = `2027-${String(month + 1).padStart(2, '0')}-01`;
+  const ticks: MonthTick[] = [];
+  const cursor = new Date(Date.UTC(2026, 8, 1)); // Sep 2026
+  const end = new Date(Date.UTC(2027, 8, 1)); // Sep 2027
+  while (cursor <= end) {
+    const y = cursor.getUTCFullYear();
+    const m = cursor.getUTCMonth();
+    const date = `${y}-${String(m + 1).padStart(2, '0')}-01`;
     ticks.push({
       date,
       ratio: dateToRatio(date),
-      label: RU_MONTH_SHORT[month],
+      label: RU_MONTH_SHORT[m],
     });
+    cursor.setUTCMonth(m + 1);
   }
   return ticks;
 }
@@ -193,7 +201,7 @@ function toTimelinePoint(
   return {
     id,
     name: ms.name,
-    shortLabel: requireExecutiveShortLabel(id),
+    shortLabel: shortLabelForMilestone(id, ms.name),
     rag: ms.rag,
     baselineDate: ms.baselineDate,
     forecastDate: ms.forecastDate,
@@ -516,12 +524,23 @@ export function resolveExecutiveTimelinePresentation(
     }
     points.push(toTimelinePoint(id, ms));
   }
-  points.sort((a, b) => a.ratio - b.ratio || a.id.localeCompare(b.id));
-
+  // Stable scope order = API executiveMilestoneIds (baseline sort); do not
+  // re-order by forecast ratio when presenting the universe list.
   const band = resolveProductionStartBand(data);
   const asOfRatio = dateToRatio(data.scenarioAsOfDate);
   const { chrome, reserved } = buildLateChromeReservations(band, asOfRatio);
-  const slots = applyExecutiveLabelLayout(points, reserved);
+  // Full-horizon universe densifies ratios; skip collision layout here.
+  // Overview density in the strip may still render labeled markers.
+  const slots =
+    points.length <= 12
+      ? applyExecutiveLabelLayout(points, reserved)
+      : points.map((p) => ({
+          key: p.id,
+          side: p.labelSide,
+          lane: p.labelLane,
+          ratio: p.ratio,
+          occupant: p.id,
+        }));
 
   return { points, band, chrome, slots };
 }

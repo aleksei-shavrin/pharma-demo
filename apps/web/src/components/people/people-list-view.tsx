@@ -1,69 +1,117 @@
 'use client';
 
-import Link from 'next/link';
+import { useMemo, useState } from 'react';
 import type { PersonList } from '@/lib/api-client';
 import {
-  PageContent,
-  PageFrame,
-  PageHeader,
-} from '@/components/shell/page-frame';
-import { presentWorkstream } from '@/lib/ui-labels';
+  RegisterCell,
+  RegisterEntityCell,
+  RegisterRow,
+  RegisterShell,
+  RegisterTable,
+} from '@/components/registers/register-table';
+import { programLabelForWorkstream } from '@/lib/registers/program-filter';
 import { formatDateRu } from '@/lib/format/ru';
+import { presentRoleTitleRu } from '@/lib/people/present-role-title';
 
 export function PeopleListView({ data }: { data: PersonList }) {
+  const [query, setQuery] = useState('');
+  const [program, setProgram] = useState('all');
+  const q = query.trim().toLowerCase();
+
+  const programs = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of data.items) {
+      if (p.primaryWorkstreamId) {
+        set.add(programLabelForWorkstream(p.primaryWorkstreamId));
+      }
+    }
+    return [...set].sort();
+  }, [data.items]);
+
+  const filtered = data.items.filter((p) => {
+    if (program !== 'all') {
+      const label = p.primaryWorkstreamId
+        ? programLabelForWorkstream(p.primaryWorkstreamId)
+        : '';
+      if (label !== program) return false;
+    }
+    if (!q) return true;
+    return (
+      p.id.toLowerCase().includes(q) ||
+      p.fullNameRu.toLowerCase().includes(q) ||
+      presentRoleTitleRu(p.roleTitleRu).toLowerCase().includes(q)
+    );
+  });
+
+  const clear = () => {
+    setQuery('');
+    setProgram('all');
+  };
+
   return (
-    <PageFrame className="gap-4 p-6" data-page="people-list">
-      <PageHeader className="space-y-1">
-        <h1 className="text-xl font-semibold tracking-tight text-[var(--text)]">
-          Персоны
-        </h1>
-        <p className="text-sm text-[var(--text-secondary)]">
-          На дату {formatDateRu(data.scenarioAsOfDate)} · снимок{' '}
-          <span className="font-semibold text-[var(--text)]">
-            {data.snapshotId}
-          </span>
-        </p>
-      </PageHeader>
-      <PageContent mode="workspace">
-        <div className="min-h-0 flex-1 overflow-auto rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)]">
-          <table className="w-full text-left text-sm">
-            <caption className="sr-only">Каталог людей проекта</caption>
-            <thead className="sticky top-0 z-10 border-b border-[var(--border)] bg-[var(--surface-sunken)] text-[10px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
-              <tr>
-                <th className="px-3 py-2 font-semibold">Человек</th>
-                <th className="px-3 py-2 font-semibold">Роль</th>
-                <th className="px-3 py-2 font-semibold">Направление</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.items.map((p) => (
-                <tr
-                  key={p.id}
-                  className="border-b border-[var(--border)] last:border-0"
-                >
-                  <td className="px-3 py-2">
-                    <Link
-                      href={`/people/${encodeURIComponent(p.id)}`}
-                      className="font-medium text-[var(--text)] underline-offset-2 hover:underline"
-                    >
-                      {p.fullNameRu}
-                    </Link>
-                    <div className="text-xs text-[var(--text-muted)]">{p.id}</div>
-                  </td>
-                  <td className="px-3 py-2 text-[var(--text-secondary)]">
-                    {p.roleTitleRu}
-                  </td>
-                  <td className="px-3 py-2 text-[var(--text-secondary)]">
-                    {p.primaryWorkstreamId
-                      ? presentWorkstream(p.primaryWorkstreamId)
-                      : '—'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </PageContent>
-    </PageFrame>
+    <RegisterShell
+      title="Участники"
+      asOf={formatDateRu(data.scenarioAsOfDate)}
+      snapshot={data.snapshotId}
+    >
+      <p className="text-sm text-[var(--text-secondary)]" data-list-subtitle="people">
+        Показано{' '}
+        <span className="font-semibold tabular-nums text-[var(--text)]">
+          {filtered.length} / {data.items.length}
+        </span>
+      </p>
+      <div className="mt-2 flex flex-wrap items-center gap-2" data-list-toolbar="people">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Поиск по имени, роли или ID"
+          className="h-8 w-60 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
+        />
+        <select
+          className="h-8 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
+          value={program}
+          onChange={(e) => setProgram(e.target.value)}
+        >
+          <option value="all">Все программы</option>
+          {programs.map((label) => (
+            <option key={label} value={label}>
+              {label}
+            </option>
+          ))}
+        </select>
+        {(q || program !== 'all') && (
+          <button
+            type="button"
+            className="text-sm text-[var(--link)] underline"
+            onClick={clear}
+          >
+            Сбросить
+          </button>
+        )}
+      </div>
+      <RegisterTable
+        caption="Каталог участников проекта"
+        columns={['Участник', 'Роль', 'Программа']}
+      >
+        {filtered.map((p) => (
+          <RegisterRow key={p.id}>
+            <RegisterEntityCell
+              href={`/people/${encodeURIComponent(p.id)}`}
+              title={p.fullNameRu}
+              id={p.id}
+            />
+            <RegisterCell>
+              {presentRoleTitleRu(p.roleTitleRu)}
+            </RegisterCell>
+            <RegisterCell>
+              {p.primaryWorkstreamId
+                ? programLabelForWorkstream(p.primaryWorkstreamId)
+                : '—'}
+            </RegisterCell>
+          </RegisterRow>
+        ))}
+      </RegisterTable>
+    </RegisterShell>
   );
 }

@@ -1,9 +1,6 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { parseSnapshotQuery } from './parse-snapshot-query';
-import {
-  SNAPSHOT_IDS_ALLOWED_MESSAGE,
-  type SnapshotId,
-} from './snapshot-id';
+import { SNAPSHOT_IDS_ALLOWED_MESSAGE, type SnapshotId } from './snapshot-id';
 
 @Injectable()
 export class SnapshotQueryPipe implements PipeTransform<unknown, SnapshotId> {

@@ -116,7 +116,9 @@ export function distributeByWeights(
   weights: WsWeightBp,
 ): Record<WorkstreamId, number> {
   if (!Number.isInteger(totalRub) || totalRub < 0) {
-    throw new Error(`distribute total must be non-negative integer: ${totalRub}`);
+    throw new Error(
+      `distribute total must be non-negative integer: ${totalRub}`,
+    );
   }
   const out = {} as Record<WorkstreamId, number>;
   let allocated = 0;

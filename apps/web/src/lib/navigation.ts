@@ -6,6 +6,7 @@ import {
   FolderKanban,
   LayoutDashboard,
   ListTree,
+  Scale,
   Users,
   Wrench,
 } from 'lucide-react';
@@ -57,10 +58,16 @@ export const NAV_ITEMS: NavItem[] = [
     crumb: 'Вехи',
   },
   {
+    href: '/decisions',
+    label: 'Решения',
+    icon: Scale,
+    crumb: 'Решения',
+  },
+  {
     href: '/people',
-    label: 'Персоны',
+    label: 'Участники',
     icon: Users,
-    crumb: 'Персоны',
+    crumb: 'Участники',
   },
 ];
 
@@ -76,11 +83,12 @@ export function crumbForPath(pathname: string): string {
     return 'Проблемы и риски';
   }
   if (pathname.startsWith('/milestones')) return 'Вехи';
+  if (pathname.startsWith('/decisions')) return 'Решения';
   if (pathname.startsWith('/schedule')) return 'Календарный план';
   if (pathname.startsWith('/programs')) return 'Программы';
   if (pathname.startsWith('/projects')) return 'Проекты';
-  if (pathname.startsWith('/workstreams')) return 'Направление';
-  if (pathname.startsWith('/people')) return 'Персоны';
+  if (pathname.startsWith('/workstreams')) return 'Программы';
+  if (pathname.startsWith('/people')) return 'Участники';
   return 'Дашборд';
 }
 

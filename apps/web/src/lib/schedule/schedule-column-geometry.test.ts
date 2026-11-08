@@ -7,14 +7,17 @@ import {
   SCHEDULE_COL_NAME_PX,
   SCHEDULE_COL_OBJECT_PX,
   SCHEDULE_COL_PAD_X_PX,
+  SCHEDULE_COL_WBS_PX,
   scheduleColBoxStyle,
   wideTableColumnWidths,
   wideTableMinWidthPx,
 } from './schedule-column-geometry';
 
 describe('schedule-column-geometry', () => {
-  it('forecast min-width = Σ widths + gaps + pad (не magic 1040)', () => {
+  it('forecast min-width = Σ widths + gaps + pad (без колонки №)', () => {
     const widths = wideTableColumnWidths('forecast');
+    expect(widths[0]).toBe(SCHEDULE_COL_WBS_PX);
+    expect(widths).toHaveLength(11);
     expect(widths).toContain(SCHEDULE_COL_NAME_PX);
     expect(widths).toContain(SCHEDULE_COL_OBJECT_PX);
     expect(widths).toContain(SCHEDULE_COL_DATE_PX);

@@ -10,22 +10,37 @@ export function RegisterTable({
   caption,
   columns,
   children,
+  tableClassName = '',
+  columnClassNames,
+  layoutHint,
 }: {
   caption: string;
   columns: string[];
   children: ReactNode;
+  /** Extra table classes (e.g. min-width for inner h-scroll on narrow viewports). */
+  tableClassName?: string;
+  /** Optional per-column `<th>` classes (width hints for table-fixed layouts). */
+  columnClassNames?: string[];
+  /** Optional layout marker for tests / browser proofs (e.g. decisions desktop-fit). */
+  layoutHint?: string;
 }) {
   return (
-    <div className="min-h-0 flex-1 overflow-auto rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)]">
-      <table className="min-w-full border-collapse text-left text-sm">
+    <div
+      className="min-h-0 flex-1 overflow-auto rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface-raised)]"
+      data-register-table-scroll="true"
+      {...(layoutHint ? { 'data-register-table-layout': layoutHint } : {})}
+    >
+      <table
+        className={`min-w-full border-collapse text-left text-sm ${tableClassName}`.trim()}
+      >
         <caption className="sr-only">{caption}</caption>
         <thead className="sticky top-0 z-10 bg-[var(--surface-sunken)] text-xs uppercase tracking-wide text-[var(--text-muted)] shadow-[inset_0_-1px_0_0_var(--border)]">
           <tr>
-            {columns.map((col) => (
+            {columns.map((col, i) => (
               <th
                 key={col}
                 scope="col"
-                className="whitespace-nowrap px-3 py-2 font-semibold"
+                className={`whitespace-nowrap px-3 py-2 font-semibold ${columnClassNames?.[i] ?? ''}`.trim()}
               >
                 {col}
               </th>
@@ -66,7 +81,7 @@ export function RegisterRow({
         selected
           ? 'bg-[var(--selected)]'
           : 'hover:bg-[var(--interactive)]',
-        emphasis ? 'border-l-2 border-l-[var(--border-strong,var(--border))]' : '',
+        // Decorative left stripe removed (emphasis kept as data-attr only).
       ].join(' ')}
     >
       {children}
@@ -91,16 +106,19 @@ export function RegisterEntityCell({
   href,
   title,
   id,
+  className = 'min-w-[14rem] max-w-[22rem]',
 }: {
   href: string;
   title: string;
   id: string;
+  /** Override default width constraints (e.g. decisions desktop-fit). */
+  className?: string;
 }) {
   return (
-    <RegisterCell className="min-w-[14rem] max-w-[22rem]">
+    <RegisterCell className={className}>
       <Link
         href={href}
-        className="font-medium text-[var(--text)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+        className="break-words font-medium text-[var(--text)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
       >
         {title}
       </Link>
@@ -155,9 +173,19 @@ export function RegisterShell({
 
 export function RegisterLoading() {
   return (
-    <p className="text-sm text-[var(--text-muted)]" aria-live="polite">
-      Загрузка данных снимка…
-    </p>
+    <div
+      className="space-y-2 py-2"
+      role="status"
+      aria-busy="true"
+      aria-live="polite"
+      data-page-state="loading"
+    >
+      <div className="h-4 w-48 animate-pulse rounded bg-[var(--border-subtle)]" />
+      <div className="h-10 animate-pulse rounded-[var(--radius-sm)] bg-[var(--border-subtle)]" />
+      <div className="h-10 animate-pulse rounded-[var(--radius-sm)] bg-[var(--border-subtle)]" />
+      <div className="h-10 animate-pulse rounded-[var(--radius-sm)] bg-[var(--border-subtle)]" />
+      <span className="sr-only">Загрузка данных снимка…</span>
+    </div>
   );
 }
 

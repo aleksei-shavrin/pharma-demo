@@ -114,7 +114,7 @@ export function workStatusLabel(status: ScheduleWorkStatus): string {
 }
 
 export function entityTypeLabel(
-  type: 'equipment' | 'issue' | 'risk' | 'milestone',
+  type: 'equipment' | 'issue' | 'risk' | 'milestone' | 'person',
 ): string {
   switch (type) {
     case 'equipment':
@@ -125,6 +125,8 @@ export function entityTypeLabel(
       return 'Риск';
     case 'milestone':
       return 'Веха';
+    case 'person':
+      return 'Участник';
   }
 }
 

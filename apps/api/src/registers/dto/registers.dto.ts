@@ -73,8 +73,7 @@ export class IssuesRisksRowDto {
   id!: string;
 
   @ApiProperty({
-    description:
-      'Issue title or Risk display name from read model (not Owner)',
+    description: 'Issue title or Risk display name from read model (not Owner)',
   })
   title!: string;
 
@@ -121,7 +120,9 @@ export class IssuesRisksRowDto {
   })
   milestoneId!: string | null;
 
-  @ApiPropertyOptional({ description: 'Issue optional cost impact (integer RUB)' })
+  @ApiPropertyOptional({
+    description: 'Issue optional cost impact (integer RUB)',
+  })
   costImpactRub?: number;
 
   @ApiPropertyOptional({ enum: ['realized', 'forecast'] })
@@ -197,4 +198,70 @@ export class MilestonesRegisterDto {
 
   @ApiProperty({ type: [MilestoneRegisterItemDto] })
   items!: MilestoneRegisterItemDto[];
+}
+
+export class DecisionRegisterItemDto {
+  @ApiProperty()
+  id!: string;
+
+  /** Portfolio plant id (PRJ-01) — not an analyst project. */
+  @ApiProperty()
+  projectId!: string;
+
+  @ApiPropertyOptional({ nullable: true, type: String })
+  milestoneId!: string | null;
+
+  /** Human milestone title from snapshot; null when unbound. */
+  @ApiPropertyOptional({ nullable: true, type: String })
+  milestoneName!: string | null;
+
+  @ApiProperty({ enum: ['PrioritizeRecovery', 'AcceptDateSlip'] })
+  type!: 'PrioritizeRecovery' | 'AcceptDateSlip';
+
+  @ApiProperty({
+    description: 'Person owner id (PER-*)',
+    pattern: String.raw`^PER-\d{2,}$`,
+  })
+  ownerPersonId!: string;
+
+  @ApiProperty({
+    description: 'Director-facing owner name from Person catalogue',
+  })
+  ownerFullNameRu!: string;
+
+  @ApiPropertyOptional({ nullable: true, type: String })
+  dueDate!: string | null;
+
+  @ApiProperty()
+  note!: string;
+
+  /** Calendar due vs scenarioAsOf — not execution failure. */
+  @ApiProperty({ enum: ['none', 'upcoming', 'passed'] })
+  dueState!: 'none' | 'upcoming' | 'passed';
+
+  /** Canonical program from milestone membership; null for MS-PS / unbound. */
+  @ApiPropertyOptional({ nullable: true, type: String })
+  programId!: string | null;
+
+  /** Analyst AN-* from milestone membership; never invent for MS-PS. */
+  @ApiPropertyOptional({ nullable: true, type: String })
+  analystProjectId!: string | null;
+
+  /** Catalog name for analystProjectId when membership resolves; else null. */
+  @ApiPropertyOptional({ nullable: true, type: String })
+  analystProjectName!: string | null;
+}
+
+export class DecisionsRegisterDto {
+  @ApiProperty({ enum: SNAPSHOT_IDS })
+  snapshotId!: SnapshotId;
+
+  @ApiProperty()
+  scenarioAsOfDate!: string;
+
+  @ApiProperty()
+  projectId!: string;
+
+  @ApiProperty({ type: [DecisionRegisterItemDto] })
+  items!: DecisionRegisterItemDto[];
 }

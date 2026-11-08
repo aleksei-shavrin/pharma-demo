@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { dashboardOverviewFixture } from '@/lib/test/dashboard-overview-fixture';
 import {
-  assertNoSlotCollisions,
   dateToRatio,
   ExecutiveMilestoneIntegrityError,
   resolveExecutiveMilestones,
@@ -15,29 +14,21 @@ import {
 import { EXECUTIVE_TIMELINE_MILESTONE_IDS } from './executive-timeline-ids';
 
 describe('executive timeline helpers', () => {
-  it('uses R2-U1 horizon through end of September 2027', () => {
-    expect(TIMELINE_HORIZON_START).toBe('2027-02-01');
+  it('uses full pre-project→PS horizon through end of September 2027', () => {
+    expect(TIMELINE_HORIZON_START).toBe('2026-09-01');
     expect(TIMELINE_HORIZON_END).toBe('2027-09-30');
-    expect(dateToRatio('2027-02-01')).toBe(0);
+    expect(dateToRatio('2026-09-01')).toBe(0);
     expect(dateToRatio('2027-09-30')).toBe(1);
+    expect(dateToRatio('2027-02-01')).toBeGreaterThan(0.3);
     expect(dateToRatio('2027-09-22')).toBeGreaterThan(0.9);
-    // C worst PS forecast (06.10) clamps to horizon end
     expect(dateToRatio('2027-10-06')).toBe(1);
   });
 
-  it('month ticks cover feb–sep', () => {
+  it('month ticks cover sep 2026–sep 2027', () => {
     const ticks = timelineMonthTicks();
-    expect(ticks[0]?.label).toBe('фев');
-    expect(ticks.map((t) => t.label)).toEqual([
-      'фев',
-      'мар',
-      'апр',
-      'май',
-      'июн',
-      'июл',
-      'авг',
-      'сен',
-    ]);
+    expect(ticks[0]?.label).toBe('сен');
+    expect(ticks[ticks.length - 1]?.label).toBe('сен');
+    expect(ticks.length).toBeGreaterThanOrEqual(13);
   });
 
   it('uses executiveMilestoneIds when present; always includes MS-PS', () => {
@@ -63,9 +54,10 @@ describe('executive timeline helpers', () => {
     expect(new Set(points.map((p) => p.id))).toEqual(
       new Set(EXECUTIVE_TIMELINE_MILESTONE_IDS),
     );
-    for (let i = 1; i < points.length; i += 1) {
-      expect(points[i]!.ratio).toBeGreaterThanOrEqual(points[i - 1]!.ratio);
-    }
+    // Scope order follows API ids (baseline sort); marker X uses forecast ratio.
+    expect(points.map((p) => p.id)).toEqual([
+      ...EXECUTIVE_TIMELINE_MILESTONE_IDS,
+    ]);
 
     const late = resolveExecutiveMilestones(dashboardOverviewFixture('O'));
     expect(late.some((p) => p.id === 'MS-PS')).toBe(true);
@@ -165,24 +157,20 @@ describe('executive timeline helpers', () => {
     expect(ps?.rag).toBe('Red');
   });
 
-  it('keeps marker ratios on forecast dates while alternating label sides', () => {
+  it('keeps marker ratios on forecast dates', () => {
     const points = resolveExecutiveMilestones(dashboardOverviewFixture('C'));
     for (const p of points) {
       expect(p.ratio).toBe(dateToRatio(p.forecastDate));
     }
-    expect(points[0]?.labelSide).toBe('below');
-    expect(points[1]?.labelSide).toBe('above');
-    const hvac = points.find((p) => p.id === 'MS-HVAC-IQ');
-    const wfi = points.find((p) => p.id === 'MS-UTL-WFI');
-    expect(hvac?.labelSide).not.toBe(wfi?.labelSide);
+    expect(points.some((p) => p.id === 'MS-HVAC-IQ')).toBe(true);
+    expect(points.some((p) => p.id === 'MS-UTL-WFI')).toBe(true);
   });
 
-  it('R2-U1-R8 late O/S: PS cluster zone reserved; milestones avoid below 0/1', () => {
+  it('R2-U1-R8 late O/S: PS chrome reserved; ratios on forecast', () => {
     for (const snap of ['O', 'S'] as const) {
       const presentation = resolveExecutiveTimelinePresentation(
         dashboardOverviewFixture(snap),
       );
-      expect(() => assertNoSlotCollisions(presentation.slots)).not.toThrow();
 
       for (const p of presentation.points) {
         expect(p.ratio).toBe(dateToRatio(p.forecastDate));
@@ -196,18 +184,7 @@ describe('executive timeline helpers', () => {
       expect(chrome.baseline).toBeNull();
       expect(chrome.forecast).toBeNull();
       expect(chrome.coincident).toBeNull();
-
-      const lateVisible = presentation.points.filter(
-        (p) => p.id !== 'MS-PS' && p.ratio >= 0.7,
-      );
-      for (const p of lateVisible) {
-        const conflictsPs =
-          p.labelSide === 'below' && (p.labelLane === 0 || p.labelLane === 1);
-        expect(conflictsPs).toBe(false);
-      }
-
-      const go = presentation.points.find((p) => p.id === 'MS-COM-GO');
-      expect(go?.labelSide).toBe('above');
+      expect(presentation.points.some((p) => p.id === 'MS-COM-GO')).toBe(true);
     }
 
     const oData = dashboardOverviewFixture('O');

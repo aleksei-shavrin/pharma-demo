@@ -75,7 +75,15 @@ describe('factCaption', () => {
 });
 
 describe('displayedWorkBounds', () => {
-  it('по умолчанию WK-01 остаётся на прогнозе, даже если база совпадает', () => {
+  it('baseline-only uses base bounds; missing baseline is null (not forecast)', () => {
+    expect(displayedWorkBounds(openWork, 'baseline')).toEqual({
+      start: '2027-02-26',
+      end: '2027-03-08',
+    });
+    expect(displayedWorkBounds(noFact, 'baseline')).toBeNull();
+  });
+
+  it('forecast mode: WK-01 stays on forecast even when baseline coincides', () => {
     expect(displayedWorkBounds(wk01, 'forecast')).toEqual({
       start: '2027-02-20',
       end: '2027-02-24',

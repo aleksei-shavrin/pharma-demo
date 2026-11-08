@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { loginViaForm } from './auth';
 
 /** Full option aria-label = snapshotOptionLabel(id). */
 const SNAP_OPTION = {
@@ -22,6 +23,10 @@ async function selectSnapshot(page: Page, id: NarrativeSnap) {
 }
 
 test.describe('Demo v1 narrative readiness (I8)', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginViaForm(page, '/');
+  });
+
   test('A→C→D→F Dashboard honesty + Schedule split + missing entity', async ({
     page,
   }) => {

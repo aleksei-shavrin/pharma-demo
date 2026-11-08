@@ -10,7 +10,10 @@ export class CostsService {
     @Inject(DEMO_DATA_SOURCE) private readonly dataSource: DemoDataSource,
   ) {}
 
-  getOverview(projectId: string, snapshotId: SnapshotId): ProjectCostsOverviewDto {
+  getOverview(
+    projectId: string,
+    snapshotId: SnapshotId,
+  ): ProjectCostsOverviewDto {
     const project = this.dataSource.getProject(snapshotId, projectId);
     if (!project) {
       throw new NotFoundException(`Project ${projectId} not found`);

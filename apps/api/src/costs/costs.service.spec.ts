@@ -21,15 +21,13 @@ describe('CostsService (R2-M1)', () => {
     );
     expect(overview.workstreams).toHaveLength(8);
     expect(overview.equipment.length).toBeGreaterThan(0);
-    expect(
-      overview.equipment.some((e) => e.equipmentId === 'EQ-HVAC-01'),
-    ).toBe(true);
+    expect(overview.equipment.some((e) => e.equipmentId === 'EQ-HVAC-01')).toBe(
+      true,
+    );
     expect(overview.reconciliation.projectLevelForecastRub).toBe(
       DEMO_PROJECT_CONTINGENCY_TOTAL_RUB,
     );
-    expect(overview.reconciliation.workstreamEacSumRub).toBe(
-      5_850_000_000,
-    );
+    expect(overview.reconciliation.workstreamEacSumRub).toBe(5_850_000_000);
     expect(overview.project.eacRub).toBe(
       overview.reconciliation.workstreamEacSumRub +
         overview.reconciliation.projectLevelForecastRub,

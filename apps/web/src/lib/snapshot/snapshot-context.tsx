@@ -10,6 +10,7 @@ import {
   useRef,
   type ReactNode,
 } from 'react';
+import { usePathname } from 'next/navigation';
 import { fetchDashboardOverview } from '@/lib/api-client';
 import { runSnapshotLoad } from './run-snapshot-load';
 import type { SnapshotId } from './snapshot-id';
@@ -27,6 +28,10 @@ import {
 
 const DEMO_PROJECT_ID = 'PRJ-01';
 
+function isLoginPath(pathname: string | null): boolean {
+  return pathname === '/login' || Boolean(pathname?.startsWith('/login/'));
+}
+
 type SnapshotContextValue = SnapshotState & {
   switchSnapshot: (snapshot: SnapshotId) => Promise<void>;
   retryLastSwitch: () => Promise<void>;
@@ -35,6 +40,8 @@ type SnapshotContextValue = SnapshotState & {
 const SnapshotContext = createContext<SnapshotContextValue | null>(null);
 
 export function SnapshotProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const onLogin = isLoginPath(pathname);
   const [state, rawDispatch] = useReducer(
     snapshotReducer,
     initialSnapshotState,
@@ -64,8 +71,10 @@ export function SnapshotProvider({ children }: { children: ReactNode }) {
   }, [dispatch]);
 
   useEffect(() => {
+    // Anonymous login must not bootstrap protected app data (401 → Next “1 error”).
+    if (onLogin) return;
     void runLoad(resolveBootstrapSnapshot());
-  }, [runLoad]);
+  }, [runLoad, onLogin]);
 
   const switchSnapshot = useCallback(
     async (snapshot: SnapshotId) => {

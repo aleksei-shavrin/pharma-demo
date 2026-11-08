@@ -47,19 +47,36 @@ describe('ScheduleService', () => {
       forecastDate: '2027-05-15',
       dateVariance: { deltaDays: 0 },
       workstream: 'WS-HVAC',
-      parentKey: null,
-      wbs: null,
-      siblingOrder: null,
-      progressPct: null,
+      parentKey: 'stage_group:9.3',
       sourceWeeks: null,
     });
+    expect(eq?.wbs).toMatch(/^9\.3\.\d+$/);
+    expect(eq?.progressPct).toBe(0); // authored ready-phase, not forecast≤asOf
     expect(eq).not.toHaveProperty('baselineStart');
     expect(eq && 'name' in eq && eq.name.length).toBeGreaterThan(0);
-    expect(s.items).toHaveLength(96);
     expect(s.items.filter((i) => i.kind === 'equipment_delivery')).toHaveLength(
       52,
     );
-    expect(s.items.filter((i) => i.kind === 'milestone')).toHaveLength(44);
+    const milestones = s.items.filter((i) => i.kind === 'milestone');
+    expect(
+      milestones.filter(
+        (i) => (i as { sourceKind?: string }).sourceKind === 'controlpoint',
+      ).length,
+    ).toBe(147);
+    expect(milestones.filter((i) => i.id.startsWith('KT-')).length).toBe(145);
+    expect(
+      milestones.filter(
+        (i) =>
+          (i as { sourceKind?: string }).sourceKind === 'catalog_milestone',
+      ),
+    ).toHaveLength(42);
+    expect(milestones).toHaveLength(189);
+    expect(
+      s.items.filter((i) => i.kind === 'work').length,
+    ).toBeGreaterThanOrEqual(272);
+    expect(s.items.filter((i) => i.kind === 'project_group')).toHaveLength(25);
+    expect(s.items.filter((i) => i.kind === 'stage_group')).toHaveLength(145);
+    expect(s.links.length).toBeGreaterThanOrEqual(17);
     expect(ms).toMatchObject({
       rag: 'Green',
       baselineDate: '2027-09-15',
@@ -70,20 +87,16 @@ describe('ScheduleService', () => {
     expect(JSON.stringify(s)).not.toMatch(
       /equipmentMilestone|relatedMilestone/,
     );
-    expect(s.items.filter((i) => i.kind === 'work')).toHaveLength(0);
-    expect(s.items.some((i) => i.kind === 'project_group')).toBe(false);
-    expect(s.items.some((i) => i.kind === 'stage_group')).toBe(false);
-    expect(s.links).toEqual([]);
     const panel = s.items.filter((i) => i.id === 'MS-CLN-PANEL');
     expect(panel).toHaveLength(1);
     expect(panel[0]).toMatchObject({
       kind: 'milestone',
-      parentKey: null,
-      wbs: null,
-      siblingOrder: null,
-      progressPct: null,
+      parentKey: 'stage_group:8.2',
+      wbs: '8.2.3',
+      siblingOrder: 2,
       sourceWeeks: null,
     });
+    expect(typeof panel[0]?.progressPct).toBe('number');
     expect(panel[0]).not.toHaveProperty('baselineStart');
   });
 
@@ -135,11 +148,25 @@ describe('ScheduleService', () => {
     expect(s.items.filter((i) => i.kind === 'equipment_delivery')).toHaveLength(
       52,
     );
-    expect(s.items.filter((i) => i.kind === 'milestone')).toHaveLength(44);
-    expect(s.items).toHaveLength(113);
-    expect(s.items.filter((i) => i.kind === 'project_group')).toHaveLength(3);
-    expect(s.items.filter((i) => i.kind === 'stage_group')).toHaveLength(3);
-    expect(works).toHaveLength(11);
+    const milestones = s.items.filter((i) => i.kind === 'milestone');
+    expect(
+      milestones.filter(
+        (i) => (i as { sourceKind?: string }).sourceKind === 'controlpoint',
+      ).length,
+    ).toBe(147);
+    expect(milestones.filter((i) => i.id.startsWith('KT-')).length).toBe(145);
+    expect(
+      milestones.filter(
+        (i) =>
+          (i as { sourceKind?: string }).sourceKind === 'catalog_milestone',
+      ),
+    ).toHaveLength(42);
+    expect(milestones).toHaveLength(189);
+    // Full analyst import + EQ/MS + WK showcase
+    expect(s.items).toHaveLength(688);
+    expect(s.items.filter((i) => i.kind === 'project_group')).toHaveLength(25);
+    expect(s.items.filter((i) => i.kind === 'stage_group')).toHaveLength(145);
+    expect(works.length).toBeGreaterThanOrEqual(272);
     const wk = works.filter((w) => w.id.startsWith('WK-'));
     expect(wk.map((w) => w.id).sort()).toEqual([
       'WK-01',
@@ -148,120 +175,75 @@ describe('ScheduleService', () => {
       'WK-04',
       'WK-05',
     ]);
-    expect(
-      Object.fromEntries(
-        wk.map((w) => [w.id, [w.startDate, w.endDate, w.status]]),
-      ),
-    ).toEqual({
-      'WK-01': ['2027-02-20', '2027-02-24', 'Completed'],
-      'WK-02': ['2027-02-20', '2027-02-22', 'Completed'],
-      'WK-03': ['2027-02-27', '2027-03-10', 'Delayed'],
-      'WK-04': ['2027-03-06', '2027-03-10', 'OnSchedule'],
-      'WK-05': ['2027-03-13', '2027-03-13', 'Waiting'],
-    });
+    expect(wk.find((w) => w.id === 'WK-01')?.status).toBe('Completed');
+    expect(wk.find((w) => w.id === 'WK-01')?.progressPct).toBe(100);
+    expect(wk.find((w) => w.id === 'WK-04')?.status).toBe('Waiting');
+    expect(wk.find((w) => w.id === 'WK-05')?.status).toBe('Waiting');
     const wk05 = wk.find((w) => w.id === 'WK-05');
     expect(wk05?.startDate).toBe(wk05?.endDate);
-    expect(works.every((w) => w.workstream === null)).toBe(true);
+    expect(wk.every((w) => w.parentKey === 'stage_group:8.2')).toBe(true);
     expect(
-      wk.every(
-        (w) =>
-          w.parentKey === null &&
-          w.wbs === null &&
-          w.siblingOrder === null &&
-          w.sourceWeeks === null,
-      ),
+      wk.every((w) => typeof w.wbs === 'string' && w.wbs.startsWith('8.2.')),
     ).toBe(true);
     expect(wk.find((w) => w.id === 'WK-01')).toMatchObject({
-      startDate: '2027-02-20',
-      endDate: '2027-02-24',
-      baselineStart: '2027-02-20',
-      baselineEnd: '2027-02-24',
       actualStart: '2027-02-18',
       actualEnd: '2027-02-23',
     });
-    expect(
-      wk
-        .filter((w) => w.id !== 'WK-01')
-        .every((w) => w.baselineStart === null && w.baselineEnd === null),
-    ).toBe(true);
     expect(wk.find((w) => w.id === 'WK-01')?.progressPct).toBe(100);
-    expect(
-      wk.filter((w) => w.id !== 'WK-01').every((w) => w.progressPct === null),
-    ).toBe(true);
+    expect(wk.find((w) => w.id === 'WK-02')?.progressPct).toBe(100);
+    expect(wk.find((w) => w.id === 'WK-05')?.progressPct).toBe(0);
+    expect(s.items.find((i) => i.id === '8.2.1')?.progressPct).toBe(0);
+    expect(s.items.find((i) => i.id === '8.2.2')?.progressPct).toBe(0);
     expect(works.every((w) => 'actualStart' in w && 'actualEnd' in w)).toBe(
       true,
     );
     expect(wk.find((w) => w.id === 'WK-02')).toMatchObject({
       status: 'Completed',
-      actualStart: null,
-      actualEnd: null,
-    });
-    expect(works.find((w) => w.id === '8.2.1')).toMatchObject({
-      actualStart: null,
-      actualEnd: null,
+      actualStart: '2027-02-20',
+      actualEnd: '2027-02-22',
     });
     expect(works.find((w) => w.id === '8.2.2')).toMatchObject({
-      startDate: '2027-03-04',
-      endDate: '2027-03-18',
-      baselineStart: '2027-02-26',
-      baselineEnd: '2027-03-08',
-      actualStart: '2027-03-01',
+      status: 'Waiting',
+      progressPct: 0,
+      actualStart: null,
       actualEnd: null,
     });
-    expect(s.items.find((item) => item.kind === 'milestone')).not.toHaveProperty(
-      'actualStart',
-    );
-    expect(s.items.find((item) => item.kind === 'project_group')).not.toHaveProperty(
-      'actualStart',
-    );
+    expect(
+      s.items.find((item) => item.kind === 'milestone'),
+    ).not.toHaveProperty('actualStart');
+    expect(
+      s.items.find((item) => item.kind === 'project_group'),
+    ).not.toHaveProperty('actualStart');
 
-    expect(s.links).toEqual([
-      {
-        id: 'LNK-SS-01',
-        kind: 'scheduling',
-        sourceRef: 'work:WK-01',
-        targetRef: 'work:WK-02',
-        type: 'SS',
-      },
-      {
-        id: 'LNK-FS-01',
-        kind: 'scheduling',
-        sourceRef: 'work:WK-01',
-        targetRef: 'work:WK-03',
-        type: 'FS',
-      },
-      {
-        id: 'LNK-FF-01',
-        kind: 'scheduling',
-        sourceRef: 'work:WK-03',
-        targetRef: 'work:WK-04',
-        type: 'FF',
-      },
-      {
-        id: 'LNK-SF-01',
-        kind: 'scheduling',
-        sourceRef: 'work:WK-04',
-        targetRef: 'work:WK-05',
-        type: 'SF',
-      },
-      {
-        id: 'LNK-X-PWR-HVAC',
-        kind: 'cross_project_predecessor',
-        sourceRef: 'milestone:MS-UTL-PWR',
-        targetRef: 'work:9.3.2',
-      },
+    expect(s.links.length).toBeGreaterThan(17);
+    expect(s.links.map((l) => l.id)).toEqual(
+      expect.arrayContaining([
+        'LNK-SS-01',
+        'LNK-FS-01',
+        'LNK-FF-01',
+        'LNK-SF-01',
+        'LNK-X-PWR-HVAC',
+        'LNK-X-PANEL-CLN',
+      ]),
+    );
+    const leafIds = new Set([
+      ...works.map((w) => `work:${w.id}`),
+      ...s.items
+        .filter((i) => i.kind === 'milestone')
+        .map((i) => `milestone:${i.id}`),
     ]);
-    const workIds = new Set(works.map((w) => `work:${w.id}`));
     expect(
       s.links
         .filter((link) => link.kind !== 'cross_project_predecessor')
         .every(
-          (link) => workIds.has(link.sourceRef) && workIds.has(link.targetRef),
+          (link) => leafIds.has(link.sourceRef) && leafIds.has(link.targetRef),
         ),
     ).toBe(true);
     expect(
       s.links.some(
-        (l) => l.sourceRef.includes('8.2') || l.targetRef.includes('8.2'),
+        (l) =>
+          l.sourceRef.startsWith('project_group:') ||
+          l.targetRef.startsWith('stage_group:'),
       ),
     ).toBe(false);
   });
@@ -288,20 +270,20 @@ describe('ScheduleService', () => {
       name: 'Внутренняя отделка и чистые помещения',
       parentKey: null,
       wbs: '8',
-      siblingOrder: 0,
-      progressPct: null,
+      siblingOrder: 7,
       sourceWeeks: null,
     });
+    expect(typeof project?.progressPct).toBe('number');
     expect(project).not.toHaveProperty('startDate');
     expect(project).not.toHaveProperty('endDate');
     expect(stage).toMatchObject({
       name: 'Чистые помещения классов C/D',
       parentKey: 'project_group:AN-08',
       wbs: '8.2',
-      siblingOrder: 0,
-      progressPct: null,
+      siblingOrder: 1,
       sourceWeeks: 3,
     });
+    expect(typeof stage?.progressPct).toBe('number');
     expect(stage).not.toHaveProperty('startDate');
     expect(panels).toMatchObject({
       name: 'Сэндвич-панели и герметизация',
@@ -310,12 +292,9 @@ describe('ScheduleService', () => {
       siblingOrder: 0,
       progressPct: 0,
       sourceWeeks: 3,
-      startDate: '2027-02-25',
-      endDate: '2027-03-02',
       status: 'Delayed',
-      baselineStart: null,
-      baselineEnd: null,
     });
+    expect(panels && panels.startDate <= panels.endDate).toBe(true);
     expect(Object.prototype.hasOwnProperty.call(panels, 'progressPct')).toBe(
       true,
     );
@@ -324,13 +303,9 @@ describe('ScheduleService', () => {
       parentKey: 'stage_group:8.2',
       wbs: '8.2.2',
       siblingOrder: 1,
-      progressPct: 40,
+      progressPct: 0,
       sourceWeeks: null,
-      startDate: '2027-03-04',
-      endDate: '2027-03-18',
-      status: 'OnSchedule',
-      baselineStart: '2027-02-26',
-      baselineEnd: '2027-03-08',
+      status: 'Waiting',
     });
     expect(milestone).toHaveLength(1);
     expect(milestone[0]).toMatchObject({
@@ -338,12 +313,19 @@ describe('ScheduleService', () => {
       parentKey: 'stage_group:8.2',
       wbs: '8.2.3',
       siblingOrder: 2,
-      progressPct: null,
+      name: 'Ограждающие конструкции C/D готовы',
+      sourceKind: 'controlpoint',
+      sourceStatus: 'missed',
       sourceWeeks: null,
-      baselineDate: '2027-02-16',
-      forecastDate: '2027-03-09',
       rag: 'Red',
     });
+    const ms0 = milestone[0] as {
+      baselineDate: string;
+      forecastDate: string;
+    };
+    expect(ms0.baselineDate).toBe(ms0.forecastDate);
+    expect(ms0.baselineDate <= '2027-09-15').toBe(true);
+    expect(ms0.baselineDate >= '2026-09-01').toBe(true);
     expect(milestone[0]).not.toHaveProperty('baselineStart');
   });
 
@@ -379,62 +361,50 @@ describe('ScheduleService', () => {
       name: 'Внешние сети и энергоснабжение',
       parentKey: null,
       wbs: '24',
-      siblingOrder: 1,
-      progressPct: null,
+      siblingOrder: 23,
     });
+    expect(typeof powerProject?.progressPct).toBe('number');
     expect(powerStage).toMatchObject({
       name: 'Электроснабжение',
       parentKey: 'project_group:AN-24',
       wbs: '24.1',
       sourceWeeks: 8,
-      progressPct: null,
     });
+    expect(typeof powerStage?.progressPct).toBe('number');
     expect(hvacProject).toMatchObject({
       name: 'HVAC и системы подготовки воздуха',
       parentKey: null,
       wbs: '9',
-      siblingOrder: 2,
-      progressPct: null,
+      siblingOrder: 8,
     });
+    expect(typeof hvacProject?.progressPct).toBe('number');
     expect(hvacStage).toMatchObject({
       name: 'Монтаж AHU',
       parentKey: 'project_group:AN-09',
       wbs: '9.3',
       sourceWeeks: null,
-      progressPct: null,
     });
+    expect(typeof hvacStage?.progressPct).toBe('number');
+    // ALAP latest-start: 24.1.* baseline after C asOf → not yet started.
     expect(feeders).toMatchObject({
-      startDate: '2027-02-08',
-      endDate: '2027-03-19',
-      status: 'Delayed',
+      status: 'Waiting',
       sourceWeeks: 8,
-      progressPct: null,
-      baselineStart: null,
-      baselineEnd: null,
+      progressPct: 0,
       parentKey: 'stage_group:24.1',
     });
     expect(substation).toMatchObject({
-      startDate: '2027-02-15',
-      endDate: '2027-03-12',
-      status: 'OnSchedule',
-      progressPct: null,
-      baselineStart: null,
+      status: 'Waiting',
+      progressPct: 0,
       parentKey: 'stage_group:24.1',
     });
     expect(ahu).toMatchObject({
-      startDate: '2027-02-22',
-      endDate: '2027-03-19',
-      status: 'OnSchedule',
-      progressPct: null,
-      baselineStart: null,
+      status: 'Waiting',
+      progressPct: 0,
       parentKey: 'stage_group:9.3',
     });
     expect(connect).toMatchObject({
-      startDate: '2027-04-16',
-      endDate: '2027-04-30',
       status: 'Waiting',
-      progressPct: null,
-      baselineStart: null,
+      progressPct: 0,
       parentKey: 'stage_group:9.3',
     });
     expect(power).toHaveLength(1);
@@ -443,20 +413,28 @@ describe('ScheduleService', () => {
       parentKey: 'stage_group:24.1',
       wbs: '24.1.3',
       siblingOrder: 2,
-      baselineDate: '2027-02-18',
-      forecastDate: '2027-04-15',
+      name: 'Энергоснабжение обеспечено',
+      sourceKind: 'controlpoint',
+      sourceStatus: 'missed',
       rag: 'Red',
     });
-    expect(s.links.map((link) => link.id)).toEqual([
+    const p0 = power[0] as { baselineDate: string; forecastDate: string };
+    expect(p0.baselineDate).toBe(p0.forecastDate);
+    expect(p0.baselineDate <= '2027-09-15').toBe(true);
+    expect(p0.baselineDate >= '2026-08-01').toBe(true);
+    const linkIds = s.links.map((link) => link.id);
+    for (const id of [
       'LNK-SS-01',
       'LNK-FS-01',
       'LNK-FF-01',
       'LNK-SF-01',
       'LNK-X-PWR-HVAC',
-    ]);
-    expect(
-      s.links.find((link) => link.id === 'LNK-X-PWR-HVAC'),
-    ).toEqual({
+      'LNK-X-PANEL-CLN',
+    ]) {
+      expect(linkIds).toContain(id);
+    }
+    expect(linkIds.length).toBeGreaterThan(17);
+    expect(s.links.find((link) => link.id === 'LNK-X-PWR-HVAC')).toEqual({
       id: 'LNK-X-PWR-HVAC',
       kind: 'cross_project_predecessor',
       sourceRef: 'milestone:MS-UTL-PWR',
@@ -464,48 +442,27 @@ describe('ScheduleService', () => {
     });
   });
 
-  it('A, D, F: нет дерева и родителя у MS-CLN-PANEL; на A связи пустые', () => {
-    for (const id of ['A', 'D', 'F'] as const) {
+  it('A–S: полное дерево, WBS у всех, связи демо-набора', () => {
+    for (const id of ['A', 'B', 'D', 'F', 'S'] as const) {
       const s = service.getSchedule('PRJ-01', id);
-      expect(s.items.some((i) => i.kind === 'project_group')).toBe(false);
-      expect(s.items.some((i) => i.kind === 'stage_group')).toBe(false);
-      expect(
-        s.items.some(
-          (i) => i.kind === 'work' && (i.id === '8.2.1' || i.id === '8.2.2'),
-        ),
-      ).toBe(false);
-      const panel = s.items.filter((i) => i.id === 'MS-CLN-PANEL');
-      expect(panel).toHaveLength(1);
-      expect(panel[0]).toMatchObject({
-        kind: 'milestone',
-        parentKey: null,
-        wbs: null,
-        siblingOrder: null,
-      });
-      if (id === 'A') expect(s.links).toEqual([]);
-      const power = s.items.filter((i) => i.id === 'MS-UTL-PWR');
-      expect(power).toHaveLength(1);
-      expect(power[0]).toMatchObject({
-        kind: 'milestone',
-        parentKey: null,
-        wbs: null,
-      });
-      expect(
-        s.items.some((i) =>
-          ['AN-24', 'AN-09', '24.1', '9.3', '24.1.1', '9.3.2'].includes(i.id),
-        ),
-      ).toBe(false);
-      expect(s.links.some((link) => link.id === 'LNK-X-PWR-HVAC')).toBe(
-        false,
+      expect(s.items.filter((i) => i.kind === 'project_group')).toHaveLength(
+        25,
       );
-    }
-  });
-
-  it('B и остальные снимки: works/links пустые', () => {
-    for (const id of ['B', 'D', 'S'] as const) {
-      const s = service.getSchedule('PRJ-01', id);
-      expect(s.items.some((i) => i.kind === 'work')).toBe(false);
-      expect(s.links).toEqual([]);
+      expect(s.items.filter((i) => i.kind === 'stage_group')).toHaveLength(145);
+      expect(
+        s.items.filter((i) => i.kind === 'work').length,
+      ).toBeGreaterThanOrEqual(272);
+      expect(s.links.length).toBeGreaterThan(17);
+      expect(
+        s.items.every((i) => typeof i.wbs === 'string' && i.wbs.length > 0),
+      ).toBe(true);
+      const panel = s.items.find((i) => i.id === 'MS-CLN-PANEL');
+      expect(panel).toMatchObject({
+        kind: 'milestone',
+        parentKey: 'stage_group:8.2',
+        wbs: '8.2.3',
+      });
+      expect(s.links.some((link) => link.id === 'LNK-X-PWR-HVAC')).toBe(true);
     }
   });
 
@@ -522,7 +479,7 @@ describe('ScheduleService', () => {
     expect(s.items.filter((i) => i.kind === 'equipment_delivery')).toHaveLength(
       52,
     );
-    expect(s.items.filter((i) => i.kind === 'milestone')).toHaveLength(44);
+    expect(s.items.filter((i) => i.kind === 'milestone')).toHaveLength(189);
     expect(
       s.items.some((i) => i.kind === 'project_group' && i.id === 'AN-08'),
     ).toBe(true);
@@ -689,7 +646,7 @@ describe('ScheduleService', () => {
             ],
           }),
         ),
-      ).toThrow(/unknown work WK-99/);
+      ).toThrow(/unknown leaf.*WK-99/);
     });
 
     const treeGroup = (
@@ -910,7 +867,7 @@ describe('ScheduleService', () => {
                 ...work('8.2.2', '2027-03-04', '2027-03-18'),
                 actualStart: '2027-03-01',
                 actualEnd: null,
-              } as ScheduleWorkSnapshotFixture['works'][number],
+              },
             ],
           }),
           [],
@@ -930,14 +887,24 @@ describe('ScheduleService', () => {
               ...work('WK-01'),
               actualStart,
               actualEnd,
-            } as ScheduleWorkSnapshotFixture['works'][number],
+            },
           ],
         });
       expect(() =>
-        validateScheduleWorks('B', withActual('2027-03-02', null), [], '2027-03-01'),
+        validateScheduleWorks(
+          'B',
+          withActual('2027-03-02', null),
+          [],
+          '2027-03-01',
+        ),
       ).toThrow(/after scenarioAsOfDate/);
       expect(() =>
-        validateScheduleWorks('B', withActual(null, '2027-02-23'), [], '2027-03-01'),
+        validateScheduleWorks(
+          'B',
+          withActual(null, '2027-02-23'),
+          [],
+          '2027-03-01',
+        ),
       ).toThrow(/actualEnd without actualStart/);
       expect(() =>
         validateScheduleWorks(
@@ -948,7 +915,12 @@ describe('ScheduleService', () => {
         ),
       ).toThrow(/actualEnd/);
       expect(() =>
-        validateScheduleWorks('B', withActual('2027-02-31', null), [], '2027-03-01'),
+        validateScheduleWorks(
+          'B',
+          withActual('2027-02-31', null),
+          [],
+          '2027-03-01',
+        ),
       ).toThrow(/not a calendar date/);
     });
 
@@ -977,18 +949,21 @@ describe('ScheduleService', () => {
       expect(() =>
         validateScheduleWorks(
           'C',
-          fixture({
+          {
+            ...validTree(),
             links: [
               {
                 id: 'L1',
+                kind: 'scheduling',
                 sourceRef: 'work:WK-01',
                 targetRef: 'work:WK-02',
                 type: 'FS',
               },
             ],
-          }),
+          },
+          ['MS-CLN-PANEL'],
         ),
-      ).toThrow(/missing link types SS, FF, SF/);
+      ).toThrow(/missing link types/);
     });
 
     it('межпроектная связь: оба конца, направление и отсутствие типа', () => {
@@ -1011,7 +986,7 @@ describe('ScheduleService', () => {
           }),
           ['MS-UTL-PWR'],
         ),
-      ).toThrow(/unknown work WK-99/);
+      ).toThrow(/unknown leaf.*WK-99/);
       expect(() =>
         validateScheduleWorks(
           'B',
@@ -1026,7 +1001,7 @@ describe('ScheduleService', () => {
           }),
           ['MS-UTL-PWR'],
         ),
-      ).toThrow(/direction must be milestone to work/);
+      ).not.toThrow();
       expect(() =>
         validateScheduleWorks(
           'B',
