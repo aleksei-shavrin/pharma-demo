@@ -56,6 +56,8 @@ services:
       - ./website:/app/website
       - ./docs:/app/docs
       - ./openspec/specs:/app/openspec/specs
+      # Remark demote-out-of-tree-links imports scripts/lib (site-path helpers).
+      - ./scripts:/app/scripts:ro
       - ppc_dev_docs_node_modules:/app/website/node_modules
       - ppc_dev_docs_docusaurus:/app/website/.docusaurus
     expose:
