@@ -52,7 +52,7 @@ export class NotificationEntityRefDto {
 }
 
 export class NotificationDto {
-  @ApiProperty({ example: 'NTF-C-001' })
+  @ApiProperty({ example: 'NTF-03-001' })
   id!: string;
 
   @ApiProperty({ enum: SNAPSHOT_IDS })
@@ -87,7 +87,7 @@ export class NotificationListDto {
   @ApiProperty()
   scenarioAsOfDate!: string;
 
-  @ApiProperty({ example: 'PRJ-01' })
+  @ApiProperty({ example: 'PRT-01' })
   projectId!: string;
 
   @ApiProperty({ type: [NotificationDto] })

@@ -1,27 +1,15 @@
 import type { NotificationEntityRef } from '@/lib/api-client';
+import { hrefForUiRouteRef } from '@/lib/entity-routes';
 
-/** Soft navigation only — Decision has no detail route in Demo v1 N1. */
+/**
+ * Soft navigation only — Decision has no detail route in Demo v1 N1
+ * (register list filter is separate; notifications stay unlinked for decision).
+ */
 export function hrefForEntityRef(
   ref: NotificationEntityRef,
 ): string | null {
-  switch (ref.type) {
-    case 'equipment':
-      return `/equipment/${encodeURIComponent(ref.id)}`;
-    case 'issue':
-      return `/issues/${encodeURIComponent(ref.id)}`;
-    case 'risk':
-      return `/risks/${encodeURIComponent(ref.id)}`;
-    case 'milestone':
-      return `/milestones/${encodeURIComponent(ref.id)}`;
-    case 'person':
-      return `/people/${encodeURIComponent(ref.id)}`;
-    case 'workstream':
-      return `/workstreams/${encodeURIComponent(ref.id)}`;
-    case 'decision':
-      return null;
-    default:
-      return null;
-  }
+  if (ref.type === 'decision') return null;
+  return hrefForUiRouteRef(ref.type, ref.id);
 }
 
 export function resolveNotificationHref(

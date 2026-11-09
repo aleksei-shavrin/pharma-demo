@@ -1,10 +1,28 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, TdHTMLAttributes } from 'react';
 import Link from 'next/link';
+
 import {
   PageContent,
   PageFrame,
   PageHeader,
 } from '@/components/shell/page-frame';
+import {
+  hrefForUiRouteRef,
+  type UiRouteRefType,
+} from '@/lib/entity-routes';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
+
+export type RegisterColumn =
+  | string
+  | {
+      label: string;
+      /** Hover / assistive title (e.g. decisions Status meaning). */
+      title?: string;
+    };
+
+function columnLabel(col: RegisterColumn): string {
+  return typeof col === 'string' ? col : col.label;
+}
 
 export function RegisterTable({
   caption,
@@ -15,7 +33,7 @@ export function RegisterTable({
   layoutHint,
 }: {
   caption: string;
-  columns: string[];
+  columns: RegisterColumn[];
   children: ReactNode;
   /** Extra table classes (e.g. min-width for inner h-scroll on narrow viewports). */
   tableClassName?: string;
@@ -36,15 +54,20 @@ export function RegisterTable({
         <caption className="sr-only">{caption}</caption>
         <thead className="sticky top-0 z-10 bg-[var(--surface-sunken)] text-xs uppercase tracking-wide text-[var(--text-muted)] shadow-[inset_0_-1px_0_0_var(--border)]">
           <tr>
-            {columns.map((col, i) => (
-              <th
-                key={col}
-                scope="col"
-                className={`whitespace-nowrap px-3 py-2 font-semibold ${columnClassNames?.[i] ?? ''}`.trim()}
-              >
-                {col}
-              </th>
-            ))}
+            {columns.map((col, i) => {
+              const label = columnLabel(col);
+              const title = typeof col === 'string' ? undefined : col.title;
+              return (
+                <th
+                  key={`${label}-${i}`}
+                  scope="col"
+                  title={title}
+                  className={`whitespace-nowrap px-3 py-2 font-semibold ${columnClassNames?.[i] ?? ''}`.trim()}
+                >
+                  {label}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody className="text-[var(--text-secondary)]">{children}</tbody>
@@ -92,12 +115,15 @@ export function RegisterRow({
 export function RegisterCell({
   children,
   className = '',
+  ...rest
 }: {
   children: ReactNode;
   className?: string;
-}) {
+} & TdHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <td className={`px-3 py-2 align-middle ${className}`}>{children}</td>
+    <td className={`px-3 py-2 align-middle ${className}`} {...rest}>
+      {children}
+    </td>
   );
 }
 
@@ -140,6 +166,81 @@ export function RegisterMutedIds({ ids }: { ids: string[] }) {
   );
 }
 
+export type RegisterIdRef = {
+  type: UiRouteRefType;
+  id: string;
+};
+
+/** Typed related-id links — canonical hrefForUiRouteRef; unresolved stays muted text. */
+export function RegisterIdLinks({
+  refs,
+}: {
+  refs: readonly RegisterIdRef[];
+}) {
+  if (refs.length === 0) {
+    return (
+      <span className="text-[var(--text-muted)]" data-register-id-links="empty">
+        —
+      </span>
+    );
+  }
+  return (
+    <span
+      className="inline-flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 font-mono text-xs"
+      data-register-id-links="true"
+    >
+      {refs.map((ref, i) => {
+        const href = hrefForUiRouteRef(ref.type, ref.id);
+        const sep = i > 0 ? <span className="text-[var(--text-muted)]">, </span> : null;
+        if (!href) {
+          return (
+            <span key={`${ref.type}:${ref.id}`}>
+              {sep}
+              <span
+                className="whitespace-nowrap text-[var(--text-muted)]"
+                title={unresolvedRefTitle(ref)}
+                data-ref-type={ref.type}
+                data-ref-id={ref.id}
+                data-ref-resolved="false"
+              >
+                {ref.id || '—'}
+              </span>
+            </span>
+          );
+        }
+        return (
+          <span key={`${ref.type}:${ref.id}`}>
+            {sep}
+            <Link
+              href={href}
+              className="whitespace-nowrap text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+              data-ref-type={ref.type}
+              data-ref-id={ref.id}
+              data-ref-resolved="true"
+            >
+              {ref.id}
+            </Link>
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+function unresolvedRefTitle(ref: RegisterIdRef): string {
+  if (!ref.id?.trim()) {
+    return 'Идентификатор не задан';
+  }
+  if (ref.type === 'decision') {
+    return 'Карточка решения в Demo v1 отсутствует; доступен фильтр списка';
+  }
+  if (ref.type === 'milestone' && ref.id.startsWith('KT-')) {
+    return 'Импортированная контрольная точка KT без карточки детали';
+  }
+  return `Нет маршрута для ${ref.type} ${ref.id}`;
+}
+
+
 export function RegisterShell({
   title,
   asOf,
@@ -148,6 +249,7 @@ export function RegisterShell({
 }: {
   title: string;
   asOf: string | null;
+  /** Internal snapshot id (01–19); displayed as ordinal 01–19. */
   snapshot: string;
   children: ReactNode;
 }) {
@@ -160,7 +262,9 @@ export function RegisterShell({
         <p className="text-sm text-[var(--text-secondary)]">
           {asOf ? `На дату ${asOf} · ` : null}
           снимок{' '}
-          <span className="font-semibold text-[var(--text)]">{snapshot}</span>
+          <span className="font-semibold tabular-nums text-[var(--text)]">
+            {snapshotDisplayLabel(snapshot)}
+          </span>
         </p>
       </PageHeader>
       {/* Workspace: Schedule / registers own internal scroll; no page-level scroll. */}

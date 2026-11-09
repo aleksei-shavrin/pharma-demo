@@ -20,11 +20,11 @@ type Band = 'early' | 'c' | 'mid' | 'late' | 'close';
 
 function bandFor(snapshotId: SnapshotId): Band {
   const i = schedulePhaseIndex(snapshotId);
-  if (i <= 1) return 'early'; // A–B
+  if (i <= 1) return 'early'; // 01–02
   if (i === 2) return 'c';
-  if (i <= 7) return 'mid'; // D–H
-  if (i <= 13) return 'late'; // I–N
-  return 'close'; // O–S
+  if (i <= 7) return 'mid'; // 04–08
+  if (i <= 13) return 'late'; // 09–14
+  return 'close'; // 15–19
 }
 
 /**
@@ -161,7 +161,7 @@ export function reconcileWorkFacts(
 
 const WORK_STATE_TABLE: Record<string, Record<Band, WorkStateOverlay>> = {
   'WK-01': {
-    // A asOf 2027-02-15 is before authored start 2027-02-18 → Waiting/0 on early.
+    // 01 asOf 2027-02-15 is before authored start 2027-02-18 → Waiting/0 on early.
     early: {
       status: 'Waiting',
       progressPct: 0,
@@ -264,7 +264,7 @@ const WORK_STATE_TABLE: Record<string, Record<Band, WorkStateOverlay>> = {
       actualStart: null,
       actualEnd: null,
     },
-    // C asOf 2027-03-01 is before authored start 2027-03-06 → still Waiting/0.
+    // 03 asOf 2027-03-01 is before authored start 2027-03-06 → still Waiting/0.
     c: {
       status: 'Waiting',
       progressPct: 0,
@@ -362,7 +362,7 @@ const WORK_STATE_TABLE: Record<string, Record<Band, WorkStateOverlay>> = {
       actualEnd: null,
     },
     c: {
-      // Integrity/storyline: floors waiting behind delayed 8.2.1 at C asOf.
+      // Integrity/storyline: floors waiting behind delayed 8.2.1 at 03 asOf.
       status: 'Waiting',
       progressPct: 0,
       actualStart: null,

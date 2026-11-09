@@ -29,7 +29,7 @@ export type SnapshotState = {
   msRag: Partial<Record<MilestoneId, Rag>>;
   /**
    * Fixture-authored executive milestone set (R2-U1-R4):
-   * stable curated project-lifecycle map — same membership A–S.
+   * stable curated project-lifecycle map — same membership 01–19.
    * Snapshot switching changes state/RAG/chrome, not set membership.
    */
   executiveMilestoneIds: MilestoneId[];
@@ -44,7 +44,7 @@ const emptyTrend = (): TrendFixture => ({
 });
 
 /**
- * Stable executive map (12) across A–S.
+ * Stable executive map (12) across 01–19.
  * FND and STR stay in the catalogue and the milestone register.
  * R2-U1-R4: not snapshot-phase-varying.
  */
@@ -63,7 +63,7 @@ export const EXECUTIVE_MILESTONE_SET_STABLE: MilestoneId[] = [
   'MS-PS',
 ];
 
-/** Risks present from A (Green) excluding RISK-COM-01 until E. */
+/** Risks present from 01 (Green) excluding RISK-COM-01 until 05. */
 const BASE_RISKS_GREEN: Partial<Record<RiskId, Rag>> = {
   'RISK-001': 'Green',
   'RISK-HVAC-02': 'Green',
@@ -81,29 +81,29 @@ const BASE_RISKS_GREEN: Partial<Record<RiskId, Rag>> = {
 };
 
 /**
- * Panel and power slips are authored on C and held through S.
- * A–B stay at delta 0. Holding avoids a C→D forecast jump back to baseline
+ * Panel and power slips are authored on 03 and held through 19.
+ * 01–02 stay at delta 0. Holding avoids a 03→04 forecast jump back to baseline
  * while scenarioAsOfDate moves forward. Demo assumption: the source has no recovery date.
  * Project/workstream rollups do not read milestone RAG, so HVAC and MS-PS arcs stay intact.
  */
 const PANEL_POWER_SLIP_FROM: readonly PopulatedSnapshotId[] = [
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'I',
-  'J',
-  'K',
-  'L',
-  'M',
-  'N',
-  'O',
-  'P',
-  'Q',
-  'R',
-  'S',
+  '03',
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+  '15',
+  '16',
+  '17',
+  '18',
+  '19',
 ];
 
 const PANEL_POWER_SLIP_DELTA: Partial<Record<MilestoneId, number>> = {
@@ -131,7 +131,7 @@ function holdPanelPowerSlip(
 }
 
 const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
-  A: {
+  '01': {
     asOf: '2027-02-15',
     psForecast: '2027-09-15',
     eqDelta: {},
@@ -144,7 +144,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     trend: emptyTrend(),
   },
 
-  B: {
+  '02': {
     asOf: '2027-02-28',
     psForecast: '2027-09-15',
     eqDelta: {
@@ -193,7 +193,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  C: {
+  '03': {
     asOf: '2027-03-01',
     psForecast: '2027-10-06',
     eqDelta: {
@@ -220,7 +220,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
-        id: 'TEX-C-HVAC-PS',
+        id: 'TEX-03-HVAC-PS',
         title: 'Критический прогноз сдвига AHU',
         causeImpact:
           'Задержка long-lead HVAC угрожает старту производства (+21 дн.)',
@@ -250,7 +250,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  D: {
+  '04': {
     asOf: '2027-03-20',
     psForecast: '2027-10-06',
     eqDelta: {
@@ -287,7 +287,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
-        id: 'TEX-D-HVAC-PS',
+        id: 'TEX-04-HVAC-PS',
         title: 'HVAC → старт производства',
         causeImpact: 'Прогноз запуска остаётся сдвинутым на 21 день',
         links: [
@@ -310,7 +310,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
         priority: 2,
       },
       {
-        id: 'TEX-D-HVAC-IQ',
+        id: 'TEX-04-HVAC-IQ',
         title: 'Гейт HVAC (IQ) под давлением документации',
         causeImpact: 'ISS-HVAC-02 / RISK-HVAC-02',
         links: [
@@ -328,7 +328,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  E: {
+  '05': {
     asOf: '2027-04-10',
     psForecast: '2027-10-06',
     eqDelta: {
@@ -454,7 +454,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  F: {
+  '06': {
     asOf: '2027-04-20',
     psForecast: '2027-10-06',
     eqDelta: {
@@ -515,7 +515,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
-        id: 'TEX-F-HVAC-PS',
+        id: 'TEX-06-HVAC-PS',
         title: 'HVAC → PS без изменения прогноза',
         causeImpact: 'DEC-001 зафиксирован; Δ остаётся +21 (BR-006)',
         links: [
@@ -554,7 +554,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  G: {
+  '07': {
     asOf: '2027-05-15',
     psForecast: '2027-09-29',
     eqDelta: {
@@ -614,7 +614,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     executiveMilestoneIds: [...EXECUTIVE_MILESTONE_SET_STABLE],
     topExceptions: [
       {
-        id: 'TEX-G-HVAC-PS',
+        id: 'TEX-07-HVAC-PS',
         title: 'Остаточный HVAC +14',
         causeImpact:
           'Прогресс по сценарию; риск срыва запуска и веха старта остаются в отклонении',
@@ -657,7 +657,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  H: {
+  '08': {
     asOf: '2027-06-01',
     psForecast: '2027-09-29',
     eqDelta: {
@@ -757,7 +757,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  I: {
+  '09': {
     asOf: '2027-06-20',
     psForecast: '2027-09-29',
     eqDelta: {
@@ -860,7 +860,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  J: {
+  '10': {
     asOf: '2027-07-05',
     psForecast: '2027-09-29',
     eqDelta: {
@@ -954,7 +954,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  K: {
+  '11': {
     asOf: '2027-07-20',
     psForecast: '2027-09-29',
     eqDelta: {
@@ -1049,7 +1049,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  L: {
+  '12': {
     asOf: '2027-08-01',
     psForecast: '2027-09-29',
     eqDelta: {
@@ -1142,7 +1142,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  M: {
+  '13': {
     asOf: '2027-08-12',
     psForecast: '2027-09-29',
     eqDelta: {
@@ -1238,7 +1238,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  N: {
+  '14': {
     asOf: '2027-08-22',
     psForecast: '2027-09-29',
     eqDelta: {
@@ -1327,7 +1327,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  O: {
+  '15': {
     asOf: '2027-09-01',
     psForecast: '2027-09-22',
     eqDelta: {
@@ -1420,7 +1420,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  P: {
+  '16': {
     asOf: '2027-09-10',
     psForecast: '2027-09-22',
     eqDelta: {
@@ -1511,7 +1511,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  Q: {
+  '17': {
     asOf: '2027-09-15',
     psForecast: '2027-09-22',
     eqDelta: {
@@ -1597,7 +1597,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  R: {
+  '18': {
     asOf: '2027-09-18',
     psForecast: '2027-09-22',
     eqDelta: {
@@ -1672,7 +1672,7 @@ const SNAPSHOT_STATES_BASE: Record<PopulatedSnapshotId, SnapshotState> = {
     },
   },
 
-  S: {
+  '19': {
     asOf: '2027-09-22',
     psForecast: '2027-09-22',
     eqDelta: {

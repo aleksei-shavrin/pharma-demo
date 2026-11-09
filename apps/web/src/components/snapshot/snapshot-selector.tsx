@@ -13,6 +13,7 @@ import { createPortal } from 'react-dom';
 import {
   SELECTABLE_SNAPSHOT_IDS,
   isSelectableSnapshotId,
+  snapshotDisplayLabel,
   type SelectableSnapshotId,
   type SnapshotId,
 } from '@/lib/snapshot/snapshot-id';
@@ -31,11 +32,11 @@ import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 type PopupPos = { top: number; right: number; width: number };
 
 function toSelectable(id: SnapshotId): SelectableSnapshotId {
-  return isSelectableSnapshotId(id) ? id : 'A';
+  return isSelectableSnapshotId(id) ? id : '01';
 }
 
 /**
- * Compact AppBar snapshot disclosure (R2-U1: A–S phase-grouped).
+ * Compact AppBar snapshot disclosure (R2-U1: 01–19 phase-grouped).
  * Single ARIA pattern: button trigger + portaled listbox.
  */
 export function SnapshotSelector() {
@@ -59,7 +60,7 @@ export function SnapshotSelector() {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<PopupPos | null>(null);
   const [focusId, setFocusId] = useState<SelectableSnapshotId>(() =>
-    toSelectable(settled ? active : (requested ?? 'A')),
+    toSelectable(settled ? active : (requested ?? '01')),
   );
 
   useEffect(() => {
@@ -165,13 +166,13 @@ export function SnapshotSelector() {
         break;
       case 'Home':
         event.preventDefault();
-        setFocusId('A');
-        queueMicrotask(() => optionRefs.current.A?.focus());
+        setFocusId('01');
+        queueMicrotask(() => optionRefs.current['01']?.focus());
         break;
       case 'End':
         event.preventDefault();
-        setFocusId('S');
-        queueMicrotask(() => optionRefs.current.S?.focus());
+        setFocusId('19');
+        queueMicrotask(() => optionRefs.current['19']?.focus());
         break;
       case 'Enter':
       case ' ':
@@ -207,12 +208,15 @@ export function SnapshotSelector() {
     : snapshotAsOfRu(requested ?? active);
   const displayId = settled ? active : requested ?? active;
   const phaseHint = phaseTitleForSnapshot(toSelectable(displayId));
+  const displayOrdinal = snapshotDisplayLabel(displayId);
+  const activeOrdinal = snapshotDisplayLabel(active);
+  const requestedOrdinal = requested ? snapshotDisplayLabel(requested) : null;
   const triggerLabel = settled
     ? loading && requested && requested !== active
-      ? `Снимок ${active}, ${committedAsOfRu}, ${phaseHint}, активный, загрузка снимка ${requested}`
-      : `Снимок ${active}, ${committedAsOfRu}, ${phaseHint}, активный`
-    : loading && requested
-      ? `Снимок ${requested}, загрузка`
+      ? `Снимок ${activeOrdinal}, ${committedAsOfRu}, ${phaseHint}, активный, загрузка снимка ${requestedOrdinal}`
+      : `Снимок ${activeOrdinal}, ${committedAsOfRu}, ${phaseHint}, активный`
+    : loading && requestedOrdinal
+      ? `Снимок ${requestedOrdinal}, загрузка`
       : 'Демо-снимок, загрузка';
 
   const listStyle: CSSProperties | undefined = pos
@@ -282,8 +286,11 @@ export function SnapshotSelector() {
                         ].join(' ')}
                       >
                         <div className="flex items-baseline gap-2">
-                          <span className="w-4 shrink-0 text-xs font-semibold text-[var(--text)]">
-                            {id}
+                          <span
+                            className="w-5 shrink-0 text-xs font-semibold tabular-nums text-[var(--text)]"
+                            data-snapshot-id={id}
+                          >
+                            {snapshotDisplayLabel(id)}
                           </span>
                           <span className="text-xs text-[var(--text-secondary)]">
                             {snapshotAsOfRu(id)}
@@ -333,14 +340,15 @@ export function SnapshotSelector() {
           loading ? 'opacity-80' : '',
         ].join(' ')}
         data-snapshot-trigger
+        data-snapshot-active={settled ? active : undefined}
       >
-        <span className="text-xs font-semibold text-[var(--text)]">
-          Снимок {displayId}
+        <span className="text-xs font-semibold tabular-nums text-[var(--text)]">
+          Снимок {displayOrdinal}
           {loading && requested ? (
             <span className="font-normal text-[var(--text-muted)]"> …</span>
           ) : null}
         </span>
-        {/* Clip the phase line only; aria-label still carries the letter and date. */}
+        {/* Clip the phase line only; aria-label carries ordinal + date. */}
         <span className="block w-full max-w-full truncate text-[10px] leading-tight text-[var(--text-muted)]">
           {settled ? committedAsOfRu : snapshotAsOfRu(displayId)}
           {phaseHint ? ` · ${phaseHint}` : ''}
@@ -372,7 +380,7 @@ export function SnapshotSelector() {
         </div>
       ) : null}
       {loading && requested && !open ? (
-        <p className="text-xs text-[var(--text-muted)]" aria-live="polite">
+        <p className="sr-only" aria-live="polite">
           Загрузка снимка {requested}…
         </p>
       ) : null}

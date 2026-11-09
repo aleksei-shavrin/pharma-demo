@@ -1,5 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { DashboardService } from '../dashboard/dashboard.service';
+import { PortfolioService } from '../portfolio/portfolio.service';
+import { ScheduleService } from '../schedule/schedule.service';
 import { DEMO_DATA_SOURCE } from './demo-data-source';
 import { MockDemoDataSource } from './mock-demo-data-source';
 import {
@@ -23,13 +25,15 @@ describe('portfolio milestone universe', () => {
     const mod = await Test.createTestingModule({
       providers: [
         DashboardService,
+        PortfolioService,
+        ScheduleService,
         { provide: DEMO_DATA_SOURCE, useClass: MockDemoDataSource },
       ],
     }).compile();
     const dash = mod.get(DashboardService);
     let prev: string[] | null = null;
     for (const snap of POPULATED_SCHEDULE_SNAPSHOTS) {
-      const o = dash.getOverview('PRJ-01', snap);
+      const o = dash.getOverview('PRT-01', snap);
       expect(o.executiveMilestoneIds).toHaveLength(189);
       expect(o.milestones.length).toBeGreaterThanOrEqual(189);
       const order = [...o.executiveMilestoneIds];

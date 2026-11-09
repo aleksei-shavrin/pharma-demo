@@ -2,15 +2,15 @@
 
 ## ADDED Requirements
 
-### Requirement: Portfolio container keeps PRJ-01
+### Requirement: Portfolio container keeps PRT-01
 
-Демонстрационный портфель SHALL быть тем же `PRJ-01`. Новые ID программ и проектов аналитика SHALL NOT заменять `PRJ-01` в контрактах `MS-PS`, `DEC-001` и HVAC.
+Демонстрационный портфель SHALL быть тем же `PRT-01`. Новые ID программ и проектов аналитика SHALL NOT заменять `PRT-01` в контрактах `MS-PS`, `DEC-001` и HVAC.
 
 #### Scenario: Production start identity is unchanged
 
-- **WHEN** читается обзор на снимке C, D или F
-- **THEN** прогноз запуска `PRJ-01` равен `2027-10-06`
-- **AND** `DEC-001` на F по-прежнему ссылается на `PRJ-01` и `MS-PS`
+- **WHEN** читается обзор на снимке 03, 04 или 06
+- **THEN** прогноз запуска `PRT-01` равен `2027-10-06`
+- **AND** `DEC-001` на 06 по-прежнему ссылается на `PRT-01` и `MS-PS`
 
 ### Requirement: Seven programs and twenty-five analyst projects
 
@@ -37,7 +37,7 @@
 
 #### Scenario: Design projects stay in attention
 
-- **WHEN** читается каталог на любом снимке A–S
+- **WHEN** читается каталог на любом снимке 01–19
 - **THEN** `AN-01`…`AN-05` имеют статус Yellow
 - **AND** у них нет выдуманного числа недель отставания
 
@@ -59,7 +59,7 @@
 
 #### Scenario: Construction is red when panels are red
 
-- **WHEN** активен снимок C и читается `PRG-CON`
+- **WHEN** активен снимок 03 и читается `PRG-CON`
 - **THEN** `AN-08` Red, `AN-06` и `AN-07` Yellow
 - **AND** статус `PRG-CON` равен Red
 

@@ -163,6 +163,53 @@ export class DashboardMilestoneDto {
   portfolioVisible!: boolean;
 }
 
+export class DecisionExecutionSourceDto {
+  @ApiProperty({
+    enum: ['demo'],
+    description: 'Illustrative demo provenance — not GMP evidence',
+  })
+  kind!: 'demo';
+
+  @ApiProperty()
+  label!: string;
+}
+
+export class DecisionExecutionDto {
+  @ApiProperty({ enum: ['not_started', 'in_progress', 'completed'] })
+  status!: 'not_started' | 'in_progress' | 'completed';
+
+  @ApiProperty()
+  evidenceNote!: string;
+
+  @ApiProperty({ type: DecisionExecutionSourceDto })
+  source!: DecisionExecutionSourceDto;
+
+  @ApiProperty()
+  updatedAt!: string;
+
+  @ApiProperty()
+  observationId!: string;
+
+  @ApiProperty()
+  asOfDate!: string;
+}
+
+export class DecisionHonestyDto {
+  @ApiProperty({
+    description:
+      'DEPRECATED BR-006 legacy: always false when Decision recorded. NOT execution status — do not interpret as «action not done».',
+    deprecated: true,
+  })
+  recoveryExecuted!: false;
+
+  @ApiProperty({
+    enum: ['within_baseline', 'deviation_persists'],
+    description:
+      'Forecast deviation vs baseline (independent of executionStatus). BR-006: record alone does not clear deviation.',
+  })
+  forecastDeviation!: 'within_baseline' | 'deviation_persists';
+}
+
 export class DashboardDecisionDto {
   @ApiProperty()
   id!: string;
@@ -196,6 +243,19 @@ export class DashboardDecisionDto {
 
   @ApiProperty({ enum: ['none', 'upcoming', 'passed'] })
   dueState!: 'none' | 'upcoming' | 'passed';
+
+  @ApiProperty({
+    enum: ['unknown', 'not_started', 'in_progress', 'completed'],
+    description: 'Read-only demo execution status; unknown when no observation',
+  })
+  executionStatus!: 'unknown' | 'not_started' | 'in_progress' | 'completed';
+
+  @ApiPropertyOptional({
+    type: DecisionExecutionDto,
+    nullable: true,
+    description: 'Null when executionStatus=unknown',
+  })
+  execution!: DecisionExecutionDto | null;
 
   @ApiPropertyOptional({
     description:
@@ -242,14 +302,6 @@ export class DerivedImpactDto {
   kind!: 'none' | 'aligned_slip';
 }
 
-export class DecisionHonestyDto {
-  @ApiProperty({
-    description:
-      'Always false in Demo v1 when Decision is recorded (BR-006). FE builds user copy.',
-  })
-  recoveryExecuted!: false;
-}
-
 export type DecisionPanelState = 'absent' | 'needed' | 'recorded';
 
 export class WorkstreamRollupDto {
@@ -269,6 +321,26 @@ export class ProgramSummaryDto {
 
   @ApiProperty({ enum: ['Green', 'Yellow', 'Red'] })
   status!: 'Green' | 'Yellow' | 'Red';
+
+  @ApiPropertyOptional({
+    nullable: true,
+    type: Number,
+    description:
+      'Schedule leaf progress % (parity with GET /programs); null when no leaves',
+  })
+  progressPct!: number | null;
+
+  @ApiProperty()
+  leafCompleted!: number;
+
+  @ApiProperty()
+  leafTotal!: number;
+
+  @ApiProperty({
+    enum: ['ok', 'warn', 'danger'],
+    description: 'Same fill tone policy as schedule / programs list',
+  })
+  progressFillTone!: 'ok' | 'warn' | 'danger';
 }
 
 export class TopExceptionLinkDto {
@@ -312,6 +384,120 @@ export class TrendDto {
 
   @ApiProperty({ type: [String] })
   unchangedCritical!: string[];
+}
+
+export class PeopleFocusEntityLinkDto {
+  @ApiProperty({ enum: ['issue', 'equipment'] })
+  type!: 'issue' | 'equipment';
+
+  @ApiProperty()
+  id!: string;
+}
+
+export class PeopleFocusReasonDto {
+  @ApiProperty()
+  text!: string;
+
+  @ApiProperty({ type: [PeopleFocusEntityLinkDto] })
+  links!: PeopleFocusEntityLinkDto[];
+}
+
+export class PeopleFocusPersonDto {
+  @ApiProperty({ pattern: String.raw`^PER-\d{2,}$`, example: 'PER-02' })
+  personId!: string;
+
+  @ApiProperty()
+  fullNameRu!: string;
+
+  @ApiProperty()
+  roleTitleRu!: string;
+
+  @ApiPropertyOptional({ nullable: true, type: String })
+  primaryWorkstreamId!: string | null;
+
+  @ApiProperty()
+  criticalIncidentCount!: number;
+
+  @ApiProperty()
+  otherActiveIssueCount!: number;
+
+  @ApiProperty()
+  hasNewCritical!: boolean;
+
+  @ApiProperty()
+  incidentGrowth!: number;
+
+  @ApiProperty({
+    description:
+      'Critical keys removed for this person vs previous; 0 when previous unknown',
+  })
+  criticalSignalsRemoved!: number;
+
+  @ApiProperty({ type: [PeopleFocusReasonDto] })
+  reasons!: PeopleFocusReasonDto[];
+
+  @ApiProperty({ type: [String] })
+  criticalIncidentKeys!: string[];
+
+  @ApiProperty({ type: [String] })
+  activeIssueIds!: string[];
+
+  @ApiProperty({ type: [String] })
+  delayedCriticalEquipmentIds!: string[];
+}
+
+export class PeopleFocusSummaryDto {
+  @ApiProperty({ description: 'People with ≥1 open issue or critical delay' })
+  peopleWithQuestions!: number;
+
+  @ApiProperty({ description: 'Distinct critical incidents (deduped)' })
+  criticalQuestionCount!: number;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    type: Number,
+    description:
+      'New critical incidents vs previous snapshot (not all new issues); null on A',
+  })
+  newCriticalQuestionCount!: number | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    type: Number,
+    description:
+      'Critical keys present on previous but not current (same predicate); null on A',
+  })
+  removedCriticalSignalCount!: number | null;
+
+  @ApiProperty({
+    description:
+      'Active issues not tied to a critical Delayed EQ case (not “low severity”)',
+  })
+  otherActiveIssueCount!: number;
+}
+
+export class PeopleFocusPanelDto {
+  @ApiPropertyOptional({
+    enum: SNAPSHOT_IDS,
+    nullable: true,
+    description: 'Previous SNAPSHOT_IDS neighbor; null on A',
+  })
+  previousSnapshotId!: SnapshotId | null;
+
+  @ApiProperty({ type: PeopleFocusSummaryDto })
+  summary!: PeopleFocusSummaryDto;
+
+  @ApiProperty({ type: [PeopleFocusPersonDto] })
+  people!: PeopleFocusPersonDto[];
+
+  @ApiProperty({
+    type: [String],
+    description: 'Critical Delayed EQ with null responsiblePersonId',
+  })
+  unassignedDelayedCriticalEquipmentIds!: string[];
+
+  @ApiProperty()
+  totalPeopleInFocus!: number;
 }
 
 export class DashboardOverviewDto {
@@ -374,7 +560,14 @@ export class DashboardOverviewDto {
     type: DecisionHonestyDto,
     nullable: true,
     description:
-      'Present when Decision recorded; recoveryExecuted is always false in Demo v1 (BR-006). UI prose is FE-owned.',
+      'Present when DEC-001 recorded. recoveryExecuted deprecated always-false; use forecastDeviation + executionStatus.',
   })
   decisionHonesty!: DecisionHonestyDto | null;
+
+  @ApiProperty({
+    type: PeopleFocusPanelDto,
+    description:
+      'Director people-focus: owners of open critical delivery questions (not HR scores)',
+  })
+  peopleFocus!: PeopleFocusPanelDto;
 }

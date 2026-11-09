@@ -10,7 +10,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   RegisterEmpty,
   RegisterError,
@@ -42,6 +42,7 @@ import {
 import {
   captureChartPaneScroll,
   captureRowAnchor,
+  centeredOwnedScrollTop,
   emptyScheduleScrollAnchor,
   forwardWheelDeltaToOwner,
   restoreChartPaneScroll,
@@ -64,7 +65,10 @@ import {
   type ScheduleComparisonMode,
 } from '@/lib/schedule/schedule-comparison';
 import { resolveScheduleFillTone } from '@/lib/schedule/schedule-fill-tone';
-import { applyScheduleRowHover } from '@/lib/schedule/schedule-row-hover';
+import {
+  applyScheduleRowHover,
+  applyScheduleRowSelected,
+} from '@/lib/schedule/schedule-row-hover';
 import {
   computeScheduleVirtualWindow,
   type ScheduleVirtualWindow,
@@ -77,6 +81,12 @@ import {
   type ScheduleViewMode,
 } from './schedule-view-mode';
 import { ScheduleViewToggle } from './schedule-view-toggle';
+import { ScheduleZoomToggle } from './schedule-zoom-toggle';
+import {
+  SCHEDULE_ZOOM_DEFAULT_INDEX,
+  canZoomIn,
+  canZoomOut,
+} from '@/lib/schedule/schedule-gantt-zoom';
 
 /** Keep a link only when both ends are among the visible rows. */
 function linksForVisibleRows(
@@ -159,8 +169,8 @@ function toGanttTreeRow<T extends ScheduleHierarchyItem>(
 /** Split pane list width bounds: min 20rem (320px at 16px root), max 70% of the split row. */
 const SPLIT_LIST_MIN_PX = 320;
 const SPLIT_LIST_MAX_FRACTION = 0.7;
-/** ~640px on typical 1920 content — not the max drag width. */
-const SPLIT_LIST_DEFAULT_WIDTH = 'min(40rem, 40%)';
+/** Equal panes until the user drags the 1px splitter (then listWidthPx is set). */
+const SPLIT_LIST_DEFAULT_WIDTH = '50%';
 const SPLIT_KEY_STEP_PX = 24;
 const SPLIT_KEY_STEP_LARGE_PX = 96;
 
@@ -262,7 +272,9 @@ function includeScheduleItem(
 export function ScheduleView() {
   const { active } = useSnapshot();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const projectFilter = searchParams.get('project');
+  const focusParam = searchParams.get('focus');
   const { data, status, error, retry } = useRegisterQuery(fetchSchedule);
   const [mode, setMode] = useState<ScheduleViewMode>(SCHEDULE_VIEW_DEFAULT);
   const [comparison, setComparison] = useState<ScheduleComparisonMode>(() =>
@@ -276,6 +288,8 @@ export function ScheduleView() {
     () => new Set(),
   );
   const expandSeedRef = useRef<string | null>(null);
+  const focusAppliedRef = useRef<string | null>(null);
+  const focusScrollDoneRef = useRef<string | null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const listPaneRef = useRef<HTMLDivElement>(null);
   const chartPaneRef = useRef<HTMLDivElement>(null);
@@ -289,11 +303,14 @@ export function ScheduleView() {
     startWidth: number;
   } | null>(null);
   const splitDragCleanupRef = useRef<(() => void) | null>(null);
-  /** null = default `min(40rem, 40%)`; set after the user resizes the list pane. */
+  /** null = default CSS 50%; set only after the user resizes the list pane. */
   const [listWidthPx, setListWidthPx] = useState<number | null>(null);
   const [splitDragging, setSplitDragging] = useState(false);
   const [ownedScrollTop, setOwnedScrollTop] = useState(0);
   const [ownedViewportHeight, setOwnedViewportHeight] = useState(0);
+  const [zoomLevelIndex, setZoomLevelIndex] = useState(
+    SCHEDULE_ZOOM_DEFAULT_INDEX,
+  );
   const scrollSyncRafRef = useRef(0);
 
   const splitMetrics = () => {
@@ -607,6 +624,149 @@ export function ScheduleView() {
     setExpandedKeys(new Set(allScheduleGroupKeys(data.items)));
   }, [active, data]);
 
+  // Deep-link: /schedule?focus=milestone:MS-… → existing selectionKey + scroll once.
+  useEffect(() => {
+    if (!data?.items?.length || !focusParam) return;
+    if (focusAppliedRef.current === focusParam) return;
+
+    const key = parseSelectionKeyId(focusParam);
+    if (!key) {
+      focusAppliedRef.current = focusParam;
+      return;
+    }
+
+    const item = data.items.find(
+      (row) => row.kind === key.kind && row.id === key.entityId,
+    ) as ScheduleHierarchyItem | undefined;
+    if (!item) {
+      focusAppliedRef.current = focusParam;
+      return;
+    }
+
+    // Ensure ancestors are expanded so virtualization/collapse cannot hide the row.
+    setExpandedKeys((prev) => {
+      const next = new Set(prev);
+      for (const groupKey of allScheduleGroupKeys(data.items)) {
+        next.add(groupKey);
+      }
+      let parent = item.parentKey ?? null;
+      const byKey = new Map(
+        data.items.map((row) => [`${row.kind}:${row.id}`, row as ScheduleHierarchyItem]),
+      );
+      while (parent) {
+        next.add(parent);
+        const parentRow = byKey.get(parent);
+        parent = parentRow?.parentKey ?? null;
+      }
+      return next;
+    });
+
+    // If ?project= would hide the target, drop it once (keep focus + snapshot).
+    const itemProject =
+      (item as { projectId?: string | null }).projectId ?? null;
+    if (
+      projectFilter &&
+      itemProject &&
+      projectFilter !== itemProject
+    ) {
+      const q = new URLSearchParams(searchParams.toString());
+      q.delete('project');
+      q.set('focus', focusParam);
+      router.replace(`/schedule?${q.toString()}`, { scroll: false });
+    }
+
+    const date =
+      (item as { forecastDate?: string | null }).forecastDate ||
+      (item as { baselineDate?: string | null }).baselineDate ||
+      null;
+    if (date) {
+      scrollAnchorRef.current.chartDateIso = date;
+      scrollAnchorRef.current.rowKey = `${key.kind}:${key.entityId}`;
+      // One-shot H center for focus; ordinary restore stays left-edge.
+      scrollAnchorRef.current.centerChartDateOnce = true;
+    }
+
+    setSelectedKey(`${key.kind}:${key.entityId}`);
+    focusAppliedRef.current = focusParam;
+    focusScrollDoneRef.current = null;
+  }, [data, focusParam, projectFilter, router, searchParams]);
+
+  // After expand settles, reveal/center the focus row (once). Do not mark done
+  // until a real scroll owner is available for the active presentation mode.
+  useEffect(() => {
+    if (!focusParam || focusAppliedRef.current !== focusParam) return;
+    if (focusScrollDoneRef.current === focusParam) return;
+    const key = parseSelectionKeyId(focusParam);
+    if (!key) {
+      focusScrollDoneRef.current = focusParam;
+      return;
+    }
+    const rowKey = `${key.kind}:${key.entityId}`;
+    const idx = visibleRows.findIndex((row) => row.key === rowKey);
+    if (idx < 0) return; // wait until expand makes the row visible
+
+    if (mode === 'split') {
+      const owner = scrollOwnerRef.current;
+      if (!owner || owner.clientHeight <= 0) return;
+      const max = Math.max(0, owner.scrollHeight - owner.clientHeight);
+      const sticky = owner.querySelector<HTMLElement>(
+        '[data-schedule-sticky-scale], .ppc-schedule-chart-sticky-scale, [data-gantt-sticky-scale]',
+      );
+      const stickyH = sticky?.getBoundingClientRect().height ?? 0;
+      const target = centeredOwnedScrollTop(
+        idx,
+        SCHEDULE_ROW_HEIGHT_PX,
+        owner.clientHeight,
+        max,
+        stickyH,
+      );
+      owner.scrollTop = target;
+      setOwnedScrollTop(target);
+      scrollAnchorRef.current.verticalScrollTop = target;
+      scrollAnchorRef.current.rowKey = rowKey;
+      focusScrollDoneRef.current = focusParam;
+      return;
+    }
+
+    if (mode === 'table') {
+      const list = listPaneRef.current;
+      const viewport =
+        list?.querySelector<HTMLElement>('[data-schedule-viewport="true"]') ??
+        list;
+      if (!viewport || viewport.clientHeight <= 0) return;
+      const max = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+      const target = centeredOwnedScrollTop(
+        idx,
+        SCHEDULE_ROW_HEIGHT_PX,
+        viewport.clientHeight,
+        max,
+      );
+      viewport.scrollTop = target;
+      scrollAnchorRef.current.verticalScrollTop = target;
+      scrollAnchorRef.current.rowKey = rowKey;
+      focusScrollDoneRef.current = focusParam;
+      return;
+    }
+
+    if (mode === 'gantt') {
+      const chart = chartPaneRef.current;
+      if (!chart || chart.clientHeight <= 0) return;
+      const max = Math.max(0, chart.scrollHeight - chart.clientHeight);
+      const target = centeredOwnedScrollTop(
+        idx,
+        SCHEDULE_ROW_HEIGHT_PX,
+        chart.clientHeight,
+        max,
+      );
+      scrollAnchorRef.current.verticalScrollTop = target;
+      scrollAnchorRef.current.rowKey = rowKey;
+      // Vendor Y + one-shot H center applied on next syncData/restoreChartDate.
+      restoreChartPaneScroll(chart, target, rowKey, 0);
+      focusScrollDoneRef.current = focusParam;
+      return;
+    }
+  }, [focusParam, visibleRows, mode]);
+
   const collapsedHiddenCount = useMemo(() => {
     if (!data) return 0;
     const filtered = data.items.filter((item) =>
@@ -670,6 +830,15 @@ export function ScheduleView() {
     () => visibleRows.map(toGanttTreeRow),
     [visibleRows],
   );
+
+  // Chart rows need a DOM selected marker (vendor gantt_selected alone is not
+  // enough for the same fill as the React table). Re-apply after virtual re-entry.
+  useEffect(() => {
+    applyScheduleRowSelected(
+      [listPaneRef.current, chartPaneRef.current, scrollOwnerRef.current],
+      selectedKey,
+    );
+  }, [selectedKey, mode, boardRows, ganttRows, comparison, ownedScrollTop, active]);
 
   const rowWindow: ScheduleVirtualWindow | null = useMemo(() => {
     // Before the owner has a real clientHeight, mount the full list (tests / first paint).
@@ -742,7 +911,17 @@ export function ScheduleView() {
         <RegisterEmpty />
       ) : null}
       {status === 'idle' && data && data.items.length > 0 ? (
-        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden">
+        <div
+          className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden"
+          data-schedule-workspace="true"
+          data-schedule-selected={selectedKey ?? undefined}
+          data-schedule-focus={focusParam ?? undefined}
+          data-schedule-focus-applied={
+            focusParam && focusAppliedRef.current === focusParam
+              ? 'true'
+              : undefined
+          }
+        >
           <div className="shrink-0 space-y-3">
             <RegisterSummary
               total={data.items.length}
@@ -751,11 +930,11 @@ export function ScheduleView() {
               foundLabel
             />
             <div
-              className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2"
+              className="flex flex-wrap items-end gap-x-4 gap-y-2"
               data-schedule-toolbar="true"
             >
               <div
-                className="flex min-w-0 flex-wrap items-end gap-2"
+                className="flex min-w-0 flex-1 flex-wrap items-end gap-2"
                 data-schedule-toolbar-left="true"
               >
                 <RegisterToolbar
@@ -792,9 +971,26 @@ export function ScheduleView() {
                 </button>
               </div>
               <div
-                className="flex shrink-0 items-center gap-2"
+                className="ml-auto flex shrink-0 items-center justify-end gap-2"
                 data-schedule-toolbar-right="true"
+                data-schedule-toolbar-actions="true"
               >
+                <ScheduleZoomToggle
+                  levelIndex={zoomLevelIndex}
+                  canZoomIn={canZoomIn(zoomLevelIndex)}
+                  canZoomOut={canZoomOut(zoomLevelIndex)}
+                  disabled={mode === 'table'}
+                  onZoomIn={() =>
+                    setZoomLevelIndex((z) =>
+                      canZoomIn(z) ? z + 1 : z,
+                    )
+                  }
+                  onZoomOut={() =>
+                    setZoomLevelIndex((z) =>
+                      canZoomOut(z) ? z - 1 : z,
+                    )
+                  }
+                />
                 {hasWorks ? (
                   <ScheduleComparisonToggle
                     mode={comparison}
@@ -853,6 +1049,8 @@ export function ScheduleView() {
                       embedded
                       rowWindow={rowWindow}
                       onHoverRow={publishHover}
+                      selectedKeyId={selectedKey}
+                      onSelectRow={setSelectedKey}
                     />
                   </div>
                   <div
@@ -907,6 +1105,8 @@ export function ScheduleView() {
                       embedded
                       ownedScrollTop={ownedScrollTop}
                       onHoverRow={publishHover}
+                      zoomLevelIndex={zoomLevelIndex}
+                      onZoomLevelChange={setZoomLevelIndex}
                     />
                   </div>
                 </div>
@@ -930,6 +1130,8 @@ export function ScheduleView() {
                     onToggleRow={toggleExpanded}
                     comparison={comparison}
                     onHoverRow={publishHover}
+                    selectedKeyId={selectedKey}
+                    onSelectRow={setSelectedKey}
                   />
                 </div>
               )}
@@ -948,6 +1150,8 @@ export function ScheduleView() {
                     onSelect={onTimelineSelect}
                     scrollAnchor={scrollAnchorRef.current}
                     onHoverRow={publishHover}
+                    zoomLevelIndex={zoomLevelIndex}
+                    onZoomLevelChange={setZoomLevelIndex}
                   />
                 </div>
               )}

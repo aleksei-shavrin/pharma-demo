@@ -77,8 +77,10 @@ if (hasAllKeys(existing) && (!fs.existsSync(PASS_FILE) || !fs.existsSync(HASH_FI
   process.exit(1);
 }
 
-const username = 'pharma-dev';
-const plaintext = crypto.randomBytes(18).toString('base64url');
+// Local DX demo credentials (gitignored files). Not a runtime backdoor —
+// Nest still verifies bcrypt via LOGIN_PASSWORD_HASH_FILE.
+const username = 'admin';
+const plaintext = 'admin';
 const sessionSecret = crypto.randomBytes(32).toString('hex');
 const hashRaw = caddyHash(plaintext);
 if (!hashRaw.includes('$') || hashRaw.length < 40) {

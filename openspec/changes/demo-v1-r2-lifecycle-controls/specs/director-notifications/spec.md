@@ -6,8 +6,8 @@
 
 #### Scenario: Notifications scoped to committed snapshot
 
-- **WHEN** committed snapshot = C
-- **THEN** notification list отражает только entries с `snapshotId = C` (или explicit multi-snapshot design that still keys off committed id without mutating domain)
+- **WHEN** committed snapshot = 03
+- **THEN** notification list отражает только entries с `snapshotId = 03` (или explicit multi-snapshot design that still keys off committed id without mutating domain)
 
 ### Requirement: Snapshot switch toast budget
 

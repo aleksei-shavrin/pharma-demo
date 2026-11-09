@@ -16,6 +16,7 @@ import {
   PageFrame,
   PageHeader,
 } from '@/components/shell/page-frame';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 import {
   previewSlice,
   sortAttentionForPreview,
@@ -147,7 +148,7 @@ export function WorkstreamDetailView({ data }: { data: WorkstreamDetail }) {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-xs text-[var(--text-muted)]">
-              {data.workstream.id} · снимок {data.snapshotId} · на{' '}
+              {data.workstream.id} · снимок {snapshotDisplayLabel(data.snapshotId)} · на{' '}
               {formatDateRu(data.scenarioAsOfDate)}
             </p>
             <h1 className="mt-1 text-xl font-semibold tracking-tight text-[var(--text)]">
@@ -187,7 +188,7 @@ export function WorkstreamDetailView({ data }: { data: WorkstreamDetail }) {
         </h2>
         <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-[var(--text)]">
           <li>
-            <span className="text-[var(--text-muted)]">Красные риски</span>{' '}
+            <span className="text-[var(--text-muted)]">Критичные риски</span>{' '}
             <span className="font-medium tabular-nums">{att.redRiskCount}</span>
           </li>
           <li>

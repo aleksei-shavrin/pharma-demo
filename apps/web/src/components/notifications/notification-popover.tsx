@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { Notification } from '@/lib/api-client';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 import { isNotificationRead } from '@/lib/notifications/notification-storage';
 import { resolveNotificationHref } from '@/lib/notifications/notification-href';
 
@@ -54,7 +55,7 @@ export function NotificationPopover({
       <div className="flex items-center justify-between gap-2 border-b border-[var(--border-subtle)] px-3 py-2">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-[var(--text)]">Уведомления</p>
-          <p className="text-xs text-[var(--text-muted)]">Снимок {snapshotId}</p>
+          <p className="text-xs text-[var(--text-muted)]">Снимок {snapshotDisplayLabel(snapshotId)}</p>
         </div>
         {items.length > 0 ? (
           <button

@@ -57,7 +57,7 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 ## 3. Approved constraints (do not reopen)
 
 - **VD-A** Industrial Control Lattice.
-- **D1–D11**; shell: Sidebar + App Bar + breadcrumbs + Page Surface; Light/Dark; Snapshot A/B/C.
+- **D1–D11**; shell: Sidebar + App Bar + breadcrumbs + Page Surface; Light/Dark; Snapshot 01/02/03.
 - Stack intent: **shadcn/ui**, **TanStack Table**, **Recharts**.
 - Links = direct DOC-BA-015 only; Impact = derived; no Equipment—Milestone edge.
 - Schedule = Milestone + Equipment delivery only; no Activity / WBS / CPM / deps / scheduling engine / drag-reschedule.
@@ -78,7 +78,7 @@ Do not confuse document frontmatter `status: draft|approved` with decision statu
 | Mock volume | Density guidance only | `hypothesis`; DOC-PROD-012 unchanged |
 | BA-OQ-004/005/002, HIP-003/004/005/007 | Stay open; no invented messaging / AcceptDateSlip Must UI | `open_question` |
 | Closed / Amber | Not in Must palette | `open_question` |
-| Interactive PrioritizeRecovery recording outside Must | Must DecisionPanel = read-only + DEC-001 on C | Must = decided; interactive outside Must = `open_question` |
+| Interactive PrioritizeRecovery recording outside Must | Must DecisionPanel = read-only + DEC-001 on 03 | Must = decided; interactive outside Must = `open_question` |
 | Contrast ratios | Calculated targets in DOC-UX-015 locked with pack; browser verification at implementation | calc done; impl later |
 
 ## 5. UI Design pack

@@ -7,9 +7,9 @@ import { WorkstreamDetailView } from './workstream-detail-view';
 
 function detail(overrides: Partial<WorkstreamDetail> = {}): WorkstreamDetail {
   return {
-    snapshotId: 'C',
+    snapshotId: '03',
     scenarioAsOfDate: '2027-03-02',
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     workstream: {
       id: 'WS-HVAC',
       nameRu: 'HVAC',
@@ -91,7 +91,7 @@ describe('WorkstreamDetailView (R2-W1 / W1-R1)', () => {
 
   it('uses Russian summary labels and contingency copy', () => {
     render(<WorkstreamDetailView data={detail()} />);
-    expect(screen.getByText('Красные риски')).toBeInTheDocument();
+    expect(screen.getByText('Критичные риски')).toBeInTheDocument();
     expect(screen.getByText('Критические задержки')).toBeInTheDocument();
     expect(screen.getByText('Активные проблемы')).toBeInTheDocument();
     expect(screen.queryByText(/Red risks/i)).not.toBeInTheDocument();
@@ -121,7 +121,7 @@ describe('WorkstreamDetailView (R2-W1 / W1-R1)', () => {
     expect(screen.getByText('EQ-HVAC-01')).toBeInTheDocument();
     expect(screen.getByText('ISS-001')).toBeInTheDocument();
     expect(screen.getByText('RISK-001')).toBeInTheDocument();
-    expect(screen.getByText('Красный')).toBeInTheDocument();
+    expect(screen.getByText('Критично')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: '← К обзору проекта' }),
     ).toHaveAttribute('href', '/');

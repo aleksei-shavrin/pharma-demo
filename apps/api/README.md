@@ -9,7 +9,7 @@ npm install
 npm run start:dev
 # http://localhost:3001/health
 # http://localhost:3001/api  (Swagger)
-# http://localhost:3001/v1/projects/PRJ-01
+# http://localhost:3001/v1/projects/PRT-01
 ```
 
 ## Data access

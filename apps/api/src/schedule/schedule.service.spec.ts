@@ -32,8 +32,8 @@ describe('ScheduleService', () => {
   });
 
   it('A: multi control points; HVAC OnTrack; no Activity', () => {
-    const s = service.getSchedule('PRJ-01', 'A');
-    expect(s.snapshotId).toBe('A');
+    const s = service.getSchedule('PRT-01', '01');
+    expect(s.snapshotId).toBe('01');
     expect(s.items.length).toBeGreaterThanOrEqual(2);
     expect(s.items.every((i) => i.kind !== ('activity' as string))).toBe(true);
 
@@ -101,7 +101,7 @@ describe('ScheduleService', () => {
   });
 
   it('B: HVAC calm; PKG Delayed; MS-PS Green', () => {
-    const s = service.getSchedule('PRJ-01', 'B');
+    const s = service.getSchedule('PRT-01', '02');
     const hvac = s.items.find(
       (i): i is ScheduleEquipmentItemDto =>
         i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
@@ -124,7 +124,7 @@ describe('ScheduleService', () => {
   });
 
   it('C: HVAC +21 Delayed; MS-PS Red +21; no recovery heal', () => {
-    const s = service.getSchedule('PRJ-01', 'C');
+    const s = service.getSchedule('PRT-01', '03');
     const eq = s.items.find(
       (i): i is ScheduleEquipmentItemDto =>
         i.kind === 'equipment_delivery' && i.id === 'EQ-HVAC-01',
@@ -141,7 +141,7 @@ describe('ScheduleService', () => {
   });
 
   it('C: WK-кластер и 4 связи поверх контрольных точек, плюс дерево 8.2', () => {
-    const s = service.getSchedule('PRJ-01', 'C');
+    const s = service.getSchedule('PRT-01', '03');
     const works = s.items.filter(
       (i): i is ScheduleWorkItemDto => i.kind === 'work',
     );
@@ -249,7 +249,7 @@ describe('ScheduleService', () => {
   });
 
   it('C: дерево AN-08 → 8.2 и одна веха MS-CLN-PANEL', () => {
-    const s = service.getSchedule('PRJ-01', 'C');
+    const s = service.getSchedule('PRT-01', '03');
     const project = s.items.find(
       (i): i is ScheduleGroupItemDto =>
         i.kind === 'project_group' && i.id === 'AN-08',
@@ -312,12 +312,13 @@ describe('ScheduleService', () => {
       kind: 'milestone',
       parentKey: 'stage_group:8.2',
       wbs: '8.2.3',
+      // Runtime tone from lifecycle — not eternal Red from source missed.
       siblingOrder: 2,
       name: 'Ограждающие конструкции C/D готовы',
       sourceKind: 'controlpoint',
       sourceStatus: 'missed',
       sourceWeeks: null,
-      rag: 'Red',
+      rag: 'Green',
     });
     const ms0 = milestone[0] as {
       baselineDate: string;
@@ -330,7 +331,7 @@ describe('ScheduleService', () => {
   });
 
   it('C: дерево AN-24 → 24.1 и AN-09 → 9.3, одна MS-UTL-PWR, без новой связи', () => {
-    const s = service.getSchedule('PRJ-01', 'C');
+    const s = service.getSchedule('PRT-01', '03');
     const powerProject = s.items.find(
       (i) => i.kind === 'project_group' && i.id === 'AN-24',
     );
@@ -385,16 +386,16 @@ describe('ScheduleService', () => {
       sourceWeeks: null,
     });
     expect(typeof hvacStage?.progressPct).toBe('number');
-    // ALAP latest-start: 24.1.* baseline after C asOf → not yet started.
+    // Hybrid earliest-in-float: 24.1.* can finish before C asOf (was Waiting under pure ALAP).
     expect(feeders).toMatchObject({
-      status: 'Waiting',
+      status: 'Completed',
       sourceWeeks: 8,
-      progressPct: 0,
+      progressPct: 100,
       parentKey: 'stage_group:24.1',
     });
     expect(substation).toMatchObject({
-      status: 'Waiting',
-      progressPct: 0,
+      status: 'Completed',
+      progressPct: 100,
       parentKey: 'stage_group:24.1',
     });
     expect(ahu).toMatchObject({
@@ -412,11 +413,12 @@ describe('ScheduleService', () => {
       kind: 'milestone',
       parentKey: 'stage_group:24.1',
       wbs: '24.1.3',
+      // Runtime tone: Completed lifecycle ⇒ Green even if sourceStatus missed.
       siblingOrder: 2,
       name: 'Энергоснабжение обеспечено',
       sourceKind: 'controlpoint',
       sourceStatus: 'missed',
-      rag: 'Red',
+      rag: 'Green',
     });
     const p0 = power[0] as { baselineDate: string; forecastDate: string };
     expect(p0.baselineDate).toBe(p0.forecastDate);
@@ -442,9 +444,9 @@ describe('ScheduleService', () => {
     });
   });
 
-  it('A–S: полное дерево, WBS у всех, связи демо-набора', () => {
-    for (const id of ['A', 'B', 'D', 'F', 'S'] as const) {
-      const s = service.getSchedule('PRJ-01', id);
+  it('01–19: полное дерево, WBS у всех, связи демо-набора', () => {
+    for (const id of ['01', '02', '04', '06', '19'] as const) {
+      const s = service.getSchedule('PRT-01', id);
       expect(s.items.filter((i) => i.kind === 'project_group')).toHaveLength(
         25,
       );
@@ -467,7 +469,7 @@ describe('ScheduleService', () => {
   });
 
   it('порядок: даты по возрастанию у строк с интервалом; группы не выпадают', () => {
-    const s = service.getSchedule('PRJ-01', 'C');
+    const s = service.getSchedule('PRT-01', '03');
     const dated = s.items.filter(
       (item): item is Exclude<ScheduleItemDto, ScheduleGroupItemDto> =>
         item.kind !== 'project_group' && item.kind !== 'stage_group',
@@ -486,7 +488,9 @@ describe('ScheduleService', () => {
   });
 
   it('unknown project → 404', () => {
-    expect(() => service.getSchedule('PRJ-99', 'A')).toThrow(NotFoundException);
+    expect(() => service.getSchedule('PRJ-99', '01')).toThrow(
+      NotFoundException,
+    );
   });
 
   describe('compareScheduleItems', () => {
@@ -582,14 +586,14 @@ describe('ScheduleService', () => {
 
     it('пустой снимок валиден', () => {
       expect(() =>
-        validateScheduleWorks('A', { works: [], links: [] }),
+        validateScheduleWorks('01', { works: [], links: [] }),
       ).not.toThrow();
     });
 
     it('endDate < startDate → ошибка', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({ works: [work('WK-01', '2027-03-05', '2027-03-01')] }),
         ),
       ).toThrow(InternalServerErrorException);
@@ -598,7 +602,7 @@ describe('ScheduleService', () => {
     it('дубликаты work/link id → ошибка', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({ works: [work('WK-01'), work('WK-01')] }),
         ),
       ).toThrow(/duplicate work id/);
@@ -609,14 +613,14 @@ describe('ScheduleService', () => {
         type: 'FS' as const,
       };
       expect(() =>
-        validateScheduleWorks('B', fixture({ links: [link, link] })),
+        validateScheduleWorks('02', fixture({ links: [link, link] })),
       ).toThrow(/duplicate link id/);
     });
 
     it('ref не по формату work:<id> → ошибка', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             links: [
               {
@@ -634,7 +638,7 @@ describe('ScheduleService', () => {
     it('ref на несуществующую работу → ошибка', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             links: [
               {
@@ -729,19 +733,19 @@ describe('ScheduleService', () => {
     it('progressPct 0 допустим, вне 0..100 — нет', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({ works: [{ ...work('WK-01'), progressPct: 0 }] }),
         ),
       ).not.toThrow();
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({ works: [{ ...work('WK-01'), progressPct: 101 }] }),
         ),
       ).toThrow(/progressPct 101 outside 0\.\.100/);
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({ works: [{ ...work('WK-01'), progressPct: -1 }] }),
         ),
       ).toThrow(/progressPct -1 outside 0\.\.100/);
@@ -750,7 +754,7 @@ describe('ScheduleService', () => {
     it('baseline только с одной стороны → ошибка', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             works: [
               {
@@ -767,7 +771,7 @@ describe('ScheduleService', () => {
     it('parentKey не на группу этого снимка → ошибка', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             works: [{ ...work('WK-01'), parentKey: 'work:WK-01' }],
           }),
@@ -775,7 +779,7 @@ describe('ScheduleService', () => {
       ).toThrow(/does not point at a group/);
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             works: [{ ...work('WK-01'), parentKey: 'stage_group:8.2' }],
           }),
@@ -786,7 +790,7 @@ describe('ScheduleService', () => {
     it('parentKey на группу того же снимка допустим', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             groups: [treeGroup('8.2', 'stage_group', null, '8.2')],
             works: [{ ...work('WK-01'), parentKey: 'stage_group:8.2' }],
@@ -798,7 +802,7 @@ describe('ScheduleService', () => {
     it('дубликат group id и вторая MS-CLN-PANEL → ошибка', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             groups: [
               treeGroup('AN-08', 'project_group', null, '8'),
@@ -809,12 +813,12 @@ describe('ScheduleService', () => {
       ).toThrow(/duplicate group id AN-08/);
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({ works: [work('WK-01'), work('MS-CLN-PANEL')] }),
         ),
       ).toThrow(/second MS-CLN-PANEL/);
       expect(() =>
-        validateScheduleWorks('C', {
+        validateScheduleWorks('03', {
           ...validTree(),
           milestoneAttachments: [
             {
@@ -836,18 +840,18 @@ describe('ScheduleService', () => {
 
     it('на C без дерева → ошибка, полное дерево проходит', () => {
       expect(() =>
-        validateScheduleWorks('C', validTree(), ['MS-CLN-PANEL']),
+        validateScheduleWorks('03', validTree(), ['MS-CLN-PANEL']),
       ).not.toThrow();
       expect(() =>
         validateScheduleWorks(
-          'C',
+          '03',
           { ...validTree(), milestoneAttachments: [] },
           ['MS-CLN-PANEL'],
         ),
       ).toThrow(/missing schedule tree/);
       expect(() =>
         validateScheduleWorks(
-          'C',
+          '03',
           {
             ...validTree(),
             groups: validTree().groups?.filter((group) => group.id !== '8.2'),
@@ -860,7 +864,7 @@ describe('ScheduleService', () => {
     it('фактическая дата равна scenarioAsOfDate', () => {
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             works: [
               {
@@ -892,7 +896,7 @@ describe('ScheduleService', () => {
         });
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           withActual('2027-03-02', null),
           [],
           '2027-03-01',
@@ -900,7 +904,7 @@ describe('ScheduleService', () => {
       ).toThrow(/after scenarioAsOfDate/);
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           withActual(null, '2027-02-23'),
           [],
           '2027-03-01',
@@ -908,7 +912,7 @@ describe('ScheduleService', () => {
       ).toThrow(/actualEnd without actualStart/);
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           withActual('2027-02-23', '2027-02-18'),
           [],
           '2027-03-01',
@@ -916,7 +920,7 @@ describe('ScheduleService', () => {
       ).toThrow(/actualEnd/);
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           withActual('2027-02-31', null),
           [],
           '2027-03-01',
@@ -933,7 +937,7 @@ describe('ScheduleService', () => {
       };
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             works: [row as ScheduleWorkSnapshotFixture['works'][number]],
           }),
@@ -948,7 +952,7 @@ describe('ScheduleService', () => {
     it('на C обязательны все четыре типа связей', () => {
       expect(() =>
         validateScheduleWorks(
-          'C',
+          '03',
           {
             ...validTree(),
             links: [
@@ -974,13 +978,13 @@ describe('ScheduleService', () => {
         targetRef: 'work:WK-01',
       };
       expect(() =>
-        validateScheduleWorks('B', fixture({ links: [accepted] }), [
+        validateScheduleWorks('02', fixture({ links: [accepted] }), [
           'MS-UTL-PWR',
         ]),
       ).not.toThrow();
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             links: [{ ...accepted, targetRef: 'work:WK-99' }],
           }),
@@ -989,7 +993,7 @@ describe('ScheduleService', () => {
       ).toThrow(/unknown leaf.*WK-99/);
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             links: [
               {
@@ -1004,7 +1008,7 @@ describe('ScheduleService', () => {
       ).not.toThrow();
       expect(() =>
         validateScheduleWorks(
-          'B',
+          '02',
           fixture({
             links: [{ ...accepted, type: 'FS' }],
           }),

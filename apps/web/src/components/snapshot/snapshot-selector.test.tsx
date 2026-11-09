@@ -54,13 +54,13 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
-  it('trigger shows committed active; listbox exposes 19 A–S with phases', async () => {
+describe('SnapshotSelector 01–19 disclosure (R2-U1)', () => {
+  it('trigger shows committed active; listbox exposes 19 01–19 with phases', async () => {
     const user = userEvent.setup();
     renderSelector();
-    await expectActiveSnapshot('A');
+    await expectActiveSnapshot('01');
 
-    await user.click(screen.getByRole('button', { name: /Снимок A.*активный/ }));
+    await user.click(screen.getByRole('button', { name: /Снимок 01.*активный/ }));
     const list = screen.getByRole('listbox', { name: 'Демо-снимок' });
     expect(list).toHaveAttribute('data-snapshot-listbox', 'true');
     expect(list).toHaveAttribute('data-snapshot-count', '19');
@@ -75,27 +75,27 @@ describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
       ).toBeInTheDocument();
     }
     expect(
-      within(list).getByRole('option', { name: snapshotOptionLabel('A') }),
+      within(list).getByRole('option', { name: snapshotOptionLabel('01') }),
     ).toHaveAttribute('aria-selected', 'true');
   });
 
   it('selects G and H; trigger reflects committed API date', async () => {
     const user = userEvent.setup();
     renderSelector();
-    await expectActiveSnapshot('A');
-    await selectDemoSnapshot(user, 'G');
-    await expectActiveSnapshot('G');
+    await expectActiveSnapshot('01');
+    await selectDemoSnapshot(user, '07');
+    await expectActiveSnapshot('07');
     expect(
       screen.getByRole('button', {
-        name: /Снимок G, 15\.05\.2027.*активный/,
+        name: /Снимок 07, 15\.05\.2027.*активный/,
       }),
     ).toBeInTheDocument();
 
-    await selectDemoSnapshot(user, 'H');
-    await expectActiveSnapshot('H');
+    await selectDemoSnapshot(user, '08');
+    await expectActiveSnapshot('08');
     expect(
       screen.getByRole('button', {
-        name: /Снимок H, 01\.06\.2027.*активный/,
+        name: /Снимок 08, 01\.06\.2027.*активный/,
       }),
     ).toBeInTheDocument();
   });
@@ -103,37 +103,37 @@ describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
   it('keyboard: ArrowDown/Up, Home/End, Enter, Space, Escape, Tab', async () => {
     const user = userEvent.setup();
     renderSelector();
-    await expectActiveSnapshot('A');
+    await expectActiveSnapshot('01');
 
-    const trigger = screen.getByRole('button', { name: /Снимок A.*активный/ });
+    const trigger = screen.getByRole('button', { name: /Снимок 01.*активный/ });
     trigger.focus();
     await user.keyboard('{ArrowDown}');
     await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
 
     const list = screen.getByRole('listbox');
-    within(list).getByRole('option', { name: snapshotOptionLabel('A') }).focus();
+    within(list).getByRole('option', { name: snapshotOptionLabel('01') }).focus();
     await user.keyboard('{ArrowDown}');
     await user.keyboard('{Enter}');
-    await expectActiveSnapshot('B');
+    await expectActiveSnapshot('02');
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
     await user.click(trigger);
     const listEnd = await screen.findByRole('listbox');
     within(listEnd)
-      .getByRole('option', { name: snapshotOptionLabel('B') })
+      .getByRole('option', { name: snapshotOptionLabel('02') })
       .focus();
     await user.keyboard('{End}');
     await user.keyboard(' ');
-    await expectActiveSnapshot('S');
+    await expectActiveSnapshot('19');
 
     await user.click(trigger);
     const listHome = await screen.findByRole('listbox');
     within(listHome)
-      .getByRole('option', { name: snapshotOptionLabel('S') })
+      .getByRole('option', { name: snapshotOptionLabel('19') })
       .focus();
     await user.keyboard('{Home}');
     await user.keyboard('{Enter}');
-    await expectActiveSnapshot('A');
+    await expectActiveSnapshot('01');
 
     await user.click(trigger);
     await user.keyboard('{Escape}');
@@ -151,7 +151,7 @@ describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
   it('during loading: aria-busy; activation blocked; committed stays A', async () => {
     const user = userEvent.setup();
     let resolveB!: (p: DashboardOverview) => void;
-    fetchDashboardOverview.mockImplementationOnce(async () => dash('A'));
+    fetchDashboardOverview.mockImplementationOnce(async () => dash('01'));
     fetchDashboardOverview.mockImplementationOnce(
       () =>
         new Promise<DashboardOverview>((r) => {
@@ -160,24 +160,34 @@ describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
     );
 
     renderSelector();
-    await expectActiveSnapshot('A');
-    await user.click(screen.getByRole('button', { name: /Снимок A.*активный/ }));
+    await expectActiveSnapshot('01');
+    const trigger = screen.getByRole('button', {
+      name: /Снимок 01.*активный/,
+    });
+    const triggerTopBefore = trigger.getBoundingClientRect().top;
+    await user.click(trigger);
     await user.click(
       within(screen.getByRole('listbox')).getByRole('option', {
-        name: snapshotOptionLabel('B'),
+        name: snapshotOptionLabel('02'),
       }),
     );
 
     await waitFor(() => {
       expect(
         screen.getByRole('button', {
-          name: /Снимок A.*активный.*загрузка снимка B/,
+          name: /Снимок 01.*активный.*загрузка снимка 02/,
         }),
       ).toHaveAttribute('aria-busy', 'true');
     });
 
+    // Visible loading line must not appear (shifts TopAppBar); sr-only live ok.
+    const live = screen.getByText(/Загрузка снимка 02/);
+    expect(live.className).toMatch(/sr-only/);
+    expect(live).toHaveAttribute('aria-live', 'polite');
+    expect(trigger.getBoundingClientRect().top).toBe(triggerTopBefore);
+
     await user.click(
-      screen.getByRole('button', { name: /Снимок A.*загрузка снимка B/ }),
+      screen.getByRole('button', { name: /Снимок 01.*загрузка снимка 02/ }),
     );
     for (const opt of within(screen.getByRole('listbox')).getAllByRole(
       'option',
@@ -185,36 +195,36 @@ describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
       expect(opt).toHaveAttribute('aria-disabled', 'true');
     }
 
-    resolveB(dash('B'));
-    await expectActiveSnapshot('B');
+    resolveB(dash('02'));
+    await expectActiveSnapshot('02');
   });
 
   it('failed switch keeps committed A; retry reloads last attempt', async () => {
     const user = userEvent.setup();
-    fetchDashboardOverview.mockImplementationOnce(async () => dash('A'));
+    fetchDashboardOverview.mockImplementationOnce(async () => dash('01'));
     fetchDashboardOverview.mockImplementationOnce(async () => {
       throw new Error('network');
     });
-    fetchDashboardOverview.mockImplementationOnce(async () => dash('C'));
+    fetchDashboardOverview.mockImplementationOnce(async () => dash('03'));
 
     renderSelector();
-    await expectActiveSnapshot('A');
-    await selectDemoSnapshot(user, 'C');
+    await expectActiveSnapshot('01');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
     });
-    await expectActiveSnapshot('A');
-    expect(screen.getByText(/Активный снимок остаётся A/)).toBeInTheDocument();
+    await expectActiveSnapshot('01');
+    expect(screen.getByText(/Активный снимок остаётся 01/)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Повторить' }));
-    await expectActiveSnapshot('C');
+    await expectActiveSnapshot('03');
   });
 
   it('click outside closes listbox', async () => {
     const user = userEvent.setup();
     renderSelector();
-    await expectActiveSnapshot('A');
-    const trigger = screen.getByRole('button', { name: /Снимок A.*активный/ });
+    await expectActiveSnapshot('01');
+    const trigger = screen.getByRole('button', { name: /Снимок 01.*активный/ });
     await user.click(trigger);
     expect(screen.getByRole('listbox')).toBeInTheDocument();
     await user.click(document.body);
@@ -226,7 +236,7 @@ describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
   it('длинная подпись обрезается, кнопка и доступное имя остаются', async () => {
     renderSelector();
     const trigger = await screen.findByRole('button', {
-      name: /Снимок A, .*активный/,
+      name: /Снимок 01, .*активный/,
     });
     expect(trigger).toBeVisible();
     expect(trigger.className).toMatch(/max-w-/);
@@ -234,16 +244,16 @@ describe('SnapshotSelector A–S disclosure (R2-U1)', () => {
     expect(caption).toBeTruthy();
     expect(caption?.className).toMatch(/max-w-/);
     expect(caption?.textContent).toMatch(/·/);
-    expect(trigger).toHaveAttribute('aria-label', expect.stringMatching(/Снимок A/));
+    expect(trigger).toHaveAttribute('aria-label', expect.stringMatching(/Снимок 01/));
   });
 
   it('re-selecting active A does not refetch', async () => {
     const user = userEvent.setup();
     renderSelector();
-    await expectActiveSnapshot('A');
+    await expectActiveSnapshot('01');
     expect(fetchDashboardOverview).toHaveBeenCalledTimes(1);
-    await selectDemoSnapshot(user, 'A');
-    await expectActiveSnapshot('A');
+    await selectDemoSnapshot(user, '01');
+    await expectActiveSnapshot('01');
     expect(fetchDashboardOverview).toHaveBeenCalledTimes(1);
   });
 });

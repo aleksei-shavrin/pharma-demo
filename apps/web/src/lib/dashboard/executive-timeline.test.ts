@@ -48,7 +48,7 @@ describe('executive timeline helpers', () => {
     ]);
     expect(EXECUTIVE_TIMELINE_MILESTONE_IDS).toHaveLength(12);
 
-    const points = resolveExecutiveMilestones(dashboardOverviewFixture('C'));
+    const points = resolveExecutiveMilestones(dashboardOverviewFixture('03'));
     expect(points.some((p) => p.id === 'MS-PS')).toBe(true);
     expect(points.some((p) => p.id === 'MS-UTL-WFI')).toBe(true);
     expect(new Set(points.map((p) => p.id))).toEqual(
@@ -59,7 +59,7 @@ describe('executive timeline helpers', () => {
       ...EXECUTIVE_TIMELINE_MILESTONE_IDS,
     ]);
 
-    const late = resolveExecutiveMilestones(dashboardOverviewFixture('O'));
+    const late = resolveExecutiveMilestones(dashboardOverviewFixture('15'));
     expect(late.some((p) => p.id === 'MS-PS')).toBe(true);
     expect(late.map((p) => p.id)).toContain('MS-COM-GO');
     expect(new Set(late.map((p) => p.id))).toEqual(
@@ -67,27 +67,27 @@ describe('executive timeline helpers', () => {
     );
   });
 
-  it('R2-U1-R4: executive set membership identical for every A–S', () => {
+  it('R2-U1-R4: executive set membership identical for every 01–19', () => {
     const ids = [
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F',
-      'G',
-      'H',
-      'I',
-      'J',
-      'K',
-      'L',
-      'M',
-      'N',
-      'O',
-      'P',
-      'Q',
-      'R',
-      'S',
+      '01',
+      '02',
+      '03',
+      '04',
+      '05',
+      '06',
+      '07',
+      '08',
+      '09',
+      '10',
+      '11',
+      '12',
+      '13',
+      '14',
+      '15',
+      '16',
+      '17',
+      '18',
+      '19',
     ] as const;
     const expected = new Set(EXECUTIVE_TIMELINE_MILESTONE_IDS);
     for (const snap of ids) {
@@ -100,29 +100,29 @@ describe('executive timeline helpers', () => {
   });
 
   it('R2-U1-R1: authoritative subset integrity (no silent repair)', () => {
-    const valid = resolveExecutiveMilestones(dashboardOverviewFixture('C'));
+    const valid = resolveExecutiveMilestones(dashboardOverviewFixture('03'));
     expect(valid.map((p) => p.id)).toContain('MS-PS');
 
-    const missingRef = dashboardOverviewFixture('C', {
+    const missingRef = dashboardOverviewFixture('03', {
       executiveMilestoneIds: ['MS-PS', 'MS-DOES-NOT-EXIST'],
     });
     expect(() => resolveExecutiveMilestones(missingRef)).toThrow(
       ExecutiveMilestoneIntegrityError,
     );
 
-    const noPs = dashboardOverviewFixture('C', {
+    const noPs = dashboardOverviewFixture('03', {
       executiveMilestoneIds: ['MS-BLD-ENCL', 'MS-HVAC-IQ'],
     });
     expect(() => resolveExecutiveMilestones(noPs)).toThrow(
       /MS-PS/,
     );
 
-    const empty = dashboardOverviewFixture('C', {
+    const empty = dashboardOverviewFixture('03', {
       executiveMilestoneIds: [],
     });
     expect(() => resolveExecutiveMilestones(empty)).toThrow(/empty/);
 
-    const full = dashboardOverviewFixture('C');
+    const full = dashboardOverviewFixture('03');
     const legacy = { ...full };
     delete (legacy as { executiveMilestoneIds?: string[] })
       .executiveMilestoneIds;
@@ -133,32 +133,32 @@ describe('executive timeline helpers', () => {
   });
 
   it('A/B PS band coincident; C +21; G/H +14', () => {
-    const a = resolveProductionStartBand(dashboardOverviewFixture('A'));
+    const a = resolveProductionStartBand(dashboardOverviewFixture('01'));
     expect(a.coincident).toBe(true);
     expect(a.deltaDays).toBe(0);
 
-    const b = resolveProductionStartBand(dashboardOverviewFixture('B'));
+    const b = resolveProductionStartBand(dashboardOverviewFixture('02'));
     expect(b.coincident).toBe(true);
 
-    const c = resolveProductionStartBand(dashboardOverviewFixture('C'));
+    const c = resolveProductionStartBand(dashboardOverviewFixture('03'));
     expect(c.coincident).toBe(false);
     expect(c.deltaDays).toBe(21);
     expect(c.forecastDate).toBe('2027-10-06');
     expect(c.deltaLabel).toMatch(/\+21/);
 
-    const g = resolveProductionStartBand(dashboardOverviewFixture('G'));
+    const g = resolveProductionStartBand(dashboardOverviewFixture('07'));
     expect(g.deltaDays).toBe(14);
     expect(g.forecastDate).toBe('2027-09-29');
   });
 
   it('uses backend milestone RAG without recomputation', () => {
-    const c = resolveExecutiveMilestones(dashboardOverviewFixture('C'));
+    const c = resolveExecutiveMilestones(dashboardOverviewFixture('03'));
     const ps = c.find((p) => p.id === 'MS-PS');
     expect(ps?.rag).toBe('Red');
   });
 
   it('keeps marker ratios on forecast dates', () => {
-    const points = resolveExecutiveMilestones(dashboardOverviewFixture('C'));
+    const points = resolveExecutiveMilestones(dashboardOverviewFixture('03'));
     for (const p of points) {
       expect(p.ratio).toBe(dateToRatio(p.forecastDate));
     }
@@ -167,7 +167,7 @@ describe('executive timeline helpers', () => {
   });
 
   it('R2-U1-R8 late O/S: PS chrome reserved; ratios on forecast', () => {
-    for (const snap of ['O', 'S'] as const) {
+    for (const snap of ['15', '19'] as const) {
       const presentation = resolveExecutiveTimelinePresentation(
         dashboardOverviewFixture(snap),
       );
@@ -187,7 +187,7 @@ describe('executive timeline helpers', () => {
       expect(presentation.points.some((p) => p.id === 'MS-COM-GO')).toBe(true);
     }
 
-    const oData = dashboardOverviewFixture('O');
+    const oData = dashboardOverviewFixture('15');
     const oChrome = resolveTimelineChromeLayout(
       oData,
       resolveProductionStartBand(oData),
@@ -196,7 +196,7 @@ describe('executive timeline helpers', () => {
   });
 
   it('R2-U1-R5 RU-first executive short labels for stable 12', () => {
-    const points = resolveExecutiveMilestones(dashboardOverviewFixture('S'));
+    const points = resolveExecutiveMilestones(dashboardOverviewFixture('19'));
     const byId = Object.fromEntries(points.map((p) => [p.id, p.shortLabel]));
     expect(byId['MS-BLD-EXC']).toBe('Котлован');
     expect(byId['MS-CLN-PANEL']).toBe('Панели чистых');

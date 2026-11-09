@@ -9,9 +9,9 @@ import { authoredBinaryFromDate } from './schedule-control-facts';
 describe('schedule-control-progress / facts branches', () => {
   it('phase index falls back for unknown snapshot and binary band', () => {
     expect(schedulePhaseIndex('Z' as never)).toBe(0);
-    expect(schedulePhaseIndex('C')).toBeGreaterThan(0);
-    expect(authoredBinaryProgress(0, 'A')).toBe(100);
-    expect(authoredBinaryProgress(99, 'A')).toBe(0);
+    expect(schedulePhaseIndex('03')).toBeGreaterThan(0);
+    expect(authoredBinaryProgress(0, '01')).toBe(100);
+    expect(authoredBinaryProgress(99, '01')).toBe(0);
   });
 
   it('equipment/milestone progress throw on missing catalogue ids', () => {

@@ -20,7 +20,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Delta к Design pack при масштабе ~23 EQ / 14 MS / 11 ISS / 12 RISK / 6 DEC / A–H. **R1 applied.** Не BI. Не MS Project. Read-only Demo.
+> Delta к Design pack при масштабе ~23 EQ / 14 MS / 11 ISS / 12 RISK / 6 DEC / 01–08. **R1 applied.** Не BI. Не MS Project. Read-only Demo.
 
 ## 1. Keep from current Demo
 
@@ -33,7 +33,7 @@ Atomic snapshot switch + stale protection · Combined Issues & Risks + Тип ·
 | Dashboard | Top exceptions + workstreams + hierarchy |
 | Registers | Search/filter/counts; **no pagination** |
 | Schedule | Group/filter/compact/fit (~37 control points) |
-| Snapshot A/B/C radios | Compact disclosure for A–H — **not** 8 permanent radios |
+| Snapshot 01/02/03 radios | Compact disclosure for 01–08 — **not** 8 permanent radios |
 
 ## 3. Dashboard IA and hierarchy (E3)
 
@@ -114,14 +114,16 @@ Overview · Links · Impact — WHAT / STATE / WHY / LINKS / CHANGED / KNOW.
 Links = DOC-BA-015 only (incl. Issue→Milestone; Decision→Milestone when present; **no** Decision→EQ/ISS/RISK).  
 Read-only.
 
-## 7. Snapshot selector (A–H) — design requirements
+## 7. Snapshot selector (01–08 design; runtime 01–19) — design requirements
+
+> **Runtime note (2026-11):** AppBar selector exposes full **01–19 (01–19)** with phase groups. 01–08 below remains enrichment-era design floor; do not treat «only 01–08» as current product limit.
 
 **SHALL NOT** show eight permanently visible TopBar radios.
 
 **Required:**
 
 - Compact **trigger** showing current snapshot: letter · asOf/date · short RU context · selected state  
-- Disclosure reveals A–H with full context  
+- Disclosure reveals 01–08 with full context  
 - Full keyboard accessibility; visible selected state; focus management  
 - Atomic snapshot switching; stale-request protection  
 
@@ -129,17 +131,17 @@ Read-only.
 
 **SHALL NOT** prescribe or mix incompatible patterns (e.g. listbox + radiogroup inside the same control).
 
-Machine ids A…H remain; UI primary = date + RU context (DOC-PROD-022).
+Canonical ids 01…19; UI primary = date + RU context (DOC-PROD-022).
 
 ## 8. Russian copy
 
-No raw English fixture titles as sole UI. Map status/level/decision type/WS. Snapshot letters secondary to date/context.
+No raw English fixture titles as sole UI. Map status/level/decision type/WS. Номер снимка secondary to date/context.
 
 ## 9. Visual checkpoints
 
-1. Dashboard A calm vs E busy vs G partial (hierarchy holds)  
+1. Dashboard 01 calm vs E busy vs G partial (hierarchy holds)  
 2. Equipment Delayed filter  
 3. Schedule grouped + Critical filter  
 4. Detail EQ-HVAC-01 Links density  
-5. Compact snapshot control A–H  
-6. Live Presentation punch on C  
+5. Compact snapshot control 01–08  
+6. Live Presentation punch on 03  

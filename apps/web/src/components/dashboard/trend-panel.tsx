@@ -17,15 +17,16 @@ function ChangeTile({
 
   const tint =
     tone === 'better'
-      ? 'bg-[var(--status-ok-bg)] text-[var(--status-ok-fg)]'
+      ? 'border border-[var(--status-ok-border)] bg-[var(--status-ok-bg)] text-[var(--status-ok-fg)]'
       : tone === 'worse'
-        ? 'bg-[var(--status-danger-bg)] text-[var(--status-danger-fg)]'
-        : 'bg-[var(--status-warn-bg)] text-[var(--status-warn-fg)]';
+        ? 'border border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] text-[var(--status-danger-fg)]'
+        : 'border border-[var(--status-warn-border)] bg-[var(--status-warn-bg)] text-[var(--status-warn-fg)]';
 
   return (
     <div
       className={`rounded-[var(--radius-sm)] px-3 py-2.5 ${tint}`}
       data-trend-bucket={tone}
+      data-trend-border="semantic"
     >
       <p className="text-[11px] font-bold uppercase tracking-[0.08em]">
         <span aria-hidden className="mr-1.5 text-sm">
@@ -63,7 +64,10 @@ export function SnapshotChanges({ data }: { data: DashboardOverview }) {
       </h2>
 
       {emptyAll ? (
-        <p className="mt-2 text-sm text-[var(--text-secondary)]" data-trend="empty">
+        <p
+          className="mt-2 text-sm text-[var(--text-secondary)]"
+          data-trend="empty"
+        >
           Для текущего снимка изменений к предыдущему состоянию нет (базовый
           план).
         </p>

@@ -275,26 +275,53 @@ export type LeafDatePlan = {
 
 export type ScheduleAuditDecision = {
   id: string;
-  kind: 'cycle_back_edge' | 'status_vs_pred' | 'lag_absent' | 'fit_slide';
+  kind:
+    | 'cycle_back_edge'
+    | 'status_vs_pred'
+    | 'lag_absent'
+    | 'fit_slide'
+    | 'soft_phase_relax'
+    | 'soft_infeasible_vs_lf'
+    | 'hard_cpm_inconsistent';
   detail: string;
   decisionRu: string;
 };
 
 export type MasterSimFeasibility = {
-  method: 'alap_from_gate';
+  /** Hybrid: ASAP phase floors + ALAP latest; free-float keeps earliest-in-float. */
+  method: 'hybrid_earliest_in_float';
   gate: string;
-  floorsUsed: false;
+  /** Soft phase window.start used as ASAP floors (not hard ALAP floors). */
+  floorsUsed: true;
   criticalPath: string[];
   /** Sum of leaf durationDays along criticalPath (synthetic workDays). */
   criticalPathDurationDays: number;
-  /** min(LS) after ALAP — earliest calendar day any leaf must start. */
+  /**
+   * @deprecated alias of planEarliestStart — min(any leaf start), NOT critical-path necessary.
+   * Kept for call-site compat; prefer planEarliestStart / criticalEarliestStart.
+   */
   earliestNecessaryStart: string;
-  /** Calendar span gate − earliestNecessaryStart. */
+  /** min(baselineStart) over all leaves after hybrid (includes free-float early prep). */
+  planEarliestStart: string;
+  /** Earliest start among zero-float (critical) leaves after hybrid. */
+  criticalEarliestStart: string;
+  /** Calendar span gate − planEarliestStart. */
   spanToGateDays: number;
-  /** Whether earliestNecessaryStart is before executionPhaseStart (UI label). */
+  /** Whether planEarliestStart is before executionPhaseStart (UI label). */
   preprojectBeforeFebLabel: boolean;
   syntheticDurationsNoteRu: string;
+  /** Leaves placed at ALAP because total float ≤ CRITICAL_FLOAT_DAYS. */
+  criticalLeafCount: number;
+  /** Leaves placed at ASAP (free float / phase-preferred). */
+  earlyLeafCount: number;
+  /** Soft floor relax / soft-vs-LF audits (see softRelaxWbs). */
+  softRelaxCount: number;
+  /** WBS that triggered soft_phase_relax or soft_infeasible_vs_lf. */
+  softRelaxWbs: string[];
 };
+
+/** Total float days at/below this → treat as critical (use latest-feasible). */
+export const CRITICAL_FLOAT_DAYS = 0;
 
 export type MasterSimResult = {
   byWbs: Map<string, LeafDatePlan>;
@@ -472,9 +499,12 @@ export function slidePlans(
 }
 
 /**
- * Latest-start (ALAP) CPM from Production Start gate — no artificial project
- * start floors. Parallel branches keep float; schedule begins as late as
- * FS/SS/FF/SF + durations allow while terminals finish ≤ gate.
+ * Hybrid demo dating (gantt-clarity hardgate):
+ * 1) Forward ASAP probe with soft phase floors (float classification only).
+ * 2) Backward ALAP latest from Production Start gate — hard graph/type/lag/dur only
+ *    (no soft preferredStart inside alapPass).
+ * 3) Placement ES = max(hardES, min(preferredES, hardLS)); all EF ≤ gate.
+ * Soft relax = earlier than preferred window; never cancel gate / never below hardES.
  */
 export function simulateMasterBaseline(
   rows: readonly AnalystRow[],
@@ -488,19 +518,40 @@ export function simulateMasterBaseline(
   const { order, preds, succs } = buildTopo(byWbs, edges, audit);
   const gate = MASTER_SIM_ASSUMPTIONS.productionStartBaseline;
 
-  const plans = alapPass(order, byWbs, succs, gate);
+  const phaseFloors = new Map<string, string>();
+  for (const [wbs, row] of byWbs) {
+    phaseFloors.set(wbs, projectWindowFor(row.projectNo).start);
+  }
+  /** Unconstrained-by-placement ASAP for float classification only. */
+  const asapProbe = forwardPass(order, byWbs, preds, phaseFloors);
+  const alap = alapPass(order, byWbs, succs, gate);
+  const {
+    plans,
+    criticalLeafCount,
+    earlyLeafCount,
+    softRelaxCount,
+    softRelaxWbs,
+  } = placeHybridEarliestInFloat(
+    order,
+    byWbs,
+    preds,
+    phaseFloors,
+    asapProbe,
+    alap,
+    audit,
+  );
 
   audit.push({
-    id: 'alap_from_gate',
+    id: 'hybrid_earliest_in_float',
     kind: 'fit_slide',
-    detail: `ALAP from gate ${gate}; floorsUsed=false; leafCount=${plans.size}`,
+    detail: `hybrid from gate ${gate}; phaseFloors=true; leafCount=${plans.size}; critical=${criticalLeafCount}; early=${earlyLeafCount}; softRelax=${softRelaxCount}`,
     decisionRu:
-      'Обратный (latest-start) расчёт от PS без project-start floors — ветки с float не тянут весь предпроект раньше нужного',
+      'Гибрид: ASAP с soft phase start + ALAP latest; free-float → earliest-in-float (предпроект не паркуется у PS); zero-float → latest-feasible',
   });
 
   const projectRanges: MasterSimResult['projectRanges'] = [];
   let terminalBaselineMax = '0001-01-01';
-  let earliestNecessaryStart = '9999-12-31';
+  let planEarliestStart = '9999-12-31';
   for (const w of PROJECT_BASELINE_WINDOWS) {
     const inProj = leaves.filter((r) => r.projectNo === w.projectNo);
     if (inProj.length === 0) continue;
@@ -511,30 +562,48 @@ export function simulateMasterBaseline(
       if (!p) continue;
       if (p.baselineStart < min) min = p.baselineStart;
       if (p.baselineEnd > max) max = p.baselineEnd;
-      if (p.baselineStart < earliestNecessaryStart) {
-        earliestNecessaryStart = p.baselineStart;
+      if (p.baselineStart < planEarliestStart) {
+        planEarliestStart = p.baselineStart;
       }
     }
     projectRanges.push({ projectNo: w.projectNo, min, max });
     if (max > terminalBaselineMax) terminalBaselineMax = max;
   }
   for (const p of plans.values()) {
-    if (p.baselineStart < earliestNecessaryStart) {
-      earliestNecessaryStart = p.baselineStart;
+    if (p.baselineStart < planEarliestStart) {
+      planEarliestStart = p.baselineStart;
     }
   }
 
-  // Critical path via unconstrained ASAP (epoch floor) — not "any leaf at gate".
-  const epoch = '2000-01-01';
-  const asapFloors = new Map<string, string>();
-  for (const wbs of byWbs.keys()) asapFloors.set(wbs, epoch);
-  const asap = forwardPass(order, byWbs, preds, asapFloors);
+  // Critical-path sample: zero-float leaves chained by max pred end (all zero-float
+  // branches are critical; sample tip = latest-ending leaf among zero-float).
+  const zeroFloat = new Set<string>();
+  for (const wbs of order) {
+    const early = asapProbe.get(wbs);
+    const late = alap.get(wbs);
+    if (!early || !late) continue;
+    if (
+      daysBetween(early.baselineStart, late.baselineStart) <=
+      CRITICAL_FLOAT_DAYS
+    ) {
+      zeroFloat.add(wbs);
+    }
+  }
   let asapTip = '';
   let asapMaxEnd = '0001-01-01';
-  for (const [wbs, p] of asap) {
-    if (p.baselineEnd >= asapMaxEnd) {
+  for (const wbs of zeroFloat) {
+    const p = plans.get(wbs);
+    if (p && p.baselineEnd >= asapMaxEnd) {
       asapMaxEnd = p.baselineEnd;
       asapTip = wbs;
+    }
+  }
+  if (!asapTip) {
+    for (const [wbs, p] of plans) {
+      if (p.baselineEnd >= asapMaxEnd) {
+        asapMaxEnd = p.baselineEnd;
+        asapTip = wbs;
+      }
     }
   }
   const criticalPathSample: string[] = [];
@@ -547,7 +616,7 @@ export function simulateMasterBaseline(
     let best: string | null = null;
     let bestEnd = '0001-01-01';
     for (const p of list) {
-      const pred = asap.get(p.from);
+      const pred = plans.get(p.from);
       if (pred && pred.baselineEnd >= bestEnd) {
         bestEnd = pred.baselineEnd;
         best = p.from;
@@ -558,31 +627,47 @@ export function simulateMasterBaseline(
 
   let criticalPathDurationDays = 0;
   for (const wbs of criticalPathSample) {
-    criticalPathDurationDays += asap.get(wbs)?.durationDays ?? 0;
+    criticalPathDurationDays += plans.get(wbs)?.durationDays ?? 0;
   }
   const criticalTip = asapTip;
+  let criticalEarliestStart = '9999-12-31';
+  for (const wbs of zeroFloat) {
+    const p = plans.get(wbs);
+    if (p && p.baselineStart < criticalEarliestStart) {
+      criticalEarliestStart = p.baselineStart;
+    }
+  }
+  if (criticalEarliestStart === '9999-12-31') {
+    criticalEarliestStart = planEarliestStart;
+  }
 
   const feasibility: MasterSimFeasibility = {
-    method: 'alap_from_gate',
+    method: 'hybrid_earliest_in_float',
     gate,
-    floorsUsed: false,
+    floorsUsed: true,
     criticalPath: criticalPathSample,
     criticalPathDurationDays,
-    earliestNecessaryStart,
-    spanToGateDays: daysBetween(earliestNecessaryStart, gate),
+    earliestNecessaryStart: planEarliestStart,
+    planEarliestStart,
+    criticalEarliestStart,
+    spanToGateDays: daysBetween(planEarliestStart, gate),
     preprojectBeforeFebLabel:
-      earliestNecessaryStart < MASTER_SIM_ASSUMPTIONS.executionPhaseStart,
+      planEarliestStart < MASTER_SIM_ASSUMPTIONS.executionPhaseStart,
+    criticalLeafCount,
+    earlyLeafCount,
+    softRelaxCount,
+    softRelaxWbs,
     syntheticDurationsNoteRu:
-      'Длительности листьев = PROJECT_BASELINE_WINDOWS.workDays (демо-assumption 6–10д по AN). Исходник MD даёт топологию/статусы, не календарные длительности. preferred window.start/end — soft в ALAP (later-only, relax), не hard floors.',
+      'Длительности листьев = PROJECT_BASELINE_WINDOWS.workDays (демо-assumption 6–10д по AN). Исходник MD — топология/статусы без календарных дат. Soft window.start = ASAP floor (не «critical necessary»). planEarliestStart = min any leaf; criticalEarliestStart = min zero-float leaf.',
   };
 
   audit.push({
     id: 'phase_feasibility',
     kind: 'lag_absent',
-    detail: `method=alap_from_gate; earliestNecessaryStart=${earliestNecessaryStart}; criticalPathDurationDays=${criticalPathDurationDays}; pathLen=${criticalPathSample.length}; tip=${criticalTip}; floorsUsed=false`,
+    detail: `method=hybrid_earliest_in_float; planEarliestStart=${planEarliestStart}; criticalEarliestStart=${criticalEarliestStart}; criticalPathDurationDays=${criticalPathDurationDays}; pathLen=${criticalPathSample.length}; tip=${criticalTip}; criticalLeaves=${criticalLeafCount}; earlyLeaves=${earlyLeafCount}; softRelax=${softRelaxCount}; softWbs=${softRelaxWbs.join(',')}`,
     decisionRu: feasibility.preprojectBeforeFebLabel
-      ? `После ALAP без floors план необходимо начинаетcя ${earliestNecessaryStart} (сумма duration на critical path ${criticalPathDurationDays}д, synthetic workDays). Feb — UI-метка construction gate, не доказанный доменный запрет старта.`
-      : `ALAP earliestNecessaryStart=${earliestNecessaryStart} ≥ Feb label; Feb остаётся UI-меткой construction gate.`,
+      ? `Гибрид: planEarliestStart=${planEarliestStart} (min any leaf; window assumption), criticalEarliestStart=${criticalEarliestStart}, CP ~${criticalPathDurationDays}д synthetic. Free-float предпроект не у PS. Feb — UI construction gate.`
+      : `Гибрид planEarliestStart=${planEarliestStart} ≥ Feb label; criticalEarliestStart=${criticalEarliestStart}.`,
   });
 
   return {
@@ -592,6 +677,124 @@ export function simulateMasterBaseline(
     terminalBaselineMax,
     criticalPathSample,
     feasibility,
+  };
+}
+
+/**
+ * Topo-forward CPM placement (hardgate):
+ * - hardES from already-placed preds only (root: open lower bound, not phase).
+ * - preferredES = soft phase window.start (synthetic).
+ * - hardLS/LF from alapPass (hard graph + gate only).
+ * - ES = max(hardES, min(preferredES, hardLS)); EF = ES+dur.
+ * Soft relax = start earlier than preferred window (still ≥ hardES), audited.
+ * hardES > hardLS is a formula/placement bug — never cancel the gate.
+ */
+function placeHybridEarliestInFloat(
+  order: string[],
+  byWbs: Map<string, AnalystRow>,
+  preds: Map<string, { from: string; type: LinkType; lagDays: number }[]>,
+  phaseFloors: Map<string, string>,
+  asapProbe: Map<string, LeafDatePlan>,
+  alap: Map<string, LeafDatePlan>,
+  audit: ScheduleAuditDecision[],
+): {
+  plans: Map<string, LeafDatePlan>;
+  criticalLeafCount: number;
+  earlyLeafCount: number;
+  softRelaxCount: number;
+  softRelaxWbs: string[];
+} {
+  const plans = new Map<string, LeafDatePlan>();
+  let criticalLeafCount = 0;
+  let earlyLeafCount = 0;
+  let softRelaxCount = 0;
+  const softRelaxWbs: string[] = [];
+  /** Open lower bound — not a domain/phase hard floor. */
+  const OPEN_LB = '0001-01-01';
+
+  const hardEsFromPreds = (wbs: string, dur: number): string => {
+    let es = OPEN_LB;
+    for (const p of preds.get(wbs) ?? []) {
+      const pred = plans.get(p.from);
+      if (!pred) continue;
+      es = maxIso(
+        es,
+        earliestStartFromPred(
+          p.type,
+          pred.baselineStart,
+          pred.baselineEnd,
+          dur,
+          p.lagDays,
+        ),
+      );
+    }
+    return es;
+  };
+
+  for (const wbs of order) {
+    const row = byWbs.get(wbs)!;
+    const dur = Math.max(durationFor(row), 0);
+    const late = alap.get(wbs)!;
+    const hardLs = late.baselineStart;
+    const hardLf = late.baselineEnd;
+    const probe = asapProbe.get(wbs)!;
+    const probeFloat = daysBetween(probe.baselineStart, hardLs);
+    const preferredEs =
+      phaseFloors.get(wbs) ?? projectWindowFor(row.projectNo).start;
+    const hardEs = hardEsFromPreds(wbs, dur);
+
+    if (hardEs !== OPEN_LB && hardEs > hardLs) {
+      audit.push({
+        id: `hard_es_gt_ls:${wbs}`,
+        kind: 'hard_cpm_inconsistent',
+        detail: `BUG hardES ${hardEs} > hardLS ${hardLs} (LF ${hardLf})`,
+        decisionRu: `Ошибка CPM для ${wbs}: hardES>hardLS — проверить alap/preds`,
+      });
+    }
+
+    // ES = max(hardES, min(preferredES, hardLS)); open hardES does not raise the floor.
+    const cappedPreferred = preferredEs <= hardLs ? preferredEs : hardLs;
+    let start =
+      hardEs === OPEN_LB ? cappedPreferred : maxIso(hardEs, cappedPreferred);
+    // Never below hardES; never after hardLS (gate-feasible).
+    if (hardEs !== OPEN_LB && start < hardEs) start = hardEs;
+    if (start > hardLs) start = hardLs;
+    // Correct CPM: ES≤LS and LF=LS+dur ⇒ EF≤LF (no post-hoc gate cancel).
+    const end = dur === 0 ? start : addDaysIso(start, dur);
+
+    const startedBeforePreferred = start < preferredEs;
+    if (startedBeforePreferred) {
+      softRelaxCount += 1;
+      softRelaxWbs.push(wbs);
+      audit.push({
+        id: `soft_relax:${wbs}`,
+        kind: 'soft_phase_relax',
+        detail: `preferredES ${preferredEs} capped by hardLS ${hardLs}; placed ${start}/${end}`,
+        decisionRu: `Soft window: ${wbs} раньше preferred (synthetic) — hard CPM/gate сохранены`,
+      });
+    }
+
+    if (probeFloat <= CRITICAL_FLOAT_DAYS || start === hardLs) {
+      criticalLeafCount += 1;
+    } else {
+      earlyLeafCount += 1;
+    }
+
+    plans.set(wbs, {
+      wbs,
+      baselineStart: start,
+      baselineEnd: end,
+      forecastStart: start,
+      forecastEnd: end,
+      durationDays: dur,
+    });
+  }
+  return {
+    plans,
+    criticalLeafCount,
+    earlyLeafCount,
+    softRelaxCount,
+    softRelaxWbs,
   };
 }
 
@@ -638,21 +841,11 @@ function alapPass(
       }
       if (lf === '9999-12-31') lf = gate;
     }
-    // Never finish after gate.
+    // Never finish after gate. Soft phase preferredStart MUST NOT enter latest.
     if (lf > gate) lf = gate;
     let ls = addDaysIso(lf, -dur);
     // Guard zero/negative duration checkpoints: start == end.
     if (dur === 0) ls = lf;
-    // Soft preferred window.start: pull later (never earlier) when float allows.
-    // Relaxed when successor LF cannot absorb preferred+dur — not a hard floor.
-    const preferredStart = projectWindowFor(row.projectNo).start;
-    if (dur > 0 && preferredStart && ls < preferredStart) {
-      const preferredEnd = addDaysIso(preferredStart, dur);
-      if (preferredEnd <= lf) {
-        ls = preferredStart;
-        lf = preferredEnd;
-      }
-    }
     plans.set(wbs, {
       wbs,
       baselineStart: ls,
@@ -674,6 +867,20 @@ export type DisplayLifecycle = {
   normalizedFromSource: boolean;
 };
 
+/**
+ * Runtime RAG for milestones/control points from lifecycle — not eternal
+ * import emoji. Completed ⇒ Green; Delayed ⇒ Red; Waiting/OnSchedule ⇒ Green
+ * unless an explicit activeRisk override (e.g. curated problem row).
+ */
+export function runtimeRagFromLifecycle(
+  status: DisplayLifecycle['status'],
+  options?: { activeRisk?: boolean },
+): 'Green' | 'Red' {
+  if (options?.activeRisk) return 'Red';
+  if (status === 'Delayed') return 'Red';
+  return 'Green';
+}
+
 export type RealizedLeaf = {
   wbs: string;
   realizedStart: string;
@@ -686,8 +893,8 @@ export type RealizedScenarioKey = 'calm' | 'crisis' | 'recovery';
 export function realizedScenarioForSnapshot(
   snapshotId: string,
 ): RealizedScenarioKey {
-  if (snapshotId === 'S') return 'recovery';
-  if (snapshotId === 'A' || snapshotId === 'B') return 'calm';
+  if (snapshotId === '19') return 'recovery';
+  if (snapshotId === '01' || snapshotId === '02') return 'calm';
   return 'crisis';
 }
 
@@ -810,32 +1017,50 @@ export function buildRealizedTimeline(
   }
   if (openMax > launch) {
     const delta = -daysBetween(launch, openMax);
-    for (const [wbs, leaf] of out) {
+    for (const wbs of order) {
+      const base = baselinePlans.get(wbs);
+      const leaf = out.get(wbs);
+      if (!base || !leaf) continue;
       if (MASTER_SIM_ASSUMPTIONS.optionalPostLaunchWbs.includes(wbs)) continue;
-      if (leaf.realizedEnd <= recovery) continue;
-      out.set(wbs, {
-        wbs,
-        realizedStart: addDaysIso(leaf.realizedStart, delta),
-        realizedEnd: addDaysIso(leaf.realizedEnd, delta),
-      });
+      // Only pull leaves that still finish after launch — keep crisis slips intact.
+      if (leaf.realizedEnd <= launch) continue;
+      let start = addDaysIso(leaf.realizedStart, delta);
+      let end = addDaysIso(leaf.realizedEnd, delta);
+      let hardEs = start;
+      for (const p of preds.get(wbs) ?? []) {
+        const pred = out.get(p.from);
+        if (!pred) continue;
+        hardEs = maxIso(
+          hardEs,
+          earliestStartFromPred(
+            p.type,
+            pred.realizedStart,
+            pred.realizedEnd,
+            base.durationDays,
+            p.lagDays,
+          ),
+        );
+      }
+      if (start < hardEs) {
+        start = hardEs;
+        end = addDaysIso(start, Math.max(base.durationDays, 0));
+      }
+      out.set(wbs, { wbs, realizedStart: start, realizedEnd: end });
     }
   }
 
-  // Final topo repair on non-frozen leaves: enforce pred types/lag after slides.
+  // Final topo repair on leaves still open at crisis: enforce pred types/lag.
+  // Freeze = realizedEnd ≤ crisis on the actual plane (not baselineEarly hybrid dates).
   // Do NOT per-leaf clamp to launch (breaks FS); re-slide open chain if needed.
+  const isCrisisFrozenActual = (leaf: RealizedLeaf) =>
+    leaf.realizedEnd <= crisis;
+
   for (let pass = 0; pass < 3; pass++) {
     for (const wbs of order) {
       const base = baselinePlans.get(wbs);
       const leaf = out.get(wbs);
       if (!base || !leaf) continue;
-      if (isFrozenCompleted(base.baselineEnd, crisis)) {
-        out.set(wbs, {
-          wbs,
-          realizedStart: base.baselineStart,
-          realizedEnd: base.baselineEnd,
-        });
-        continue;
-      }
+      if (isCrisisFrozenActual(leaf)) continue;
       const dur = base.durationDays;
       let es = leaf.realizedStart;
       for (const p of preds.get(wbs) ?? []) {
@@ -866,21 +1091,36 @@ export function buildRealizedTimeline(
     }
     if (tip <= launch) break;
     const delta = -daysBetween(launch, tip);
-    for (const [wbs, leaf] of out) {
+    for (const wbs of order) {
+      const base = baselinePlans.get(wbs);
+      const leaf = out.get(wbs);
+      if (!base || !leaf) continue;
       if (MASTER_SIM_ASSUMPTIONS.optionalPostLaunchWbs.includes(wbs)) continue;
-      if (
-        isFrozenCompleted(
-          baselinePlans.get(wbs)?.baselineEnd ?? leaf.realizedEnd,
-          crisis,
-        )
-      ) {
-        continue;
+      if (isCrisisFrozenActual(leaf)) continue;
+      if (leaf.realizedEnd <= launch) continue;
+      let start = addDaysIso(leaf.realizedStart, delta);
+      let end = addDaysIso(leaf.realizedEnd, delta);
+      // Never slide earlier than hard preds already in `out` (incl. frozen).
+      let hardEs = start;
+      for (const p of preds.get(wbs) ?? []) {
+        const pred = out.get(p.from);
+        if (!pred) continue;
+        hardEs = maxIso(
+          hardEs,
+          earliestStartFromPred(
+            p.type,
+            pred.realizedStart,
+            pred.realizedEnd,
+            base.durationDays,
+            p.lagDays,
+          ),
+        );
       }
-      out.set(wbs, {
-        wbs,
-        realizedStart: addDaysIso(leaf.realizedStart, delta),
-        realizedEnd: addDaysIso(leaf.realizedEnd, delta),
-      });
+      if (start < hardEs) {
+        start = hardEs;
+        end = addDaysIso(start, Math.max(base.durationDays, 0));
+      }
+      out.set(wbs, { wbs, realizedStart: start, realizedEnd: end });
     }
   }
 
@@ -962,13 +1202,13 @@ export function historicalFactsFromSource(
 }
 
 export function forecastSlipDaysForSnapshot(snapshotId: string): number {
-  if (snapshotId === 'A' || snapshotId === 'B') return 0;
-  if (snapshotId === 'S') return 0;
+  if (snapshotId === '01' || snapshotId === '02') return 0;
+  if (snapshotId === '19') return 0;
   if (
-    snapshotId === 'O' ||
-    snapshotId === 'P' ||
-    snapshotId === 'Q' ||
-    snapshotId === 'R'
+    snapshotId === '15' ||
+    snapshotId === '16' ||
+    snapshotId === '17' ||
+    snapshotId === '18'
   ) {
     return 7;
   }
@@ -1087,7 +1327,7 @@ export function applyMasterLifecycleToWorks<T extends WorkLikeForLifecycle>(
       graph.rows,
       slip,
     );
-    // One immutable history — same realized map for every snapshot letter.
+    // One immutable history — same realized map for every SnapshotId.
     realizedByWbs = buildRealizedTimeline(
       graph.baselineByWbs,
       graph.edges,

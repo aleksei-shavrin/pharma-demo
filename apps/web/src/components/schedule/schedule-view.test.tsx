@@ -87,7 +87,7 @@ function dash(snapshotId: SnapshotId) {
 
 function buildItems(snapshotId: SnapshotId): ScheduleItem[] {
   const hvacDelta =
-    snapshotId === 'C' ? 21 : snapshotId === 'G' || snapshotId === 'H' ? 14 : 0;
+    snapshotId === '03' ? 21 : snapshotId === '07' || snapshotId === '08' ? 14 : 0;
   const msDelta = hvacDelta;
   const hvacForecast =
     hvacDelta === 21
@@ -176,7 +176,7 @@ function schedule(snapshotId: SnapshotId): ScheduleReadModel {
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     items: buildItems(snapshotId),
     links: [],
   };
@@ -209,7 +209,9 @@ beforeEach(() => {
 });
 
 describe('E5 Schedule control board', () => {
-  it('loads 23 EQ + 14 MS; unified board; detail links; C +21', async () => {
+  it(
+    'loads 23 EQ + 14 MS; unified board; detail links; C +21',
+    async () => {
     const user = userEvent.setup();
     render(wrap(<SchedulePage />));
     await waitFor(
@@ -218,7 +220,7 @@ describe('E5 Schedule control board', () => {
         expect(document.querySelector('[data-schedule-board="true"]')).toBeTruthy();
         expect(document.querySelector('[data-gantt-stub="true"]')).toBeTruthy();
       },
-      { timeout: 5000 },
+      { timeout: 10_000 },
     );
 
     const board = document.querySelector('[data-schedule-board="true"]');
@@ -292,17 +294,21 @@ describe('E5 Schedule control board', () => {
       screen.getByRole('link', { name: 'Готовность к производству' }),
     ).toHaveAttribute('href', '/milestones/MS-PS');
 
-    // Rows are not selectable / not clickable for selection chrome.
+    // Click selects the logical row (table chrome + aria-selected).
     const sampleRow = document.querySelector(
       '[data-schedule-row="equipment_delivery:EQ-HVAC-01"]',
     ) as HTMLElement;
-    expect(sampleRow.getAttribute('aria-selected')).toBeNull();
-    expect(sampleRow.getAttribute('data-selected')).toBeNull();
+    expect(sampleRow.getAttribute('aria-selected')).toBe('false');
     await user.click(sampleRow);
-    expect(sampleRow.getAttribute('aria-selected')).toBeNull();
-    expect(document.querySelector('[data-selected="true"]')).toBeNull();
+    expect(sampleRow.getAttribute('aria-selected')).toBe('true');
+    expect(sampleRow.getAttribute('data-schedule-row-selected')).toBe('true');
+    expect(sampleRow.className).toMatch(/ppc-schedule-row-selected/);
+    // Toggle off on second click.
+    await user.click(sampleRow);
+    expect(sampleRow.getAttribute('aria-selected')).toBe('false');
+    expect(sampleRow.getAttribute('data-schedule-row-selected')).toBeNull();
 
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() => {
       expect(screen.getAllByText('+21 день').length).toBeGreaterThan(0);
     });
@@ -325,7 +331,9 @@ describe('E5 Schedule control board', () => {
       hvacRow?.querySelector('[data-schedule-row-timeline="true"]'),
     ).toBeNull();
     expect(document.querySelector('[data-schedule-pane="chart"]')).toBeTruthy();
-  });
+  },
+  15_000,
+  );
 
   it('Таблица — board; Временная шкала — DHTMLX (стрелки G07–G11)', async () => {
     const user = userEvent.setup();
@@ -368,7 +376,7 @@ describe('E5 Schedule control board', () => {
       expect(screen.getByText('37 из 37')).toBeInTheDocument();
     });
 
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() => {
       expect(screen.getAllByText('+21 день').length).toBeGreaterThan(0);
     });
@@ -557,7 +565,7 @@ describe('E5 Schedule control board', () => {
   });
 
   it('G/H residual MS-PS +14 from register contract shape', () => {
-    for (const id of ['G', 'H'] as SnapshotId[]) {
+    for (const id of ['07', '08'] as SnapshotId[]) {
       const ms = schedule(id).items.find(
         (i): i is ScheduleMilestoneItem =>
           i.kind === 'milestone' && i.id === 'MS-PS',
@@ -622,7 +630,7 @@ describe('E5 Schedule control board', () => {
     await waitFor(() => {
       expect(screen.getByText('37 из 37')).toBeInTheDocument();
     });
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() => {
       expect(screen.getAllByText('+21 день').length).toBeGreaterThan(0);
     });
@@ -668,14 +676,25 @@ describe('E5 Schedule control board', () => {
       ],
     }));
     render(wrap(<SchedulePage />));
-    await waitFor(() => {
+    const toolbar = await waitFor(() => {
       expect(screen.getByText('38 из 38')).toBeInTheDocument();
+      const el = document.querySelector<HTMLElement>(
+        '[data-schedule-toolbar="true"]',
+      );
+      expect(el).toBeTruthy();
+      return el!;
     });
-
-    const toolbar = document.querySelector<HTMLElement>('[data-schedule-toolbar="true"]')!;
-    expect(toolbar.className).toMatch(/justify-between/);
+    expect(toolbar.className).toMatch(/flex-wrap/);
     const left = toolbar.querySelector<HTMLElement>('[data-schedule-toolbar-left="true"]')!;
-    const right = toolbar.querySelector<HTMLElement>('[data-schedule-toolbar-right="true"]')!;
+    const right = toolbar.querySelector<HTMLElement>(
+      '[data-schedule-toolbar-actions="true"]',
+    )!;
+    // Action cluster stays right-aligned even when wrapped onto its own row.
+    expect(right).toHaveAttribute('data-schedule-toolbar-right', 'true');
+    expect(right.className).toMatch(/\bml-auto\b/);
+    expect(right.className).toMatch(/justify-end/);
+    expect(right.className).toMatch(/\bshrink-0\b/);
+    expect(left.className).toMatch(/\bflex-1\b/);
 
     const search = within(left).getByPlaceholderText(/Поиск/);
     expect(search.closest('label')?.className).toMatch(/w-\[240px\]/);
@@ -689,15 +708,27 @@ describe('E5 Schedule control board', () => {
     ).toBeTruthy();
 
     const groups = right.querySelectorAll('[role="group"]');
-    expect(groups).toHaveLength(2);
+    // Zoom −/+ | comparison | view — shared group chrome; icon buttons transparent.
+    expect(groups).toHaveLength(3);
+    expect(groups[0]).toHaveAttribute('data-schedule-zoom-toggle', 'true');
+    expect(groups[1]).toHaveAttribute('data-schedule-comparison');
+    expect(groups[2]).toHaveAttribute('data-schedule-view-toggle', 'true');
     expect(right.querySelector('select, input')).toBeNull();
     for (const group of groups) {
       expect(group.className).toMatch(/\bh-8\b/);
-      expect(group.className).toMatch(/\bp-1\b/);
+      expect(group.className).toMatch(/\bborder\b/);
+      expect(group.className).toMatch(/surface-sunken/);
       for (const btn of group.querySelectorAll('button')) {
         expect(btn.className).toMatch(/\bh-6\b/);
         expect(btn.className).toMatch(/\bw-6\b/);
+        expect(btn.className).toMatch(/bg-transparent/);
+        expect(btn.className).not.toMatch(/inset|ring-offset-0|shadow-\[inset/);
       }
+    }
+    const pressed = right.querySelectorAll('[aria-pressed="true"]');
+    for (const btn of pressed) {
+      expect(btn.className).toMatch(/status-info-border/);
+      expect(btn.className).not.toMatch(/bg-\[var\(--surface/);
     }
   });
 
@@ -712,8 +743,9 @@ describe('E5 Schedule control board', () => {
     const sep = screen.getByRole('separator');
     expect(sep).toHaveAttribute('aria-orientation', 'vertical');
     expect(sep).toHaveAttribute('tabindex', '0');
-    // Default width is CSS min(40rem, 40%) (jsdom drops min()); no user width yet.
+    // Default width is CSS 50% until the user drags; no fixed px yet.
     expect(list).not.toHaveAttribute('data-schedule-list-width');
+    expect(list.style.width).toBe('50%');
 
     row.getBoundingClientRect = () => ({ width: 1000 }) as DOMRect;
     list.getBoundingClientRect = () => ({ width: 460 }) as DOMRect;

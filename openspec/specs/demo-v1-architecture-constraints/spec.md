@@ -38,12 +38,12 @@ Backend Demo v1 SHALL хранить narrative-данные через persisten
 
 ### Requirement: Enrichment remains fixture-driven discrete snapshots
 
-Система SHALL реализовывать enriched Demo через discrete fixture snapshots A–H; SHALL NOT вводить event sourcing, temporal DB, continuous simulation или arbitrary date playback.
+Система SHALL реализовывать enriched Demo через discrete fixture snapshots 01–08; SHALL NOT вводить event sourcing, temporal DB, continuous simulation или arbitrary date playback.
 
 #### Scenario: Snapshot switch loads self-contained state
 
-- **WHEN** клиент переключает snapshot с F на G
-- **THEN** сервер возвращает самодостаточное состояние G из fixtures
+- **WHEN** клиент переключает snapshot с 06 на 07
+- **THEN** сервер возвращает самодостаточное состояние 07 из fixtures
 
 ### Requirement: No Activity or WBS domain entity; Schedule may include curated work view-model rows
 
@@ -51,13 +51,13 @@ Demo v1 SHALL NOT добавлять Domain entities Activity, Task, WBS Item, W
 
 #### Scenario: Schedule items are only equipment and milestones
 
-- **WHEN** запрашивается schedule PRJ-01 на снимке без curated works
+- **WHEN** запрашивается schedule PRT-01 на снимке без curated works
 - **THEN** каждый item — equipment delivery или milestone
 - **AND** Activity entities отсутствуют
 
 #### Scenario: Schedule may return work rows without Domain Activity
 
-- **WHEN** запрашивается schedule PRJ-01 на снимке с curated works
+- **WHEN** запрашивается schedule PRT-01 на снимке с curated works
 - **THEN** items могут включать `equipment_delivery`, `milestone` и `work`
 - **AND** Domain model не вводит entity Activity / Task / WBS
 - **AND** `links` при наличии содержат display-only зависимости: scheduling между `work:` refs и/или `cross_project_predecessor` от milestone к work
@@ -89,7 +89,7 @@ Demo v1 SHALL NOT добавлять Domain entities Activity, Task, WBS Item, W
 
 #### Scenario: Issue may link to Milestone
 
-- **WHEN** клиент читает links для ISS-001 в Snapshot C
+- **WHEN** клиент читает links для ISS-001 в Snapshot 03
 - **THEN** links могут включать milestone MS-PS
 
 ### Requirement: No Domain managementPriority field
@@ -109,4 +109,4 @@ Demo v1 SHALL NOT добавлять Domain entity WBS, Activity или Task р�
 
 - **WHEN** календарный план показывает дерево `AN-08`
 - **THEN** маршруты `/`, `/programs`, `/projects` и `/schedule` не меняются
-- **AND** контейнер снимка остаётся `PRJ-01`
+- **AND** контейнер снимка остаётся `PRT-01`

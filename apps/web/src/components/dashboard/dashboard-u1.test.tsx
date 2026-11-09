@@ -29,8 +29,10 @@ import {
   resolveExecutiveMilestones,
   resolveProductionStartBand,
 } from '@/lib/dashboard/executive-timeline';
-import { DASHBOARD_LOWER_GRID_ATTR } from '@/lib/dashboard/dashboard-layout';
-import { formatDateRu } from '@/lib/format/ru';
+import {
+  DASHBOARD_LOWER_GRID_ATTR,
+  DASHBOARD_LOWER_LAYOUT_ATTR,
+} from '@/lib/dashboard/dashboard-layout';
 
 const fetchDashboardOverview = vi.fn();
 const fetchProjectCosts = vi.fn();
@@ -88,11 +90,16 @@ vi.mock('next/dynamic', () => ({
         milestoneMeta: unknown;
       }> | null>(null);
       useEffect(() => {
+        let cancelled = false;
         void loader().then((mod) => {
+          if (cancelled) return;
           const resolved =
             typeof mod === 'function' ? mod : mod.default;
           setComp(() => resolved);
         });
+        return () => {
+          cancelled = true;
+        };
       }, []);
       if (!Comp) return <div data-testid="dynamic-loading" />;
       return <Comp {...props} />;
@@ -122,11 +129,6 @@ vi.mock('./executive-timeline-echarts', () => ({
       data-testid="echarts-renderer"
     >
       <div data-snapshot-label>Дата снимка</div>
-      <div data-timeline-ps-legend="true">
-        План запуска: {formatDateRu(model.band.baselineDate)} Прогноз:{' '}
-        {formatDateRu(model.band.forecastDate)} Δ: {model.band.deltaLabel}
-        {model.band.coincident ? ' По плану' : ''}
-      </div>
       <div role="img" aria-label={model.textSummary ?? `echarts:${model.snapshotId}`} />
     </div>
   ),
@@ -158,7 +160,7 @@ beforeEach(() => {
     async (_id: string, snapshot: SnapshotId) => ({
       snapshotId: snapshot,
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       project: projectCostFixture(snapshot),
       workstreams: [],
       equipment: [],
@@ -169,16 +171,30 @@ beforeEach(() => {
     }),
   );
   fetchNotifications.mockResolvedValue({
-    snapshotId: 'A',
+    snapshotId: '01',
     scenarioAsOfDate: '2027-02-15',
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     items: [],
   });
 });
 
+function projectStatusBlock() {
+  return document.querySelector(
+    '[data-dashboard-block="project-status"]',
+  ) as HTMLElement;
+}
+
 describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
-  it('executive overview → timeline → lower-cards (Exceptions → Decision → Attention → Changes)', () => {
-    renderView('C');
+  it('portfolio summary shows PRT-01 container id (not legacy PRJ-01)', () => {
+    renderView('03');
+    const block = projectStatusBlock();
+    expect(block.textContent).toContain('PRT-01');
+    expect(block.textContent).not.toContain('PRJ-01');
+    expect(dashboardOverviewFixture('03').project.id).toBe('PRT-01');
+  });
+
+  it('executive overview → timeline → lower-cards (left People→Attention→Changes; right Exceptions→Decision)', () => {
+    renderView('03');
     const root = document.querySelector('[data-dashboard="r2-u1"]')!;
     expect(root).toHaveAttribute('data-dashboard-ia', 'r2-u1-r7');
 
@@ -199,16 +215,30 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     ).toBeTruthy();
 
     const lower = root.querySelector('[data-dashboard-block="lower-cards"]')!;
-    const lowerChildren = [...lower.children];
-    expect(lowerChildren).toHaveLength(4);
-    expect(
-      lowerChildren.map((el) => el.getAttribute('data-dashboard-block')),
-    ).toEqual(['top-exceptions', 'decisions', 'management-attention', 'trend']);
-    expect(lower).toHaveAttribute('data-dashboard-layout', 'two-col-auto-flow');
+    expect(lower).toHaveAttribute(
+      'data-dashboard-layout',
+      DASHBOARD_LOWER_LAYOUT_ATTR,
+    );
     expect(lower).toHaveAttribute('data-dashboard-grid', DASHBOARD_LOWER_GRID_ATTR);
     expect(lower.className).toMatch(/\bgrid\b/);
     expect(lower.className).toMatch(/\bgrid-cols-1\b/);
     expect(lower.className).toMatch(/\blg:grid-cols-2\b/);
+    expect(lower.className).toMatch(/\bitems-start\b/);
+
+    const left = lower.querySelector('[data-dashboard-lower-column="left"]')!;
+    const right = lower.querySelector('[data-dashboard-lower-column="right"]')!;
+    expect(
+      [...left.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['people-focus', 'management-attention', 'trend']);
+    expect(
+      [...right.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['top-exceptions', 'decisions']);
+    // Narrow DOM order: left column before right → People before Exceptions.
+    expect(
+      [...lower.children].map((el) =>
+        el.getAttribute('data-dashboard-lower-column'),
+      ),
+    ).toEqual(['left', 'right']);
 
     const blocks = [
       ...root.querySelectorAll('[data-dashboard-block]'),
@@ -227,49 +257,64 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
   });
 
   it('Snapshot A empty exceptions/attention stay compact', () => {
-    renderView('A');
+    renderView('01');
     expect(document.querySelector('[data-top-exceptions="empty"]')).toBeTruthy();
     expect(screen.getByText(/Нет активных управленческих сигналов/)).toBeTruthy();
   });
 
-  it('cost signal A: EAC=BAC VAC=0; S: EAC 6.28B VAC -80M', () => {
-    renderView('A');
+  it('cost signal 01: EAC=BAC VAC=0; 19: EAC 6.28B VAC -80M', () => {
+    renderView('01');
     const signal = document.querySelector('[data-cost-signal]')!;
     expect(signal).toHaveAttribute('data-eac', '6200000000');
     expect(signal).toHaveAttribute('data-vac', '0');
     cleanup();
-    renderView('S');
+    renderView('19');
     const s = document.querySelector('[data-cost-signal]')!;
     expect(s).toHaveAttribute('data-eac', '6280000000');
     expect(s).toHaveAttribute('data-vac', '-80000000');
   });
 
-  it('program rows: Red/Yellow persistent surfaces; Green neutral', () => {
-    renderView('C');
+  it('program rows: name|badge|progress; status on badge only (no row RAG fill)', () => {
+    // Contract after dashboard-program-people-layout: data-program-layout=name-badge-progress
+    // (replaces obsolete compact-rag row fills). Badge carries status tone; row stays neutral.
+    renderView('03');
     const matrix = document.querySelector(
-      '[data-program-layout="compact-rag"]',
+      '[data-program-layout="name-badge-progress"]',
     );
     expect(matrix).toBeTruthy();
-    for (const cell of document.querySelectorAll('[data-program]')) {
+    const cells = document.querySelectorAll('[data-program]');
+    expect(cells.length).toBe(7);
+    for (const cell of cells) {
       expect(cell.className).toMatch(/cursor-pointer/);
+      expect(cell).toHaveAttribute('data-program-row', 'name-badge-progress');
+      expect(cell).toHaveAttribute('data-rag-surface', 'neutral');
+      expect(cell.className).not.toMatch(/status-danger-bg/);
+      expect(cell.className).not.toMatch(/status-warn-bg/);
       const status = cell.getAttribute('data-program-status');
       expect(['Red', 'Yellow', 'Green']).toContain(status);
+      const badge = cell.querySelector(
+        `[data-program-status-badge="${status}"]`,
+      );
+      expect(badge).toBeTruthy();
+      expect(badge).toHaveAttribute(
+        'data-program-status-badge-compact',
+        'true',
+      );
       if (status === 'Red') {
-        expect(cell).toHaveAttribute('data-rag-surface', 'persistent');
-        expect(cell.className).toMatch(/status-danger-bg/);
+        expect(badge?.className).toMatch(/status-danger-/);
       } else if (status === 'Yellow') {
-        expect(cell).toHaveAttribute('data-rag-surface', 'persistent');
-        expect(cell.className).toMatch(/status-warn-bg/);
+        expect(badge?.className).toMatch(/status-warn-/);
       } else {
-        expect(cell).toHaveAttribute('data-rag-surface', 'neutral');
-        expect(cell.className).not.toMatch(/status-ok-bg/);
-        expect(cell.className).toMatch(/bg-transparent/);
+        expect(badge?.className).toMatch(/status-ok-/);
       }
+      const progress = cell.querySelector('[data-program-progress="true"]');
+      expect(progress).toBeTruthy();
+      expect(progress).toHaveAttribute('data-program-progress-width', 'fixed');
     }
   });
 
   it('program readiness orders Red before Yellow and keeps catalog order', () => {
-    const data = dashboardOverviewFixture('C');
+    const data = dashboardOverviewFixture('03');
     render(
       <SnapshotProvider>
         <WorkstreamStatusMatrix data={data} />
@@ -290,34 +335,42 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
   });
 
   it('O recovery +7; P Red; Q Yellow baseline passed; R Yellow; S Green achieved', () => {
-    renderView('O');
+    renderView('15');
     expect(
       document.querySelector('[data-ps-delta]')?.textContent,
     ).toMatch(/\+7/);
-    expect(screen.getByText('Красный')).toBeInTheDocument();
+    expect(
+      within(projectStatusBlock()).getByText('Критично'),
+    ).toBeInTheDocument();
     cleanup();
 
-    renderView('P');
-    expect(screen.getByText('Красный')).toBeInTheDocument();
+    renderView('16');
+    expect(
+      within(projectStatusBlock()).getByText('Критично'),
+    ).toBeInTheDocument();
     cleanup();
 
-    renderView('Q');
-    expect(screen.getByText('Жёлтый')).toBeInTheDocument();
+    renderView('17');
+    expect(
+      within(projectStatusBlock()).getByText('Требует внимания'),
+    ).toBeInTheDocument();
     expect(
       document.querySelector('[data-ps-baseline-passed]'),
     ).toBeTruthy();
     cleanup();
 
-    renderView('R');
-    expect(screen.getByText('Жёлтый')).toBeInTheDocument();
+    renderView('18');
+    expect(
+      within(projectStatusBlock()).getByText('Требует внимания'),
+    ).toBeInTheDocument();
     cleanup();
 
-    renderView('S');
+    renderView('19');
     const status = document.querySelector(
       '[data-dashboard-block="project-status"]',
     )!;
     expect(
-      within(status as HTMLElement).getByText('Зелёный'),
+      within(status as HTMLElement).getByText('В норме'),
     ).toBeInTheDocument();
     expect(document.querySelector('[data-ps-achieved]')).toBeTruthy();
   });
@@ -338,7 +391,7 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
       'MS-PS',
     ];
 
-    for (const snap of ['A', 'O', 'S'] as const) {
+    for (const snap of ['01', '15', '19'] as const) {
       const points = resolveExecutiveMilestones(
         dashboardOverviewFixture(snap),
       );
@@ -346,7 +399,7 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
       expect(points).toHaveLength(12);
     }
 
-    renderView('A');
+    renderView('01');
     const stripA = document.querySelector(
       '[data-dashboard-block="executive-timeline"]',
     )!;
@@ -357,24 +410,29 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
       ).toBeTruthy();
     });
     expect(stripA.querySelector('[data-timeline-renderer-toggle]')).toBeNull();
-    expect(stripA.textContent).toMatch(/Предпроект|План запуска/);
+    expect(stripA.querySelector('[data-timeline-ps-legend]')).toBeNull();
+    expect(stripA.querySelector('[data-timeline-meta-row]')).toBeNull();
     expect(stripA.textContent).not.toMatch(/Go\/No-Go/);
+    expect(resolveProductionStartBand(dashboardOverviewFixture('01')).coincident).toBe(
+      true,
+    );
     cleanup();
 
-    renderView('O');
+    renderView('15');
     const strip = document.querySelector(
       '[data-dashboard-block="executive-timeline"]',
     )!;
     await waitFor(() => {
       expect(
-        strip.querySelector('[data-timeline-ps-legend="true"]'),
+        strip.querySelector('[data-timeline-renderer="echarts"]'),
       ).toBeTruthy();
     });
-    expect(strip.querySelector('[data-timeline-ps-legend]')?.textContent).toMatch(
-      /\+7/,
+    expect(strip.querySelector('[data-timeline-ps-legend]')).toBeNull();
+    expect(resolveProductionStartBand(dashboardOverviewFixture('15')).deltaDays).toBe(
+      7,
     );
 
-    const points = resolveExecutiveMilestones(dashboardOverviewFixture('A'));
+    const points = resolveExecutiveMilestones(dashboardOverviewFixture('01'));
     for (const p of points) {
       expect(requireExecutiveShortLabel(p.id)).toBe(p.shortLabel);
       expect(p.shortLabel).not.toMatch(/\.\.\./);
@@ -386,73 +444,66 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     );
   });
 
-  it('R2-U1-R9: PS legend on S — historical +7, Green project', async () => {
-    renderView('S');
+  it('R2-U1-R9: PS band on S — historical +7, Green project (no DOM legend row)', async () => {
+    renderView('19');
     await waitFor(() => {
       expect(
         document.querySelector('[data-timeline-renderer="echarts"]'),
       ).toBeTruthy();
     });
     expect(document.querySelector('[data-snapshot-label]')).toBeTruthy();
-    const legend = document.querySelector('[data-timeline-ps-legend]')!;
-    expect(legend.textContent).toMatch(/15\.09\.2027/);
-    expect(legend.textContent).toMatch(/22\.09\.2027/);
-    expect(legend.textContent).toMatch(/\+7/);
-    const band = resolveProductionStartBand(dashboardOverviewFixture('S'));
+    expect(document.querySelector('[data-timeline-ps-legend]')).toBeNull();
+    const band = resolveProductionStartBand(dashboardOverviewFixture('19'));
     expect(band.deltaDays).toBe(7);
+    expect(band.baselineDate).toBe('2027-09-15');
+    expect(band.forecastDate).toBe('2027-09-22');
     expect(
       document.querySelector('[data-summary-zone="condition"]')?.textContent,
-    ).toMatch(/Зелён/i);
+    ).toMatch(/В норме/i);
   });
 
-  it('R2-U1-R9: O delayed PS legend — forecast +7', async () => {
-    renderView('O');
+  it('R2-U1-R9: O delayed PS band — forecast +7 (chart labels, no meta legend)', async () => {
+    renderView('15');
     await waitFor(() => {
       expect(
-        document.querySelector('[data-timeline-ps-legend]'),
+        document.querySelector('[data-timeline-renderer="echarts"]'),
       ).toBeTruthy();
     });
-    const legend = document.querySelector('[data-timeline-ps-legend]')!;
-    expect(legend.textContent).toMatch(/15\.09\.2027/);
-    expect(legend.textContent).toMatch(/22\.09\.2027/);
-    expect(legend.textContent).toMatch(/\+7/);
-    const band = resolveProductionStartBand(dashboardOverviewFixture('O'));
+    expect(document.querySelector('[data-timeline-ps-legend]')).toBeNull();
+    const band = resolveProductionStartBand(dashboardOverviewFixture('15'));
     expect(band.coincident).toBe(false);
     expect(band.deltaDays).toBe(7);
-    const points = resolveExecutiveMilestones(dashboardOverviewFixture('O'));
+    expect(band.baselineDate).toBe('2027-09-15');
+    expect(band.forecastDate).toBe('2027-09-22');
+    const points = resolveExecutiveMilestones(dashboardOverviewFixture('15'));
     expect(points.some((p) => p.id === 'MS-COM-GO')).toBe(true);
   });
 
-  it('R2-U1-R9: coincident A — по плану, no +0', async () => {
-    renderView('A');
+  it('R2-U1-R9: coincident A — по плану band, no +0, no meta legend', async () => {
+    renderView('01');
     await waitFor(() => {
       expect(
-        document.querySelector('[data-timeline-ps-legend]'),
+        document.querySelector('[data-timeline-renderer="echarts"]'),
       ).toBeTruthy();
     });
-    const legend = document.querySelector('[data-timeline-ps-legend]')!;
-    expect(legend.textContent).toMatch(/По плану|по плану/i);
-    expect(legend.textContent).toMatch(/15\.09\.2027/);
-    expect(legend.textContent).not.toMatch(/\+0/);
-    const band = resolveProductionStartBand(dashboardOverviewFixture('A'));
+    expect(document.querySelector('[data-timeline-ps-legend]')).toBeNull();
+    const band = resolveProductionStartBand(dashboardOverviewFixture('01'));
     expect(band.coincident).toBe(true);
+    expect(band.deltaLabel).toMatch(/По плану|по плану/i);
+    expect(band.baselineDate).toBe('2027-09-15');
+    expect(band.deltaDays).toBe(0);
   });
 
-  it('R2-U1-R7: single lower grid siblings + fill pair scroll', () => {
-    renderView('C');
+  it('R2-U1-R7: independent columns + fill pair scroll caps', () => {
+    renderView('03');
     expect(
       document.querySelector('[data-attention-layout="matrix-2x2"]'),
     ).toBeTruthy();
 
     const lower = document.querySelector('[data-dashboard-block="lower-cards"]')!;
-
-    expect(lower.children).toHaveLength(4);
-    for (const child of lower.children) {
-      expect(child.parentElement).toBe(lower);
-    }
-
+    expect(lower.children).toHaveLength(2);
     expect(lower.className).toMatch(/\blg:grid-cols-2\b/);
-    expect(lower.className).toMatch(/\bgrid-cols-1\b/);
+    expect(lower.className).toMatch(/\bitems-start\b/);
 
     const exCard = document.querySelector(
       '[data-dashboard-block="top-exceptions"]',
@@ -466,56 +517,68 @@ describe('Dashboard R2-U1-R2 IA / lifecycle', () => {
     expect(exList?.getAttribute('style') ?? '').not.toMatch(/14\.25rem/);
 
     cleanup();
-    renderView('G');
+    renderView('07');
     const decCard = document.querySelector(
       '[data-dashboard-block="decisions"]',
     );
-    const decisions = document.querySelector('[data-decisions="list"]');
+    expect(decCard).toBeTruthy();
     expect(decCard?.className).toMatch(/max-h-\[28rem\]/);
-    expect(decisions).toHaveAttribute('data-decisions-scroll', 'fill');
-    expect(decisions?.className).toMatch(/overflow-y-auto/);
-    expect(decisions?.className).toMatch(/flex-1/);
-    expect(decisions?.className).toMatch(/min-h-0/);
-    expect(decisions?.getAttribute('style') ?? '').not.toMatch(/14\.25rem/);
+    expect(decCard?.className).toMatch(/min-h-0/);
+    expect(decCard?.getAttribute('style') ?? '').not.toMatch(/14\.25rem/);
+    expect(
+      document.querySelector('[data-dashboard-block="people-focus"]'),
+    ).toBeTruthy();
   });
 });
 
-describe('B11 lower cards — single auto-flow grid', () => {
-  it('Snapshot A: one grid, three dense cards, no separate row hole', () => {
-    renderView('A');
+describe('Lower cards — two independent columns', () => {
+  it('Snapshot 01: left stack full; right exceptions only (no Decision hole)', () => {
+    renderView('01');
     const grids = document.querySelectorAll(
       `[data-dashboard-grid="${DASHBOARD_LOWER_GRID_ATTR}"]`,
     );
     expect(grids).toHaveLength(1);
-    expect(
-      document.querySelector('[data-dashboard-block="exceptions-decisions"]'),
-    ).toBeNull();
-    expect(
-      document.querySelector('[data-dashboard-block="attention-changes"]'),
-    ).toBeNull();
-
     const grid = grids[0]!;
-    expect(grid).toHaveAttribute('data-dashboard-block', 'lower-cards');
-    const blocks = [...grid.children].map((el) =>
-      el.getAttribute('data-dashboard-block'),
+    expect(grid).toHaveAttribute(
+      'data-dashboard-layout',
+      DASHBOARD_LOWER_LAYOUT_ATTR,
     );
-    expect(blocks).toEqual(['top-exceptions', 'management-attention', 'trend']);
-    expect(document.querySelector('[data-dashboard-block="decisions"]')).toBeNull();
+    const left = grid.querySelector('[data-dashboard-lower-column="left"]')!;
+    const right = grid.querySelector('[data-dashboard-lower-column="right"]')!;
+    expect(
+      [...left.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['people-focus', 'management-attention', 'trend']);
+    expect(
+      [...right.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['top-exceptions']);
+    expect(
+      document.querySelector('[data-dashboard-block="decisions"]'),
+    ).toBeNull();
   });
 
-  it('Snapshot C: four cards Exceptions → Decision → Attention → Changes', () => {
-    renderView('C');
+  it('Snapshot 03: left People→Attention→Changes; right Exceptions→Decision', () => {
+    renderView('03');
     const grid = document.querySelector('[data-dashboard-block="lower-cards"]')!;
+    const left = grid.querySelector('[data-dashboard-lower-column="left"]')!;
+    const right = grid.querySelector('[data-dashboard-lower-column="right"]')!;
     expect(
-      [...grid.children].map((el) => el.getAttribute('data-dashboard-block')),
-    ).toEqual(['top-exceptions', 'decisions', 'management-attention', 'trend']);
+      [...left.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['people-focus', 'management-attention', 'trend']);
+    expect(
+      [...right.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['top-exceptions', 'decisions']);
   });
 
-  it('Snapshot G: four cards in canonical order', () => {
-    renderView('G');
+  it('Snapshot 07: same independent column order', () => {
+    renderView('07');
     const grid = document.querySelector('[data-dashboard-block="lower-cards"]')!;
+    const left = grid.querySelector('[data-dashboard-lower-column="left"]')!;
+    const right = grid.querySelector('[data-dashboard-lower-column="right"]')!;
     expect(
-      [...grid.children].map((el) => el.getAttribute('data-dashboard-block')),
-    ).toEqual(['top-exceptions', 'decisions', 'management-attention', 'trend']);
+      [...left.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['people-focus', 'management-attention', 'trend']);
+    expect(
+      [...right.children].map((el) => el.getAttribute('data-dashboard-block')),
+    ).toEqual(['top-exceptions', 'decisions']);
   });
 });

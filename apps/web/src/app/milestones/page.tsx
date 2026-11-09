@@ -10,7 +10,7 @@ import {
   RegisterError,
   RegisterFilteredEmpty,
   RegisterLoading,
-  RegisterMutedIds,
+  RegisterIdLinks,
   RegisterRow,
   RegisterShell,
   RegisterTable,
@@ -109,8 +109,8 @@ function MilestonesPage() {
     if (!data) return [];
     const red = data.items.filter((i) => i.rag === 'Red').length;
     return [
-      { label: 'Красные', value: red },
-      { label: 'Зелёные', value: data.items.length - red },
+      { label: 'Критичные', value: red },
+      { label: 'В норме', value: data.items.length - red },
     ];
   }, [data]);
 
@@ -188,10 +188,16 @@ function MilestonesPage() {
                       {formatDeltaDays(item.dateVariance.deltaDays)}
                     </RegisterCell>
                     <RegisterCell>
-                      <RegisterMutedIds
-                        ids={[
-                          ...item.relatedActiveIssueIds,
-                          ...item.relatedRedRiskIds,
+                      <RegisterIdLinks
+                        refs={[
+                          ...item.relatedActiveIssueIds.map((id) => ({
+                            type: 'issue' as const,
+                            id,
+                          })),
+                          ...item.relatedRedRiskIds.map((id) => ({
+                            type: 'risk' as const,
+                            id,
+                          })),
                         ]}
                       />
                     </RegisterCell>

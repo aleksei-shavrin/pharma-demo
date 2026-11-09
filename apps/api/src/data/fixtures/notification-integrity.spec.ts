@@ -33,7 +33,7 @@ const FORBIDDEN_PRESENTATION_FRAGMENTS = [
 ] as const;
 
 describe('Notification fixture integrity (R2-N1 / N1-R1)', () => {
-  it('covers A–S with unique ids and valid taxonomy/severity', () => {
+  it('covers 01–19 with unique ids and valid taxonomy/severity', () => {
     const all = allNotificationFixtures();
     const ids = all.map((n) => n.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -42,15 +42,15 @@ describe('Notification fixture integrity (R2-N1 / N1-R1)', () => {
         notificationsForSnapshot(id).every((n) => n.snapshotId === id),
       ).toBe(true);
     }
-    expect(notificationsForSnapshot('A')).toHaveLength(0);
-    expect(notificationsForSnapshot('C').length).toBeGreaterThanOrEqual(3);
-    expect(notificationsForSnapshot('S').length).toBeGreaterThanOrEqual(2);
+    expect(notificationsForSnapshot('01')).toHaveLength(0);
+    expect(notificationsForSnapshot('03').length).toBeGreaterThanOrEqual(3);
+    expect(notificationsForSnapshot('19').length).toBeGreaterThanOrEqual(2);
   });
 
   it('does not mutate domain snapshot fixtures', () => {
-    const before = JSON.stringify(SNAPSHOTS.C.issues.map((i) => i.status));
-    void notificationsForSnapshot('C');
-    const after = JSON.stringify(SNAPSHOTS.C.issues.map((i) => i.status));
+    const before = JSON.stringify(SNAPSHOTS['03'].issues.map((i) => i.status));
+    void notificationsForSnapshot('03');
+    const after = JSON.stringify(SNAPSHOTS['03'].issues.map((i) => i.status));
     expect(after).toBe(before);
   });
 

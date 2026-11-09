@@ -27,7 +27,7 @@ function overviewFor(snapshotId: SnapshotId) {
   return {
     snapshotId,
     scenarioAsOfDate: '2027-01-01',
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     project: projectCostFixture(snapshotId),
     workstreams: [],
     equipment: [],
@@ -58,13 +58,13 @@ describe('CostSignal snapshot consistency (R2-U1-R1)', () => {
 
     fetchProjectCosts.mockImplementation(
       async (_pid: string, snap: SnapshotId) => {
-        if (snap === 'C') return overviewFor('C');
-        if (snap === 'O') return oPending.then(() => overviewFor('O'));
+        if (snap === '03') return overviewFor('03');
+        if (snap === '15') return oPending.then(() => overviewFor('15'));
         return overviewFor(snap);
       },
     );
 
-    const { rerender } = render(<CostSignal snapshotId="C" />);
+    const { rerender } = render(<CostSignal snapshotId="03" />);
     await waitFor(() => {
       expect(
         document.querySelector('[data-cost-signal-state="ready"]'),
@@ -72,24 +72,24 @@ describe('CostSignal snapshot consistency (R2-U1-R1)', () => {
     });
     expect(
       document.querySelector('[data-cost-signal]')?.getAttribute('data-eac'),
-    ).toBe(String(projectCostFixture('C').eacRub));
+    ).toBe(String(projectCostFixture('03').eacRub));
 
-    rerender(<CostSignal snapshotId="O" />);
+    rerender(<CostSignal snapshotId="15" />);
     await waitFor(() => {
       const el = document.querySelector('[data-cost-signal]');
       expect(el?.getAttribute('data-cost-signal-state')).toBe('loading');
       expect(el?.getAttribute('data-eac')).toBeNull();
-      expect(el?.getAttribute('data-cost-for-snapshot')).toBe('O');
+      expect(el?.getAttribute('data-cost-for-snapshot')).toBe('15');
     });
 
     await act(async () => {
-      resolveO?.(overviewFor('O'));
+      resolveO?.(overviewFor('15'));
     });
     await waitFor(() => {
       const el = document.querySelector('[data-cost-signal]');
       expect(el?.getAttribute('data-cost-signal-state')).toBe('ready');
       expect(el?.getAttribute('data-eac')).toBe(
-        String(projectCostFixture('O').eacRub),
+        String(projectCostFixture('15').eacRub),
       );
     });
   });
@@ -102,25 +102,25 @@ describe('CostSignal snapshot consistency (R2-U1-R1)', () => {
 
     fetchProjectCosts.mockImplementation(
       async (_pid: string, snap: SnapshotId) => {
-        if (snap === 'C') return cLate;
+        if (snap === '03') return cLate;
         return overviewFor(snap);
       },
     );
 
-    const { rerender } = render(<CostSignal snapshotId="C" />);
+    const { rerender } = render(<CostSignal snapshotId="03" />);
     expect(
       document
         .querySelector('[data-cost-signal]')
         ?.getAttribute('data-cost-signal-state'),
     ).toBe('loading');
 
-    rerender(<CostSignal snapshotId="O" />);
+    rerender(<CostSignal snapshotId="15" />);
     await waitFor(() => {
       expect(
         document
           .querySelector('[data-cost-signal]')
           ?.getAttribute('data-cost-for-snapshot'),
-      ).toBe('O');
+      ).toBe('15');
     });
     await waitFor(() => {
       expect(
@@ -129,13 +129,13 @@ describe('CostSignal snapshot consistency (R2-U1-R1)', () => {
           ?.getAttribute('data-cost-signal-state'),
       ).toBe('ready');
     });
-    const oEac = String(projectCostFixture('O').eacRub);
+    const oEac = String(projectCostFixture('15').eacRub);
     expect(
       document.querySelector('[data-cost-signal]')?.getAttribute('data-eac'),
     ).toBe(oEac);
 
     await act(async () => {
-      resolveC?.(overviewFor('C'));
+      resolveC?.(overviewFor('03'));
     });
     expect(
       document.querySelector('[data-cost-signal]')?.getAttribute('data-eac'),
@@ -145,19 +145,19 @@ describe('CostSignal snapshot consistency (R2-U1-R1)', () => {
   it('failed O leaves error/no-data — not previous C values', async () => {
     fetchProjectCosts.mockImplementation(
       async (_pid: string, snap: SnapshotId) => {
-        if (snap === 'C') return overviewFor('C');
+        if (snap === '03') return overviewFor('03');
         throw new Error('cost failed');
       },
     );
 
-    const { rerender } = render(<CostSignal snapshotId="C" />);
+    const { rerender } = render(<CostSignal snapshotId="03" />);
     await waitFor(() => {
       expect(
         document.querySelector('[data-cost-signal-state="ready"]'),
       ).toBeTruthy();
     });
 
-    rerender(<CostSignal snapshotId="O" />);
+    rerender(<CostSignal snapshotId="15" />);
     await waitFor(() => {
       const el = document.querySelector('[data-cost-signal]');
       expect(el?.getAttribute('data-cost-signal-state')).toBe('error');
@@ -167,12 +167,12 @@ describe('CostSignal snapshot consistency (R2-U1-R1)', () => {
 
   it('response snapshotId mismatch is not committed', async () => {
     fetchProjectCosts.mockResolvedValue({
-      ...overviewFor('C'),
-      snapshotId: 'A',
-      project: projectCostFixture('A'),
+      ...overviewFor('03'),
+      snapshotId: '01',
+      project: projectCostFixture('01'),
     });
 
-    render(<CostSignal snapshotId="C" />);
+    render(<CostSignal snapshotId="03" />);
     await waitFor(() => {
       // stays loading — mismatch ignored
       expect(

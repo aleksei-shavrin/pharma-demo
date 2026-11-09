@@ -34,7 +34,7 @@ describe('R2-M1 / R1 cost integrity (DOC-PROD-026)', () => {
     expect(DEMO_WORKSTREAM_CBS_RUB['WS-HVAC']).toBe(880_000_000);
   });
 
-  it('matches DOC-PROD-026 project A–S totals exactly', () => {
+  it('matches DOC-PROD-026 project 01–19 totals exactly', () => {
     for (const id of ALL) {
       const authored = PROJECT_COST_STORY[id];
       const p = COST_SNAPSHOTS[id].project;
@@ -113,8 +113,8 @@ describe('R2-M1 / R1 cost integrity (DOC-PROD-026)', () => {
     }
   });
 
-  it('Snapshot A: unused contingency does not create false WS overrun', () => {
-    const a = COST_SNAPSHOTS.A;
+  it('Snapshot 01: unused contingency does not create false WS overrun', () => {
+    const a = COST_SNAPSHOTS['01'];
     expect(a.project.approvedBudgetRub).toBe(6_200_000_000);
     expect(a.project.eacRub).toBe(6_200_000_000);
     expect(a.project.vacRub).toBe(0);
@@ -186,17 +186,17 @@ describe('R2-M1 / R1 cost integrity (DOC-PROD-026)', () => {
   });
 
   it('keeps F EAC flat vs E and N EAC flat vs M (Decision non-auto money)', () => {
-    expect(COST_SNAPSHOTS.F.project.eacRub).toBe(
-      COST_SNAPSHOTS.E.project.eacRub,
+    expect(COST_SNAPSHOTS['06'].project.eacRub).toBe(
+      COST_SNAPSHOTS['05'].project.eacRub,
     );
-    expect(COST_SNAPSHOTS.F.project.vacRub).toBe(
-      COST_SNAPSHOTS.E.project.vacRub,
+    expect(COST_SNAPSHOTS['06'].project.vacRub).toBe(
+      COST_SNAPSHOTS['05'].project.vacRub,
     );
-    expect(COST_SNAPSHOTS.N.project.eacRub).toBe(
-      COST_SNAPSHOTS.M.project.eacRub,
+    expect(COST_SNAPSHOTS['14'].project.eacRub).toBe(
+      COST_SNAPSHOTS['13'].project.eacRub,
     );
-    expect(COST_SNAPSHOTS.F.project.actualCostRub).toBeGreaterThan(
-      COST_SNAPSHOTS.E.project.actualCostRub,
+    expect(COST_SNAPSHOTS['06'].project.actualCostRub).toBeGreaterThan(
+      COST_SNAPSHOTS['05'].project.actualCostRub,
     );
   });
 
@@ -229,8 +229,8 @@ describe('R2-M1 / R1 cost integrity (DOC-PROD-026)', () => {
     }
   });
 
-  it('Snapshot S closeout: residual 0 while unused contingencyRemaining remains outside EAC', () => {
-    const s = COST_SNAPSHOTS.S;
+  it('Snapshot 19 closeout: residual 0 while unused contingencyRemaining remains outside EAC', () => {
+    const s = COST_SNAPSHOTS['19'];
     expect(s.project.actualCostRub).toBe(6_280_000_000);
     expect(s.project.etcRub).toBe(0);
     expect(s.project.eacRub).toBe(6_280_000_000);

@@ -37,9 +37,9 @@ describe('FE R2-C1-R1 api-client contract types', () => {
     const lead: PersonId = 'PER-08';
     const leads: WorkstreamId[] = ['WS-HVAC'];
     const workstreams: WorkstreamList = {
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: [
         {
           id: 'WS-HVAC',
@@ -51,9 +51,9 @@ describe('FE R2-C1-R1 api-client contract types', () => {
       ],
     };
     const detail: WorkstreamDetail = {
-      snapshotId: 'C',
+      snapshotId: '03',
       scenarioAsOfDate: '2027-03-01',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       workstream: {
         id: 'WS-HVAC',
         nameRu: 'HVAC',
@@ -80,9 +80,9 @@ describe('FE R2-C1-R1 api-client contract types', () => {
       cost: null,
     };
     const people: PersonList = {
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: [
         {
           id: 'PER-01',
@@ -94,9 +94,9 @@ describe('FE R2-C1-R1 api-client contract types', () => {
       ],
     };
     const personDetail: PersonDetail = {
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       person: people.items[0],
       issueIds: [],
       decisionIds: [],
@@ -104,9 +104,9 @@ describe('FE R2-C1-R1 api-client contract types', () => {
       leadWorkstreamIds: leads,
     };
     const costs: ProjectCostsOverview = {
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       project: {
         approvedBudgetRub: DEMO_PROJECT_BAC_RUB,
         actualCostRub: 0,
@@ -126,9 +126,9 @@ describe('FE R2-C1-R1 api-client contract types', () => {
       },
     };
     const notifications: NotificationList = {
-      snapshotId: 'C',
+      snapshotId: '03',
       scenarioAsOfDate: '2027-03-01',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: [],
     };
     expect(workstreams.items).toHaveLength(1);

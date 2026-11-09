@@ -48,7 +48,7 @@ describe('SessionGuard', () => {
   it('returns 401 for anonymous protected /v1', () => {
     (auth.sessionFromCookie as jest.Mock).mockReturnValue(null);
     expect(() =>
-      guard.canActivate(ctx('/v1/projects/PRJ-01/dashboard')),
+      guard.canActivate(ctx('/v1/projects/PRT-01/dashboard')),
     ).toThrow(UnauthorizedException);
   });
 
@@ -57,6 +57,6 @@ describe('SessionGuard', () => {
       username: 'pharma-dev',
       expiresAt: Date.now() + 1000,
     });
-    expect(guard.canActivate(ctx('/v1/projects/PRJ-01/schedule'))).toBe(true);
+    expect(guard.canActivate(ctx('/v1/projects/PRT-01/schedule'))).toBe(true);
   });
 });

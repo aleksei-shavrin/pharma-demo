@@ -39,7 +39,7 @@ const PANEL_MILESTONE_ID = 'MS-CLN-PANEL';
 
 /**
  * Schedule read model: control points (Milestone + Equipment delivery, D11),
- * Work bars and dependency links (G07–G11), and the snapshot C group tree.
+ * Work bars and dependency links (G07–G11), and the snapshot 03 group tree.
  * `wbs` is a stable view-model code, not a domain WBS. Links are demo data,
  * not a computed critical path. Groups do not store a summary interval.
  */
@@ -369,7 +369,7 @@ function assertWorkActual(
 /**
  * Guards fixture integrity at read time: a broken fixture must fail loudly
  * (500) instead of shipping a dangling tree or arrow to the Gantt.
- * Snapshot C must contain the AN-08 tree and all four link types.
+ * Snapshot 03 must contain the AN-08 tree and all four link types.
  * `catalogueMilestoneIds` is the milestone catalogue of the same snapshot.
  * An empty list skips the catalogue-count check (direct unit calls).
  */
@@ -568,7 +568,7 @@ function assertSnapshotCTree(
   ) {
     fail('missing schedule tree');
   }
-  // progressPct is snapshot-overlay authored (A–S); not asserted here.
+  // progressPct is snapshot-overlay authored (01–19); not asserted here.
 }
 
 /**
@@ -621,7 +621,7 @@ function assertAssembledSchedule(
     fail('missing MS-CLN-PANEL');
   }
 
-  if (snapshotId === 'C') {
+  if (snapshotId === '03') {
     const project = items.find(
       (item) => item.kind === 'project_group' && item.id === 'AN-08',
     );

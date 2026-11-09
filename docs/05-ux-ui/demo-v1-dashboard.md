@@ -3,9 +3,9 @@ id: DOC-UX-004
 title: Demo v1 — Dashboard (исполнительный обзор)
 type: product
 status: draft
-version: 0.4.11
+version: 0.4.13
 created: '2026-10-31'
-updated: '2026-11-06'
+updated: '2026-11-09'
 owner: docs-engineering
 related:
   - DOC-UX-001
@@ -32,14 +32,14 @@ Director-first home (D3): состояние production start, драйвер о
 
 | Block | User question | Data source |
 |-------|---------------|-------------|
-| Project header | Какой проект / asOf? | PRJ-01; scenarioAsOfDate (mock) |
+| Project header | Какой проект / asOf? | PRT-01; scenarioAsOfDate (mock) |
 | KPI row | Каков PS и slip? | baselineProductionStart, forecastProductionStart; Δ derived; MS-PS.rag; EQ-HVAC-01.status (и агрегаты при расширении mock — hypothesis) |
 | Causal viz | Почему угроза PS? | Только **прямые** Domain links (DOC-BA-015), присутствующие в snapshot; узлы EQ/ISS/RISK/MS (+ PS как label MS/Project aggregate). Не рисовать линейную цепочку narrative как рёбра; не рисовать EQ—MS |
 | Δ strip | Как delay связан с PS? | BR-004; delivery dates ≠ PS labels (REQ-EQPT / REQ-IMPCT); Δ = derived math, не Domain edge |
 | Decision panel | Какое решение зафиксировано? | Decision type; Issue Mitigating; honesty: forecast/RAG unchanged (BR-006) |
 | Exceptions preview | Что открыть дальше? | Top ISS/RISK refs → Issues & Risks |
 | Compact Schedule widget | Что ближайшее / slipping? | Subset control points → Schedule |
-| Optional chart | Как двигался forecast A/B/C? | Три точки mock snapshots (Recharts); не runtime forecast engine |
+| Optional chart | Как двигался forecast 01/02/03? | Три точки mock snapshots (Recharts); не runtime forecast engine |
 
 ## 3. KPI rules
 
@@ -68,50 +68,56 @@ Director-first home (D3): состояние production start, драйвер о
 
 **Не менять:** вкладка **«Обзор»** на entity-detail (summary сущности) — это другой semantic scope, не home Dashboard.
 
-## 6. Нижняя зона карточек (B11)
+## 6. Нижняя зона карточек (B11 → two independent columns)
 
-> **certainty:** approved UX decision
+> **certainty:** assumption — dashboard-two-columns 2026-11-09 (явный запрос пользователя; supersedes prior B11 single auto-flow packing)
 
-Под executive timeline — **одна** responsive-сетка (`grid`, `lg:grid-cols-2`, auto-flow по порядку DOM), не два независимых «ряда» по два столбца.
+Под executive timeline — **два равных desktop-столбца** (`lg:grid-cols-2`, `items-start`), каждый — независимая вертикальная стопка (`flex-col`). Карточки **не** растягиваются под высоту соседнего столбца; отсутствие Decision не оставляет дыру в левом столбце.
 
-**Порядок карточек (когда все четыре видимы):**
+**Desktop (lg+), порядок в стопках:**
 
-1. Key Exceptions (`top-exceptions`)
-2. Management Decisions (`decisions`) — только если панель не `absent` и есть что показать
-3. Management Attention (`management-attention`)
-4. Snapshot Changes (`trend`)
+| Столбец | Порядок (сверху вниз) |
+|---------|------------------------|
+| Левый | 1. People focus (`people-focus`) — «Участники…» · 2. Management Attention / Сводка (`management-attention`) · 3. Snapshot Changes (`trend`) |
+| Правый | 1. Key Exceptions (`top-exceptions`) — «Требует внимания» · 2. Decision (`decisions`) — «Прогноз и решение», только если панель не `absent` |
 
-**Плотная упаковка без «дыры»:** если Decision **не рендерится** (snapshot **A**: `decisionPanelState === 'absent'`, decisions пусты), оставшиеся **три** карточки (Exceptions → Attention → Changes) заполняют сетку подряд — **без** пустой ячейки во втором столбце первого ряда (anti-pattern: два отдельных `lg:grid-cols-2` контейнера, где верхний ряд содержит только Exceptions).
+**Узкий экран (`grid-cols-1`):** сначала весь левый столбец, затем правый → Участники раньше «Требует внимания».
+
+People focus: owners Open/Mitigating issues + critical Delayed EQ (дедуп по `equipmentId`). Summary: **Критичных → Новых критичных → Ответственных**; quiet / tip / unassigned — без изменения семантики.
+
+**Visual (people, 2026-11-09):** header state pill — `attention` / `active` / `quiet`; **все** `people` в DOM (`max-h-[32rem]` scroll); без left accent / topN.
 
 **Acceptance (visual / DOM):**
 
-| Snapshot | Видимые lower cards | Ожидание |
-|----------|---------------------|----------|
-| **A** | 3 (без Decision) | Один lower-grid; 3 direct children; dense 2+1 |
-| **C** или **G** | 4 | Один lower-grid; порядок Exceptions → Decision → Attention → Changes |
+| Snapshot | Ожидание |
+|----------|----------|
+| **01** | 2 column wrappers; left: people → attention → trend; right: exceptions only (нет Decision) |
+| **03** / **07** / **11** | left same; right: exceptions → decisions |
 
 ### Состояние блока решений (A08, B04–B05)
 
-> **certainty:** assumption
+> **certainty:** assumption — dashboard-management-cards 2026-11-09
 >
-> Отдельного статуса решения нет. `decisionPanelState` считается по снимку: `needed`, если список решений пуст, проблема запуска открыта и поставка AHU сдвинута; `recorded`, если в снимке есть хотя бы одно решение. Маршрут: [DOC-DEL-A06-A09](../07-delivery/reports/2026-11-06-a06-a09-director-scenario.md).
+> Карточка «Прогноз и решение» — PS-driver сигнал (DEC-001), не реестр. `decisionPanelState`: `recorded` только при DEC-001; `needed` при отсутствии DEC-001 + Open/Mitigating PS issue + EQ Delayed; иначе `absent`. Исполнение — read-only demo observations (`unknown|not_started|in_progress|completed`, source.kind=demo). `decisionHonesty.recoveryExecuted` deprecated always-false; UI опирается на `forecastDeviation` + execution. BR-006: запись сама не устраняет отклонение.
 
 | Снимок | Состояние блока | Что показано |
 |--------|-----------------|--------------|
-| C, D | `needed` | Один заголовок «Требуется решение» и пояснение про отклонение поставки и запуска. `DEC-001` в списке нет |
-| F | `recorded` | Заголовок «Управленческие решения». У каждой строки отметка «Решение записано», ссылка на владельца и подпись вехи. Прогноз запуска не меняется от факта записи |
+| C, D, E | `needed` | «Требуется решение»; DEC-001 нет |
+| 06 | `recorded` + `not_started` | DEC-001; демо «Действия не начаты»; residual Δ |
+| 07–14 | `recorded` + `in_progress` | «Действия начаты» (I не completed) |
+| 15–19 | `recorded` + `completed` | «Действия закрыты»; residual/Δ может оставаться |
 
-Подпись «Принято» не используется: контракт подтверждает запись решения, не отдельный статус принятия.
+Подпись «Принято» не используется.
 
 ### Блок изменений (C04)
 
 > **certainty:** assumption
 >
-> Тексты `better` / `worse` / `unchangedCritical` записаны в фикстуре снимка. Это не пересчёт от снимка, который был открыт перед этим. Сверка A–S показывает последовательный сюжет: каждая непустая запись читается как шаг от предыдущей буквы. Примеры: B добавляет замечания оболочки; C закрывает их и фиксирует HVAC +21; G снижает сдвиг HVAC с +21 до +14; S отмечает достигнутый старт после ожидания на R. Ни одна строка не называет несоседнюю букву.
+> Тексты `better` / `worse` / `unchangedCritical` записаны в фикстуре снимка. Это не пересчёт от снимка, который был открыт перед этим. Сверка 01–19 показывает последовательный сюжет: каждая непустая запись читается как шаг от предыдущего снимка. Примеры: B добавляет замечания оболочки; C закрывает их и фиксирует HVAC +21; G снижает сдвиг HVAC с +21 до +14; S отмечает достигнутый старт после ожидания на R. Ни одна строка не называет несоседний снимок.
 
-Для A предыдущей буквы нет. Заголовок — «Изменения по сценарию». Пустая фраза про базовый план остаётся.
+Для A предыдущего снимка нет. Заголовок — «Изменения по сценарию». Пустая фраза про базовый план остаётся.
 
-Для B–S заголовок называет предыдущую букву порядка A–S: на C это «Изменения к снимку B», на F — «Изменения к снимку E». Скачок A → F показывает текст F и заголовок про E, не разницу с A.
+Для 02–19 заголовок называет предыдущий снимок порядка 01–19: на 03 это «Изменения к снимку 02», на 06 — «Изменения к снимку 05». Скачок 01 → 06 показывает текст 06 и заголовок про 05, не разницу с A.
 
 ### Сравнение на платформе (C05)
 
@@ -125,7 +131,7 @@ Director-first home (D3): состояние production start, драйвер о
 
 ### Маркер даты и вертикальные линии (C01, C06)
 
-Линия даты снимка стоит на `scenarioAsOfDate` во всех трёх рендерерах. Формула доли горизонта не сдвигается отдельно для 28 февраля. На снимке B эта дата совпадает с `MS-BLD-ENCL`, а деление «мар» стоит на следующий день, поэтому линия визуально рядом с мартом и с точкой контура здания.
+Линия даты снимка стоит на `scenarioAsOfDate` во всех трёх рендерерах. Формула доли горизонта не сдвигается отдельно для 28 февраля. На снимке 02 эта дата совпадает с `MS-BLD-ENCL`, а деление «мар» стоит на следующий день, поэтому линия визуально рядом с мартом и с точкой контура здания.
 
 Подпись «Дата снимка» варианта 3 выравнивается по той же горизонтальной области, что и линия графика, включая боковые отступы сетки. Линию из-за подписи не переносят.
 
@@ -141,7 +147,7 @@ Director-first home (D3): состояние production start, драйвер о
 | Крупная сетка vis | `.vis-grid.vis-major` | На узкой ширине это тоже граница месяца, не отдельный слой |
 | Вертикальные split-линии ECharts | `splitLine.show: false` | Уже выключены |
 
-Проверка 2026-11-06 на снимке C, вариант 2, с `PRG-CON` и без неё, 1287px и 480px: временное скрытие `.vis-grid.vis-minor` убирает месячные границы. Подписи месяцев и линия «Дата снимка» остаются, вертикальные деления месяцев — нет. Вариант 1 не менялся. Правка в код не внесена. C06 остаётся открытым: убирать нечего, не задев деления времени.
+Проверка 2026-11-06 на снимке 03, вариант 2, с `PRG-CON` и без неё, 1287px и 480px: временное скрытие `.vis-grid.vis-minor` убирает месячные границы. Подписи месяцев и линия «Дата снимка» остаются, вертикальные деления месяцев — нет. Вариант 1 не менялся. Правка в код не внесена. C06 остаётся открытым: убирать нечего, не задев деления времени.
 
 ### Уведомления при смене снимка (C02–C03)
 
@@ -151,13 +157,33 @@ Director-first home (D3): состояние production start, драйвер о
 
 Заголовок блока исключений — «Требует внимания». Текст исключения описывает отклонение, проблему или последствие. Слова, которые только называют цвет маркера (`Red`, «красный риск»), в этом блоке не ставятся. Числа и смысл сценария сохраняются. Подписи реестров и карточек сущностей этим правилом не покрыты.
 
+> **certainty:** assumption — dashboard-card-composition 2026-11-09
+>
+> Критичный пункт в списке «Требует внимания» рисуется **1px border внутри border-box** (или эквивалентный inset), на `bg-[var(--status-danger-bg)]` + `rounded`, **не** outer `ring` и **не** обычный `border-b` divider. У `<ol>` остаются gutters ~4px (`px-1 py-1`), чтобы first/last и боковые грани контура не клипались scrollport'ом; mid-scroll partial item допустим без sticky-масок. Pair surface (`max-h` + bounded list scroll) сохраняется.
+
+### Блок изменений — ChangeTile chrome (card-composition)
+
+> **certainty:** assumption — dashboard-card-composition 2026-11-09
+>
+> Плитки better / worse / unchangedCritical: существующий tone bg + **тонкая 1px** semantic border (`--status-ok|danger|warn-border`). Пустые плитки по-прежнему не рендерятся; outer ModuleSurface без тяжёлого второго контура.
+
+### Карточка «Прогноз и решение» — композиция одного объекта контроля
+
+> **certainty:** assumption — dashboard-card-composition 2026-11-09
+>
+> Один объект контроля «Запуск производства» (подпись один раз, без инженерных «кейс/PS-driver»). Метрика +N дн. + подписанные базовый/прогноз даты; короткое «Причина» + secondary ID links. При `recorded` — нейтральная группа «Связанное решение» (DEC-001 type/note, Исполнение badge, demo source + asOf) — не реестр и не три цветные card-in-card. Footer CTA на реальные маршруты; на 768 footer не прячется за `overflow-hidden` (inner body scroll при необходимости). Forecast deviation видим независимо от execution (BR-006).
+
 ## Портфель и программы на обзоре (B01–B03, B07–B09)
 
 > **certainty:** assumption
 >
 > Контракт: [ADR-0006](../06-architecture/decisions/0006-portfolio-program-project-read-model.md), change `portfolio-program-project`. Код экрана появляется после review.
 
-Состояние и дата запуска читаются как данные портфеля `PRJ-01`. В блоке «Состояние портфеля» полное имя — «Строительство фармацевтической фабрики (Greenfield)». Рядом остаётся внутренний id `PRJ-01`. Короткая подпись цепочки «Портфель 01» этим именем не заменяется. Правый блок называется «Состояние по программам».
+Состояние и дата запуска читаются как данные портфеля `PRT-01`. В блоке «Состояние портфеля» полное имя — «Строительство фармацевтической фабрики (Greenfield)». Рядом остаётся внутренний id `PRT-01`. Короткая подпись цепочки «Портфель 01» этим именем не заменяется. Правый блок называется «Состояние по программам».
+
+> **certainty:** assumption — dashboard-program-people-layout 2026-11-09
+>
+> Строка программы: **название | статус-бейдж | прогресс** (shared column widths; без заливки всей строки и без линий таблицы). Бейдж читает только `status` + `--status-*` (Red → «Критично»); compact как people-focus: `rounded-[var(--radius-sm)]`, `px-1.5 py-0.5`, `leading-none`, однострочный «Требует внимания». Полоса прогресса — только `progressFillTone` + `--schedule-fill-*` (lag→danger, shift→warn). Оси независимы: Red+warn / Red+ok допустимы после audit 01–19 (`status` = worst child projects; fill = `fillToneForProgramProjects`). Подсказка прогресса: % выполнения ≠ календарное отклонение; у бейджа — «Статус программы». `SemanticProgressBar` compact (`text-xs`) + колонка процента в `ch` — «100%» без clipping; track bounds равны между строками.
 
 Шкала без выбранной программы называется «Вехи портфеля» и по умолчанию показывает полный universe (**189** ID; фильтр «Обзор ключевых» сужает до 12). Клик по программе ставит `?program=` и переключает заголовок на «Вехи программы». Повторный клик снимает выбор. «Перейти к программе» — отдельная ссылка на `/programs/:id`, не сам клик по строке.
 
@@ -174,8 +200,15 @@ Director-first home (D3): состояние production start, драйвер о
 > **certainty:** assumption
 > **Решение 2026-11-08 (явный запрос пользователя):** единственный рендерер карточки «Вехи портфеля» — **Apache ECharts**. Переключатель 1/2/3 и реализации custom strip / vis-timeline **удалены**. Исторические отчёты C09–C14 остаются архивом эксперимента.
 
-Карточка использует `resolveExecutiveTimelineExperimentModel` + ECharts scatter/lanes. Портфель: universe **189** с фильтрами объёма/программы; обзор ключевых — 12 ID из [DOC-UX-022](./demo-v1-r2-ux-delta.md). Резолвер не подменяет пустую программу портфельной подборкой. Горизонт, `scenarioAsOfDate`, RAG, PS-band — как в presentation.
+Карточка использует `resolveExecutiveTimelineExperimentModel` + ECharts lanes. Портфель: universe **189** с фильтрами объёма/программы; обзор ключевых — 12 ID из [DOC-UX-022](./demo-v1-r2-ux-delta.md). Резолвер не подменяет пустую программу портфельной подборкой. Смысловой горизонт API не меняется; **plot domain** расширяется/паддится, чтобы включить все рисуемые даты (ordinary + PS baseline/forecast + as-of).
+
+Summary KPI: колонка 2 — заголовок **«Запуск производства»** (не «портфеля»). Колонка 3 «Стоимость»: видимые подсказки при hover/focus для EAC/VAC/BAC/Резерв (RU; EN допускается как дополнение) — см. [demo-v1-r2-cost-control.md](../03-product/demo-v1-r2-cost-control.md).
 
 ### Подписи (постоянные)
 
-Без наведения: phase-context, **имена программ**, month ticks, «Дата снимка», обе даты запуска и Δ (legend + endpoints), key `shortLabel` с lane-aware / `labelLayout` anti-overlap. Полное имя / id / RAG — в tooltip. На узкой ширине — приоритет Red / вне кластера + hideOverlap.
+Chrome карточки (compact): заголовок слева; справа в том же ряду счётчик «Показано X/Y» и два select (объём / программа) без видимых labels «Объём»/«Программа» (имена — `aria-label`; на узкой ширине два select держатся парой, счётчик может переноситься отдельно). Ссылки «Календарный план» **внутри этой карточки нет** (пункт сайдбара и tooltip «Перейти» сохраняются). Отдельного meta-ряда (phase-context / PS legend «План / Прогноз / Δ») **нет** — ни на портфеле, ни при `?program=` (фильтры universe при program scope скрыты). Plot: **имена программ**, month ticks, «Дата снимка» (overlay; нижний край блока даты совпадает с нижним краем красной подписи прогноза у PS endpoint; на ~390px caption end-align к пунктиру + трёхстрочный forecast без X-overlap и без сдвига markLine/domain), PS endpoints + Δ на шкале, key `shortLabel` с lane-aware / `labelLayout`. Tooltip enterable: **один bold полный API title** (без дубля short+full), shared status pill, outline **«Перейти»** → `/schedule?focus=milestone:<id>` (`selectionKeyId`); HTML экранирован. Red вехи — лёгкая пульсация (`effectScatter`), с уважением `prefers-reduced-motion`.
+
+### Ряд «Портфель»
+
+> **certainty:** assumption  
+> Lane key стабильный `none`. Подпись оси/фильтра — **«Портфель»** (не «/ без программы»). В режиме «Все программы» полоса lane получает лёгкий фон `--surface-sunken` через `yAxis.splitArea`; при явном фильтре программы `none` серая заливка **выключена** (одна строка на ordinary surface), жирный caption сохраняется. Порядок опций «Программа» = визуальный top→bottom шкалы (canonical helper; source order оси не мутируется). При `?program=` отсутствующий портфельный lane **не** добавляется искусственно.

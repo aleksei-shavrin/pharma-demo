@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO_PORTFOLIO_ID } from '@/lib/demo-portfolio-id';
+
 import {
   useCallback,
   useEffect,
@@ -23,7 +25,6 @@ import {
 import { NotificationPopover } from './notification-popover';
 import { NotificationToastHost } from './notification-toast-host';
 
-const DEMO_PROJECT_ID = 'PRJ-01';
 
 export function NotificationBell() {
   const { active, status, dashboard } = useSnapshot();
@@ -47,7 +48,7 @@ export function NotificationBell() {
   useEffect(() => {
     if (!settled) return;
     let cancelled = false;
-    void fetchNotifications(DEMO_PROJECT_ID, active)
+    void fetchNotifications(DEMO_PORTFOLIO_ID, active)
       .then((list) => {
         if (cancelled) return;
         if (list.snapshotId !== active) return;

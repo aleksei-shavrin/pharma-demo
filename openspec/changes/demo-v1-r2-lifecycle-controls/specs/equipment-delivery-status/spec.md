@@ -6,7 +6,7 @@
 
 #### Scenario: All workstreams have equipment
 
-- **WHEN** запрошен equipment register Snapshot A
+- **WHEN** запрошен equipment register Snapshot 01
 - **THEN** каждый из восьми Workstream id встречается хотя бы у одного Equipment
 
 ### Requirement: Selective equipment cost fields

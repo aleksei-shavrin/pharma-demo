@@ -101,8 +101,8 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     expect(snapshotParam).toBeDefined();
     expect(snapshotParam?.required).toBe(false);
     expect(paramSchema(snapshotParam)?.enum).toEqual([...SNAPSHOT_IDS]);
-    expect(paramSchema(snapshotParam)?.enum).not.toContain('T');
-    expect(paramSchema(snapshotParam)?.default).toBe('A');
+    expect(paramSchema(snapshotParam)?.enum).not.toContain('20');
+    expect(paramSchema(snapshotParam)?.default).toBe('01');
 
     const projectSchema = document.components?.schemas?.ProjectStubDto as
       JsonSchema | undefined;
@@ -123,7 +123,7 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
       $ref: '#/components/schemas/DashboardOverviewDto',
     });
     expect(paramSchema(findQueryParam(dashboard, 'snapshot'))?.enum).toEqual(
-      expect.arrayContaining(['A', 'B', 'C']),
+      expect.arrayContaining(['01', '02', '03']),
     );
 
     for (const path of [
@@ -137,9 +137,9 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
       expect(jsonResponseSchema(op)?.$ref).toMatch(/#\/components\/schemas\//);
       const snap = findQueryParam(op, 'snapshot');
       expect(paramSchema(snap)?.enum).toEqual(
-        expect.arrayContaining(['A', 'B', 'C']),
+        expect.arrayContaining(['01', '02', '03']),
       );
-      expect(paramSchema(snap)?.default).toBe('A');
+      expect(paramSchema(snap)?.default).toBe('01');
     }
 
     expect(document.components?.schemas?.EquipmentRegisterDto).toBeDefined();
@@ -158,9 +158,9 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
       expect(jsonResponseSchema(op)?.$ref).toMatch(/#\/components\/schemas\//);
       const snap = findQueryParam(op, 'snapshot');
       expect(paramSchema(snap)?.enum).toEqual(
-        expect.arrayContaining(['A', 'B', 'C']),
+        expect.arrayContaining(['01', '02', '03']),
       );
-      expect(paramSchema(snap)?.default).toBe('A');
+      expect(paramSchema(snap)?.default).toBe('01');
     }
 
     expect(document.components?.schemas?.EquipmentDetailDto).toBeDefined();
@@ -187,9 +187,9 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     });
     const scheduleSnap = findQueryParam(schedule, 'snapshot');
     expect(paramSchema(scheduleSnap)?.enum).toEqual(
-      expect.arrayContaining(['A', 'B', 'C']),
+      expect.arrayContaining(['01', '02', '03']),
     );
-    expect(paramSchema(scheduleSnap)?.default).toBe('A');
+    expect(paramSchema(scheduleSnap)?.default).toBe('01');
     expect(document.components?.schemas?.ScheduleDto).toBeDefined();
     expect(
       document.components?.schemas?.ScheduleEquipmentItemDto,
@@ -207,9 +207,9 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
     });
     const costsSnap = findQueryParam(costs, 'snapshot');
     expect(paramSchema(costsSnap)?.enum).toEqual(
-      expect.arrayContaining(['A', 'S']),
+      expect.arrayContaining(['01', '19']),
     );
-    expect(paramSchema(costsSnap)?.default).toBe('A');
+    expect(paramSchema(costsSnap)?.default).toBe('01');
 
     const wsList = document.paths['/v1/projects/{id}/workstreams']?.get;
     expect(wsList).toBeDefined();
@@ -223,7 +223,7 @@ describe('OpenAPI contract (I2–I6 + R2-C1)', () => {
       $ref: '#/components/schemas/WorkstreamDetailDto',
     });
     expect(paramSchema(findQueryParam(wsDetail, 'snapshot'))?.enum).toEqual(
-      expect.arrayContaining(['A', 'S']),
+      expect.arrayContaining(['01', '19']),
     );
 
     const peopleList = document.paths['/v1/projects/{id}/people']?.get;

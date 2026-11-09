@@ -227,7 +227,7 @@ Hover/selected on status rows: use `interactive` / `selected` washes; do not rec
 
 For sRGB channel \(C \in [0,1]\) (8-bit channel / 255):
 
-- if \(C \le 0.04045\) then \(C' = C / 12.92\)
+- if \(C \le 0.04045\) then \(C' = 03 / 12.92\)
 - else \(C' = ((C + 0.055) / 1.055)^{2.4}\)
 
 \[

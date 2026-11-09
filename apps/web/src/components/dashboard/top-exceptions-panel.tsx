@@ -11,6 +11,7 @@ import {
   DASHBOARD_PAIR_LIST_SCROLL_CLASS,
   DASHBOARD_PAIR_SURFACE_CLASS,
 } from '@/lib/dashboard/dashboard-layout';
+import { assessTopExceptionCritical } from '@/lib/dashboard/top-exception-critical';
 import { ModuleSurface } from './module-surface';
 
 type ExceptionLink = DashboardOverview['topExceptions'][number]['links'][number];
@@ -47,62 +48,10 @@ function resolveLinkLabel(
   };
 }
 
-/** Compact causal chain only from authored links — no inferred edges. */
-function CausalFragment({
-  links,
-  data,
-}: {
-  links: ExceptionLink[];
-  data: DashboardOverview;
-}) {
-  if (links.length < 2) return null;
-  const types = new Set(links.map((l) => l.type));
-  const hasSpineShape =
-    types.has('equipment') &&
-    types.has('issue') &&
-    types.has('risk') &&
-    types.has('milestone');
-  if (!hasSpineShape) return null;
-
-  return (
-    <ol
-      className="mt-1.5 flex flex-wrap items-center gap-x-1 gap-y-1 text-xs text-[var(--text-secondary)]"
-      data-exception-causal="authored"
-    >
-      {links.map((link, i) => {
-        const label = resolveLinkLabel(link, data);
-        return (
-          <li
-            key={`${link.type}:${link.id}`}
-            className="inline-flex items-center gap-1"
-          >
-            {i > 0 ? (
-              <span className="text-[var(--text-muted)]" aria-hidden>
-                →
-              </span>
-            ) : null}
-            <Link
-              href={entityDetailHref(link.type, link.id)}
-              className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-            >
-              {label.primary}
-            </Link>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
-
-function impactAccent(causeImpact: string, psDelta: number): string | null {
-  if (psDelta > 0 && /запуск|производств|\+\d+/i.test(causeImpact)) {
-    return formatDeltaDays(psDelta);
-  }
-  return null;
-}
-
 /**
- * Editorial Top Exceptions — backend order; paired height with Decisions (R2-U1-R6).
+ * Editorial Top Exceptions — curated order; critical from linked facts only.
+ * Critical contour is a 1px border-box border (not outer ring) so scroll gutters
+ * keep first/last edges visible without expanding the pair surface.
  */
 export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
   const items = data.topExceptions;
@@ -111,7 +60,6 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
   return (
     <ModuleSurface
       data-dashboard-block="top-exceptions"
-      /* Tailwind scans this file — keep max-h literal (lib alone is not enough). */
       className={`${DASHBOARD_PAIR_SURFACE_CLASS} max-h-[28rem] overflow-hidden`}
     >
       <h2
@@ -130,19 +78,34 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
         </p>
       ) : (
         <ol
-          className={DASHBOARD_PAIR_LIST_SCROLL_CLASS}
+          className={`${DASHBOARD_PAIR_LIST_SCROLL_CLASS} flex flex-col gap-2.5 px-1 py-1`}
           data-top-exceptions="list"
           data-exceptions-scroll="fill"
         >
           {items.map((ex, index) => {
-            const accent =
-              index === 0 ? impactAccent(ex.causeImpact, psDelta) : null;
+            const assessment = assessTopExceptionCritical(ex, data);
+            const critical = assessment.critical;
+            const primaryHref = assessment.primaryLink
+              ? entityDetailHref(
+                  assessment.primaryLink.type,
+                  assessment.primaryLink.id,
+                )
+              : null;
+
             return (
               <li
                 key={ex.id}
-                className="border-b border-[var(--border-subtle)] py-3 first:pt-1 last:border-b-0 last:pb-0"
+                className={
+                  critical
+                    ? 'rounded-[var(--radius-sm)] border border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-2.5 py-2.5'
+                    : 'border-b border-[var(--border-subtle)] px-2.5 py-2 last:border-b-0'
+                }
                 data-exception-id={ex.id}
                 data-exception-order={index + 1}
+                data-exception-critical={critical ? 'true' : 'false'}
+                data-exception-chrome={
+                  critical ? 'critical-box' : 'neutral-divider'
+                }
               >
                 <div className="flex gap-3">
                   <span
@@ -153,21 +116,38 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
                   </span>
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                      <p className="text-[15px] font-semibold leading-snug text-[var(--text)]">
-                        {ex.title}
-                      </p>
-                      {accent ? (
-                        <span className="shrink-0 text-sm font-semibold tabular-nums text-[var(--status-danger-fg)]">
-                          {accent}
-                        </span>
-                      ) : null}
+                      {primaryHref ? (
+                        <Link
+                          href={primaryHref}
+                          className="text-[15px] font-semibold leading-snug text-[var(--text)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                          data-exception-title-link="true"
+                        >
+                          {ex.title}
+                        </Link>
+                      ) : (
+                        <p className="text-[15px] font-semibold leading-snug text-[var(--text)]">
+                          {ex.title}
+                        </p>
+                      )}
+                      <div className="flex shrink-0 flex-wrap items-center gap-2">
+                        {critical ? (
+                          <span
+                            className="rounded-[var(--radius-sm)] border border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--status-danger-fg)]"
+                            data-exception-badge="critical"
+                          >
+                            Критично
+                          </span>
+                        ) : null}
+                        {assessment.showPsDelta ? (
+                          <span className="text-sm font-semibold tabular-nums text-[var(--status-danger-fg)]">
+                            {formatDeltaDays(psDelta)}
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
                     <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
                       {ex.causeImpact}
                     </p>
-                    {index === 0 ? (
-                      <CausalFragment links={ex.links} data={data} />
-                    ) : null}
                     {ex.links.length > 0 ? (
                       <ul className="flex flex-wrap gap-x-2.5 gap-y-0.5 pt-0.5 text-[11px]">
                         {ex.links.map((link) => {
@@ -177,12 +157,12 @@ export function TopExceptionsPanel({ data }: { data: DashboardOverview }) {
                               <Link
                                 href={entityDetailHref(link.type, link.id)}
                                 title={`${entityTypeLabel(link.type)} · ${label.id}`}
-                                className="text-[var(--text-muted)] underline-offset-2 hover:text-[var(--link)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                                className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
                               >
-                                <span className="text-[var(--text-secondary)]">
-                                  {label.primary}
+                                <span>{label.primary}</span>
+                                <span className="ml-1 opacity-70">
+                                  {label.id}
                                 </span>
-                                <span className="ml-1 opacity-70">{label.id}</span>
                               </Link>
                             </li>
                           );

@@ -57,9 +57,9 @@ describe('Portfolio fillTone vs ScheduleService real data', () => {
   const schedule = new ScheduleService(dataSource);
   const portfolio = new PortfolioService(dataSource, schedule);
 
-  for (const snap of ['I', 'C', 'S'] as const) {
+  for (const snap of ['09', '03', '19'] as const) {
     it(`AN-01 on ${snap}: portfolio tone/pct matches schedule group fold`, () => {
-      const items = schedule.getSchedule('PRJ-01', snap).items.map((item) => ({
+      const items = schedule.getSchedule('PRT-01', snap).items.map((item) => ({
         kind: item.kind,
         id: item.id,
         status: 'status' in item ? (item.status as string | null) : null,
@@ -96,7 +96,7 @@ describe('Portfolio fillTone vs ScheduleService real data', () => {
       }));
       const expected = fillToneForProjectGroup(items, 'AN-01');
       const row = portfolio
-        .listProjects('PRJ-01', snap)
+        .listProjects('PRT-01', snap)
         .items.find((r) => r.id === 'AN-01');
       expect(row).toBeTruthy();
       expect(row!.progressFillTone).toBe(expected.progressFillTone);
@@ -117,10 +117,10 @@ describe('Portfolio fillTone vs ScheduleService real data', () => {
 
   it('program leaf sum is not mean of percents', () => {
     const program = portfolio
-      .listPrograms('PRJ-01', 'C')
+      .listPrograms('PRT-01', '03')
       .items.find((p) => p.id === 'PRG-DSN')!;
     const projects = portfolio
-      .listProjects('PRJ-01', 'C')
+      .listProjects('PRT-01', '03')
       .items.filter((p) => p.programId === 'PRG-DSN');
     const sumC = projects.reduce((s, p) => s + p.leafCompleted, 0);
     const sumT = projects.reduce((s, p) => s + p.leafTotal, 0);

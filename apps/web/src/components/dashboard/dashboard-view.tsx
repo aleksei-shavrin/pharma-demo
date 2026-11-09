@@ -3,12 +3,15 @@
 import type { DashboardOverview, ProjectCost } from '@/lib/api-client';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 import {
+  DASHBOARD_LOWER_COLUMN_CLASS,
   DASHBOARD_LOWER_GRID_ATTR,
   DASHBOARD_LOWER_GRID_CLASS,
+  DASHBOARD_LOWER_LAYOUT_ATTR,
 } from '@/lib/dashboard/dashboard-layout';
 import { DecisionAction } from './decision-panel';
 import { ExecutiveTimelineExperimentHost } from './executive-timeline-experiment-host';
 import { ManagementAttention } from './management-attention';
+import { PeopleFocusPanel } from './people-focus-panel';
 import { ProjectControlSummary } from './project-control-summary';
 import { SnapshotChanges } from './trend-panel';
 import { TopExceptionsPanel } from './top-exceptions-panel';
@@ -17,17 +20,21 @@ import { WorkstreamStatusMatrix } from './workstream-readiness';
 /**
  * Tailwind must see complete class literals in this scanned file.
  * Do not rely on src/lib string constants alone for unique utilities.
- * Keep in sync with DASHBOARD_LOWER_GRID_CLASS.
+ * Keep in sync with DASHBOARD_LOWER_GRID_CLASS / DASHBOARD_LOWER_COLUMN_CLASS.
  */
 const LOWER_ROW_GRID =
-  'grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2 lg:gap-5';
+  'grid grid-cols-1 items-start gap-4 lg:grid-cols-2 lg:gap-5';
+
+const LOWER_COLUMN = 'flex min-w-0 flex-col gap-4';
 
 /**
  * R2-U1-R7 executive Dashboard IA:
  * 1 Executive overview (Status+PS+Cost | Workstream readiness)
- * 2 Control milestones timeline (stable curated map A–S)
- * 3–4 lower cards in one lg:2-col auto-flow grid (B11):
- *    Exceptions → Decisions? → Attention → Changes
+ * 2 Control milestones timeline (stable curated map 01–19)
+ * 3 Lower zone — two independent columns (replaces B11 auto-flow):
+ *    Left: People → Attention → Changes
+ *    Right: Exceptions → Decisions?
+ *    Narrow: left stack then right (People before Exceptions).
  */
 export function DashboardView({
   data,
@@ -40,11 +47,16 @@ export function DashboardView({
   const showDecisions =
     !(data.decisionPanelState === 'absent' && data.decisions.length === 0);
 
-  // Compile-time guard: constant and inline literal stay identical.
+  // Compile-time guard: constants and inline literals stay identical.
   if (process.env.NODE_ENV !== 'production') {
     if (LOWER_ROW_GRID !== DASHBOARD_LOWER_GRID_CLASS) {
       throw new Error(
         'DASHBOARD_LOWER_GRID_CLASS drift — keep dashboard-view literal in sync',
+      );
+    }
+    if (LOWER_COLUMN !== DASHBOARD_LOWER_COLUMN_CLASS) {
+      throw new Error(
+        'DASHBOARD_LOWER_COLUMN_CLASS drift — keep dashboard-view literal in sync',
       );
     }
   }
@@ -72,19 +84,30 @@ export function DashboardView({
       <ExecutiveTimelineExperimentHost data={data} />
 
       {/*
-        Single lower grid (B11): direct children only — no wrappers. Class literal
-        below is scanned by Tailwind; do not replace with a lib-only string reference.
+        Two independent columns. Class literals scanned by Tailwind;
+        do not replace with lib-only string references.
       */}
       <div
-        className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2 lg:gap-5"
+        className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2 lg:gap-5"
         data-dashboard-block="lower-cards"
         data-dashboard-grid={DASHBOARD_LOWER_GRID_ATTR}
-        data-dashboard-layout="two-col-auto-flow"
+        data-dashboard-layout={DASHBOARD_LOWER_LAYOUT_ATTR}
       >
-        <TopExceptionsPanel data={data} />
-        {showDecisions ? <DecisionAction data={data} /> : null}
-        <ManagementAttention data={data} />
-        <SnapshotChanges data={data} />
+        <div
+          className="flex min-w-0 flex-col gap-4"
+          data-dashboard-lower-column="left"
+        >
+          <PeopleFocusPanel data={data} />
+          <ManagementAttention data={data} />
+          <SnapshotChanges data={data} />
+        </div>
+        <div
+          className="flex min-w-0 flex-col gap-4"
+          data-dashboard-lower-column="right"
+        >
+          <TopExceptionsPanel data={data} />
+          {showDecisions ? <DecisionAction data={data} /> : null}
+        </div>
       </div>
     </div>
   );

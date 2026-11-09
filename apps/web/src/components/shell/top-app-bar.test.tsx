@@ -31,9 +31,9 @@ beforeEach(() => {
       dashboardOverviewFixture(snapshot),
   );
   fetchNotifications.mockResolvedValue({
-    snapshotId: 'A',
+    snapshotId: '01',
     scenarioAsOfDate: '2027-02-15',
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     items: [],
   });
 });
@@ -60,7 +60,7 @@ describe('TopAppBar (F04–F06)', () => {
     expect(
       document.querySelector('[title="Контекст демо-проекта"]'),
     ).toBeNull();
-    expect(document.body.textContent).not.toMatch(/PRJ-01\s*·/);
+    expect(document.body.textContent).not.toMatch(/PRT-01\s*·/);
   });
 
   it('фиксированная высота topbar без flex-wrap', () => {

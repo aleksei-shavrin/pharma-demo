@@ -31,11 +31,11 @@ import {
 } from './catalog';
 import {
   SNAPSHOTS,
-  SNAPSHOT_A,
-  SNAPSHOT_C,
-  SNAPSHOT_F,
-  SNAPSHOT_G,
-  SNAPSHOT_H,
+  SNAPSHOT_01,
+  SNAPSHOT_03,
+  SNAPSHOT_06,
+  SNAPSHOT_07,
+  SNAPSHOT_08,
 } from './index';
 import {
   EXECUTIVE_MILESTONE_SET_STABLE,
@@ -44,45 +44,45 @@ import {
 import type { PopulatedSnapshotId, SnapshotFixture } from './types';
 
 const ALL: PopulatedSnapshotId[] = [
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'I',
-  'J',
-  'K',
-  'L',
-  'M',
-  'N',
-  'O',
-  'P',
-  'Q',
-  'R',
-  'S',
+  '01',
+  '02',
+  '03',
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+  '15',
+  '16',
+  '17',
+  '18',
+  '19',
 ];
 const TRANSITIONS: [PopulatedSnapshotId, PopulatedSnapshotId][] = [
-  ['A', 'B'],
-  ['B', 'C'],
-  ['C', 'D'],
-  ['D', 'E'],
-  ['E', 'F'],
-  ['F', 'G'],
-  ['G', 'H'],
-  ['H', 'I'],
-  ['I', 'J'],
-  ['J', 'K'],
-  ['K', 'L'],
-  ['L', 'M'],
-  ['M', 'N'],
-  ['N', 'O'],
-  ['O', 'P'],
-  ['P', 'Q'],
-  ['Q', 'R'],
-  ['R', 'S'],
+  ['01', '02'],
+  ['02', '03'],
+  ['03', '04'],
+  ['04', '05'],
+  ['05', '06'],
+  ['06', '07'],
+  ['07', '08'],
+  ['08', '09'],
+  ['09', '10'],
+  ['10', '11'],
+  ['11', '12'],
+  ['12', '13'],
+  ['13', '14'],
+  ['14', '15'],
+  ['15', '16'],
+  ['16', '17'],
+  ['17', '18'],
+  ['18', '19'],
 ];
 
 function ids(xs: { id: string }[]): string[] {
@@ -90,7 +90,7 @@ function ids(xs: { id: string }[]): string[] {
 }
 
 describe('fixture integrity — inventory / counts', () => {
-  it('union of A–S canonical IDs matches R2-L1 scale', () => {
+  it('union of 01–19 canonical IDs matches R2-L1 scale', () => {
     const eq = new Set<string>();
     const ms = new Set<string>();
     const iss = new Set<string>();
@@ -153,6 +153,33 @@ describe('fixture integrity — unique IDs', () => {
         expect(list).toEqual([...new Set(list)].sort());
       }
     }
+  });
+
+  it('topException ids follow TEX-<snapshotSeg>-<domain…>; no en-dash; unique globally', () => {
+    const letterOrOrdinal = '([A-S]|0[1-9]|1[0-9])';
+    const texRe = new RegExp(
+      `^TEX-${letterOrOrdinal}-[A-Z0-9]+(?:-[A-Z0-9]+)*$`,
+    );
+    const letterOf: Record<string, string> = Object.fromEntries(
+      ALL.map((id, i) => [id, 'ABCDEFGHIJKLMNOPQRST'[i]]),
+    );
+    const seen = new Map<string, string>();
+    for (const snap of ALL) {
+      for (const tex of SNAPSHOTS[snap].topExceptions) {
+        expect(tex.id.includes('–')).toBe(false);
+        expect(tex.id).toMatch(texRe);
+        const seg = tex.id.split('-')[1];
+        if (/^\d{2}$/.test(seg)) {
+          expect(seg).toBe(snap);
+        } else {
+          expect(seg).toBe(letterOf[snap]);
+        }
+        const prev = seen.get(tex.id);
+        expect(prev).toBeUndefined();
+        seen.set(tex.id, snap);
+      }
+    }
+    expect(seen.size).toBeGreaterThan(20);
   });
 });
 
@@ -301,15 +328,15 @@ describe('fixture integrity — date / delta arithmetic', () => {
   });
 
   it('approved HVAC / PS residual dates', () => {
-    expect(findEquipment(SNAPSHOT_C, 'EQ-HVAC-01')!.forecastDelivery).toBe(
+    expect(findEquipment(SNAPSHOT_03, 'EQ-HVAC-01')!.forecastDelivery).toBe(
       '2027-06-05',
     );
-    expect(SNAPSHOT_C.project.forecastProductionStart).toBe('2027-10-06');
-    expect(findEquipment(SNAPSHOT_G, 'EQ-HVAC-01')!.forecastDelivery).toBe(
+    expect(SNAPSHOT_03.project.forecastProductionStart).toBe('2027-10-06');
+    expect(findEquipment(SNAPSHOT_07, 'EQ-HVAC-01')!.forecastDelivery).toBe(
       '2027-05-29',
     );
-    expect(SNAPSHOT_G.project.forecastProductionStart).toBe('2027-09-29');
-    expect(SNAPSHOT_H.project.forecastProductionStart).toBe('2027-09-29');
+    expect(SNAPSHOT_07.project.forecastProductionStart).toBe('2027-09-29');
+    expect(SNAPSHOT_08.project.forecastProductionStart).toBe('2027-09-29');
   });
 });
 
@@ -334,22 +361,22 @@ describe('fixture integrity — BR-004 sole PS driver', () => {
         );
       }
     }
-    // Explicit B: PKG delayed, PS baseline.
-    expect(findEquipment(SNAPSHOTS.B, 'EQ-PKG-01')!.status).toBe('Delayed');
-    expect(SNAPSHOTS.B.project.forecastProductionStart).toBe('2027-09-15');
-    // Explicit E: WFI delayed heavily, PS still HVAC +21.
+    // Explicit 02: PKG delayed, PS baseline.
+    expect(findEquipment(SNAPSHOTS['02'], 'EQ-PKG-01')!.status).toBe('Delayed');
+    expect(SNAPSHOTS['02'].project.forecastProductionStart).toBe('2027-09-15');
+    // Explicit 05: WFI delayed heavily, PS still HVAC +21.
     expect(
       calendarDaysDelta(
-        findEquipment(SNAPSHOTS.E, 'EQ-UTL-02')!.baselineDelivery,
-        findEquipment(SNAPSHOTS.E, 'EQ-UTL-02')!.forecastDelivery,
+        findEquipment(SNAPSHOTS['05'], 'EQ-UTL-02')!.baselineDelivery,
+        findEquipment(SNAPSHOTS['05'], 'EQ-UTL-02')!.forecastDelivery,
       ),
     ).toBe(18);
-    expect(SNAPSHOTS.E.project.forecastProductionStart).toBe('2027-10-06');
+    expect(SNAPSHOTS['05'].project.forecastProductionStart).toBe('2027-10-06');
   });
 });
 
 describe('fixture integrity — BR-007 state-based', () => {
-  it('RISK-001 Red ⇒ MS-PS not Green on every snapshot', () => {
+  it('18ISK-001 Red ⇒ MS-PS not Green on every snapshot', () => {
     for (const id of ALL) {
       const s = SNAPSHOTS[id];
       const risk = findRisk(s, PS_RISK_ID)!;
@@ -358,16 +385,16 @@ describe('fixture integrity — BR-007 state-based', () => {
         expect(ms.rag).not.toBe('Green');
       }
     }
-    expect(findRisk(SNAPSHOT_G, PS_RISK_ID)!.rag).toBe('Red');
-    expect(findMilestone(SNAPSHOT_G, PS_MILESTONE_ID)!.rag).toBe('Red');
-    expect(findRisk(SNAPSHOT_H, PS_RISK_ID)!.rag).toBe('Red');
-    expect(findMilestone(SNAPSHOT_H, PS_MILESTONE_ID)!.rag).toBe('Red');
+    expect(findRisk(SNAPSHOT_07, PS_RISK_ID)!.rag).toBe('Red');
+    expect(findMilestone(SNAPSHOT_07, PS_MILESTONE_ID)!.rag).toBe('Red');
+    expect(findRisk(SNAPSHOT_08, PS_RISK_ID)!.rag).toBe('Red');
+    expect(findMilestone(SNAPSHOT_08, PS_MILESTONE_ID)!.rag).toBe('Red');
   });
 });
 
 describe('fixture integrity — RISK-COM-01 orphan exception', () => {
   it('accepts RISK-COM-01 Red without Issue; rejects arbitrary orphan Red', () => {
-    const e = SNAPSHOTS.E;
+    const e = SNAPSHOTS['05'];
     const com = findRisk(e, 'RISK-COM-01')!;
     expect(com.rag).toBe('Red');
     expect(com.issueId).toBeNull();
@@ -402,44 +429,44 @@ describe('fixture integrity — RISK-COM-01 orphan exception', () => {
   });
 });
 
-describe('fixture integrity — workstream rollups + project status A–H', () => {
+describe('fixture integrity — workstream rollups + project status 01–08', () => {
   it('spot-checks DOC-PROD-022 overall + notable WS', () => {
-    expect(computeProjectStatus(SNAPSHOT_A)).toBe('Green');
+    expect(computeProjectStatus(SNAPSHOT_01)).toBe('Green');
     expect(
-      computeWorkstreamRollups(SNAPSHOT_A).every((r) => r.status === 'Green'),
+      computeWorkstreamRollups(SNAPSHOT_01).every((r) => r.status === 'Green'),
     ).toBe(true);
 
-    expect(computeProjectStatus(SNAPSHOTS.B)).toBe('Yellow');
-    expect(workstreamStatus(SNAPSHOTS.B, 'WS-PKG')).toBe('Yellow');
-    expect(workstreamStatus(SNAPSHOTS.B, 'WS-BLD')).toBe('Yellow');
-    expect(workstreamStatus(SNAPSHOTS.B, 'WS-HVAC')).toBe('Green');
+    expect(computeProjectStatus(SNAPSHOTS['02'])).toBe('Yellow');
+    expect(workstreamStatus(SNAPSHOTS['02'], 'WS-PKG')).toBe('Yellow');
+    expect(workstreamStatus(SNAPSHOTS['02'], 'WS-BLD')).toBe('Yellow');
+    expect(workstreamStatus(SNAPSHOTS['02'], 'WS-HVAC')).toBe('Green');
 
-    expect(computeProjectStatus(SNAPSHOT_C)).toBe('Red');
-    expect(workstreamStatus(SNAPSHOT_C, 'WS-HVAC')).toBe('Red');
-    expect(workstreamStatus(SNAPSHOT_C, 'WS-PKG')).toBe('Yellow');
+    expect(computeProjectStatus(SNAPSHOT_03)).toBe('Red');
+    expect(workstreamStatus(SNAPSHOT_03, 'WS-HVAC')).toBe('Red');
+    expect(workstreamStatus(SNAPSHOT_03, 'WS-PKG')).toBe('Yellow');
 
-    expect(computeProjectStatus(SNAPSHOTS.D)).toBe('Red');
-    expect(computeProjectStatus(SNAPSHOTS.E)).toBe('Red');
-    expect(computeProjectStatus(SNAPSHOT_F)).toBe('Red');
-    expect(workstreamStatus(SNAPSHOT_F, 'WS-HVAC')).toBe('Red');
+    expect(computeProjectStatus(SNAPSHOTS['04'])).toBe('Red');
+    expect(computeProjectStatus(SNAPSHOTS['05'])).toBe('Red');
+    expect(computeProjectStatus(SNAPSHOT_06)).toBe('Red');
+    expect(workstreamStatus(SNAPSHOT_06, 'WS-HVAC')).toBe('Red');
 
-    expect(computeProjectStatus(SNAPSHOT_G)).toBe('Red');
-    expect(workstreamStatus(SNAPSHOT_G, 'WS-HVAC')).toBe('Red');
+    expect(computeProjectStatus(SNAPSHOT_07)).toBe('Red');
+    expect(workstreamStatus(SNAPSHOT_07, 'WS-HVAC')).toBe('Red');
     // DOC-PROD-022: S4 primary recovered ≠ WS-PKG Green. Residual
     // serialization (EQ-PKG-03 Delayed + ISS-PKG-02 Open) → WS-PKG Yellow
     // under unchanged E1 rollup.
-    expect(workstreamStatus(SNAPSHOT_G, 'WS-PKG')).toBe('Yellow');
-    expect(findEquipment(SNAPSHOT_G, 'EQ-PKG-01')!.status).toBe('OnTrack');
-    expect(findRisk(SNAPSHOT_G, 'RISK-PKG-01')!.rag).toBe('Green');
-    expect(findIssue(SNAPSHOT_G, 'ISS-PKG-01')!.status).toBe('Closed');
-    expect(findEquipment(SNAPSHOT_G, 'EQ-PKG-03')!.status).toBe('Delayed');
-    expect(findIssue(SNAPSHOT_G, 'ISS-PKG-02')!.status).toBe('Open');
+    expect(workstreamStatus(SNAPSHOT_07, 'WS-PKG')).toBe('Yellow');
+    expect(findEquipment(SNAPSHOT_07, 'EQ-PKG-01')!.status).toBe('OnTrack');
+    expect(findRisk(SNAPSHOT_07, 'RISK-PKG-01')!.rag).toBe('Green');
+    expect(findIssue(SNAPSHOT_07, 'ISS-PKG-01')!.status).toBe('Closed');
+    expect(findEquipment(SNAPSHOT_07, 'EQ-PKG-03')!.status).toBe('Delayed');
+    expect(findIssue(SNAPSHOT_07, 'ISS-PKG-02')!.status).toBe('Open');
 
-    expect(computeProjectStatus(SNAPSHOT_H)).toBe('Red');
-    expect(workstreamStatus(SNAPSHOT_H, 'WS-HVAC')).toBe('Red');
-    expect(workstreamStatus(SNAPSHOT_H, 'WS-PKG')).toBe('Yellow');
-    expect(findEquipment(SNAPSHOT_H, 'EQ-PKG-01')!.status).toBe('OnTrack');
-    expect(findIssue(SNAPSHOT_H, 'ISS-PKG-01')!.status).toBe('Closed');
+    expect(computeProjectStatus(SNAPSHOT_08)).toBe('Red');
+    expect(workstreamStatus(SNAPSHOT_08, 'WS-HVAC')).toBe('Red');
+    expect(workstreamStatus(SNAPSHOT_08, 'WS-PKG')).toBe('Yellow');
+    expect(findEquipment(SNAPSHOT_08, 'EQ-PKG-01')!.status).toBe('OnTrack');
+    expect(findIssue(SNAPSHOT_08, 'ISS-PKG-01')!.status).toBe('Closed');
 
     for (const id of ALL) {
       expect(computeWorkstreamRollups(SNAPSHOTS[id])).toHaveLength(
@@ -450,9 +477,9 @@ describe('fixture integrity — workstream rollups + project status A–H', () =
 });
 
 describe('fixture integrity — Top Exceptions + Trend', () => {
-  it('A empty exceptions; priorities unique and sorted; trends authored', () => {
-    expect(SNAPSHOT_A.topExceptions).toEqual([]);
-    expect(SNAPSHOT_A.trend).toEqual({
+  it('01 empty exceptions; priorities unique and sorted; trends authored', () => {
+    expect(SNAPSHOT_01.topExceptions).toEqual([]);
+    expect(SNAPSHOT_01.trend).toEqual({
       better: [],
       worse: [],
       unchangedCritical: [],
@@ -465,46 +492,46 @@ describe('fixture integrity — Top Exceptions + Trend', () => {
       expect(new Set(priorities).size).toBe(priorities.length);
     }
 
-    expect(SNAPSHOTS.B.trend.worse).toEqual(
+    expect(SNAPSHOTS['02'].trend.worse).toEqual(
       expect.arrayContaining([
         'Упаковка: прогноз срыва FAT',
         'Оболочка: замечания по дверям',
       ]),
     );
-    expect(SNAPSHOT_C.trend.worse).toContain('HVAC / старт производства: +21');
-    expect(SNAPSHOT_F.trend.unchangedCritical).toContain(
+    expect(SNAPSHOT_03.trend.worse).toContain('HVAC / старт производства: +21');
+    expect(SNAPSHOT_06.trend.unchangedCritical).toContain(
       'HVAC / PS без изменения прогноза',
     );
-    expect(SNAPSHOT_G.trend.better).toEqual(
+    expect(SNAPSHOT_07.trend.better).toEqual(
       expect.arrayContaining([
         'Упаковка стабилизирована',
         'HVAC Δ снижен до +14',
       ]),
     );
-    expect(SNAPSHOT_H.trend.better).toContain(
+    expect(SNAPSHOT_08.trend.better).toContain(
       'Зафиксирована заморозка точек BMS/EMS',
     );
   });
 });
 
-describe('fixture integrity — A–S retrievable; narrative spine', () => {
+describe('fixture integrity — 01–19 retrievable; narrative spine', () => {
   it('all nineteen snapshots exist with expected PS / DEC / ISS spine', () => {
     expect(Object.keys(SNAPSHOTS).sort()).toEqual([...ALL].sort());
-    expect(findIssue(SNAPSHOT_A, PS_ISSUE_ID)).toBeUndefined();
-    expect(findIssue(SNAPSHOT_C, PS_ISSUE_ID)?.status).toBe('Open');
-    expect(SNAPSHOT_F.decisions.some((d) => d.id === 'DEC-001')).toBe(true);
-    expect(SNAPSHOT_C.decisions).toEqual([]);
-    expect(findIssue(SNAPSHOT_G, PS_ISSUE_ID)?.status).toBe('Mitigating');
-    expect(findEquipment(SNAPSHOT_G, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+    expect(findIssue(SNAPSHOT_01, PS_ISSUE_ID)).toBeUndefined();
+    expect(findIssue(SNAPSHOT_03, PS_ISSUE_ID)?.status).toBe('Open');
+    expect(SNAPSHOT_06.decisions.some((d) => d.id === 'DEC-001')).toBe(true);
+    expect(SNAPSHOT_03.decisions).toEqual([]);
+    expect(findIssue(SNAPSHOT_07, PS_ISSUE_ID)?.status).toBe('Mitigating');
+    expect(findEquipment(SNAPSHOT_07, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
       'Delayed',
     );
   });
 });
 
 describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
-  it('O atomically moves HVAC and PS +14 → +7 together', () => {
-    const n = SNAPSHOTS.N;
-    const o = SNAPSHOTS.O;
+  it('15 atomically moves HVAC and PS +14 → +7 together', () => {
+    const n = SNAPSHOTS['14'];
+    const o = SNAPSHOTS['15'];
     expect(
       calendarDaysDelta(
         findEquipment(n, PS_DRIVER_EQUIPMENT_ID)!.baselineDelivery,
@@ -547,61 +574,76 @@ describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
     }
   });
 
-  it('I–P Red / Q Yellow / R Yellow / S Green via status rules', () => {
-    for (const id of ['I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'] as const) {
+  it('09–16 Red / 17 Yellow / 18 Yellow / 19 Green via status rules', () => {
+    for (const id of [
+      '09',
+      '10',
+      '11',
+      '12',
+      '13',
+      '14',
+      '15',
+      '16',
+    ] as const) {
       expect(computeProjectStatus(SNAPSHOTS[id])).toBe('Red');
     }
 
-    expect(findRisk(SNAPSHOTS.P, PS_RISK_ID)!.rag).toBe('Red');
-    expect(findMilestone(SNAPSHOTS.P, PS_MILESTONE_ID)!.rag).not.toBe('Green');
-
-    expect(findRisk(SNAPSHOTS.Q, PS_RISK_ID)!.rag).not.toBe('Red');
-    expect(findMilestone(SNAPSHOTS.Q, PS_MILESTONE_ID)!.rag).not.toBe('Red');
-    expect(computeProjectStatus(SNAPSHOTS.Q)).toBe('Yellow');
-    // Q/R keep HVAC Delayed (+7); Yellow via residual attention, not asOf completion.
-    expect(findEquipment(SNAPSHOTS.Q, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
-      'Delayed',
-    );
-    expect(findEquipment(SNAPSHOTS.R, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
-      'Delayed',
+    expect(findRisk(SNAPSHOTS['16'], PS_RISK_ID)!.rag).toBe('Red');
+    expect(findMilestone(SNAPSHOTS['16'], PS_MILESTONE_ID)!.rag).not.toBe(
+      'Green',
     );
 
-    expect(findRisk(SNAPSHOTS.R, PS_RISK_ID)!.rag).not.toBe('Red');
-    expect(findMilestone(SNAPSHOTS.R, PS_MILESTONE_ID)!.rag).not.toBe('Red');
-    expect(computeProjectStatus(SNAPSHOTS.R)).toBe('Yellow');
+    expect(findRisk(SNAPSHOTS['17'], PS_RISK_ID)!.rag).not.toBe('Red');
+    expect(findMilestone(SNAPSHOTS['17'], PS_MILESTONE_ID)!.rag).not.toBe(
+      'Red',
+    );
+    expect(computeProjectStatus(SNAPSHOTS['17'])).toBe('Yellow');
+    // 17/18 keep HVAC Delayed (+7); Yellow via residual attention, not asOf completion.
+    expect(findEquipment(SNAPSHOTS['17'], PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+      'Delayed',
+    );
+    expect(findEquipment(SNAPSHOTS['18'], PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+      'Delayed',
+    );
 
-    expect(findRisk(SNAPSHOTS.S, PS_RISK_ID)!.rag).toBe('Green');
-    expect(findMilestone(SNAPSHOTS.S, PS_MILESTONE_ID)!.rag).toBe('Green');
-    const hvacS = findEquipment(SNAPSHOTS.S, PS_DRIVER_EQUIPMENT_ID)!;
+    expect(findRisk(SNAPSHOTS['18'], PS_RISK_ID)!.rag).not.toBe('Red');
+    expect(findMilestone(SNAPSHOTS['18'], PS_MILESTONE_ID)!.rag).not.toBe(
+      'Red',
+    );
+    expect(computeProjectStatus(SNAPSHOTS['18'])).toBe('Yellow');
+
+    expect(findRisk(SNAPSHOTS['19'], PS_RISK_ID)!.rag).toBe('Green');
+    expect(findMilestone(SNAPSHOTS['19'], PS_MILESTONE_ID)!.rag).toBe('Green');
+    const hvacS = findEquipment(SNAPSHOTS['19'], PS_DRIVER_EQUIPMENT_ID)!;
     expect(hvacS.status).toBe('OnTrack');
     expect(
       calendarDaysDelta(hvacS.baselineDelivery, hvacS.forecastDelivery),
     ).toBe(7);
-    expect(computeProjectStatus(SNAPSHOTS.S)).toBe('Green');
+    expect(computeProjectStatus(SNAPSHOTS['19'])).toBe('Green');
   });
 
-  it('A–H Equipment.status uses schedule variance; not asOf inference', () => {
-    expect(findEquipment(SNAPSHOTS.B, 'EQ-BLD-02')!.status).toBe('Delayed');
-    expect(findEquipment(SNAPSHOTS.B, 'EQ-PKG-01')!.status).toBe('Delayed');
-    expect(findEquipment(SNAPSHOT_C, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+  it('01–08 Equipment.status uses schedule variance; not asOf inference', () => {
+    expect(findEquipment(SNAPSHOTS['02'], 'EQ-BLD-02')!.status).toBe('Delayed');
+    expect(findEquipment(SNAPSHOTS['02'], 'EQ-PKG-01')!.status).toBe('Delayed');
+    expect(findEquipment(SNAPSHOT_03, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
       'Delayed',
     );
-    // Positive delta remains Delayed even when forecastDelivery <= asOf (B BLD).
-    const bld = findEquipment(SNAPSHOTS.B, 'EQ-BLD-02')!;
-    expect(bld.forecastDelivery <= SNAPSHOTS.B.scenarioAsOfDate).toBe(true);
+    // Positive delta remains Delayed even when forecastDelivery <= asOf (02 BLD).
+    const bld = findEquipment(SNAPSHOTS['02'], 'EQ-BLD-02')!;
+    expect(bld.forecastDelivery <= SNAPSHOTS['02'].scenarioAsOfDate).toBe(true);
     expect(bld.status).toBe('Delayed');
   });
 
-  it('S HVAC OnTrack is fixture-authored override, not calendar completion', () => {
-    const st = SNAPSHOT_STATES.S;
+  it('19 HVAC OnTrack is fixture-authored override, not calendar completion', () => {
+    const st = SNAPSHOT_STATES['19'];
     expect(st.eqDelta['EQ-HVAC-01']).toBe(7);
     expect(st.eqStatus?.['EQ-HVAC-01']).toBe('OnTrack');
-    expect(findEquipment(SNAPSHOTS.S, PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
+    expect(findEquipment(SNAPSHOTS['19'], PS_DRIVER_EQUIPMENT_ID)!.status).toBe(
       'OnTrack',
     );
   });
 
-  it('panel and power baselines stay fixed; C–S hold the C slip; B stays green', () => {
+  it('panel and power baselines stay fixed; 03–19 hold the 03 slip; 02 stays green', () => {
     const baselines = {
       'MS-CLN-PANEL': '2027-02-16',
       'MS-UTL-PWR': '2027-02-18',
@@ -613,15 +655,15 @@ describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
       }
     }
 
-    const panelB = findMilestone(SNAPSHOTS.B, 'MS-CLN-PANEL')!;
-    const powerB = findMilestone(SNAPSHOTS.B, 'MS-UTL-PWR')!;
+    const panelB = findMilestone(SNAPSHOTS['02'], 'MS-CLN-PANEL')!;
+    const powerB = findMilestone(SNAPSHOTS['02'], 'MS-UTL-PWR')!;
     expect(panelB.forecastDate).toBe('2027-02-16');
     expect(panelB.rag).toBe('Green');
     expect(powerB.forecastDate).toBe('2027-02-18');
     expect(powerB.rag).toBe('Green');
 
     for (const id of ALL.filter(
-      (snapshotId) => snapshotId !== 'A' && snapshotId !== 'B',
+      (snapshotId) => snapshotId !== '01' && snapshotId !== '02',
     )) {
       const panel = findMilestone(SNAPSHOTS[id], 'MS-CLN-PANEL')!;
       const power = findMilestone(SNAPSHOTS[id], 'MS-UTL-PWR')!;
@@ -631,24 +673,26 @@ describe('fixture integrity — R2-L1 late lifecycle BR-004/007', () => {
       expect(power.rag).toBe('Red');
     }
 
-    expect(findMilestone(SNAPSHOT_C, 'MS-PS')!.forecastDate).toBe('2027-10-06');
-    expect(findMilestone(SNAPSHOT_C, 'MS-PS')!.rag).toBe('Red');
-    expect(findEquipment(SNAPSHOT_C, 'EQ-HVAC-01')!.status).toBe('Delayed');
+    expect(findMilestone(SNAPSHOT_03, 'MS-PS')!.forecastDate).toBe(
+      '2027-10-06',
+    );
+    expect(findMilestone(SNAPSHOT_03, 'MS-PS')!.rag).toBe('Red');
+    expect(findEquipment(SNAPSHOT_03, 'EQ-HVAC-01')!.status).toBe('Delayed');
     expect(ISSUE_CATALOG['ISS-CLN-01'].milestoneId).toBe('MS-CLN-RDY');
     expect(ISSUE_CATALOG['ISS-CLN-01'].equipmentId).toBe('EQ-CLN-01');
     expect(
-      SNAPSHOT_C.milestones.some((milestone) => milestone.id === 'MS-BLD-FND'),
+      SNAPSHOT_03.milestones.some((milestone) => milestone.id === 'MS-BLD-FND'),
     ).toBe(true);
     expect(
-      SNAPSHOT_C.milestones.some((milestone) => milestone.id === 'MS-BLD-STR'),
+      SNAPSHOT_03.milestones.some((milestone) => milestone.id === 'MS-BLD-STR'),
     ).toBe(true);
     // Fixture-authored executiveMilestoneIds remain the legacy curated seed;
     // DashboardService expands to the canonical 189-universe at read time.
-    expect(SNAPSHOT_C.executiveMilestoneIds).toContain('MS-PS');
+    expect(SNAPSHOT_03.executiveMilestoneIds).toContain('MS-PS');
     expect(EXECUTIVE_MILESTONE_SET_STABLE).toContain('MS-PS');
   });
 
-  it('fixture executiveMilestoneIds seed stable A–S (legacy curated 12)', () => {
+  it('fixture executiveMilestoneIds seed stable 01–19 (legacy curated 12)', () => {
     expect(EXECUTIVE_MILESTONE_SET_STABLE).toHaveLength(12);
     expect(EXECUTIVE_MILESTONE_SET_STABLE).toContain('MS-PS');
     for (const id of ALL) {

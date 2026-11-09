@@ -6,37 +6,37 @@ import {
   findRisk,
 } from './snapshot-access';
 
-describe('MockDemoDataSource (E2 A–H fixtures)', () => {
+describe('MockDemoDataSource (E2 01–08 fixtures)', () => {
   const ds = new MockDemoDataSource();
 
-  it('exposes populated snapshots A–S', () => {
+  it('exposes populated snapshots 01–19', () => {
     expect(ds.listSnapshotIds().sort()).toEqual([
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F',
-      'G',
-      'H',
-      'I',
-      'J',
-      'K',
-      'L',
-      'M',
-      'N',
-      'O',
-      'P',
-      'Q',
-      'R',
-      'S',
+      '01',
+      '02',
+      '03',
+      '04',
+      '05',
+      '06',
+      '07',
+      '08',
+      '09',
+      '10',
+      '11',
+      '12',
+      '13',
+      '14',
+      '15',
+      '16',
+      '17',
+      '18',
+      '19',
     ]);
   });
 
-  it('default snapshot is A with baseline PS dates equal', () => {
+  it('default snapshot is 01 with baseline PS dates equal', () => {
     const a = ds.getDefaultSnapshot();
-    expect(a.id).toBe('A');
-    expect(a.project.id).toBe('PRJ-01');
+    expect(a.id).toBe('01');
+    expect(a.project.id).toBe('PRT-01');
     expect(a.project.baselineProductionStart).toBe('2027-09-15');
     expect(a.project.forecastProductionStart).toBe('2027-09-15');
     expect(findEquipment(a, 'EQ-HVAC-01')?.status).toBe('OnTrack');
@@ -45,8 +45,8 @@ describe('MockDemoDataSource (E2 A–H fixtures)', () => {
     expect(a.decisions).toEqual([]);
   });
 
-  it('snapshot B: local PKG/BLD Yellow path; HVAC/PS calm; no DEC', () => {
-    const b = ds.getSnapshot('B');
+  it('snapshot 02: local PKG/BLD Yellow path; HVAC/PS calm; no DEC', () => {
+    const b = ds.getSnapshot('02');
     expect(findEquipment(b, 'EQ-HVAC-01')?.status).toBe('OnTrack');
     expect(findEquipment(b, 'EQ-PKG-01')?.status).toBe('Delayed');
     expect(findEquipment(b, 'EQ-BLD-02')?.status).toBe('Delayed');
@@ -59,8 +59,8 @@ describe('MockDemoDataSource (E2 A–H fixtures)', () => {
     expect(b.decisions).toEqual([]);
   });
 
-  it('snapshot C: HVAC +21 / Open ISS-001 / Red; no DEC-001', () => {
-    const c = ds.getSnapshot('C');
+  it('snapshot 03: HVAC +21 / Open ISS-001 / Red; no DEC-001', () => {
+    const c = ds.getSnapshot('03');
     expect(findEquipment(c, 'EQ-HVAC-01')?.forecastDelivery).toBe('2027-06-05');
     expect(findEquipment(c, 'EQ-HVAC-01')?.status).toBe('Delayed');
     expect(c.project.forecastProductionStart).toBe('2027-10-06');
@@ -72,23 +72,23 @@ describe('MockDemoDataSource (E2 A–H fixtures)', () => {
     expect(c.decisions).toEqual([]);
   });
 
-  it('D–H are populated; Z remains invalid at parse layer (not this API)', () => {
-    for (const id of ['D', 'E', 'F', 'G', 'H'] as const) {
+  it('04–08 are populated; Z remains invalid at parse layer (not this API)', () => {
+    for (const id of ['04', '05', '06', '07', '08'] as const) {
       expect(ds.getSnapshot(id).id).toBe(id);
     }
-    expect(ds.getSnapshot('F').decisions.some((d) => d.id === 'DEC-001')).toBe(
+    expect(ds.getSnapshot('06').decisions.some((d) => d.id === 'DEC-001')).toBe(
       true,
     );
-    expect(ds.getSnapshot('G').project.forecastProductionStart).toBe(
+    expect(ds.getSnapshot('07').project.forecastProductionStart).toBe(
       '2027-09-29',
     );
   });
 
-  it('I–S populated; S achieves Production Start', () => {
-    expect(ds.getSnapshot('I').id).toBe('I');
-    expect(ds.getSnapshot('O').project.forecastProductionStart).toBe(
+  it('09–19 populated; 19 achieves Production Start', () => {
+    expect(ds.getSnapshot('09').id).toBe('09');
+    expect(ds.getSnapshot('15').project.forecastProductionStart).toBe(
       '2027-09-22',
     );
-    expect(ds.getSnapshot('S').scenarioAsOfDate).toBe('2027-09-22');
+    expect(ds.getSnapshot('19').scenarioAsOfDate).toBe('2027-09-22');
   });
 });

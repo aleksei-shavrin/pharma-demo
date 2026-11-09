@@ -2,24 +2,28 @@ import { BadRequestException } from '@nestjs/common';
 import { parseSnapshotQuery } from './parse-snapshot-query';
 
 describe('parseSnapshotQuery', () => {
-  it('defaults omitted/empty to A', () => {
-    expect(parseSnapshotQuery(undefined)).toBe('A');
-    expect(parseSnapshotQuery(null)).toBe('A');
-    expect(parseSnapshotQuery('')).toBe('A');
+  it('defaults omitted/empty to 01', () => {
+    expect(parseSnapshotQuery(undefined)).toBe('01');
+    expect(parseSnapshotQuery(null)).toBe('01');
+    expect(parseSnapshotQuery('')).toBe('01');
   });
 
-  it('accepts A–S machine ids', () => {
-    expect(parseSnapshotQuery('A')).toBe('A');
-    expect(parseSnapshotQuery('C')).toBe('C');
-    expect(parseSnapshotQuery('H')).toBe('H');
-    expect(parseSnapshotQuery('I')).toBe('I');
-    expect(parseSnapshotQuery('S')).toBe('S');
+  it('accepts numeric machine ids 01–19', () => {
+    expect(parseSnapshotQuery('01')).toBe('01');
+    expect(parseSnapshotQuery('03')).toBe('03');
+    expect(parseSnapshotQuery('08')).toBe('08');
+    expect(parseSnapshotQuery('09')).toBe('09');
+    expect(parseSnapshotQuery('19')).toBe('19');
   });
 
-  it('rejects T and other invalid values with 400 semantics', () => {
+  it('rejects letters and non-canonical numerics with 400 semantics', () => {
+    expect(() => parseSnapshotQuery('A')).toThrow(BadRequestException);
+    expect(() => parseSnapshotQuery('C')).toThrow(BadRequestException);
+    expect(() => parseSnapshotQuery('S')).toThrow(BadRequestException);
+    expect(() => parseSnapshotQuery('1')).toThrow(BadRequestException);
+    expect(() => parseSnapshotQuery('001')).toThrow(BadRequestException);
+    expect(() => parseSnapshotQuery('00')).toThrow(BadRequestException);
+    expect(() => parseSnapshotQuery('20')).toThrow(BadRequestException);
     expect(() => parseSnapshotQuery('T')).toThrow(BadRequestException);
-    expect(() => parseSnapshotQuery('Z')).toThrow(BadRequestException);
-    expect(() => parseSnapshotQuery('a')).toThrow(BadRequestException);
-    expect(() => parseSnapshotQuery('AB')).toThrow(BadRequestException);
   });
 });

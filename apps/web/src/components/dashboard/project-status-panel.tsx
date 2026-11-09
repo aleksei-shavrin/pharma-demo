@@ -2,6 +2,7 @@ import type { DashboardOverview } from '@/lib/api-client';
 import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import { projectStatusMeaning } from '@/lib/ui-labels';
 import { StatusPill } from './status-pill';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 
 /**
  * Executive Project Status — Production Start is the primary visual signal.
@@ -88,7 +89,7 @@ export function ProjectStatusPanel({ data }: { data: DashboardOverview }) {
         <span className="mx-1.5 text-[var(--border)]" aria-hidden>
           ·
         </span>
-        снимок {data.snapshotId}
+        снимок {snapshotDisplayLabel(data.snapshotId)}
       </p>
     </section>
   );

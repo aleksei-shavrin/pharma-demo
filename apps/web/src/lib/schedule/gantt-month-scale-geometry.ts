@@ -51,6 +51,7 @@ type PosDateGantt = {
   config: {
     start_date?: Date | string;
     end_date?: Date | string;
+    scales?: ReadonlyArray<{ unit?: string }>;
   };
   /** Preferred source of truth when present. */
   getScale?: () => GanttScaleLike | null | undefined;
@@ -109,7 +110,7 @@ function cellsFromScale(scale: GanttScaleLike): RawCell[] | null {
   return cells.length > 0 ? cells : null;
 }
 
-/** Group scale cells (month / week / day) by calendar month of their start date. */
+/** Group scale cells by calendar month of their start date (month zoom). */
 function monthsFromCells(cells: RawCell[]): GanttMonthScaleCell[] {
   const months: GanttMonthScaleCell[] = [];
   const byKey = new Map<string, { cell: GanttMonthScaleCell; right: number }>();
@@ -144,6 +145,7 @@ function extractFromScale(
 ): GanttMonthScaleGeometry | null {
   const cells = cellsFromScale(scale);
   if (!cells) return null;
+  // Zoom levels are month-density only — aggregate sticky cells by calendar month.
   const months = monthsFromCells(cells);
   if (months.length === 0) return null;
   const last = cells[cells.length - 1];

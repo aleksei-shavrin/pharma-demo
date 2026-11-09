@@ -327,20 +327,23 @@ describe('buildVisibleScheduleRows', () => {
     expect(stage?.summaryEnd).toBe('2027-03-18');
   });
 
-  it('ставит на 8.2 недели отставания, а на 8.2.2 сдвиг базы', () => {
+  it('8.2 сворачивает сдвиг ребёнка; historical weeks группы не дают own lag', () => {
     const rows = buildVisibleScheduleRows(frozenSnapshotC(), {
       expandedKeys: CURATED,
     });
 
     expect(rows.find((row) => row.id === 'AN-08')?.warning.tone).toBe('shift');
+    // Stage has sourceWeeks=3 (historical) but also Delayed 8.2.1 + shifted 8.2.2;
+    // shift preferred over lag when folding descendants.
     expect(rows.find((row) => row.id === '8.2')?.warning).toEqual({
-      tone: 'lag',
-      label: 'Отставание, 3 нед.',
+      tone: 'shift',
+      label: 'Прогноз отличается от базового плана',
     });
     expect(rows.find((row) => row.id === '8.2.2')?.warning).toEqual({
       tone: 'shift',
       label: 'Прогноз отличается от базового плана',
     });
+    expect(rows.find((row) => row.id === '8.2.1')?.warning.tone).toBe('lag');
     expect(rows.find((row) => row.id === 'WK-01')?.warning).toEqual({
       tone: 'none',
       label: '',

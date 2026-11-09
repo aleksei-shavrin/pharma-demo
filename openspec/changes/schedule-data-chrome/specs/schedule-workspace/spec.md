@@ -71,15 +71,15 @@ Shared hover SHALL tint the sticky table lead rail (`data-schedule-row-left`) wi
 
 Work progress SHALL use per-snapshot authored overlays with actuals coherent after asOf clamp. EQ/MS progress SHALL be binary from the control-facts catalogue dates vs `scenarioAsOfDate` (all catalogue ids required). Forbidden: live forecast≤asOf; sorted-id/letter rank. FS target@100 requires source@100.
 
-#### Scenario: Snapshot C preserves key authored works
-- **WHEN** schedule for snapshot C is loaded
+#### Scenario: Snapshot 03 preserves key authored works
+- **WHEN** schedule for snapshot 03 is loaded
 - **THEN** work `8.2.1` has progressPct 0
 - **AND** work `8.2.2` has progressPct 40
 - **AND** work `WK-01` has progressPct 100
 - **AND** work `WK-04` has progressPct 0
 - **AND** milestone `MS-COM-GO` has progressPct 0
 
-#### Scenario: Snapshot A differs from C on the same topology
-- **WHEN** schedule for snapshot A is loaded
+#### Scenario: Snapshot 01 differs from 03 on the same topology
+- **WHEN** schedule for snapshot 01 is loaded
 - **THEN** work `WK-01` progressPct is 0
 - **AND** EQ-HVAC-01 progressPct is 0

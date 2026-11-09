@@ -33,7 +33,7 @@ import {
 import { ScheduleService } from '../schedule/schedule.service';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 
-const DEMO_PROJECT = 'PRJ-01';
+const DEMO_PROJECT = 'PRT-01';
 
 export type ResponsiblePerson = {
   personId: string;

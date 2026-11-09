@@ -25,6 +25,7 @@ describe('якорь прокрутки календарного плана', ()
       tableScrollLeft: 0,
       chartDateIso: null,
       verticalScrollTop: 0,
+      centerChartDateOnce: false,
     });
   });
 });

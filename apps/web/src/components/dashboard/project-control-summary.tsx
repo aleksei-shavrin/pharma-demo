@@ -3,6 +3,7 @@ import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
 import { projectStatusMeaning } from '@/lib/ui-labels';
 import { CostSignal } from './cost-signal';
 import { StatusPill } from './status-pill';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 
 function conditionAccent(status: DashboardOverview['projectStatus']): string {
   if (status === 'Green') return 'bg-[var(--status-ok-border)]';
@@ -32,7 +33,7 @@ export function ProjectControlSummary({
   const meaning = projectStatusMeaning(data.projectStatus, ps.deltaDays);
   const onPlan = ps.deltaDays === 0;
   const achieved =
-    data.snapshotId === 'S' &&
+    data.snapshotId === '19' &&
     data.projectStatus === 'Green' &&
     ps.forecastDate === '2027-09-22';
 
@@ -77,7 +78,7 @@ export function ProjectControlSummary({
               {meaning}
             </p>
             <p className="mt-auto pt-3 text-[10px] text-[var(--text-muted)]">
-              {data.project.id} · снимок {data.snapshotId} ·{' '}
+              {data.project.id} · снимок {snapshotDisplayLabel(data.snapshotId)} ·{' '}
               {formatDateRu(data.scenarioAsOfDate)}
             </p>
           </div>
@@ -89,7 +90,7 @@ export function ProjectControlSummary({
           data-production-start
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
-            Запуск портфеля
+            Запуск производства
           </p>
           {achieved ? (
             <>
@@ -147,7 +148,7 @@ export function ProjectControlSummary({
                 </span>
                 прогноз {formatDateRu(ps.forecastDate)}
               </p>
-              {data.snapshotId === 'Q' ? (
+              {data.snapshotId === '17' ? (
                 <p
                   className="mt-1.5 text-xs text-[var(--status-warn-fg)]"
                   data-ps-baseline-passed

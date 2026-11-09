@@ -3,16 +3,16 @@ import type { SnapshotFixture } from './types';
 
 /**
  * Test-only SnapshotFixture clone: C HVAC Red path + DEC-001 recorded.
- * Production Snapshot C has no DEC-001 (belongs to F).
+ * Production Snapshot 03 has no DEC-001 (belongs to 06).
  * Do not place this on the production SNAPSHOTS map.
  */
 export function snapshotWithDec001(
   overrides: Partial<SnapshotFixture> = {},
 ): SnapshotFixture {
-  const base = structuredClone(buildSnapshot('C'));
+  const base = structuredClone(buildSnapshot('03'));
   return {
     ...base,
-    id: 'C',
+    id: '03',
     issues: base.issues.map((issue) =>
       issue.id === 'ISS-001'
         ? { ...issue, status: 'Mitigating' as const }
@@ -21,7 +21,7 @@ export function snapshotWithDec001(
     decisions: [
       {
         id: 'DEC-001',
-        projectId: 'PRJ-01',
+        projectId: 'PRT-01',
         milestoneId: 'MS-PS',
         type: 'PrioritizeRecovery',
         ownerPersonId: 'PER-01',
@@ -41,7 +41,7 @@ export function snapshotWithAcceptDateSlip(): SnapshotFixture {
     decisions: [
       {
         id: 'DEC-001',
-        projectId: 'PRJ-01',
+        projectId: 'PRT-01',
         milestoneId: null,
         type: 'AcceptDateSlip',
         ownerPersonId: 'PER-01',

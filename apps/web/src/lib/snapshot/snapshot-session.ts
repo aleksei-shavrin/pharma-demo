@@ -2,9 +2,19 @@ import { isSnapshotId, type SnapshotId } from './snapshot-id';
 
 export const SNAPSHOT_SESSION_KEY = 'ppc.demo.snapshot';
 
+function clearInvalidSessionValue(): void {
+  try {
+    if (typeof sessionStorage === 'undefined') return;
+    sessionStorage.removeItem(SNAPSHOT_SESSION_KEY);
+  } catch {
+    // ignore
+  }
+}
+
 /**
- * Read a SnapshotId (A–S) from sessionStorage, or null if missing/invalid.
- * Invalid legacy values fall back safely (bootstrap → A).
+ * Read a SnapshotId (01–19) from sessionStorage, or null if missing/invalid.
+ * Legacy/non-canonical values are removed; bootstrap falls back to 01.
+ * No letter→ordinal mapping table in runtime.
  */
 export function readSessionSnapshot(): SnapshotId | null {
   try {
@@ -15,14 +25,18 @@ export function readSessionSnapshot(): SnapshotId | null {
     if (raw === null) {
       return null;
     }
-    return isSnapshotId(raw) ? raw : null;
+    if (isSnapshotId(raw)) {
+      return raw;
+    }
+    clearInvalidSessionValue();
+    return null;
   } catch {
     return null;
   }
 }
 
 /**
- * Persist last successfully committed snapshot (A–S after R2-U1).
+ * Persist last successfully committed snapshot (01–19).
  */
 export function writeSessionSnapshot(snapshot: SnapshotId): void {
   try {
@@ -38,7 +52,7 @@ export function writeSessionSnapshot(snapshot: SnapshotId): void {
   }
 }
 
-/** Bootstrap target: valid session value, otherwise A. */
+/** Bootstrap target: valid session value, otherwise 01. */
 export function resolveBootstrapSnapshot(): SnapshotId {
-  return readSessionSnapshot() ?? 'A';
+  return readSessionSnapshot() ?? '01';
 }

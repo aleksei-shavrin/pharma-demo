@@ -13,28 +13,28 @@ import {
  * Prevents silent drift between selector option dates and fixtures.
  */
 const FIXTURE_AS_OF = {
-  A: '2027-02-15',
-  B: '2027-02-28',
-  C: '2027-03-01',
-  D: '2027-03-20',
-  E: '2027-04-10',
-  F: '2027-04-20',
-  G: '2027-05-15',
-  H: '2027-06-01',
-  I: '2027-06-20',
-  J: '2027-07-05',
-  K: '2027-07-20',
-  L: '2027-08-01',
-  M: '2027-08-12',
-  N: '2027-08-22',
-  O: '2027-09-01',
-  P: '2027-09-10',
-  Q: '2027-09-15',
-  R: '2027-09-18',
-  S: '2027-09-22',
+  '01': '2027-02-15',
+  '02': '2027-02-28',
+  '03': '2027-03-01',
+  '04': '2027-03-20',
+  '05': '2027-04-10',
+  '06': '2027-04-20',
+  '07': '2027-05-15',
+  '08': '2027-06-01',
+  '09': '2027-06-20',
+  '10': '2027-07-05',
+  '11': '2027-07-20',
+  '12': '2027-08-01',
+  '13': '2027-08-12',
+  '14': '2027-08-22',
+  '15': '2027-09-01',
+  '16': '2027-09-10',
+  '17': '2027-09-15',
+  '18': '2027-09-18',
+  '19': '2027-09-22',
 } as const;
 
-describe('snapshot-meta A–S contract (R2-C1)', () => {
+describe('snapshot-meta 01–19 contract (R2-C1)', () => {
   it('covers every SnapshotId with as-of + RU context', () => {
     expect(() => assertSnapshotMetaComplete()).not.toThrow();
     expect(Object.keys(SNAPSHOT_AS_OF).sort()).toEqual([...SNAPSHOT_IDS].sort());
@@ -49,15 +49,18 @@ describe('snapshot-meta A–S contract (R2-C1)', () => {
     }
   });
 
-  it('UI selectable set is full A–S after R2-U1', () => {
+  it('UI selectable set is full 01–19 after R2-U1', () => {
     expect([...SELECTABLE_SNAPSHOT_IDS]).toEqual([...SNAPSHOT_IDS]);
   });
 
   it('formats option labels with date + context', () => {
-    expect(snapshotAsOfRu('C')).toBe('01.03.2027');
-    expect(snapshotOptionLabel('C')).toContain('Срыв HVAC');
-    expect(snapshotOptionLabel('G')).toContain('15.05.2027');
-    expect(snapshotOptionLabel('S')).toContain('22.09.2027');
-    expect(snapshotOptionLabel('S')).toContain('Production Start достигнут');
+    expect(snapshotAsOfRu('03')).toBe('01.03.2027');
+    expect(snapshotOptionLabel('03')).toMatch(/^03 —/);
+    expect(snapshotOptionLabel('03')).toContain('Срыв HVAC');
+    expect(snapshotOptionLabel('07')).toMatch(/^07 —/);
+    expect(snapshotOptionLabel('07')).toContain('15.05.2027');
+    expect(snapshotOptionLabel('19')).toMatch(/^19 —/);
+    expect(snapshotOptionLabel('19')).toContain('22.09.2027');
+    expect(snapshotOptionLabel('19')).toContain('Production Start достигнут');
   });
 });

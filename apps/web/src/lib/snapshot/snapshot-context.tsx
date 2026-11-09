@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO_PORTFOLIO_ID } from '@/lib/demo-portfolio-id';
+
 import {
   createContext,
   useCallback,
@@ -26,7 +28,6 @@ import {
   type SnapshotState,
 } from './snapshot-state';
 
-const DEMO_PROJECT_ID = 'PRJ-01';
 
 function isLoginPath(pathname: string | null): boolean {
   return pathname === '/login' || Boolean(pathname?.startsWith('/login/'));
@@ -48,7 +49,7 @@ export function SnapshotProvider({ children }: { children: ReactNode }) {
   );
   const stateRef = useRef(state);
   stateRef.current = state;
-  const lastAttemptRef = useRef<SnapshotId>('A');
+  const lastAttemptRef = useRef<SnapshotId>('01');
   const allocateSeqRef = useRef(createMonotonicSeq());
 
   /** Keep stateRef in sync before React re-render so getRequestSeq sees commits. */
@@ -61,7 +62,7 @@ export function SnapshotProvider({ children }: { children: ReactNode }) {
     lastAttemptRef.current = snapshot;
     await runSnapshotLoad({
       snapshot,
-      projectId: DEMO_PROJECT_ID,
+      projectId: DEMO_PORTFOLIO_ID,
       allocateSeq: allocateSeqRef.current,
       dispatch,
       fetchDashboard: fetchDashboardOverview,

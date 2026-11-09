@@ -16,7 +16,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Screen inventory (P1–P5, detail) — `approved UX decision` (D1/D2/D4/D7/D9). Бизнес-ожидания A/B/C — из walkthrough и living OpenSpec.
+> Screen inventory (P1–P5, detail) — `approved UX decision` (D1/D2/D4/D7/D9). Бизнес-ожидания 01/02/03 — из walkthrough и living OpenSpec.
 
 ## 1. Screen inventory
 
@@ -42,7 +42,7 @@ related:
 | D-MS | Milestone detail | Full Page + Tabs |
 | M-DEC | Record PrioritizeRecovery | Modal/dialog; управленческая Decision, не execution (D6); AcceptDateSlip не Must journey |
 
-## 2. Flow A → B → C (обязательный narrative)
+## 2. Flow 01 → 02 → 03 (обязательный narrative)
 
 Опора: [demo-v1-acceptance-walkthrough](../03-product/demo-v1-acceptance-walkthrough.md), DOC-PROD-012, living specs.
 
@@ -53,7 +53,7 @@ related:
 | 2 | **B** | EQ Delayed +21d; ISS Open; RISK/MS Red; PS/MS forecast 2027-10-06 | BR-004; NC-001; walkthrough §2–6 |
 | 3 | B | Drill по **прямым** Domain links (EQ↔ISS, EQ↔RISK, ISS↔RISK, ISS↔MS, RISK↔MS); порядок кликов может совпасть с narrative, но не равен схеме рёбер | DOC-BA-015; **нет** прямой Equipment—Milestone; PS — не ребро Links |
 | 4 | B→**C** | Record PrioritizeRecovery (M-DEC) | REQ-IMPCT-002 |
-| 5 | **C** | Issue Mitigating; DEC-001; **forecast и RAG Risk/MS без улучшения** | BR-006; OpenSpec Snapshot C |
+| 5 | **C** | Issue Mitigating; DEC-001; **forecast и RAG Risk/MS без улучшения** | BR-006; OpenSpec Snapshot 03 |
 
 **Явно не показывать как «график восстановлен»:** Green MS/Risk, откат PS, progress bar recovery execution.
 

@@ -38,7 +38,7 @@ describe('schedule-fill-semantics (Nest port)', () => {
       kind: 'work',
       id: '1.1.1',
       parentKey: 'project_group:AN-01',
-      status: 'OnSchedule',
+      status: 'Delayed',
       sourceWeeks: 3,
       baselineStart: '2026-01-01',
       baselineEnd: '2026-01-10',
@@ -55,6 +55,28 @@ describe('schedule-fill-semantics (Nest port)', () => {
     const result = fillToneForProjectGroup(items, 'AN-01');
     expect(result.progressFillTone).toBe('danger');
     expect(result.progressPct).toBe(47);
+  });
+
+  it('Completed + historical sourceWeeks → none warning / ok fill', () => {
+    const completed: ScheduleWarningItem = {
+      kind: 'work',
+      id: '1.2.2',
+      status: 'Completed',
+      sourceWeeks: 2,
+      baselineStart: '2026-08-08',
+      baselineEnd: '2026-08-15',
+      startDate: '2026-08-08',
+      endDate: '2026-08-15',
+      progressPct: 100,
+    };
+    expect(resolveScheduleWarning(completed).tone).toBe('none');
+    expect(
+      resolveScheduleFillTone({
+        kind: 'work',
+        status: 'Completed',
+        warningTone: 'none',
+      }),
+    ).toBe('ok');
   });
 
   it('does not map RAG into work/group fill when warning none', () => {

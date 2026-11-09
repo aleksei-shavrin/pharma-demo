@@ -1,5 +1,5 @@
 /**
- * DOC-PROD-021 + R2-L1 static identity catalog (A–S).
+ * DOC-PROD-021 + R2-L1 static identity catalog (01–19).
  * Status/RAG/forecast vary per snapshot — see snapshot-states + build-snapshot.
  */
 import type { WorkstreamId } from '../workstream-ids';
@@ -7,7 +7,7 @@ import type { DecisionType } from './types';
 import type { SnapshotId } from './types';
 
 export const PROJECT = {
-  id: 'PRJ-01',
+  id: 'PRT-01',
   /** Заголовок файла аналитика. В иерархии демо это имя портфеля, не одной из семи программ. */
   name: 'Строительство фармацевтической фабрики (Greenfield)',
   baselineProductionStart: '2027-09-15',
@@ -372,7 +372,7 @@ export const MILESTONE_CATALOG = {
     workstream: 'WS-UTL' as WorkstreamId,
     baselineDate: '2027-07-01',
   },
-  /** Исходник 24.1.3. Baseline общий для A–S; отставание — overlay с C. */
+  /** Исходник 24.1.3. Baseline общий для 01–19; отставание — overlay с C. */
   'MS-UTL-PWR': {
     name: 'Энергоснабжение обеспечено',
     workstream: 'WS-UTL' as WorkstreamId,
@@ -440,7 +440,7 @@ export const MILESTONE_CATALOG = {
   },
   /**
    * Приблизительное соответствие исходнику 8.2.3.
-   * Baseline синтетический и стабильный: на снимке C плановая дата уже прошла.
+   * Baseline синтетический и стабильный: на снимке 03 плановая дата уже прошла.
    */
   'MS-CLN-PANEL': {
     name: 'Монтаж панелей чистых зон завершён',
@@ -568,7 +568,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-HVAC-01' as EquipmentId,
     milestoneId: 'MS-PS' as MilestoneId,
     ownerPersonId: 'PER-02',
-    first: 'C' as SnapshotId,
+    first: '03' as SnapshotId,
   },
   'ISS-HVAC-02': {
     title: 'Неполный комплект документации поставки AHU',
@@ -576,7 +576,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-HVAC-01' as EquipmentId,
     milestoneId: 'MS-HVAC-IQ' as MilestoneId,
     ownerPersonId: 'PER-08',
-    first: 'D' as SnapshotId,
+    first: '04' as SnapshotId,
   },
   'ISS-CLN-01': {
     title: 'Отставание монтажа панелей чистых зон',
@@ -584,7 +584,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-CLN-01' as EquipmentId,
     milestoneId: 'MS-CLN-RDY' as MilestoneId,
     ownerPersonId: 'PER-07',
-    first: 'D' as SnapshotId,
+    first: '04' as SnapshotId,
   },
   'ISS-UTL-01': {
     title: 'Прогноз сдвига поставки дистиллятора WFI',
@@ -592,7 +592,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-UTL-02' as EquipmentId,
     milestoneId: 'MS-UTL-WFI' as MilestoneId,
     ownerPersonId: 'PER-09',
-    first: 'E' as SnapshotId,
+    first: '05' as SnapshotId,
   },
   'ISS-UTL-02': {
     title: 'Дефицит мощности ИБП на критических нагрузках',
@@ -600,7 +600,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-UTL-04' as EquipmentId,
     milestoneId: null,
     ownerPersonId: 'PER-09',
-    first: 'E' as SnapshotId,
+    first: '05' as SnapshotId,
   },
   'ISS-PRD-01': {
     title: 'Несогласованность интерфейсов CIP с реакторным блоком',
@@ -608,7 +608,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-PRD-02' as EquipmentId,
     milestoneId: 'MS-PRD-INST' as MilestoneId,
     ownerPersonId: 'PER-10',
-    first: 'E' as SnapshotId,
+    first: '05' as SnapshotId,
   },
   'ISS-PKG-01': {
     title: 'Прогноз срыва срока FAT первичной упаковки',
@@ -616,7 +616,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-PKG-01' as EquipmentId,
     milestoneId: 'MS-PKG-SAT' as MilestoneId,
     ownerPersonId: 'PER-11',
-    first: 'B' as SnapshotId,
+    first: '02' as SnapshotId,
   },
   'ISS-PKG-02': {
     title: 'Отставание сериализации от графика интеграции',
@@ -624,7 +624,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-PKG-03' as EquipmentId,
     milestoneId: 'MS-PKG-SAT' as MilestoneId,
     ownerPersonId: 'PER-11',
-    first: 'E' as SnapshotId,
+    first: '05' as SnapshotId,
   },
   'ISS-QC-01': {
     title: 'Прогноз поздней поставки HPLC',
@@ -632,7 +632,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-QC-01' as EquipmentId,
     milestoneId: 'MS-QC-RDY' as MilestoneId,
     ownerPersonId: 'PER-12',
-    first: 'E' as SnapshotId,
+    first: '05' as SnapshotId,
   },
   'ISS-AUT-01': {
     title: 'Конфликт точек интеграции BMS / EMS',
@@ -640,7 +640,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId,
     milestoneId: 'MS-AUT-BMS' as MilestoneId,
     ownerPersonId: 'PER-13',
-    first: 'E' as SnapshotId,
+    first: '05' as SnapshotId,
   },
   'ISS-BLD-01': {
     title: 'Замечания по комплектности технических дверей оболочки',
@@ -648,7 +648,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-BLD-02' as EquipmentId,
     milestoneId: 'MS-BLD-ENCL' as MilestoneId,
     ownerPersonId: 'PER-06',
-    first: 'B' as SnapshotId,
+    first: '02' as SnapshotId,
   },
   'ISS-UTL-03': {
     title: 'Отставание пуска контура охлаждённой воды',
@@ -656,7 +656,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-UTL-06' as EquipmentId,
     milestoneId: 'MS-UTL-RDY' as MilestoneId,
     ownerPersonId: 'PER-09',
-    first: 'I' as SnapshotId,
+    first: '09' as SnapshotId,
   },
   'ISS-AUT-02': {
     title: 'Конфликт интерфейсов BMS и EMS при интеграции',
@@ -664,7 +664,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-03' as EquipmentId,
     milestoneId: 'MS-AUT-INT' as MilestoneId,
     ownerPersonId: 'PER-13',
-    first: 'I' as SnapshotId,
+    first: '09' as SnapshotId,
   },
   'ISS-PRD-02': {
     title: 'Сдвиг монтажа линии фильтрации',
@@ -672,7 +672,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-PRD-04' as EquipmentId,
     milestoneId: 'MS-PRD-INST' as MilestoneId,
     ownerPersonId: 'PER-10',
-    first: 'J' as SnapshotId,
+    first: '10' as SnapshotId,
   },
   'ISS-PRD-03': {
     title: 'Нестыковка CIP с буферной подготовкой',
@@ -680,7 +680,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-PRD-07' as EquipmentId,
     milestoneId: 'MS-PRD-CIP' as MilestoneId,
     ownerPersonId: 'PER-10',
-    first: 'J' as SnapshotId,
+    first: '10' as SnapshotId,
   },
   'ISS-HVAC-03': {
     title: 'Замечания по HEPA при предмонтажной проверке',
@@ -688,7 +688,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-HVAC-05' as EquipmentId,
     milestoneId: 'MS-HVAC-BAL' as MilestoneId,
     ownerPersonId: 'PER-08',
-    first: 'K' as SnapshotId,
+    first: '11' as SnapshotId,
   },
   'ISS-PKG-03': {
     title: 'Остаточный дефект печати сериализации',
@@ -696,7 +696,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-PKG-07' as EquipmentId,
     milestoneId: 'MS-PKG-SER' as MilestoneId,
     ownerPersonId: 'PER-11',
-    first: 'K' as SnapshotId,
+    first: '11' as SnapshotId,
   },
   'ISS-AUT-03': {
     title: 'Неполный набор точек EMS для чистых зон',
@@ -704,7 +704,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-02' as EquipmentId,
     milestoneId: 'MS-AUT-EMS' as MilestoneId,
     ownerPersonId: 'PER-13',
-    first: 'L' as SnapshotId,
+    first: '12' as SnapshotId,
   },
   'ISS-AUT-04': {
     title: 'Задержка поставки серверной стойки BMS/EMS',
@@ -712,7 +712,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-04' as EquipmentId,
     milestoneId: 'MS-AUT-BMS' as MilestoneId,
     ownerPersonId: 'PER-13',
-    first: 'L' as SnapshotId,
+    first: '12' as SnapshotId,
   },
   'ISS-COM-01': {
     title: 'Давление на демо-гейт готовности (IQ)',
@@ -720,7 +720,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId,
     milestoneId: 'MS-COM-IQ' as MilestoneId,
     ownerPersonId: 'PER-05',
-    first: 'M' as SnapshotId,
+    first: '13' as SnapshotId,
   },
   'ISS-COM-02': {
     title: 'Неготовность данных для демо-гейта OQ',
@@ -728,7 +728,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-03' as EquipmentId,
     milestoneId: 'MS-COM-OQ' as MilestoneId,
     ownerPersonId: 'PER-05',
-    first: 'M' as SnapshotId,
+    first: '13' as SnapshotId,
   },
   'ISS-QC-02': {
     title: 'Отставание инфраструктуры лаборатории QC',
@@ -736,7 +736,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-QC-04' as EquipmentId,
     milestoneId: 'MS-QC-LAB' as MilestoneId,
     ownerPersonId: 'PER-12',
-    first: 'M' as SnapshotId,
+    first: '13' as SnapshotId,
   },
   'ISS-HVAC-04': {
     title: 'Остаточные замечания балансировки HVAC',
@@ -744,7 +744,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-HVAC-01' as EquipmentId,
     milestoneId: 'MS-HVAC-BAL' as MilestoneId,
     ownerPersonId: 'PER-08',
-    first: 'O' as SnapshotId,
+    first: '15' as SnapshotId,
   },
   'ISS-COM-03': {
     title: 'Давление на демо-гейт готовности (PQ)',
@@ -752,7 +752,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId,
     milestoneId: 'MS-COM-PQ' as MilestoneId,
     ownerPersonId: 'PER-05',
-    first: 'P' as SnapshotId,
+    first: '16' as SnapshotId,
   },
   'ISS-QC-03': {
     title: 'Остаточное внимание по методам QC перед стартом',
@@ -760,7 +760,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-QC-01' as EquipmentId,
     milestoneId: 'MS-QC-METH' as MilestoneId,
     ownerPersonId: 'PER-12',
-    first: 'P' as SnapshotId,
+    first: '16' as SnapshotId,
   },
   'ISS-RDY-01': {
     title: 'Контрольный перечень финальной готовности не закрыт',
@@ -768,7 +768,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId,
     milestoneId: 'MS-COM-RDY' as MilestoneId,
     ownerPersonId: 'PER-02',
-    first: 'Q' as SnapshotId,
+    first: '17' as SnapshotId,
   },
   'ISS-GO-01': {
     title: 'Открытые условия Go/No-Go перед стартом',
@@ -776,7 +776,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId,
     milestoneId: 'MS-COM-GO' as MilestoneId,
     ownerPersonId: 'PER-01',
-    first: 'R' as SnapshotId,
+    first: '18' as SnapshotId,
   },
   'ISS-UTL-04': {
     title: 'Локальные замечания по процессным газам',
@@ -784,7 +784,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-UTL-08' as EquipmentId,
     milestoneId: 'MS-UTL-GAS' as MilestoneId,
     ownerPersonId: 'PER-09',
-    first: 'I' as SnapshotId,
+    first: '09' as SnapshotId,
   },
   'ISS-PRD-04': {
     title: 'Отставание FAT реакторного блока',
@@ -792,7 +792,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-PRD-01' as EquipmentId,
     milestoneId: 'MS-PRD-FAT' as MilestoneId,
     ownerPersonId: 'PER-10',
-    first: 'J' as SnapshotId,
+    first: '10' as SnapshotId,
   },
   'ISS-BLD-02': {
     title: 'Замечания по герметичности кровельных проходок',
@@ -800,7 +800,7 @@ export const ISSUE_CATALOG = {
     equipmentId: 'EQ-BLD-03' as EquipmentId,
     milestoneId: 'MS-BLD-WT' as MilestoneId,
     ownerPersonId: 'PER-06',
-    first: 'B' as SnapshotId,
+    first: '02' as SnapshotId,
   },
 } as const;
 
@@ -813,7 +813,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-HVAC-01' as EquipmentId | null,
     milestoneId: 'MS-PS' as MilestoneId | null,
     issueId: 'ISS-001' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-HVAC-02': {
     title: 'Доп. задержка демо-гейта HVAC (IQ) из-за документации',
@@ -821,7 +821,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-HVAC-01' as EquipmentId | null,
     milestoneId: 'MS-HVAC-IQ' as MilestoneId | null,
     issueId: 'ISS-HVAC-02' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-CLN-01': {
     title: 'Неготовность чистых зон к пуску HVAC',
@@ -829,7 +829,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-CLN-01' as EquipmentId | null,
     milestoneId: 'MS-CLN-RDY' as MilestoneId | null,
     issueId: 'ISS-CLN-01' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-UTL-01': {
     title: 'Недоступность WFI к технологическим прогонам',
@@ -837,7 +837,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-UTL-02' as EquipmentId | null,
     milestoneId: 'MS-UTL-WFI' as MilestoneId | null,
     issueId: 'ISS-UTL-01' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-UTL-02': {
     title: 'Риск простоя критических нагрузок без ИБП',
@@ -845,7 +845,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-UTL-04' as EquipmentId | null,
     milestoneId: null,
     issueId: 'ISS-UTL-02' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-PRD-01': {
     title: 'Сдвиг монтажа процессного оборудования',
@@ -853,7 +853,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-PRD-01' as EquipmentId | null,
     milestoneId: 'MS-PRD-INST' as MilestoneId | null,
     issueId: 'ISS-PRD-01' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-PKG-01': {
     title: 'Срыв SAT упаковки',
@@ -861,7 +861,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-PKG-01' as EquipmentId | null,
     milestoneId: 'MS-PKG-SAT' as MilestoneId | null,
     issueId: 'ISS-PKG-01' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-PKG-02': {
     title: 'Неготовность сериализации к релизу',
@@ -869,7 +869,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-PKG-03' as EquipmentId | null,
     milestoneId: 'MS-PKG-SAT' as MilestoneId | null,
     issueId: 'ISS-PKG-02' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-QC-01': {
     title: 'Задержка готовности QC к поддержке запуска',
@@ -877,7 +877,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-QC-01' as EquipmentId | null,
     milestoneId: 'MS-QC-RDY' as MilestoneId | null,
     issueId: 'ISS-QC-01' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-AUT-01': {
     title: 'Неготовность BMS к мониторингу зон',
@@ -885,7 +885,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId | null,
     milestoneId: 'MS-AUT-BMS' as MilestoneId | null,
     issueId: 'ISS-AUT-01' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-BLD-01': {
     title: 'Локальный риск по готовности оболочки здания',
@@ -893,7 +893,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-BLD-02' as EquipmentId | null,
     milestoneId: 'MS-BLD-ENCL' as MilestoneId | null,
     issueId: 'ISS-BLD-01' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   /** Approved orphan Red Risk exception (no causal Issue). */
   'RISK-COM-01': {
@@ -902,7 +902,7 @@ export const RISK_CATALOG = {
     equipmentId: null,
     milestoneId: 'MS-COM-IQ' as MilestoneId | null,
     issueId: null,
-    first: 'E' as SnapshotId,
+    first: '05' as SnapshotId,
   },
   'RISK-UTL-03': {
     title: 'Риск задержки готовности охлаждённой воды',
@@ -910,7 +910,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-UTL-06' as EquipmentId | null,
     milestoneId: 'MS-UTL-RDY' as MilestoneId | null,
     issueId: 'ISS-UTL-03' as IssueId | null,
-    first: 'I' as SnapshotId,
+    first: '09' as SnapshotId,
   },
   'RISK-AUT-02': {
     title: 'Риск срыва интеграции BMS/EMS',
@@ -918,7 +918,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-AUT-03' as EquipmentId | null,
     milestoneId: 'MS-AUT-INT' as MilestoneId | null,
     issueId: 'ISS-AUT-02' as IssueId | null,
-    first: 'I' as SnapshotId,
+    first: '09' as SnapshotId,
   },
   'RISK-PRD-02': {
     title: 'Риск сдвига монтажа фильтрации',
@@ -926,7 +926,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-PRD-04' as EquipmentId | null,
     milestoneId: 'MS-PRD-INST' as MilestoneId | null,
     issueId: 'ISS-PRD-02' as IssueId | null,
-    first: 'J' as SnapshotId,
+    first: '10' as SnapshotId,
   },
   'RISK-PRD-03': {
     title: 'Риск неготовности CIP к прогонам',
@@ -934,7 +934,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-PRD-07' as EquipmentId | null,
     milestoneId: 'MS-PRD-CIP' as MilestoneId | null,
     issueId: 'ISS-PRD-03' as IssueId | null,
-    first: 'J' as SnapshotId,
+    first: '10' as SnapshotId,
   },
   'RISK-HVAC-03': {
     title: 'Риск повторных замечаний по HEPA',
@@ -942,7 +942,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-HVAC-05' as EquipmentId | null,
     milestoneId: 'MS-HVAC-BAL' as MilestoneId | null,
     issueId: 'ISS-HVAC-03' as IssueId | null,
-    first: 'K' as SnapshotId,
+    first: '11' as SnapshotId,
   },
   'RISK-PKG-03': {
     title: 'Риск срыва готовности сериализации',
@@ -950,7 +950,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-PKG-07' as EquipmentId | null,
     milestoneId: 'MS-PKG-SER' as MilestoneId | null,
     issueId: 'ISS-PKG-03' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-AUT-03': {
     title: 'Риск неполноты покрытия EMS',
@@ -958,7 +958,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-AUT-02' as EquipmentId | null,
     milestoneId: 'MS-AUT-EMS' as MilestoneId | null,
     issueId: 'ISS-AUT-03' as IssueId | null,
-    first: 'L' as SnapshotId,
+    first: '12' as SnapshotId,
   },
   'RISK-AUT-04': {
     title: 'Риск задержки инфраструктуры BMS/EMS',
@@ -966,7 +966,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-AUT-04' as EquipmentId | null,
     milestoneId: 'MS-AUT-BMS' as MilestoneId | null,
     issueId: 'ISS-AUT-04' as IssueId | null,
-    first: 'L' as SnapshotId,
+    first: '12' as SnapshotId,
   },
   'RISK-COM-02': {
     title: 'Риск срыва демо-гейта OQ',
@@ -974,7 +974,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-AUT-03' as EquipmentId | null,
     milestoneId: 'MS-COM-OQ' as MilestoneId | null,
     issueId: 'ISS-COM-02' as IssueId | null,
-    first: 'M' as SnapshotId,
+    first: '13' as SnapshotId,
   },
   'RISK-COM-03': {
     title: 'Риск срыва демо-гейта PQ',
@@ -982,7 +982,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId | null,
     milestoneId: 'MS-COM-PQ' as MilestoneId | null,
     issueId: 'ISS-COM-03' as IssueId | null,
-    first: 'P' as SnapshotId,
+    first: '16' as SnapshotId,
   },
   'RISK-QC-02': {
     title: 'Риск задержки лабораторной инфраструктуры',
@@ -990,7 +990,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-QC-04' as EquipmentId | null,
     milestoneId: 'MS-QC-LAB' as MilestoneId | null,
     issueId: 'ISS-QC-02' as IssueId | null,
-    first: 'M' as SnapshotId,
+    first: '13' as SnapshotId,
   },
   'RISK-QC-03': {
     title: 'Риск остаточного внимания QC перед стартом',
@@ -998,7 +998,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-QC-01' as EquipmentId | null,
     milestoneId: 'MS-QC-METH' as MilestoneId | null,
     issueId: 'ISS-QC-03' as IssueId | null,
-    first: 'P' as SnapshotId,
+    first: '16' as SnapshotId,
   },
   'RISK-RDY-01': {
     title: 'Риск незакрытой финальной готовности',
@@ -1006,7 +1006,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId | null,
     milestoneId: 'MS-COM-RDY' as MilestoneId | null,
     issueId: 'ISS-RDY-01' as IssueId | null,
-    first: 'Q' as SnapshotId,
+    first: '17' as SnapshotId,
   },
   'RISK-GO-01': {
     title: 'Риск отрицательного Go/No-Go',
@@ -1014,7 +1014,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-AUT-01' as EquipmentId | null,
     milestoneId: 'MS-COM-GO' as MilestoneId | null,
     issueId: 'ISS-GO-01' as IssueId | null,
-    first: 'R' as SnapshotId,
+    first: '18' as SnapshotId,
   },
   'RISK-UTL-04': {
     title: 'Риск недоступности процессных газов',
@@ -1022,7 +1022,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-UTL-08' as EquipmentId | null,
     milestoneId: 'MS-UTL-GAS' as MilestoneId | null,
     issueId: 'ISS-UTL-04' as IssueId | null,
-    first: 'I' as SnapshotId,
+    first: '09' as SnapshotId,
   },
   'RISK-PRD-04': {
     title: 'Риск срыва FAT процессного оборудования',
@@ -1030,7 +1030,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-PRD-01' as EquipmentId | null,
     milestoneId: 'MS-PRD-FAT' as MilestoneId | null,
     issueId: 'ISS-PRD-04' as IssueId | null,
-    first: 'J' as SnapshotId,
+    first: '10' as SnapshotId,
   },
   'RISK-BLD-02': {
     title: 'Риск локальных протечек оболочки',
@@ -1038,7 +1038,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-BLD-03' as EquipmentId | null,
     milestoneId: 'MS-BLD-WT' as MilestoneId | null,
     issueId: 'ISS-BLD-02' as IssueId | null,
-    first: 'A' as SnapshotId,
+    first: '01' as SnapshotId,
   },
   'RISK-HVAC-04': {
     title: 'Риск остаточной разбалансировки HVAC',
@@ -1046,7 +1046,7 @@ export const RISK_CATALOG = {
     equipmentId: 'EQ-HVAC-01' as EquipmentId | null,
     milestoneId: 'MS-HVAC-BAL' as MilestoneId | null,
     issueId: 'ISS-HVAC-04' as IssueId | null,
-    first: 'O' as SnapshotId,
+    first: '15' as SnapshotId,
   },
 } as const;
 
@@ -1056,164 +1056,164 @@ export const DECISION_CATALOG = {
   'DEC-001': {
     note: 'Утвердить ускоренную логистику AHU и резервный монтажный слот',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-PS' as MilestoneId,
     ownerPersonId: 'PER-01',
     dueDate: '2027-05-15',
-    first: 'F' as SnapshotId,
+    first: '06' as SnapshotId,
   },
   'DEC-UTL-01': {
     note: 'Согласовать параллельный ввод PW и сжатый монтаж WFI',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-UTL-WFI' as MilestoneId,
     ownerPersonId: 'PER-09',
     dueDate: '2027-05-20',
-    first: 'F' as SnapshotId,
+    first: '06' as SnapshotId,
   },
   'DEC-CLN-01': {
     note: 'Усилить бригаду монтажа чистых зон (две смены)',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-CLN-RDY' as MilestoneId,
     ownerPersonId: 'PER-07',
     dueDate: '2027-04-30',
-    first: 'F' as SnapshotId,
+    first: '06' as SnapshotId,
   },
   'DEC-PKG-01': {
     note: 'Зафиксировать принятие текущего прогноза SAT с оговорками по сериализации',
     type: 'AcceptDateSlip' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-PKG-SAT' as MilestoneId,
     ownerPersonId: 'PER-11',
     dueDate: null,
-    first: 'G' as SnapshotId,
+    first: '07' as SnapshotId,
   },
   'DEC-QC-01': {
     note: 'Временно использовать контрактную лабораторию для HPLC',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-QC-RDY' as MilestoneId,
     ownerPersonId: 'PER-12',
     dueDate: '2027-06-01',
-    first: 'G' as SnapshotId,
+    first: '07' as SnapshotId,
   },
   'DEC-AUT-01': {
     note: 'Зафиксировать freeze точек интеграции BMS/EMS',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-AUT-BMS' as MilestoneId,
     ownerPersonId: 'PER-13',
     dueDate: '2027-06-15',
-    first: 'H' as SnapshotId,
+    first: '08' as SnapshotId,
   },
   'DEC-UTL-02': {
     note: 'Усилить пусконаладку охлаждённой воды и PW',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-UTL-RDY' as MilestoneId,
     ownerPersonId: 'PER-09',
     dueDate: '2027-07-01',
-    first: 'I' as SnapshotId,
+    first: '09' as SnapshotId,
   },
   'DEC-AUT-02': {
     note: 'Зафиксировать план интеграции BMS/EMS',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-AUT-INT' as MilestoneId,
     ownerPersonId: 'PER-13',
     dueDate: '2027-07-15',
-    first: 'I' as SnapshotId,
+    first: '09' as SnapshotId,
   },
   'DEC-PRD-01': {
     note: 'Приоритизировать монтаж фильтрации и CIP',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-PRD-INST' as MilestoneId,
     ownerPersonId: 'PER-10',
     dueDate: '2027-07-20',
-    first: 'J' as SnapshotId,
+    first: '10' as SnapshotId,
   },
   'DEC-PRD-02': {
     note: 'Принять текущий прогноз FAT с оговорками',
     type: 'AcceptDateSlip' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-PRD-FAT' as MilestoneId,
     ownerPersonId: 'PER-02',
     dueDate: null,
-    first: 'J' as SnapshotId,
+    first: '10' as SnapshotId,
   },
   'DEC-PKG-02': {
     note: 'Закрыть остаточный дефект сериализации вне критического пути',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-PKG-SER' as MilestoneId,
     ownerPersonId: 'PER-11',
     dueDate: '2027-08-05',
-    first: 'K' as SnapshotId,
+    first: '11' as SnapshotId,
   },
   'DEC-AUT-03': {
     note: 'Усилить покрытие EMS чистых зон',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-AUT-EMS' as MilestoneId,
     ownerPersonId: 'PER-13',
     dueDate: '2027-08-10',
-    first: 'L' as SnapshotId,
+    first: '12' as SnapshotId,
   },
   'DEC-COM-01': {
     note: 'Зафиксировать план закрытия демо-гейта IQ',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-COM-IQ' as MilestoneId,
     ownerPersonId: 'PER-05',
     dueDate: '2027-08-20',
-    first: 'M' as SnapshotId,
+    first: '13' as SnapshotId,
   },
   'DEC-COM-02': {
     note: 'Принять сжатый график демо-гейта OQ',
     type: 'AcceptDateSlip' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-COM-OQ' as MilestoneId,
     ownerPersonId: 'PER-02',
     dueDate: null,
-    first: 'N' as SnapshotId,
+    first: '14' as SnapshotId,
   },
   'DEC-HVAC-01': {
     note: 'Утвердить пост-состояние HVAC +7 / PS +7',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-PS' as MilestoneId,
     ownerPersonId: 'PER-01',
     dueDate: '2027-09-05',
-    first: 'O' as SnapshotId,
+    first: '15' as SnapshotId,
   },
   'DEC-COM-03': {
     note: 'Зафиксировать критерии демо-гейта PQ',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-COM-PQ' as MilestoneId,
     ownerPersonId: 'PER-05',
     dueDate: '2027-09-12',
-    first: 'P' as SnapshotId,
+    first: '16' as SnapshotId,
   },
   'DEC-RDY-01': {
     note: 'Зафиксировать честный статус на дату baseline PS',
     type: 'AcceptDateSlip' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-COM-RDY' as MilestoneId,
     ownerPersonId: 'PER-01',
     dueDate: '2027-09-15',
-    first: 'Q' as SnapshotId,
+    first: '17' as SnapshotId,
   },
   'DEC-GO-01': {
     note: 'Утвердить условный Go при закрытии контрольного перечня',
     type: 'PrioritizeRecovery' as DecisionType,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     milestoneId: 'MS-COM-GO' as MilestoneId,
     ownerPersonId: 'PER-01',
     dueDate: '2027-09-20',
-    first: 'R' as SnapshotId,
+    first: '18' as SnapshotId,
   },
 } as const;
 

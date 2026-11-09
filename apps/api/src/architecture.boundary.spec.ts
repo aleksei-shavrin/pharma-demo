@@ -65,7 +65,7 @@ describe('API layer boundaries (structural)', () => {
     expect(
       isForbiddenFixtureImport(
         'projects/evil.service.ts',
-        `import { SNAPSHOT_A } from '../data/fixtures/snapshot-a';\n`,
+        `import { SNAPSHOT_01 } from '../data/fixtures/snapshot-a';\n`,
       ),
     ).toBe(true);
     expect(
@@ -89,7 +89,7 @@ describe('API layer boundaries (structural)', () => {
     expect(
       isForbiddenFixtureImport(
         'data/mock-demo-data-source.ts',
-        `import { SNAPSHOT_A } from './fixtures/snapshot-a';\n`,
+        `import { SNAPSHOT_01 } from './fixtures/snapshot-a';\n`,
       ),
     ).toBe(false);
   });

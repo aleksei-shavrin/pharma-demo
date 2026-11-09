@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { DemoDataSource } from '../data/demo-data-source';
-import { SNAPSHOT_A, SNAPSHOT_B, SNAPSHOT_C } from '../data/fixtures';
+import { SNAPSHOT_01, SNAPSHOT_02, SNAPSHOT_03 } from '../data/fixtures';
 import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import { ProjectsService } from './projects.service';
@@ -30,7 +30,7 @@ class FakeDataSource extends DemoDataSource {
   }
 
   getDefaultSnapshot(): SnapshotFixture {
-    return this.snapshots.A!;
+    return this.snapshots['01']!;
   }
 
   getCosts(): never {
@@ -63,35 +63,35 @@ class FakeDataSource extends DemoDataSource {
 
 describe('ProjectsService', () => {
   const ds = new FakeDataSource({
-    A: SNAPSHOT_A,
-    B: SNAPSHOT_B,
-    C: SNAPSHOT_C,
+    '01': SNAPSHOT_01,
+    '02': SNAPSHOT_02,
+    '03': SNAPSHOT_03,
   });
 
   it('returns project stub for requested snapshot via DemoDataSource', () => {
     const service = new ProjectsService(ds);
-    expect(service.getProjectStub('PRJ-01', 'A').name).toBe(
+    expect(service.getProjectStub('PRT-01', '01').name).toBe(
       'Строительство фармацевтической фабрики (Greenfield)',
     );
-    expect(service.getProjectStub('PRJ-01', 'A')).toEqual(
+    expect(service.getProjectStub('PRT-01', '01')).toEqual(
       expect.objectContaining({
-        snapshotId: 'A',
-        forecastProductionStart: SNAPSHOT_A.project.forecastProductionStart,
-        scenarioAsOfDate: SNAPSHOT_A.scenarioAsOfDate,
+        snapshotId: '01',
+        forecastProductionStart: SNAPSHOT_01.project.forecastProductionStart,
+        scenarioAsOfDate: SNAPSHOT_01.scenarioAsOfDate,
       }),
     );
-    expect(service.getProjectStub('PRJ-01', 'B')).toEqual(
+    expect(service.getProjectStub('PRT-01', '02')).toEqual(
       expect.objectContaining({
-        snapshotId: 'B',
-        forecastProductionStart: SNAPSHOT_B.project.forecastProductionStart,
-        scenarioAsOfDate: SNAPSHOT_B.scenarioAsOfDate,
+        snapshotId: '02',
+        forecastProductionStart: SNAPSHOT_02.project.forecastProductionStart,
+        scenarioAsOfDate: SNAPSHOT_02.scenarioAsOfDate,
       }),
     );
   });
 
   it('throws NotFoundException for unknown project', () => {
     const service = new ProjectsService(ds);
-    expect(() => service.getProjectStub('NOPE', 'A')).toThrow(
+    expect(() => service.getProjectStub('NOPE', '01')).toThrow(
       NotFoundException,
     );
   });

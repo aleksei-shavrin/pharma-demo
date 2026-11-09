@@ -26,7 +26,7 @@ related:
 
 ## 1. Why current Demo feels thin
 
-Singular fixtures (1 EQ / 1 MS / 1 Issue / 1 Risk / 1 Decision / A–C) prove the causal spine but feel empty as a plant project. Enrichment = `small but believable` multi-workstream model.
+Singular fixtures (1 EQ / 1 MS / 1 Issue / 1 Risk / 1 Decision / 01–03) prove the causal spine but feel empty as a plant project. Enrichment = `small but believable` multi-workstream model.
 
 **Preserve:** Live Presentation HVAC spine; BR-006 honesty; BA-015 edges; read-only Schedule; FE via API; Nest mock only.
 
@@ -39,11 +39,11 @@ Singular fixtures (1 EQ / 1 MS / 1 Issue / 1 Risk / 1 Decision / A–C) prove th
 | Milestones | **14** | Intermediate gates + MS-PS |
 | Issues | **11** | Open / Mitigating / **Closed** |
 | Risks | **12** | Mix Green + Red |
-| Decisions | **6** | Across F/G/H; Decision ≠ recovery |
-| Snapshots | **8** (A…H) | Discrete fixtures |
+| Decisions | **6** | Across 06/07/08; Decision ≠ recovery |
+| Snapshots | **8** (01…08) | Discrete fixtures |
 
 **Calendar:** DOC-PROD-012 (**2027**); PS baseline **2027-09-15**.  
-**Spine IDs:** `PRJ-01`, `EQ-HVAC-01`, `MS-PS`, `ISS-001`, `RISK-001`, `DEC-001`.
+**Spine IDs:** `PRT-01` (portfolio container; historically `PRJ-01` in enrichment drafts — см. ADR-0006 superseding), `EQ-HVAC-01`, `MS-PS`, `ISS-001`, `RISK-001`, `DEC-001`. Реальные проекты — `AN-*`.
 
 ## 3. Workstreams
 
@@ -141,7 +141,7 @@ Post-state = **fixture-authored**. Decision alone changes nothing. BA-OQ-004/005
 
 ### BR-007 — state-based
 
-If RISK-001 is Red on HVAC→PS path, MS-PS SHALL NOT be Green (any snapshot). Letters C–H are examples/tests only.
+If RISK-001 is Red on HVAC→PS path, MS-PS SHALL NOT be Green (any snapshot). Verified across snapshots 03–08 in fixtures/tests.
 
 ## 7. Derived status rules (backend-owned)
 
@@ -163,14 +163,14 @@ No scoring system.
 
 | ID | Sense |
 |----|--------|
-| A | Baseline |
-| B | Local attention |
-| C | HVAC +21 (≈ current B) |
-| D | Cascade CLN / HVAC IQ |
-| E | Parallel pressure |
-| F | Decisions recorded (≈ current C+) |
-| G | Partial recovery; HVAC residual +14 |
-| H | Residual honesty |
+| 01 | Baseline |
+| 02 | Local attention |
+| 03 | HVAC +21 (≈ current B) |
+| 04 | Cascade CLN / HVAC IQ |
+| 05 | Parallel pressure |
+| 06 | Decisions recorded (≈ current C+) |
+| 07 | Partial recovery; HVAC residual +14 |
+| 08 | Residual honesty |
 
 ## 9. Architecture constraints
 

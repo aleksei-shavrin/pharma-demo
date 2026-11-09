@@ -99,15 +99,15 @@ function build(snapshotId: SnapshotId, drafts: Draft[]): NotificationFixture[] {
  * Not a generic snapshot diff. Soft entityRefs only — not BA-015 edges.
  */
 const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
-  A: build('A', []),
-  B: build('B', [
+  '01': build('01', []),
+  '02': build('02', [
     {
       n: 1,
       severity: 'attention',
       taxonomy: 'issue',
       titleRu: 'Локальное внимание по строительству и упаковке',
       bodyRu:
-        'На снимке B появились отклонения WS-BLD и WS-PKG без влияния на Production Start.',
+        'На снимке 02 появились отклонения WS-BLD и WS-PKG без влияния на Production Start.',
       refs: [
         { type: 'workstream', id: 'WS-BLD' },
         { type: 'workstream', id: 'WS-PKG' },
@@ -122,7 +122,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'milestone', id: 'MS-PS' }],
     },
   ]),
-  C: build('C', [
+  '03': build('03', [
     {
       n: 1,
       severity: 'critical',
@@ -176,7 +176,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-HVAC' }],
     },
   ]),
-  D: build('D', [
+  '04': build('04', [
     {
       n: 1,
       severity: 'critical',
@@ -206,7 +206,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'issue', id: 'ISS-HVAC-02' }],
     },
   ]),
-  E: build('E', [
+  '05': build('05', [
     {
       n: 1,
       severity: 'critical',
@@ -241,7 +241,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-UTL' }],
     },
   ]),
-  F: build('F', [
+  '06': build('06', [
     {
       n: 1,
       severity: 'critical',
@@ -282,7 +282,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'equipment', id: 'EQ-HVAC-01' }],
     },
   ]),
-  G: build('G', [
+  '07': build('07', [
     {
       n: 1,
       severity: 'critical',
@@ -321,7 +321,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-PKG' }],
     },
   ]),
-  H: build('H', [
+  '08': build('08', [
     {
       n: 1,
       severity: 'critical',
@@ -360,7 +360,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-AUT' }],
     },
   ]),
-  I: build('I', [
+  '09': build('09', [
     {
       n: 1,
       severity: 'critical',
@@ -387,7 +387,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-AUT' }],
     },
   ]),
-  J: build('J', [
+  '10': build('10', [
     {
       n: 1,
       severity: 'critical',
@@ -417,7 +417,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-PRD' }],
     },
   ]),
-  K: build('K', [
+  '11': build('11', [
     {
       n: 1,
       severity: 'critical',
@@ -448,7 +448,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'risk', id: 'RISK-001' }],
     },
   ]),
-  L: build('L', [
+  '12': build('12', [
     {
       n: 1,
       severity: 'critical',
@@ -476,7 +476,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-AUT' }],
     },
   ]),
-  M: build('M', [
+  '13': build('13', [
     {
       n: 1,
       severity: 'critical',
@@ -503,7 +503,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-HVAC' }],
     },
   ]),
-  N: build('N', [
+  '14': build('14', [
     {
       n: 1,
       severity: 'attention',
@@ -532,7 +532,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'risk', id: 'RISK-001' }],
     },
   ]),
-  O: build('O', [
+  '15': build('15', [
     {
       n: 1,
       severity: 'critical',
@@ -572,7 +572,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-HVAC' }],
     },
   ]),
-  P: build('P', [
+  '16': build('16', [
     {
       n: 1,
       severity: 'critical',
@@ -601,7 +601,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'workstream', id: 'WS-HVAC' }],
     },
   ]),
-  Q: build('Q', [
+  '17': build('17', [
     {
       n: 1,
       severity: 'critical',
@@ -630,7 +630,7 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       refs: [{ type: 'milestone', id: 'MS-PS' }],
     },
   ]),
-  R: build('R', [
+  '18': build('18', [
     {
       n: 1,
       severity: 'attention',
@@ -657,11 +657,11 @@ const BY_SNAPSHOT: Record<SnapshotId, NotificationFixture[]> = {
       severity: 'info',
       taxonomy: 'readiness',
       titleRu: 'Общий статус жёлтый до фактического старта',
-      bodyRu: 'Зелёный статус проекта ожидается только на снимке S.',
+      bodyRu: 'Зелёный статус проекта ожидается только на снимке 19.',
       refs: [{ type: 'milestone', id: 'MS-PS' }],
     },
   ]),
-  S: build('S', [
+  '19': build('19', [
     {
       n: 1,
       severity: 'info',

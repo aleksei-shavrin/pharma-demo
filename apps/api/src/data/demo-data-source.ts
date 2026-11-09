@@ -22,7 +22,7 @@ export abstract class DemoDataSource {
     projectId: string,
   ): ProjectFixture | null;
   abstract listSnapshotIds(): SnapshotId[];
-  /** I1 default narrative context (Snapshot A) until I2 snapshot switching. */
+  /** Default narrative context (Snapshot 01) for bootstrap. */
   abstract getDefaultSnapshot(): SnapshotFixture;
   /** Project / Workstream / selective Equipment cost overview (R2-M1). */
   abstract getCosts(snapshotId: SnapshotId): BuiltProjectCosts;

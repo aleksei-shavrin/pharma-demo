@@ -24,13 +24,13 @@ related:
 
 | Entity | Fields (core) | Relationships (direct) | API (examples) | Screens |
 |--------|---------------|------------------------|----------------|---------|
-| Project | id `PRJ-01`, name, baseline/forecast PS | owns MS/EQ/ISS/RISK/DEC | `GET /v1/projects/PRJ-01` | Dashboard header |
+| Portfolio container | id `PRT-01` (historical enrichment drafts: `PRJ-01`), name, baseline/forecast PS | owns MS/EQ/ISS/RISK/DEC | `GET /v1/projects/PRT-01` | Dashboard header |
 | Equipment | id, critical, baseline/forecast delivery, status | ← Issue, ← Risk | `/equipment`, `/equipment/:id` | Equipment, Schedule, Detail |
 | Milestone | id, baseline/forecast, rag | ← Risk, ← Issue, ← Decision (docs) | `/milestones`, `/milestones/:id` | Milestones, Schedule, Detail |
 | Issue | id, status Open\|Mitigating (API); Closed in Domain | → EQ, → Risk, → **Milestone** | `/issues-risks`, `/issues/:id` | Issues&Risks, Detail |
 | Risk | id, rag Green\|Red, links | → EQ, → MS, → Issue | `/issues-risks`, `/risks/:id` | Issues&Risks, Detail |
 | Decision | id, type, ownerRole, dueDate, note | docs: → Project, → Milestone?; **code: no Decision edges yet** | dashboard / Impact | Dashboard |
-| Snapshot | A\|B\|C discrete | owns fixture slice | `?snapshot=` | Switcher |
+| Snapshot | 01/02/03 discrete | owns fixture slice | `?snapshot=` | Switcher |
 | Schedule item | EQ delivery \| MS | read model | `/schedule` | Schedule |
 
 **DOC-BA-015 direct edges:**
@@ -55,9 +55,9 @@ related:
 | RISK-001 | Red→MS-PS |
 | MS-PS | Production start milestone |
 | DEC-001 | PrioritizeRecovery @ C (today); enriched @ F |
-| Snapshots A/B/C | Baseline / delay / decision |
+| Snapshots 01/02/03 | Baseline / delay / decision |
 
-Calendar (DOC-PROD-012): narrative **2027**; PS baseline **2027-09-15**; Δ HVAC **+21** @ B/C.
+Calendar (DOC-PROD-012): narrative **2027**; PS baseline **2027-09-15**; Δ HVAC **+21** @ 02/03.
 
 ## 3. Business rules in force
 
@@ -71,7 +71,7 @@ Calendar (DOC-PROD-012): narrative **2027**; PS baseline **2027-09-15**; Δ HVAC
 ## 4. What scales without Domain entity change
 
 - More EQ / MS / Issue / Risk / Decision instances  
-- Discrete snapshots D…H  
+- Discrete snapshots 04…08  
 - Dashboard aggregates / top-N (**read-model** ordering, not Domain fields)  
 - Register filters; Schedule grouping  
 - RU presentation maps  
@@ -95,7 +95,7 @@ Calendar (DOC-PROD-012): narrative **2027**; PS baseline **2027-09-15**; Δ HVAC
 | Dashboard one causal card | Strong teaching | Need top exceptions + workstreams |
 | Registers | Fine | Search/filter/counts |
 | Schedule timeline | Readable | Group/filter |
-| Snapshot A/B/C radios | OK | A–H needs compact disclosure (not 8 radios) |
+| Snapshot 01/02/03 radios | OK | 01–08 needs compact disclosure (not 8 radios) |
 
 ## 7–8. Keep list
 

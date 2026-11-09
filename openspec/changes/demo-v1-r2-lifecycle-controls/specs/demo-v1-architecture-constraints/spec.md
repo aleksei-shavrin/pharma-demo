@@ -1,22 +1,22 @@
 ## ADDED Requirements
 
-### Requirement: Snapshot id space A through S
+### Requirement: Snapshot id space 01 through 19
 
-Selectable Demo snapshots SHALL быть A–S (19). Invalid stored snapshot id SHALL fall back to A. Atomic switch, stale rejection, and sessionStorage committed snapshot semantics SHALL сохраняться.
+Selectable Demo snapshots SHALL быть 01–19 (19). Invalid stored snapshot id SHALL fall back to 01. Atomic switch, stale rejection, and sessionStorage committed snapshot semantics SHALL сохраняться.
 
 #### Scenario: Invalid session id falls back to A
 
 - **WHEN** sessionStorage содержит неизвестный snapshot id
-- **THEN** bootstrap загружает Snapshot A
+- **THEN** bootstrap загружает Snapshot 01
 
 ### Requirement: Phase-grouped snapshot selector
 
-UI Snapshot selector SHALL поддерживать phase-grouped scrollable accessible listbox for A–S without embedding a Gantt/timeline in the AppBar. Portal behavior SHALL avoid shell clipping.
+UI Snapshot selector SHALL поддерживать phase-grouped scrollable accessible listbox for 01–19 without embedding a Gantt/timeline in the AppBar. Portal behavior SHALL avoid shell clipping.
 
-#### Scenario: Keyboard reaches snapshot S
+#### Scenario: Keyboard reaches snapshot 19
 
 - **WHEN** listbox открыт и пользователь нажимает End
-- **THEN** фокус/выделение достигает Snapshot S
+- **THEN** фокус/выделение достигает Snapshot 19
 
 ### Requirement: Forbidden modeling in R2
 

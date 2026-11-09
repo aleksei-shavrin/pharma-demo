@@ -31,7 +31,7 @@ related:
 
 **Primary navigation (7):**
 
-1. Обзор
+1. Дашборд (home `/`; не путать с вкладкой «Обзор» на entity-detail)
 2. Календарный план
 3. Оборудование
 4. Проблемы и риски
@@ -47,22 +47,24 @@ AppBar: Notification bell (not a nav section).
 
 > **certainty:** fact
 >
-> **R2-U1 APPROVED / CLOSED** (human visual 2026-11-02: O/S LIGHT, S DARK, O timeline zoom). Accepted: executive IA; 50/50 lower rows; workstream readiness; stable 12 A–S milestones + selector; late collision policy; consolidated PS cluster (`○───●` + leader + single annotation; O active delay vs S historical +N); light/dark parity. Domain/API/BR-004 unchanged. R2-I1 / R2-A1 not started.
+> **R2-U1 APPROVED / CLOSED** (human visual **2026-11-02**): executive IA; 50/50 lower rows; workstream readiness; **тогда** stable curated **12** milestones + selector; late collision policy; consolidated PS cluster (`○───●` + leader + single annotation); light/dark parity. Domain/API/BR-004 unchanged. Это **human acceptance того presentation**, не запрет последующих UX-уточнений.
+>
+> **Superseded presentation (current, 2026-11):** карточка вех — **единственный Apache ECharts**; default universe **~189** + фильтр «обзор ключевых (12)»; без toggle 1/2/3 / vis / custom strip. Актуальная спецификация композиции — [demo-v1-dashboard.md](./demo-v1-dashboard.md). Domain/BR не менялись этим supersede.
 
 Hierarchy (desktop):
 
 1. **Executive overview row** (~55/45):
    - LEFT: Project Status + Production Start + Cost — inner zones **stretch to full card height** (dividers full height)
    - RIGHT: Workstream readiness — dense clickable rows; **Yellow/Red** persistent semantic tint; **Green** = neutral/transparent row + green status indicator (no persistent ok fill); separate hover/focus; Red → Yellow → Green + catalog `sortOrder`; optional internal scroll → `/workstreams/:id`
-2. **Контрольные вехи проекта** — **stable curated executive map** (exactly **12** IDs, identical A–S). Snapshot switching changes state/RAG/chrome accents, **not** set membership. Always includes MS-PS. **RU-first** short presentation labels. Horizon `01.02.2027–30.09.2027`. **Production Start cluster (R8/R9):** `○───●` + leader attached to current (`data-ps-connector="baseline-current"`, `data-ps-leader-attached="current"`); true-date markers; one annotation («Запуск производства» / План → прогноз|факт / +N or «По плану»). O: active delay tone on +N. S: historical muted +N (not danger-active). Coincident: one point, no zero-length connector, no +0. Not independent TimelineMarker PS labels. Snapshot chrome above; MS-COM-GO («Решение о запуске») ordinary above-axis milestone. No horizontal timeline scroll.
+2. **Вехи портфеля (ECharts)** — runtime default показывает **полный universe (~189)**; фильтр объёма «обзор ключевых (12)» сужает к curated executive set (те же 12 ID на 01–19). Snapshot switching меняет state/RAG/chrome, не членство curated-набора. Always includes MS-PS. **RU-first** short labels + enterable tooltip (полный title, status pill, outline «Перейти» → schedule focus). Red pulse с уважением `prefers-reduced-motion`. Horizon и PS endpoints/captions — см. актуальный [demo-v1-dashboard.md](./demo-v1-dashboard.md). Исторический абзац R2-U1 про vis/`○───●` cluster ниже/в approval note — **не** единственный current renderer.
 3. **Key Exceptions | Management Decisions** — direct siblings in one grid; mobile `grid-cols-1`; desktop `lg:grid-cols-2` (equal 50/50); equal outer height; both lists bounded (~3 items) with internal scroll; headers fixed. Tailwind class literals MUST live in scanned component source (not only `src/lib` constants).
-4. **Management Attention | Snapshot Changes** — same two-column grid contract. Attention = compact **2×2 signal matrix** (quiet → single empty message). Changes = semantic tiles. Narrow viewports stack. Director-facing narrative RU-only (tech terms HVAC/WFI/IQ/OQ/PQ/BMS/EMS/QC/EAC/VAC/BAC allowed)
+4. **Management Attention | Snapshot 03hanges** — same two-column grid contract. Attention = compact **2×2 signal matrix** (quiet → single empty message). Changes = semantic tiles. Narrow viewports stack. Director-facing narrative RU-only (tech terms HVAC/WFI/IQ/OQ/PQ/BMS/EMS/QC/EAC/VAC/BAC allowed)
 
 **Stable executive set (normative, 2026-11-06):** MS-BLD-EXC, MS-CLN-PANEL, MS-UTL-PWR, MS-BLD-ENCL, MS-CLN-RDY, MS-HVAC-IQ, MS-UTL-WFI, MS-PRD-INST, MS-PKG-SAT, MS-COM-OQ, MS-COM-GO, MS-PS.
 
 > **certainty:** assumption
 >
-> Состав обзора заменён для показа панелей чистых помещений и энергоснабжения. `MS-BLD-FND` и `MS-BLD-STR` сняты со шкалы и остаются в реестре вех. `MS-PS`, сюжет HVAC (`MS-HVAC-IQ`) и прежний гейт готовности чистых помещений (`MS-CLN-RDY`) сохранены. Абзац приёмки R2-U1 выше описывает прежний набор из 12. Правило членства то же: один набор на все снимки A–S, меняются RAG и даты прогноза.
+> Состав обзора заменён для показа панелей чистых помещений и энергоснабжения. `MS-BLD-FND` и `MS-BLD-STR` сняты со шкалы и остаются в реестре вех. `MS-PS`, сюжет HVAC (`MS-HVAC-IQ`) и прежний гейт готовности чистых помещений (`MS-CLN-RDY`) сохранены. Абзац приёмки R2-U1 выше описывает прежний набор из 12. Правило членства то же: один набор на все снимки 01–19, меняются RAG и даты прогноза.
 
 **Not** a KPI wall or finance dashboard. Notifications do not duplicate Dashboard content. Selector phase groups remain navigation-only (not a second Dashboard timeline).
 
@@ -70,14 +72,14 @@ Hierarchy (desktop):
 
 | Snap | Expectation |
 |------|-------------|
-| A | Calm Green; EAC=BAC VAC=0; empty exceptions |
-| C | Red HVAC/PS +21; cost shock visible |
-| H | Residual +14; AUT rising; cost residual |
-| M/N | Commissioning drama; decisions; PS still +14 until O |
-| P | Red; final readiness / RISK-001 still Red |
-| Q | Yellow; baseline date honesty without start |
-| R | Yellow; Go/No-Go |
-| S | Production Start achieved; Green; final cost |
+| 01 | Calm Green; EAC=BAC VAC=0; empty exceptions |
+| 03 | Red HVAC/PS +21; cost shock visible |
+| 08 | Residual +14; AUT rising; cost residual |
+| 13/14 | Commissioning drama; decisions; PS still +14 until 15 |
+| 16 | Red; final readiness / RISK-001 still Red |
+| 17 | Yellow; baseline date honesty without start |
+| 18 | Yellow; Go/No-Go |
+| 19 | Production Start achieved; Green; final cost |
 
 ## 3. Workstream page `/workstreams/:id`
 
@@ -106,7 +108,7 @@ Project Controls view:
 - Workstream forecast table
 - Top variances
 - Risk cost exposure summary
-- Optional A–S spark/table of EAC evolution (fixture-authored series)
+- Optional 01–19 spark/table of EAC evolution (fixture-authored series)
 
 No GL, invoices, or contractor ledgers.
 
@@ -129,14 +131,14 @@ No GL, invoices, or contractor ledgers.
 - Taxonomy: critical_risk, issue, milestone, cost, decision, recovery, readiness
 - Payload: id, snapshotId, severity, taxonomy, titleRu, bodyRu?, href?, entityRefs?
 
-## 7. Snapshot selector A–S
+## 7. Snapshot selector 01–19
 
 **Implemented in R2-U1** — phase-grouped scrollable listbox (portal preserved):
 
 - Phases (RU): Ранний этап · Срыв и давление · Управленческие меры · Монтаж · Пусконаладка · Готовность и старт
 - Sticky phase headers; max-height ~60vh; keyboard (arrows, Home/End, Enter/Space, Escape, Tab)
 - Trigger: id + asOf + phase hint
-- Atomic switch + stale protection; sessionStorage `ppc.demo.snapshot` persists A–S
+- Atomic switch + stale protection; sessionStorage `ppc.demo.snapshot` persists 01–19
 - Timeline horizon: 01.02.2027–30.09.2027
 - **No** second Gantt/timeline inside AppBar
 
@@ -155,7 +157,7 @@ Director-facing RU prose; retain technical acronyms (HVAC, WFI, BMS/EMS, IQ/OQ/P
 - Nav / breadcrumb / page / Dashboard block title: **«Решения»** (route `/decisions` unchanged).
 - Record honesty: summary «Записано»; copy «Данные об исполнении не указаны…» (не Demo/v1). Due calendar separate via StatusPill-style badge in column «Срок»: «Срок прошёл» / «Срок впереди» / «Сегодня» (`dueDate == asOf`) / «Срок не задан». Passed ≠ failed/неисполнение. Color is secondary to text.
 - Milestone cell: human `milestoneName` from register DTO (snapshot milestones); technical id muted under title. AN context may show catalog name when API provides it.
-- Portfolio column for `PRJ-01` → dashboard `/`; program/AN only via milestone membership (no MS-PS fake project).
+- Portfolio column for `PRT-01` → dashboard `/`; program/AN only via milestone membership (no MS-PS fake project).
 - `RegisterToolbar` search compact (~240px); placeholder «Поиск решений». ID column `whitespace-nowrap` + min-width.
 - Lower Dashboard pair: shared `max-h-[28rem]` + list flex-1 / min-h-0; scroll when overflowing; no empty 14.25rem pocket.
 - Decision panel: portfolio forecast honesty once in header; no gray bottom callout; no ×N «РЕШЕНИЕ ЗАПИСАНО» spam.

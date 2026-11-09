@@ -18,7 +18,7 @@ related:
 
 > **certainty:** hypothesis
 >
-> Target catalogues for implementation (R2-L1+). Counts are **story floors**, not quotas. A–H entity IDs from DOC-PROD-021 remain; R2 **adds** entities and I–S overlays.
+> Target catalogues for implementation (R2-L1+). Counts are **story floors**, not quotas. 01–08 entity IDs from DOC-PROD-021 remain; R2 **adds** entities and 09–19 overlays.
 
 ## 1. Target scale
 
@@ -31,7 +31,7 @@ related:
 | Risks | 12 | **~30** | Union |
 | Decisions | 6 | **~18** | Appear from F onward + late |
 | People | 0 (SH-* only) | **~15** | `PER-*` |
-| Snapshots | 8 (A–H) | **19 (A–S)** | |
+| Snapshots | 8 (01–08) | **19 (01–19)** | |
 | Notifications | 0 | story-driven | Per hot snapshot |
 
 ## 2. Workstream catalogue (8)
@@ -43,7 +43,7 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Purpose:** shell enclosure, risers, handover to clean fit-out.
 - **EQ (~4):** structure/enclosure packages, clean riser kits (extend beyond EQ-BLD-02).
 - **MS (~4):** enclosure closed; risers ready; BLD handover; weather-tight.
-- **Story:** B Yellow early → Closed by C/D; quiet later.
+- **Story:** 02 Yellow early → Closed by 03/04; quiet later.
 - **Cost share:** see DOC-PROD-026 CBS.
 - **People:** BLD lead + shared PM oversight.
 
@@ -52,7 +52,7 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Purpose:** cleanroom envelope ready for HVAC.
 - **EQ (~6):** panels, airlocks, pass-throughs.
 - **MS (~5):** panel complete; HVAC-ready; clean balance; CLN ready.
-- **Story:** D cascade → F decisions → G residual → closed by Installation.
+- **Story:** 04 cascade → 06 decisions → 07 residual → closed by Installation.
 - **People:** CLN lead.
 
 ### WS-HVAC — HVAC
@@ -60,7 +60,7 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Purpose:** AHU critical path (BR-004) + secondary HVAC.
 - **EQ (~7):** EQ-HVAC-01 spine + AHU-2, duct modules, controls skids.
 - **MS (~5):** AHU delivered/installed; HVAC demo IQ gate; balance.
-- **Story:** C–O spine; must not remain sole drama after L.
+- **Story:** 03–15 spine; must not remain sole drama after 12.
 - **People:** HVAC lead; Director/PM on DEC-001.
 
 ### WS-UTL — Инженерные системы
@@ -68,7 +68,7 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Purpose:** PW/WFI/gases/power supporting process.
 - **EQ (~8):** WFI, PW, compressed air, electrical.
 - **MS (~6):** PW available; WFI available; black utilities; UTL ready.
-- **Story:** E pressure → F/G residual → I recovery.
+- **Story:** 05 pressure → 06/07 residual → 09 recovery.
 - **People:** UTL lead; Procurement on long-lead.
 
 ### WS-PRD — Технологическое оборудование
@@ -76,7 +76,7 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Purpose:** process train delivery/install readiness.
 - **EQ (~8):** mixers, vessels, process skids (fictional).
 - **MS (~5):** delivered; installed; process ready-for-commission.
-- **Story:** J install wave peak; settles before O–S.
+- **Story:** 10 install wave peak; settles before 15–19.
 - **People:** PRD lead.
 
 ### WS-PKG — Упаковка
@@ -84,7 +84,7 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Purpose:** packaging line FAT/SAT + serialization.
 - **EQ (~7):** line, serialization, secondary modules.
 - **MS (~5):** FAT; SAT; serialization ready.
-- **Story:** B–G residual Yellow; K residual closed; quiet close-out.
+- **Story:** 02–07 residual Yellow; 11 residual closed; quiet close-out.
 - **People:** PKG lead.
 
 ### WS-QC — QC / лаборатория
@@ -92,7 +92,7 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Purpose:** lab readiness, instruments.
 - **EQ (~6):** HPLC and lab support.
 - **MS (~4):** lab ready; methods ready (demo wording only).
-- **Story:** E–G; late P residual possible.
+- **Story:** 05–07; late 16 residual possible.
 - **People:** QC lead + QA project.
 
 ### WS-AUT — Автоматизация BMS/EMS
@@ -100,7 +100,7 @@ Each WS: `id`, RU name, `leadPersonId`, `sortOrder`, backend RAG, aggregates.
 - **Purpose:** BMS/EMS + plant demo COM gates.
 - **EQ (~6):** BMS, EMS, integration cabinets.
 - **MS (~6):** BMS live; EMS live; COM IQ/OQ/PQ (демо-гейты).
-- **Story:** H–N commissioning drama; critical for M/L.
+- **Story:** 08–14 commissioning drama; critical for 13/12.
 - **People:** AUT lead; Commissioning lead.
 
 ## 3. Milestone catalogue strategy (~40 → 43)
@@ -119,7 +119,7 @@ Catalogue count after U1-R2: **43** milestones (still in ~40 class). A01–A05 a
 
 **Classes:**
 
-- **Executive:** fixture-authored **stable curated set of 12** across A–S (R2-U1-R4, состав пересмотрен 2026-11-06), always includes **MS-PS**. Membership does **not** change by snapshot; state/RAG/chrome do. Set: EXC→CLN-PANEL→UTL-PWR→ENCL→CLN-RDY→HVAC-IQ→WFI→PRD-INST→PKG-SAT→COM-OQ→COM-GO→MS-PS. `MS-BLD-FND` и `MS-BLD-STR` остаются в каталоге и реестре, не в обзоре. Baseline `MS-CLN-PANEL` = 2027-02-16; `MS-UTL-PWR` = 2027-02-18. На A–B delta 0 и Green. На C–S у панелей +21 / Red (прогноз 2027-03-09), у энергоснабжения +56 / Red (прогноз 2027-04-15): D продолжает C теми же числами, без отката к baseline. Подробности: [DOC-DEL-A01-A05](../07-delivery/reports/2026-11-06-a01-a05-analyst-mapping.md).
+- **Executive:** fixture-authored **stable curated set of 12** across 01–19 (R2-U1-R4, состав пересмотрен 2026-11-06), always includes **MS-PS**. Membership does **not** change by snapshot; state/RAG/chrome do. Set: EXC→CLN-PANEL→UTL-PWR→ENCL→CLN-RDY→HVAC-IQ→WFI→PRD-INST→PKG-SAT→COM-OQ→COM-GO→MS-PS. `MS-BLD-FND` и `MS-BLD-STR` остаются в каталоге и реестре, не в обзоре. Baseline `MS-CLN-PANEL` = 2027-02-16; `MS-UTL-PWR` = 2027-02-18. На 01–02 delta 0 и Green. На 03–19 у панелей +21 / Red (прогноз 2027-03-09), у энергоснабжения +56 / Red (прогноз 2027-04-15): 04 продолжает 03 теми же числами, без отката к baseline. Подробности: [DOC-DEL-A01-A05](../07-delivery/reports/2026-11-06-a01-a05-analyst-mapping.md).
 - **Control:** full Schedule + Workstream page + registers.
 
 **Forbidden:** Equipment → Milestone edge (BA-015).
@@ -170,8 +170,8 @@ Exact `fullNameRu` strings authored in R2-P1 (`apps/api/src/data/fixtures/person
 
 ## 6. Notifications
 
-Story-driven catalogue keyed by `snapshotId`; not 1:1 with every field. Hot snaps (C, G, L, O, Q, S) get richer sets.
+Story-driven catalogue keyed by `snapshotId`; not 1:1 with every field. Hot snaps (03, 07, 12, 15, 17, 19) get richer sets.
 
 ## 7. Integrity expectations
 
-Unique IDs; refs resolve; A–S chronology; BR-004/007; BA-015; cost invariants (DOC-PROD-026); Person refs; notification soft refs; executive milestone ⊆ catalogue.
+Unique IDs; refs resolve; 01–19 chronology; BR-004/007; BA-015; cost invariants (DOC-PROD-026); Person refs; notification soft refs; executive milestone ⊆ catalogue.

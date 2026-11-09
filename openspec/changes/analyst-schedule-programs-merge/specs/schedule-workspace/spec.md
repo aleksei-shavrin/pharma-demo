@@ -18,17 +18,17 @@
 
 #### Scenario: Fresh visit shows full height need
 
-- **WHEN** пользователь открывает календарный план на снимке C без сохранённого collapse
+- **WHEN** пользователь открывает календарный план на снимке 03 без сохранённого collapse
 - **THEN** видимы все строки payload (с учётом фильтров)
 - **AND** счётчик не выглядит как пагинация: «Найдено N из T» и при collapse «Свёрнуто M»
 
-### Requirement: Anchor C for source statuses
+### Requirement: Anchor 03 for source statuses
 
-Source status tokens SHALL отображаться на снимке C как DEMO_ASSUMPTION. Даты и проценты SHALL NOT выдаваться за факты аналитика. Anchor asOf C SHALL быть `2027-03-01`. Система SHALL NOT назначать даты/проценты через hash/rank/random от WBS.
+Source status tokens SHALL отображаться на снимке 03 как DEMO_ASSUMPTION. Даты и проценты SHALL NOT выдаваться за факты аналитика. Anchor asOf 03 SHALL быть `2027-03-01`. Система SHALL NOT назначать даты/проценты через hash/rank/random от WBS.
 
-#### Scenario: Completed requires authored actualEnd on C
+#### Scenario: Completed requires authored actualEnd on 03
 
-- **WHEN** строка аналитика имеет ✅ и снимок C
+- **WHEN** строка аналитика имеет ✅ и снимок 03
 - **THEN** display status Completed
 - **AND** actualEnd ≤ scenarioAsOfDate C
 - **AND** даты помечены как supplementary assumption, не source fact

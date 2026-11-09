@@ -3,12 +3,14 @@ import { describe, expect, it } from 'vitest';
 import {
   presentDecisionNote,
   presentDecisionType,
+  presentDecisionTypeCompact,
   presentIssueTitle,
   presentMilestoneName,
   presentOwnerRole,
   presentWorkstream,
   projectStatusLabel,
   projectStatusMeaning,
+  ragLabel,
   scheduleKindLabel,
   workStatusLabel,
 } from './ui-labels';
@@ -42,7 +44,37 @@ describe('Demo v1 presentation mapping', () => {
     expect(presentWorkstream('WS-HVAC')).toBe('HVAC');
     expect(presentWorkstream('WS-PKG')).toBe('Упаковка');
     expect(presentOwnerRole('SH-DIR-01')).toBe('Директор проекта');
-    expect(projectStatusLabel('Yellow')).toBe('Жёлтый');
+    expect(projectStatusLabel('Green')).toBe('В норме');
+    expect(projectStatusLabel('Yellow')).toBe('Требует внимания');
+    expect(projectStatusLabel('Red')).toBe('Критично');
+    expect(presentDecisionTypeCompact('PrioritizeRecovery')).toBe(
+      'Приоритизация сроков',
+    );
+    expect(presentDecisionTypeCompact('AcceptDateSlip')).toBe(
+      'Принять сдвиг даты',
+    );
+  });
+
+  it('projectStatusLabel unknown/null is Нет оценки (never false Critical)', () => {
+    expect(projectStatusLabel(null)).toBe('Нет оценки');
+    expect(projectStatusLabel(undefined)).toBe('Нет оценки');
+    expect(projectStatusLabel('')).toBe('Нет оценки');
+    expect(projectStatusLabel('Purple')).toBe('Нет оценки');
+    expect(projectStatusLabel('unknown')).toBe('Нет оценки');
+  });
+
+  it('ragLabel is assessment meaning; null/unknown/Amber handled', () => {
+    expect(ragLabel('risk', 'Green')).toBe('Риск в норме');
+    expect(ragLabel('risk', 'Red')).toBe('Риск критичен');
+    expect(ragLabel('milestone', 'Green')).toBe('Веха в норме');
+    expect(ragLabel('milestone', 'Red')).toBe('Веха критична');
+    expect(ragLabel('risk', 'Yellow')).toBe('Риск требует внимания');
+    expect(ragLabel('risk', 'Amber')).toBe('Риск требует внимания');
+    expect(ragLabel('milestone', 'Amber')).toBe('Веха требует внимания');
+    expect(ragLabel('risk', null)).toBe('Нет оценки');
+    expect(ragLabel('milestone', undefined)).toBe('Нет оценки');
+    expect(ragLabel('risk', 'Purple')).toBe('Нет оценки');
+    expect(ragLabel('milestone', '')).toBe('Нет оценки');
   });
 
   it('falls back to API string for unknown ids (no silent invent)', () => {
@@ -57,6 +89,8 @@ describe('Demo v1 presentation mapping', () => {
     expect(projectStatusMeaning('Yellow', 0)).toMatch(/без сдвига/);
     expect(projectStatusMeaning('Red', 21)).toMatch(/Критический прогноз/);
     expect(projectStatusMeaning('Red', 14)).toMatch(/Остаточный критический/);
+    expect(projectStatusMeaning(null, 0)).toMatch(/отсутствует/);
+    expect(projectStatusMeaning('weird', 5)).toMatch(/отсутствует/);
   });
 });
 

@@ -30,9 +30,9 @@ Schedule API SHALL допускать items с `kind: 'work'` наряду с `e
 - **AND** в режиме «Базовый план / факт» закрытый факт MAY заменить только нижнюю полосу по Comparison uses at most two bars
 - **AND** открытый факт не рисует отдельную фактическую полосу
 
-#### Scenario: Snapshot C allows baseline with scheduling links on WK-01
+#### Scenario: Snapshot 03 allows baseline with scheduling links on WK-01
 
-- **WHEN** читается подвыборка снимка C для `WK-01`
+- **WHEN** читается подвыборка снимка 03 для `WK-01`
 - **THEN** у работы заданы оба конца базы, совпадающие с прогнозом
 - **AND** существуют scheduling-связи SS и FS с участием `WK-01`
 - **AND** крепление стрелок к нижней отображаемой полосе следует правилу Link edges follow the displayed lower bar
@@ -82,24 +82,24 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 ### Requirement: Schedule tree rows keep stable identity
 
-На снимке C Schedule SHALL содержать одну строку `project_group` с id `AN-08`, одну строку `stage_group` с id `8.2` и parentKey `project_group:AN-08`, работы `8.2.1` и `8.2.2` с parentKey `stage_group:8.2`. Веха `MS-CLN-PANEL` SHALL оставаться одной строкой с прежним id. На снимке C её parentKey SHALL быть `stage_group:8.2`, а wbs SHALL быть `8.2.3`. Система SHALL NOT создавать вторую строку с id `MS-CLN-PANEL`.
+На снимке 03 Schedule SHALL содержать одну строку `project_group` с id `AN-08`, одну строку `stage_group` с id `8.2` и parentKey `project_group:AN-08`, работы `8.2.1` и `8.2.2` с parentKey `stage_group:8.2`. Веха `MS-CLN-PANEL` SHALL оставаться одной строкой с прежним id. На снимке 03 её parentKey SHALL быть `stage_group:8.2`, а wbs SHALL быть `8.2.3`. Система SHALL NOT создавать вторую строку с id `MS-CLN-PANEL`.
 
-#### Scenario: Snapshot C nests the existing panel milestone
+#### Scenario: Snapshot 03 nests the existing panel milestone
 
-- **WHEN** клиент запрашивает schedule `PRJ-01` на снимке C
+- **WHEN** клиент запрашивает schedule `PRT-01` на снимке 03
 - **THEN** среди items ровно одна запись с id `MS-CLN-PANEL` и kind `milestone`
 - **AND** её parentKey равен `stage_group:8.2`
 - **AND** в ответе есть группы `AN-08` и `8.2` и работы `8.2.1`, `8.2.2`
 - **AND** работы `WK-01`…`WK-05` присутствуют с parentKey `null`
 
-#### Scenario: Snapshots A–S share topology with overlay state
+#### Scenario: Snapshots 01–19 share topology with overlay state
 
-- **WHEN** клиент запрашивает schedule на любом populated snapshot A–S
+- **WHEN** клиент запрашивает schedule на любом populated snapshot 01–19
 - **THEN** items содержат полные `project_group`/`stage_group` для всех workstream
 - **AND** есть работы `8.2.1` и `8.2.2` с непустым `wbs`
 - **AND** у `MS-CLN-PANEL` parentKey указывает на stage
 - **AND** links содержат scheduling и cross_project_predecessor по всем workstream (не только CLN)
-- **AND** progress/status/actuals MAY отличаться между снимками (authored overlays), без копирования одного frozen C state
+- **AND** progress/status/actuals MAY отличаться между снимками (authored overlays), без копирования одного frozen 03 state
 
 ### Requirement: Progress zero is distinct from unknown progress
 
@@ -182,7 +182,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 #### Scenario: Actual start on the scenario date is accepted
 
-- **WHEN** снимок C имеет `scenarioAsOfDate` `2027-03-01` и `actualStart` равен `2027-03-01`
+- **WHEN** снимок 03 имеет `scenarioAsOfDate` `2027-03-01` и `actualStart` равен `2027-03-01`
 - **THEN** сервис принимает это начало
 
 #### Scenario: Actual date after the scenario date is rejected
@@ -233,7 +233,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 #### Scenario: Bounded DOM at mid and end scroll
 
-- **WHEN** snapshot C (~688 rows) в split и пользователь прокручивает mid/end
+- **WHEN** snapshot 03 (~688 rows) в split и пользователь прокручивает mid/end
 - **THEN** число React row DOM и Gantt task row DOM ≤ viewport/rowPitch + разумный overscan
 - **AND** логический счётчик строк остаётся полным
 - **AND** last row reachable с обеих pane
@@ -255,7 +255,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 В режиме факта система SHALL NOT рисовать полосу и SHALL NOT рисовать отметку для одного `actualStart`. Начало SHALL быть в таблице. Пустой конец SHALL отображаться как «—». Нижняя полоса SHALL оставаться прогнозом.
 
-#### Scenario: Snapshot C work 8.2.2 keeps the forecast bar
+#### Scenario: Snapshot 03 work 8.2.2 keeps the forecast bar
 
 - **WHEN** режим факта показывает `8.2.2` с `actualStart` `2027-03-01` и пустым `actualEnd`
 - **THEN** на диаграмме остаются прогнозная и базовая полосы
@@ -287,13 +287,13 @@ Schedule API SHALL включать `links`. Для связей с явным `
 - **THEN** прогнозные колонки содержат `2027-02-25` и `2027-03-02`
 - **AND** обе фактические колонки содержат «—»
 
-### Requirement: Snapshot C stores one open actual
+### Requirement: Snapshot 03 stores one open actual
 
-На снимке C работа `8.2.2` SHALL иметь `actualStart` `2027-03-01` и `actualEnd` `null`. Работы `8.2.1` и `WK-02` SHALL иметь оба фактических поля пустыми. Прогноз, база, статус, прогресс и связи этих строк SHALL не меняться. Снимки A, D и F SHALL NOT получать работы `8.2.1` и `8.2.2`.
+На снимке 03 работа `8.2.2` SHALL иметь `actualStart` `2027-03-01` и `actualEnd` `null`. Работы `8.2.1` и `WK-02` SHALL иметь оба фактических поля пустыми. Прогноз, база, статус, прогресс и связи этих строк SHALL не меняться. Снимки 01, 04 и 06 SHALL NOT получать работы `8.2.1` и `8.2.2`.
 
 #### Scenario: Open actual does not rewrite the forecast
 
-- **WHEN** клиент запрашивает schedule снимка C
+- **WHEN** клиент запрашивает schedule снимка 03
 - **THEN** у `8.2.2` фактическое начало `2027-03-01`, конец пуст, прогноз `2027-03-04`…`2027-03-18`, база `2027-02-26`…`2027-03-08`
 
 #### Scenario: Two works stay without fact
@@ -301,19 +301,19 @@ Schedule API SHALL включать `links`. Для связей с явным `
 - **WHEN** читается тот же ответ
 - **THEN** у `8.2.1` и `WK-02` оба фактических поля пусты
 
-### Requirement: Snapshot C stores a closed fact on WK-01
+### Requirement: Snapshot 03 stores a closed fact on WK-01
 
-На снимке C работа `WK-01` SHALL хранить прогноз `2027-02-20`…`2027-02-24`, базу `2027-02-20`…`2027-02-24` и факт `2027-02-18`…`2027-02-23`. Это синтетические демоданные. В режиме прогноза нижняя полоса SHALL оставаться прогнозом, а верхняя база SHALL рисоваться общим правилом обоих концов. Система SHALL NOT иметь отдельного правила для id `WK-01`.
+На снимке 03 работа `WK-01` SHALL хранить прогноз `2027-02-20`…`2027-02-24`, базу `2027-02-20`…`2027-02-24` и факт `2027-02-18`…`2027-02-23`. Это синтетические демоданные. В режиме прогноза нижняя полоса SHALL оставаться прогнозом, а верхняя база SHALL рисоваться общим правилом обоих концов. Система SHALL NOT иметь отдельного правила для id `WK-01`.
 
 #### Scenario: Default mode shows a coincident baseline bar
 
-- **WHEN** снимок C открыт в режиме прогноза
+- **WHEN** снимок 03 открыт в режиме прогноза
 - **THEN** у `WK-01` нижняя полоса равна `2027-02-20`…`2027-02-24`
 - **AND** верхняя полоса равна тому же интервалу
 
 #### Scenario: Fact mode shows baseline over the closed actual
 
-- **WHEN** снимок C открыт в режиме факта
+- **WHEN** снимок 03 открыт в режиме факта
 - **THEN** нижняя полоса `WK-01` равна `2027-02-18`…`2027-02-23`
 - **AND** верхняя полоса равна `2027-02-20`…`2027-02-24`
 - **AND** подпись строки равна «Факт»
@@ -324,7 +324,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 #### Scenario: FS and SS leave the closed actual bar
 
-- **WHEN** режим факта показывает снимок C, где у `WK-01` закрытый факт, а у `WK-02` и `WK-03` факта нет
+- **WHEN** режим факта показывает снимок 03, где у `WK-01` закрытый факт, а у `WK-02` и `WK-03` факта нет
 - **THEN** SS встречается с `WK-01` в начале `2027-02-18` и с `WK-02` в начале прогноза
 - **AND** FS встречается с `WK-01` в конце `2027-02-23` и с `WK-03` в начале прогноза
 
@@ -336,7 +336,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 #### Scenario: Switching mode moves only WK-01 edges
 
-- **WHEN** пользователь переключает снимок C с режима прогноза на режим факта
+- **WHEN** пользователь переключает снимок 03 с режима прогноза на режим факта
 - **THEN** края SS и FS на стороне `WK-01` переходят с прогноза `2027-02-20` и `2027-02-24` на факт `2027-02-18` и `2027-02-23`
 - **AND** края FF и SF не меняются
 - **AND** края `WK-02` и `WK-03` остаются на их прогнозе
@@ -360,13 +360,13 @@ Schedule API SHALL включать `links`. Для связей с явным `
 - **WHEN** режим факта показывает закрытый факт под базой
 - **THEN** отдельный цвет отклонения не рисуется
 
-### Requirement: Full analyst import on populated snapshots A–S
+### Requirement: Full analyst import on populated snapshots 01–19
 
-На populated snapshots A–S Schedule SHALL публиковать полный analyst import: 25 `project_group`, 145 `stage_group`, 272 source works (+ curated WK showcase), 44 catalog milestones, 145 imported КТ (`sourceKind=controlpoint`, zero-duration), 52 equipment — **688** items при полном раскрытии; links включают scheduling (в т.ч. 4 demo arrow types) и `cross_project_predecessor`. MS aliases `8.2.3`→`MS-CLN-PANEL`, `24.1.3`→`MS-UTL-PWR`. Группы SHALL нести equal-weight rollup; колонка «№» SHALL NOT отображаться. Equipment/milestone progress SHALL быть authored facts, не `forecast ≤ asOf`. Default UI SHALL expand all groups.
+На populated snapshots 01–19 Schedule SHALL публиковать полный analyst import: 25 `project_group`, 145 `stage_group`, 272 source works (+ curated WK showcase), 44 catalog milestones, 145 imported КТ (`sourceKind=controlpoint`, zero-duration), 52 equipment — **688** items при полном раскрытии; links включают scheduling (в т.ч. 4 demo arrow types) и `cross_project_predecessor`. MS aliases `8.2.3`→`MS-CLN-PANEL`, `24.1.3`→`MS-UTL-PWR`. Группы SHALL нести equal-weight rollup; колонка «№» SHALL NOT отображаться. Equipment/milestone progress SHALL быть authored facts, не `forecast ≤ asOf`. Default UI SHALL expand all groups.
 
 #### Scenario: Full expansion counts 688 rows
 
-- **WHEN** клиент запрашивает schedule `PRJ-01` на снимке C и раскрыты все группы
+- **WHEN** клиент запрашивает schedule `PRT-01` на снимке 03 и раскрыты все группы
 - **THEN** в ответе 688 строк
 - **AND** среди них 25 `project_group` включая `AN-08`, `AN-24`, `AN-09`
 - **AND** 145 `stage_group` и 145 КТ controlpoint
@@ -374,21 +374,21 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 #### Scenario: Default expansion shows full tree
 
-- **WHEN** на снимке C открыт календарный план без сохранённого collapse
+- **WHEN** на снимке 03 открыт календарный план без сохранённого collapse
 - **THEN** все `project_group`/`stage_group` раскрыты
 - **AND** полный ответ Schedule содержит 688 элементов
 
 #### Scenario: Power milestone keeps its identity inside stage 24.1
 
-- **WHEN** клиент запрашивает schedule на снимке C
+- **WHEN** клиент запрашивает schedule на снимке 03
 - **THEN** ровно одна строка имеет id `MS-UTL-PWR` и kind `milestone`
 - **AND** её parentKey равен `stage_group:24.1`, а wbs равен `24.1.3`
 
 #### Scenario: Existing episode and other snapshots stay
 
-- **WHEN** клиент сравнивает снимок C с A, D и F
-- **THEN** на C сохранены дерево `AN-08`, база `8.2.2` и связи WK
-- **AND** populated snapshots A–S share the analyst import topology (688 items when fully expanded)
+- **WHEN** клиент сравнивает снимок 03 с 01, 04 и 06
+- **THEN** на 03 сохранены дерево `AN-08`, база `8.2.2` и связи WK
+- **AND** populated snapshots 01–19 share the analyst import topology (688 items when fully expanded)
 - **AND** progress/status overlays MAY differ by snapshot; equipment/milestone progress remains authored dates≤asOf (not live forecast≤asOf, not id-rank)
 
 ### Requirement: Milestone to work link is an untyped cross-project predecessor
@@ -431,9 +431,9 @@ Schedule API SHALL включать `links`. Для связей с явным `
 - **WHEN** у `cross_project_predecessor` нет одного конца в этом ответе, источник не веха, цель не работа, или задан тип планирования
 - **THEN** ответ Schedule не отдаётся
 
-#### Scenario: Snapshot C stores the predecessor next to the four scheduling links
+#### Scenario: Snapshot 03 stores the predecessor next to the four scheduling links
 
-- **WHEN** клиент запрашивает schedule на снимке C после review
+- **WHEN** клиент запрашивает schedule на снимке 03 после review
 - **THEN** среди links есть `LNK-X-PWR-HVAC` вида `cross_project_predecessor`
 - **AND** четыре связи WK остаются видом `scheduling`
 - **AND** на A, D и F связи `LNK-X-PWR-HVAC` нет
@@ -455,7 +455,7 @@ Schedule API SHALL включать `links`. Для связей с явным `
 
 #### Scenario: First rows share a vertical origin
 
-- **WHEN** на снимке C открыто «Разделение» и прокрутка в начале
+- **WHEN** на снимке 03 открыто «Разделение» и прокрутка в начале
 - **THEN** верх первой строки таблицы и верх первой строки диаграммы совпадают
 - **AND** шаг соседних строк в обеих частях равен 32px
 
@@ -498,3 +498,96 @@ Schedule API SHALL включать `links`. Для связей с явным `
 - **WHEN** сравнение — факт и у целевой работы заданы оба фактических конца
 - **THEN** межпроектная линия на эту работу не рисуется
 - **AND** в режиме прогноза та же линия видна, если видны обе строки
+
+### Requirement: Demo master dating is hybrid earliest-in-float (not pure ALAP)
+
+> **certainty:** assumption — synthetic demo planning; source MD has no calendar dates (wave gantt-clarity / r3 hardgate).
+
+Для analyst master fixture Demo v1 система SHALL строить единый canonical baseline через согласованный forward+backward расчёт:
+
+1. Backward **ALAP latest** только из hard graph (FS/SS/FF/SF+lag+duration) и Production Start gate `2027-09-15` — **без** soft `preferredStart` внутри latest-pass.
+2. Forward placement: `hardES` из already-placed preds (root — open lower bound); `preferredES` из soft phase window; **ES = max(hardES, min(preferredES, hardLS))**; EF = ES+dur.
+3. Zero/low total float → у hardLS (critical); free float → earlier-in-float при сохранении hardES.
+
+Soft phase MAY поставить раньше preferred window (audit `soft_phase_relax`); soft relax SHALL NOT cancel gate и SHALL NOT ставить ниже настоящего hardES. Все mandatory leaf `baselineEnd` SHALL быть ≤ `2027-09-15` (`soft_infeasible_vs_lf` count = 0 на реальном графе). Система SHALL NOT default-hide source scheduling links; UI SHALL highlight immediate pred/succ from shared selection (table или chart). Grid/chart/diamond status tone SHALL share one **runtime** presentation family derived from lifecycle (raw sourceStatus/emoji = provenance only; historical missed/delayed SHALL NOT вечно красить Completed в Red без активного риска). Progress % SHALL NOT replace Delayed/OnSchedule meaning. `planEarliestStart` (min any leaf / window assumption) SHALL NOT быть silently renamed в critical necessary start.
+
+#### Scenario: Free-float early prep is not parked at the gate
+
+- **WHEN** leaf в AN-01/02/03 имеет free float после hybrid dating
+- **THEN** baselineStart лежит в/около preferred phase window (или documented soft relax earlier than window)
+- **AND** baselineEnd ≤ Production Start gate `2027-09-15`
+- **AND** все source FS/SS/FF/SF constraints остаются выполнены
+
+#### Scenario: Soft floor relax keeps hard predecessors and gate
+
+- **WHEN** preferredES > hardLS (synthetic phase window later than hard latest)
+- **THEN** система ставит ES = max(hardES, hardLS) (earlier than preferred) с audit soft_phase_relax
+- **AND** SHALL NOT превысить gate / SHALL NOT поставить ниже hardES
+- **AND** hardES > hardLS на корректном графе считается bug (`hard_cpm_inconsistent`), не поводом отменять gate
+
+#### Scenario: Runtime tone parity grid and chart
+
+- **WHEN** leaf Completed по asOf, а raw sourceStatus был missed/delayed
+- **THEN** grid StatusPill, bar/diamond CSS и tooltip используют один runtime tone (не eternal Red от emoji)
+- **AND** активный Delayed (напр. HVAC problem) остаётся danger/Red на всех поверхностях
+
+#### Scenario: Historical sourceWeeks is not current progress warning
+
+- **WHEN** work Completed (или иначе не Delayed) имеет `sourceWeeks` из source ⚠️Nн
+- **THEN** schedule warning tone = none (sourceWeeks = audit provenance only)
+- **AND** `data-schedule-fill-tone` / progress fill не danger из‑за одних недель
+- **AND** parent aggregation не поднимает lag только из historical weeks детей
+- **AND** active `status===Delayed` по-прежнему даёт lag (weeks могут уточнять label)
+
+#### Scenario: Source link coverage preserved
+
+- **WHEN** клиент запрашивает schedule на populated snapshot
+- **THEN** число unique scheduling+cross_project links в API соответствует fixture coverage (≈679)
+- **AND** UI не удаляет links из payload ради «чистоты»
+- **AND** selection refresh links без `gantt.parse` / `clearAll`
+
+### Requirement: Dashboard milestone focus deep-link
+
+`/schedule?focus=milestone:<id>` SHALL map once onto the existing `selectionKeyId` (`milestone:<id>`), expand ancestors so collapse/virtualization cannot hide the row, center vertically in the Gantt scroll owner (not the document), and set horizontal chart date from the item forecast/baseline without breaking fit. Invalid or unknown focus SHALL fail soft (no infinite effect/scroll). Snapshot letter in sessionStorage SHALL survive ordinary `<a>` navigation. Conflicting `?project=` that would hide the target MAY be dropped once while preserving `focus`.
+
+#### Scenario: Focus selects and reveals a known milestone
+
+- **WHEN** пользователь открывает `/schedule?focus=milestone:MS-HVAC-IQ` на populated snapshot
+- **THEN** строка `milestone:MS-HVAC-IQ` выбрана
+- **AND** предки раскрыты
+- **AND** вертикальный центр выполняется через Gantt scroll owner
+
+#### Scenario: Invalid focus is a no-op
+
+- **WHEN** `focus` отсутствует в данных или не парсится как selection key
+- **THEN** UI не зацикливается и не скроллит бесконечно
+- **AND** остальной schedule остаётся usable
+
+### Requirement: Split default is equal table and chart panes
+
+В режиме «Разделение» начальная ширина таблицы SHALL быть **50%** контейнера (CSS), пока пользователь не изменил разделитель. Resize окна без ручного drag SHALL сохранять 50/50 (разница list/chart bbox ≤ 2px с учётом 1px divider). После явного drag/keyboard ширина MAY фиксироваться в px с clamp (min 320px, max 70%). Система SHALL NOT восстанавливать устаревший unequal default из storage.
+
+#### Scenario: Fresh split opens at half
+
+- **WHEN** пользователь открывает Календарный план в «Разделении» без предшествующего drag
+- **THEN** ширина pane таблицы ≈ половине split row (±2px к chart с учётом divider)
+
+### Requirement: Chart uses rich portal popover instead of native title
+
+Hover/focus bar/diamond/summary SHALL открывать один React portal popover (dashboard tip semantics): имя, id/WBS, kind, status/progress если известны, даты текущего comparison; ссылка «Открыть» только при существующем entity route. Native browser `title` на chart triggers SHALL быть пуст. Popover SHALL поддерживать Escape, hover-bridge к ссылке, viewport clip, close на scroll/zoom/snapshot/unmount; SHALL NOT вызывать gantt.parse/clearAll. Click selection chain SHALL оставаться.
+
+### Requirement: Schedule toolbar icon active state is color not frame
+
+Active comparison/view/zoom icon SHALL быть синей (accent/info); inactive — серой. Shared group containers SHALL иметь border + sunken background (три различимые группы). Individual buttons SHALL NOT иметь own border/background/inset selection box. `aria-pressed` и focus-visible ring SHALL сохраняться (только для keyboard focus).
+
+### Requirement: Scale and table headers share bold uppercase RU
+
+Шапка таблицы и шкала дат диаграммы SHALL использовать bold UPPERCASE RU labels и одну высоту 40px (один tier). Zoom SHALL NOT ломать высоту/число рядов шапки относительно таблицы.
+
+### Requirement: Community gantt.ext.zoom with month-density levels
+
+При наличии `gantt.ext.zoom` (DHTMLX Community 10.x) система SHALL инициализировать уровни **unit=month** с `min_column_width` 48 / 96 / 192 / **384 (default)** / 768. Все уровни SHALL сохранять `smart_rendering` в fit/split mode (bounded DOM). Toolbar −/+ слева от comparison/view; min/max disabled; без Ctrl+wheel zoom по умолчанию. Initial X SHALL якорить first visible work/bar с padding (не пустой mid-horizon). Subsequent zoom SHALL центрировать selected-visible element (range intersection + midpoint для полос; точная дата для вех) или ближайший visible work/MS/EQ; SHALL NOT использовать пустую mid-canvas date и SHALL NOT сбрасывать Y. Table-only: zoom controls disabled/hidden.
+
+### Requirement: Table-only columns fill available width
+
+В режиме «Таблица» колонки name (и object) SHALL flex-grow так, чтобы крайняя правая колонка доходила до viewport (±2px), при сохранении minWidths/nowrap для id/дат/progress. Head и body SHALL делить одну geometry template.

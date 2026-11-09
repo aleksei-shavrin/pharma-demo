@@ -77,6 +77,18 @@ export function presentDecisionType(type: DecisionType): string {
   return DECISION_TYPE_LABEL[type];
 }
 
+/** Compact table label; full wording stays in presentDecisionType / title. */
+export function presentDecisionTypeCompact(type: DecisionType): string {
+  switch (type) {
+    case 'PrioritizeRecovery':
+      return 'Приоритизация сроков';
+    case 'AcceptDateSlip':
+      return 'Принять сдвиг даты';
+    default:
+      return 'Нет типа';
+  }
+}
+
 export function presentDecisionNote(id: string, apiNote: string): string {
   return DECISION_NOTE_BY_ID[id] ?? apiNote;
 }
@@ -144,14 +156,40 @@ export function issueStatusLabel(
   return 'Закрыта';
 }
 
+/**
+ * Risk/milestone assessment (RAG) — not lifecycle, not overdue, not probability.
+ * Known Green/Red (+ Yellow/Amber if runtime); null/unknown → «Нет оценки»
+ * (never false Green/Red).
+ */
 export function ragLabel(
   entity: 'risk' | 'milestone',
-  rag: 'Green' | 'Red',
+  rag: string | null | undefined,
 ): string {
+  if (rag == null || rag === '') return 'Нет оценки';
   if (entity === 'risk') {
-    return rag === 'Green' ? 'Риск: зелёный' : 'Риск: красный';
+    switch (rag) {
+      case 'Green':
+        return 'Риск в норме';
+      case 'Red':
+        return 'Риск критичен';
+      case 'Yellow':
+      case 'Amber':
+        return 'Риск требует внимания';
+      default:
+        return 'Нет оценки';
+    }
   }
-  return rag === 'Green' ? 'Веха: зелёная' : 'Веха: красная';
+  switch (rag) {
+    case 'Green':
+      return 'Веха в норме';
+    case 'Red':
+      return 'Веха критична';
+    case 'Yellow':
+    case 'Amber':
+      return 'Веха требует внимания';
+    default:
+      return 'Нет оценки';
+  }
 }
 
 export function presentWorkstream(id: WorkstreamId): string {
@@ -162,10 +200,23 @@ export function presentOwnerRole(role: string): string {
   return OWNER_ROLE_LABEL[role] ?? role;
 }
 
-export function projectStatusLabel(status: ProjectStatus): string {
-  if (status === 'Green') return 'Зелёный';
-  if (status === 'Yellow') return 'Жёлтый';
-  return 'Красный';
+/**
+ * Portfolio/program health — not overdue and not RAG risk assessment.
+ * Explicit known switch; null/undefined/unknown → «Нет оценки» (never false Critical).
+ */
+export function projectStatusLabel(
+  status: ProjectStatus | string | null | undefined,
+): string {
+  switch (status) {
+    case 'Green':
+      return 'В норме';
+    case 'Yellow':
+      return 'Требует внимания';
+    case 'Red':
+      return 'Критично';
+    default:
+      return 'Нет оценки';
+  }
 }
 
 /**
@@ -173,22 +224,25 @@ export function projectStatusLabel(status: ProjectStatus): string {
  * No frontend RAG derivation.
  */
 export function projectStatusMeaning(
-  status: ProjectStatus,
+  status: ProjectStatus | string | null | undefined,
   productionStartDeltaDays: number,
 ): string {
-  if (status === 'Green') {
-    return 'Проект в базовом плане без управленческих отклонений.';
+  switch (status) {
+    case 'Green':
+      return 'Проект в базовом плане без управленческих отклонений.';
+    case 'Yellow':
+      return productionStartDeltaDays === 0
+        ? 'Требуется внимание по направлениям проекта; прогноз старта производства без сдвига.'
+        : 'Требуется внимание по направлениям проекта.';
+    case 'Red':
+      if (productionStartDeltaDays >= 21) {
+        return 'Критический прогноз сдвига старта производства; требуется управленческое внимание.';
+      }
+      if (productionStartDeltaDays > 0) {
+        return 'Остаточный критический риск по старту производства; решение не означает устранение.';
+      }
+      return 'Критическое состояние проекта; требуется управленческое внимание.';
+    default:
+      return 'Оценка статуса проекта отсутствует.';
   }
-  if (status === 'Yellow') {
-    return productionStartDeltaDays === 0
-      ? 'Требуется внимание по направлениям проекта; прогноз старта производства без сдвига.'
-      : 'Требуется внимание по направлениям проекта.';
-  }
-  if (productionStartDeltaDays >= 21) {
-    return 'Критический прогноз сдвига старта производства; требуется управленческое внимание.';
-  }
-  if (productionStartDeltaDays > 0) {
-    return 'Остаточный критический риск по старту производства; решение не означает устранение.';
-  }
-  return 'Критическое состояние проекта; требуется управленческое внимание.';
 }

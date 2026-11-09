@@ -24,6 +24,10 @@ volumes:
   ppc_dev_api_node_modules:
   ppc_dev_api_dist:
   ppc_dev_docs_node_modules:
+  # Isolates Docusaurus generated cache from host bind mount so host
+  # `npm run docs:build` (absolute host paths in .docusaurus) cannot break
+  # the live docs container (expects /app/website/... paths).
+  ppc_dev_docs_docusaurus:
 
 services:
   proxy:
@@ -53,6 +57,7 @@ services:
       - ./docs:/app/docs
       - ./openspec/specs:/app/openspec/specs
       - ppc_dev_docs_node_modules:/app/website/node_modules
+      - ppc_dev_docs_docusaurus:/app/website/.docusaurus
     expose:
       - "3000"
     networks:

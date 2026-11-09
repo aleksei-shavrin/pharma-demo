@@ -15,9 +15,11 @@ related:
 
 ## Локальный контур (направление)
 
-> **certainty:** hypothesis
+> **certainty:** assumption
 >
-> Документация отдаётся через reverse proxy (**Caddy** или **nginx**) на `http://docs.localhost` без аутентификации в локальном dev. App/API — `http://localhost` / `http://api.localhost`. Сеть Compose: `ppc-net`. Подробнее: [ADR-0003](../06-architecture/decisions/0003-local-dev-urls-and-proxy.md).
+> **DX (основной):** после `npm run dev` документация same-origin на `http://127.0.0.1:3080/docs/` (Caddy → docs), без page-middleware auth; app `/`, API `/backend`. См. [local-dev-and-demo](../10-operations/local-dev-and-demo.md).
+>
+> **Production-like / historical W1:** host-routing `docs.localhost` / `api.localhost` на :80 — другой режим ([ADR-0003](../06-architecture/decisions/0003-local-dev-urls-and-proxy.md), [final-report](./final-report.md)).
 
 > **certainty:** fact
 >

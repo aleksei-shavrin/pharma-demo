@@ -204,7 +204,7 @@ export class DecisionRegisterItemDto {
   @ApiProperty()
   id!: string;
 
-  /** Portfolio plant id (PRJ-01) — not an analyst project. */
+  /** Portfolio plant id (PRT-01) — not an analyst project. */
   @ApiProperty()
   projectId!: string;
 
@@ -238,6 +238,27 @@ export class DecisionRegisterItemDto {
   /** Calendar due vs scenarioAsOf — not execution failure. */
   @ApiProperty({ enum: ['none', 'upcoming', 'passed'] })
   dueState!: 'none' | 'upcoming' | 'passed';
+
+  @ApiProperty({
+    enum: ['unknown', 'not_started', 'in_progress', 'completed'],
+    description: 'Read-only demo execution; unknown when no observation',
+  })
+  executionStatus!: 'unknown' | 'not_started' | 'in_progress' | 'completed';
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description:
+      'Null when executionStatus=unknown; source.kind=demo illustrative',
+    type: Object,
+  })
+  execution!: {
+    status: 'not_started' | 'in_progress' | 'completed';
+    evidenceNote: string;
+    source: { kind: 'demo'; label: string };
+    updatedAt: string;
+    observationId: string;
+    asOfDate: string;
+  } | null;
 
   /** Canonical program from milestone membership; null for MS-PS / unbound. */
   @ApiPropertyOptional({ nullable: true, type: String })

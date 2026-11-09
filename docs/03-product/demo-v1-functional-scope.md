@@ -35,7 +35,7 @@ related:
 | BR-001…007 | [business-rules](../02-business-analysis/business-rules-demo-v1.md) |
 | Domain entities Demo v1 | [domain-model](../02-business-analysis/domain-model-demo-v1.md) |
 | Primary UX priority | Директор проекта; вторично — руководитель проекта (HIP-001) |
-| Mock Snapshots A/B/C | Задержка critical equipment **+21 календарный день** (DOC-PROD-012) |
+| Mock Snapshots 01/02/03 | Задержка critical equipment **+21 календарный день** (DOC-PROD-012) |
 | PrioritizeRecovery | Запись управленческого Decision; recovery execution и auto-reforecast **не** моделируются (BR-006) |
 | AcceptDateSlip | Допустимый тип Decision; post-state Issue/Risk/Milestone — BA-OQ-004/005 |
 | FE↔API only; mock NestJS; no PG | DOC-PROD-003 |

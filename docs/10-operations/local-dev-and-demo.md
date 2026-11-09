@@ -5,7 +5,7 @@ type: delivery
 status: draft
 version: 0.2.0
 created: '2026-11-01'
-updated: '2026-11-07'
+updated: '2026-11-09'
 owner: docs-engineering
 related:
   - DOC-OPS-README-001
@@ -77,7 +77,25 @@ File watching в **dev Compose** (`docker-compose.dev.yml`): `CHOKIDAR_USEPOLLIN
 
 Конфиг в корне репозитория: `docker-compose.dev.yml`, `Caddyfile.dev`.
 
-`node_modules` / Next `.next` / Nest `dist` в named volumes — не перекрываются host bind mount и не портят права на хосте.
+`node_modules` / Next `.next` / Nest `dist` / Docs `.docusaurus` в named volumes — не перекрываются host bind mount и не портят права на хосте.
+
+### Docs cache isolation (DX)
+
+`website/` bind-mount’ится в контейнер `docs`, но **`/app/website/.docusaurus`** живёт в named volume `ppc_dev_docs_docusaurus`.
+
+**Зачем.** Host `npm run docs:build` пишет в host `website/.docusaurus` абсолютные пути вида `/home/…/website/…`. Dev-контейнер резолвит модули из `/app/website/…`. Без изоляции host build ломает live `/docs/` (`Cannot find module '/home/…/layers.css'`), хотя HTTP 200 отдаёт HTML shell.
+
+**Как безопасно.**
+
+| Действие | Эффект на live DX `/docs/` |
+|----------|----------------------------|
+| `npm run docs:build` на хосте (gates/CI) | Не трогает container `.docusaurus` — **можно** при поднятом `docs` |
+| Правки `docs/**`, `website/src`, `openspec/specs` | Hot reload как раньше (исходники на bind mount) |
+| Полный сброс docs cache | `docker compose -p pharma-demo --env-file .env.local -f docker-compose.dev.yml up -d --no-deps --force-recreate docs` (только сервис `docs`) |
+
+Не смешивать: не монтировать host `.docusaurus` обратно в контейнер и не ожидать, что host-side `.docusaurus` отражает состояние DX.
+
+**Ограничение.** Пока контейнер `docs` запущен, **не удаляйте и не переименовывайте** host-каталог `website/.docusaurus`: nested volume mount может «провалиться» в bind mount, и контейнер снова увидит host absolute paths. Если каталог на хосте уже снесли — `force-recreate` только сервиса `docs` (команда выше) восстанавливает volume mount.
 
 ---
 

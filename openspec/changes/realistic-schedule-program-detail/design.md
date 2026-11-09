@@ -6,7 +6,7 @@ Content `workDays` 6–10 by AN; forward CPM; **slide** so `terminalBaselineMax 
 
 ## Realized timeline (r4)
 
-Один immutable timeline: baseline CPM → crisis event (asOf C **2027-03-01**, +21 на незавершённый HVAC seed) с topo FS/SS/FF/SF → recovery slide open suffix к launch **2027-09-22**. Facts, завершённые до кризиса, не двигаются. Forecast C **10-06** остаётся на forecast plane. Raw emoji = provenance.
+Один immutable timeline: baseline CPM → crisis event (asOf 03 **2027-03-01**, +21 на незавершённый HVAC seed) с topo FS/SS/FF/SF → recovery slide open suffix к launch **2027-09-22**. Facts, завершённые до кризиса, не двигаются. Forecast C **10-06** остаётся на forecast plane. Raw emoji = provenance.
 
 ## Conflict priority
 

@@ -4,6 +4,7 @@ import {
   presentDecisionType,
   presentIssueTitle,
   presentMilestoneName,
+  ragLabel,
 } from '@/lib/ui-labels';
 
 /**
@@ -35,11 +36,12 @@ export function DetailImpact({ impact }: { impact: EntityImpact }) {
             {formatDateRu(impact.equipmentForecastDelivery)}).
           </li>
           <li>
-            Риск {impact.riskId} — зелёный.
+            Риск {impact.riskId} — {ragLabel('risk', 'Green')}.
           </li>
           <li>
             {presentMilestoneName(impact.milestoneId, impact.milestoneName)} (
-            {impact.milestoneId}) — зелёная; запуск производства без отклонения (
+            {impact.milestoneId}) — {ragLabel('milestone', 'Green')}; запуск
+            производства без отклонения (
             {formatDateRu(impact.productionStartForecast)}).
           </li>
         </ol>
@@ -60,18 +62,14 @@ export function DetailImpact({ impact }: { impact: EntityImpact }) {
     steps.push(`Проблема ${impact.issueId} ${verb}: «${title}».`);
   }
   steps.push(
-    impact.riskRag === 'Red'
-      ? `Риск ${impact.riskId} — красный.`
-      : `Риск ${impact.riskId} — зелёный.`,
+    `Риск ${impact.riskId} — ${ragLabel('risk', impact.riskRag)}.`,
   );
   const msName = presentMilestoneName(
     impact.milestoneId,
     impact.milestoneName,
   );
   steps.push(
-    impact.milestoneRag === 'Red'
-      ? `${msName} (${impact.milestoneId}) — красная.`
-      : `${msName} (${impact.milestoneId}) — зелёная.`,
+    `${msName} (${impact.milestoneId}) — ${ragLabel('milestone', impact.milestoneRag)}.`,
   );
   steps.push(
     `Прогноз запуска производства смещён на ${psDelta} → ${formatDateRu(impact.productionStartForecast)}.`,

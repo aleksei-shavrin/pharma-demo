@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO_PORTFOLIO_ID } from '@/lib/demo-portfolio-id';
+
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -9,9 +11,9 @@ import {
   type NotificationTaxonomy,
 } from '@/lib/api-client';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 import { resolveNotificationHref } from '@/lib/notifications/notification-href';
 
-const DEMO_PROJECT_ID = 'PRJ-01';
 /** r10 UX: one compact toast; remainder only in bell tray. */
 const MAX_TOASTS = 1;
 const TOAST_MS = 3500;
@@ -101,7 +103,7 @@ export function NotificationToastHost({
     }
 
     let cancelled = false;
-    void fetchNotifications(DEMO_PROJECT_ID, active)
+    void fetchNotifications(DEMO_PORTFOLIO_ID, active)
       .then((list) => {
         if (cancelled) return;
         if (list.snapshotId !== active) return;
@@ -155,7 +157,7 @@ export function NotificationToastHost({
               aria-hidden
             />
             <p className="pl-1.5 text-[10px] uppercase tracking-wide text-[var(--text-muted)]">
-              Снимок {n.snapshotId}
+              Снимок {snapshotDisplayLabel(n.snapshotId)}
             </p>
             <p className="pl-1.5 text-sm font-medium leading-snug text-[var(--text)]">
               {n.titleRu}

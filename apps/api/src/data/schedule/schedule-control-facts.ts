@@ -7,12 +7,12 @@
  *   (static fixture), then narrative overrides applied below.
  * - Progress at runtime is `authoredDate <= scenarioAsOfDate` → 100 else 0.
  * - MUST NOT read live forecastDate / forecastDelivery for progress.
- * - MUST NOT use sorted-id / snapshot-letter rank readiness.
+ * - MUST NOT use sorted-id / SnapshotId-rank readiness.
  *
  * Overrides:
  * - EQ-HVAC-01 → 2027-06-05 (was 2027-09-20 after IQ; now baseline 05-15 + crisis +21, before MS-HVAC-IQ 06-15)
- * - MS-PS → 2027-09-22 (Production Start only on S)
- * - MS-COM-GO → 2027-09-18 (Go/No-Go; still 0 on C@2027-03-01)
+ * - MS-PS → 2027-09-22 (Production Start only on 19)
+ * - MS-COM-GO → 2027-09-18 (Go/No-Go; still 0 on 03@2027-03-01)
  * - MS-BLD-ENCL → 2027-03-21 (after BLD install works reach completion band)
  * - MS-CLN-PANEL → 2027-04-15 (slipped panel)
  * - MS-UTL-PWR → 2027-04-20 (power gate mid-arc)

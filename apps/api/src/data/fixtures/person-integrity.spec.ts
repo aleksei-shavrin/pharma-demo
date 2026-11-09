@@ -57,7 +57,7 @@ describe('Person catalogue integrity (R2-P1)', () => {
     }
   });
 
-  it('SH_TO_PER covers legacy roles and public snapshots have no SH owners', () => {
+  it('19H_TO_PER covers legacy roles and public snapshots have no SH owners', () => {
     expect(Object.keys(SH_TO_PER).sort()).toEqual(
       ['SH-DIR-01', 'SH-ENG-01', 'SH-PKG-01', 'SH-PM-01', 'SH-QC-01'].sort(),
     );

@@ -1,37 +1,37 @@
 ## ADDED Requirements
 
-### Requirement: Multi-snapshot project overview A through S
+### Requirement: Multi-snapshot project overview 01 through 19
 
-Система SHALL предоставлять Project overview для discrete snapshots A–S (DOC-PROD-024) без temporal engine. A–H semantics DOC-PROD-022 SHALL оставаться согласованными. Snapshot S SHALL представлять достигнутый Production Start с actual/forecast `2027-09-22`.
+Система SHALL предоставлять Project overview для discrete snapshots 01–19 (DOC-PROD-024) без temporal engine. 01–08 semantics DOC-PROD-022 SHALL оставаться согласованными. Snapshot 19 SHALL представлять достигнутый Production Start с actual/forecast `2027-09-22`.
 
-#### Scenario: Snapshot P remains Red under BR-007
+#### Scenario: Snapshot 16 remains Red under BR-007
 
-- **WHEN** активен Snapshot P
+- **WHEN** активен Snapshot 16
 - **THEN** RISK-001 rag = Red и projectStatus = Red
 - **AND** MS-PS rag ≠ Green
 
-#### Scenario: Snapshot Q is Yellow after spine leaves Red
+#### Scenario: Snapshot 17 is Yellow after spine leaves Red
 
-- **WHEN** активен Snapshot Q (asOf 2027-09-15)
+- **WHEN** активен Snapshot 17 (asOf 2027-09-15)
 - **THEN** RISK-001 rag ≠ Red и MS-PS rag ≠ Red
 - **AND** projectStatus = Yellow
 - **AND** Production Start ещё не achieved
 
-#### Scenario: Snapshot R remains Yellow before actual start
+#### Scenario: Snapshot 18 remains Yellow before actual start
 
-- **WHEN** активен Snapshot R
+- **WHEN** активен Snapshot 18
 - **THEN** projectStatus = Yellow
 
-#### Scenario: Snapshot S production start achieved
+#### Scenario: Snapshot 19 production start achieved
 
-- **WHEN** активен Snapshot S (asOf 2027-09-22)
+- **WHEN** активен Snapshot 19 (asOf 2027-09-22)
 - **THEN** Production Start actual равен 2027-09-22 и projectStatus = Green
 - **AND** RISK-001 rag = Green и MS-PS rag = Green
 - **AND** EQ-HVAC-01 Δ согласован с PS Δ = +7 (BR-004)
 
-#### Scenario: Snapshot O aligned recovery to plus seven
+#### Scenario: Snapshot 15 aligned recovery to plus seven
 
-- **WHEN** активен Snapshot O
+- **WHEN** активен Snapshot 15
 - **THEN** forecastProductionStart равен 2027-09-22
 - **AND** EQ-HVAC-01 delivery delta равен +7
 
@@ -41,21 +41,21 @@ Dashboard overview SHALL включать compact project cost signal (BAC, EAC,
 
 #### Scenario: Cost signal present on C
 
-- **WHEN** активен Snapshot C
+- **WHEN** активен Snapshot 03
 - **THEN** overview содержит integer RUB BAC/EAC/VAC fields
 
-### Requirement: Stable curated executive milestones (A–S)
+### Requirement: Stable curated executive milestones (01–19)
 
-Dashboard SHALL получать fixture-authored `executiveMilestoneIds` as a **stable curated project-lifecycle map** (exactly **12** IDs, identical membership for every snapshot A–S), always including `MS-PS`. Snapshot switching SHALL change project state / RAG / chrome accents, **not** membership of the executive set. FE SHALL NOT invent a competing membership as SoT.
+Dashboard SHALL получать fixture-authored `executiveMilestoneIds` as a **stable curated project-lifecycle map** (exactly **12** IDs, identical membership for every snapshot 01–19), always including `MS-PS`. Snapshot switching SHALL change project state / RAG / chrome accents, **not** membership of the executive set. FE SHALL NOT invent a competing membership as SoT.
 
 #### Scenario: Membership unchanged across snapshots
 
-- **WHEN** активен Snapshot A и Snapshot S
+- **WHEN** активен Snapshot 01 и Snapshot 19
 - **THEN** `executiveMilestoneIds` совпадает по membership с нормативным stable set (включая early BLD EXC/FND/STR/ENCL и late COM-OQ / COM-GO / MS-PS)
 
 #### Scenario: Late snapshot still shows early construction points
 
-- **WHEN** активен Snapshot O или S
+- **WHEN** активен Snapshot 15 или 19
 - **THEN** executive strip всё ещё включает early BLD points и MS-PS; меняется state/RAG/chrome, не состав точек
 
 ### Requirement: Navigable workstream readiness
@@ -64,7 +64,7 @@ Workstream readiness entries на Dashboard SHALL быть navigable к Workstre
 
 #### Scenario: Click HVAC readiness
 
-- **WHEN** пользователь активирует WS-HVAC на Dashboard Snapshot C
+- **WHEN** пользователь активирует WS-HVAC на Dashboard Snapshot 03
 - **THEN** клиент переходит к Workstream detail WS-HVAC
 
 #### Scenario: Attention surfaces vs green neutral
@@ -74,7 +74,7 @@ Workstream readiness entries на Dashboard SHALL быть navigable к Workstre
 
 ### Requirement: Dashboard lower composition (R2-U1-R7)
 
-Desktop Dashboard SHALL place Key Exceptions | Management Decisions and Management Attention | Snapshot Changes as equal **50/50** sibling pairs in two CSS grids with generated two-column rules.
+Desktop Dashboard SHALL place Key Exceptions | Management Decisions and Management Attention | Snapshot 03hanges as equal **50/50** sibling pairs in two CSS grids with generated two-column rules.
 
 #### Scenario: Aligned 50/50 lower rows
 
@@ -108,13 +108,13 @@ Production Start SHALL render as one consolidated executive timeline annotation 
 
 #### Scenario: Delayed O consolidated cluster
 
-- **WHEN** Snapshot O is shown
+- **WHEN** Snapshot 15 is shown
 - **THEN** one PS cluster shows plan 15.09.2027 → прогноз 22.09.2027 and +7
 - **AND** MS-COM-GO remains a separate ordinary milestone label above the axis
 
 #### Scenario: Achieved S consolidated cluster
 
-- **WHEN** Snapshot S is shown
+- **WHEN** Snapshot 19 is shown
 - **THEN** one PS cluster shows plan 15.09.2027 → факт 22.09.2027 and +7
 - **AND** the cluster does not use the word «прогноз» for the achieved date
 - **AND** +7 uses historical (non danger-active) presentation while project status remains Green
@@ -136,14 +136,14 @@ Production Start SHALL render as one consolidated executive timeline annotation 
 
 ### Requirement: Sole BR-004 production start driver
 
-Система SHALL сдвигать forecastProductionStart только по Δ EQ-HVAC-01 (sole critical driver) на всём A–S. Delayed non-HVAC critical equipment SHALL NOT автоматически менять Production Start. На любом snapshot `psDeltaDays` SHALL equal `EQ-HVAC-01` delta days. Состояние HVAC +7 при PS +14 SHALL NOT публиковаться.
+Система SHALL сдвигать forecastProductionStart только по Δ EQ-HVAC-01 (sole critical driver) на всём 01–19. Delayed non-HVAC critical equipment SHALL NOT автоматически менять Production Start. На любом snapshot `psDeltaDays` SHALL equal `EQ-HVAC-01` delta days. Состояние HVAC +7 при PS +14 SHALL NOT публиковаться.
 
-#### Scenario: Snapshot B packaging delay does not shift PS
+#### Scenario: Snapshot 02 packaging delay does not shift PS
 
-- **WHEN** активен Snapshot B с Delayed EQ-PKG-01 и без HVAC delay
+- **WHEN** активен Snapshot 02 с Delayed EQ-PKG-01 и без HVAC delay
 - **THEN** forecastProductionStart остаётся 2027-09-15
 
-#### Scenario: Snapshot N decisions leave residual plus fourteen
+#### Scenario: Snapshot 14 decisions leave residual plus fourteen
 
-- **WHEN** активен Snapshot N с commissioning Decisions
+- **WHEN** активен Snapshot 14 с commissioning Decisions
 - **THEN** forecastProductionStart остаётся 2027-09-29 и EQ-HVAC-01 Δ = +14

@@ -25,7 +25,7 @@ related:
 |-------|--------|-----------------|-----|
 | UI kit | shadcn/ui | `approved UX decision` | Shell, buttons, tabs, dialog, theme |
 | Tables | TanStack Table | `approved UX decision` | Все реестры + Schedule table |
-| Charts | Recharts | `approved UX decision` | KPI distributions, A/B/C forecast points |
+| Charts | Recharts | `approved UX decision` | KPI distributions, 01/02/03 forecast points |
 | Gantt | `dhtmlx-gantt@10.0.3` Community / MIT | **RESOLVED** (ADR-0004, I7) | Read-only Schedule secondary view (D10) |
 
 ## 2. Tables
@@ -37,7 +37,7 @@ related:
 Допустимые примеры (нужен data source):
 
 - Bar: baseline vs forecast Production Start
-- Step/line: forecast across Snapshots A/B/C
+- Step/line: forecast across Snapshots 01/02/03
 - Distribution: counts by Equipment.status / Issue.status / Risk.rag (**только** allowlisted значения)
 
 Недопустимо: burn-down, earned value, org heatmaps без данных; графики без опоры на реестр.

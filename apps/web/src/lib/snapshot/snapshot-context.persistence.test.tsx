@@ -56,13 +56,13 @@ function Probe() {
       <span data-testid="active">{active}</span>
       <span data-testid="settled">{dashboard ? 'yes' : 'no'}</span>
       <span data-testid="dash-snap">{dashboard?.snapshotId ?? 'none'}</span>
-      <button type="button" onClick={() => void switchSnapshot('B')}>
+      <button type="button" onClick={() => void switchSnapshot('02')}>
         goto-B
       </button>
-      <button type="button" onClick={() => void switchSnapshot('C')}>
+      <button type="button" onClick={() => void switchSnapshot('03')}>
         goto-C
       </button>
-      <button type="button" onClick={() => void switchSnapshot('G')}>
+      <button type="button" onClick={() => void switchSnapshot('07')}>
         goto-G
       </button>
     </div>
@@ -87,14 +87,14 @@ beforeEach(() => {
     async (_id: string, snapshot: SnapshotId) => ({
       snapshotId: snapshot,
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: [],
     }),
   );
   fetchProjectCosts.mockResolvedValue({
-    snapshotId: 'A',
+    snapshotId: '01',
     scenarioAsOfDate: '2027-02-15',
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     project: {
       approvedBudgetRub: 6_200_000_000,
       actualCostRub: 0,
@@ -125,80 +125,80 @@ describe('SnapshotProvider session persistence', () => {
   it('empty storage → bootstrap A and writes A', async () => {
     renderApp();
     await waitFor(() => {
-      expect(screen.getByTestId('dash-snap')).toHaveTextContent('A');
+      expect(screen.getByTestId('dash-snap')).toHaveTextContent('01');
     });
-    expect(fetchDashboardOverview.mock.calls.map((c) => c[1])).toEqual(['A']);
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
-    await expectActiveSnapshot('A');
+    expect(fetchDashboardOverview.mock.calls.map((c) => c[1])).toEqual(['01']);
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('01');
+    await expectActiveSnapshot('01');
   });
 
   it('storage G → bootstrap/commit G', async () => {
-    writeSessionSnapshot('G');
+    writeSessionSnapshot('07');
     renderApp();
     await waitFor(() => {
-      expect(screen.getByTestId('dash-snap')).toHaveTextContent('G');
+      expect(screen.getByTestId('dash-snap')).toHaveTextContent('07');
     });
-    expect(fetchDashboardOverview.mock.calls.map((c) => c[1])).toEqual(['G']);
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('G');
-    await expectActiveSnapshot('G');
+    expect(fetchDashboardOverview.mock.calls.map((c) => c[1])).toEqual(['07']);
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('07');
+    await expectActiveSnapshot('07');
   });
 
   it('storage H → bootstrap/commit H', async () => {
-    writeSessionSnapshot('H');
+    writeSessionSnapshot('08');
     renderApp();
     await waitFor(() => {
-      expect(screen.getByTestId('dash-snap')).toHaveTextContent('H');
+      expect(screen.getByTestId('dash-snap')).toHaveTextContent('08');
     });
-    await expectActiveSnapshot('H');
+    await expectActiveSnapshot('08');
   });
 
   it('invalid storage → A; never sent to API', async () => {
     sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'Z');
     renderApp();
     await waitFor(() => {
-      expect(screen.getByTestId('dash-snap')).toHaveTextContent('A');
+      expect(screen.getByTestId('dash-snap')).toHaveTextContent('01');
     });
     const requested = fetchDashboardOverview.mock.calls.map((c) => c[1]);
-    expect(requested).toEqual(['A']);
+    expect(requested).toEqual(['01']);
     expect(requested).not.toContain('Z');
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('01');
   });
 
   it('successful A→B writes B', async () => {
     const user = userEvent.setup();
     renderApp();
-    await expectActiveSnapshot('A');
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
+    await expectActiveSnapshot('01');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('01');
 
-    await selectDemoSnapshot(user, 'B');
-    await expectActiveSnapshot('B');
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('B');
+    await selectDemoSnapshot(user, '02');
+    await expectActiveSnapshot('02');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('02');
   });
 
   it('failed switch does not change persisted committed snapshot', async () => {
     const user = userEvent.setup();
-    fetchDashboardOverview.mockImplementationOnce(async () => dash('A'));
+    fetchDashboardOverview.mockImplementationOnce(async () => dash('01'));
     fetchDashboardOverview.mockImplementationOnce(async () => {
       throw new Error('network');
     });
 
     renderApp();
-    await expectActiveSnapshot('A');
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
+    await expectActiveSnapshot('01');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('01');
 
-    await selectDemoSnapshot(user, 'B');
+    await selectDemoSnapshot(user, '02');
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
     });
-    expect(screen.getByTestId('dash-snap')).toHaveTextContent('A');
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
-    await expectActiveSnapshot('A');
+    expect(screen.getByTestId('dash-snap')).toHaveTextContent('01');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('01');
+    await expectActiveSnapshot('01');
   });
 
   it('stale success does not change storage; rapid C→G ends on G', async () => {
     const pending: Array<(p: DashboardOverview) => void> = [];
 
-    fetchDashboardOverview.mockImplementationOnce(async () => dash('A'));
+    fetchDashboardOverview.mockImplementationOnce(async () => dash('01'));
     fetchDashboardOverview.mockImplementation(
       () =>
         new Promise<DashboardOverview>((r) => {
@@ -208,25 +208,25 @@ describe('SnapshotProvider session persistence', () => {
 
     const user = userEvent.setup();
     renderApp();
-    await expectActiveSnapshot('A');
+    await expectActiveSnapshot('01');
 
     await user.click(screen.getByRole('button', { name: 'goto-C' }));
     await waitFor(() => expect(pending.length).toBe(1));
     await user.click(screen.getByRole('button', { name: 'goto-G' }));
     await waitFor(() => expect(pending.length).toBe(2));
 
-    pending[0](dash('C'));
+    pending[0](dash('03'));
     await Promise.resolve();
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('A');
-    expect(screen.getByTestId('dash-snap')).toHaveTextContent('A');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('01');
+    expect(screen.getByTestId('dash-snap')).toHaveTextContent('01');
 
-    pending[1](dash('G'));
-    await expectActiveSnapshot('G');
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('G');
+    pending[1](dash('07'));
+    await expectActiveSnapshot('07');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('07');
   });
 
   it('first paint with stored B does not present A as settled', async () => {
-    writeSessionSnapshot('B');
+    writeSessionSnapshot('02');
     const pending: Array<(p: DashboardOverview) => void> = [];
     fetchDashboardOverview.mockImplementation(
       () =>
@@ -238,7 +238,7 @@ describe('SnapshotProvider session persistence', () => {
     renderApp();
 
     await waitFor(() => {
-      expect(fetchDashboardOverview).toHaveBeenCalledWith('PRJ-01', 'B');
+      expect(fetchDashboardOverview).toHaveBeenCalledWith('PRT-01', '02');
       expect(pending.length).toBeGreaterThan(0);
     });
 
@@ -246,26 +246,26 @@ describe('SnapshotProvider session persistence', () => {
     const trigger = screen.getByRole('button', { name: /Снимок/ });
     expect(trigger.getAttribute('aria-label') ?? '').not.toMatch(/активный/);
     expect(trigger.getAttribute('aria-label') ?? '').toMatch(/загрузка/i);
-    expect(screen.getAllByText(/Загрузка снимка B/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Загрузка снимка 02/).length).toBeGreaterThan(0);
 
     for (const resolve of pending) {
-      resolve(dash('B'));
+      resolve(dash('02'));
     }
-    await expectActiveSnapshot('B');
+    await expectActiveSnapshot('02');
   });
 
   it('Provider remount with stored B restores B (reload semantics)', async () => {
-    writeSessionSnapshot('B');
+    writeSessionSnapshot('02');
     const { unmount } = renderApp();
     await waitFor(() => {
-      expect(screen.getByTestId('dash-snap')).toHaveTextContent('B');
+      expect(screen.getByTestId('dash-snap')).toHaveTextContent('02');
     });
     unmount();
 
     renderApp();
     await waitFor(() => {
-      expect(screen.getByTestId('dash-snap')).toHaveTextContent('B');
+      expect(screen.getByTestId('dash-snap')).toHaveTextContent('02');
     });
-    await expectActiveSnapshot('B');
+    await expectActiveSnapshot('02');
   });
 });

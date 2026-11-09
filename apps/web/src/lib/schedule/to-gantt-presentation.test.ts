@@ -570,7 +570,79 @@ describe('toGanttPresentation: иерархия и прогресс', () => {
         progress: 0,
         css: 'ppc-work ppc-progress-zero',
       }),
-    ).toBe('Работа · 0%');
+    ).toBe('Работа · Прогресс 0%');
+    expect(
+      workBarTooltip({
+        text: 'URS',
+        type: 'task',
+        progress: 1,
+        css: 'ppc-work ppc-work-delayed ppc-progress-known',
+      }),
+    ).toBe('URS · С задержкой · Прогресс 100%');
+    expect(
+      workBarTooltip({
+        text: 'План',
+        type: 'task',
+        css: 'ppc-work ppc-work-onschedule ppc-progress-known',
+        progress: 0.5,
+        kindLabel: 'Работа',
+        baselineCaption: 'План 2026-08-01–2026-08-08',
+        forecastCaption: 'Прогноз 2026-08-01–2026-08-08',
+      }),
+    ).toBe(
+      'Работа · План · По плану · План 2026-08-01–2026-08-08 · Прогноз 2026-08-01–2026-08-08 · Прогресс 50%',
+    );
+    expect(
+      workBarTooltip({
+        text: 'Ожидание',
+        type: 'task',
+        css: 'ppc-work ppc-work-waiting ppc-progress-zero',
+        progress: 0,
+      }),
+    ).toBe('Ожидание · Ожидание · Прогресс 0%');
+    expect(
+      workBarTooltip({
+        text: 'Готово',
+        type: 'task',
+        css: 'ppc-work ppc-work-completed ppc-progress-known',
+        progress: 1,
+      }),
+    ).toBe('Готово · Завершено · Прогресс 100%');
+    expect(
+      workBarTooltip({
+        text: 'КТ',
+        type: 'milestone',
+        css: 'ppc-ms ppc-ms-red',
+      }),
+    ).toBe('КТ · КТ · критична');
+    expect(
+      workBarTooltip({
+        text: 'КТ2',
+        type: 'milestone',
+        css: 'ppc-ms ppc-ms-green',
+      }),
+    ).toBe('КТ2 · КТ · в норме');
+    expect(
+      workBarTooltip({
+        text: 'EQ',
+        type: 'milestone',
+        css: 'ppc-eq ppc-eq-delayed',
+      }),
+    ).toBe('EQ · Поставка · задержка');
+    expect(
+      workBarTooltip({
+        text: 'EQ2',
+        type: 'milestone',
+        css: 'ppc-eq ppc-eq-ontrack',
+      }),
+    ).toBe('EQ2 · Поставка · в срок');
+    expect(
+      workBarTooltip({
+        text: 'Сводка AN-01',
+        type: 'project',
+        css: 'ppc-summary',
+      }),
+    ).toBe('Сводка AN-01 · Сводка');
     expect(Object.prototype.hasOwnProperty.call(unknown, 'progress')).toBe(
       false,
     );
@@ -579,6 +651,91 @@ describe('toGanttPresentation: иерархия и прогресс', () => {
     expect(unknown.type).toBe('task');
     expect(unknown.duration).toBe(1);
     expect(unknown.css).not.toContain('ppc-ms');
+  });
+
+  it('work tooltip enrichment exposes status/baseline captions (not id-only)', () => {
+    const waiting: ScheduleWorkItem = {
+      ...workZero,
+      id: '1.3.1',
+      name: 'Briefing package',
+      status: 'Waiting',
+      baselineStart: '2026-08-01',
+      baselineEnd: '2026-08-08',
+      startDate: '2026-08-01',
+      endDate: '2026-08-08',
+    };
+    const delayed: ScheduleWorkItem = {
+      ...workZero,
+      id: '1.5.1',
+      name: 'Make-or-buy',
+      status: 'Delayed',
+      progressPct: 100,
+      baselineStart: '2026-08-01',
+      baselineEnd: '2026-08-08',
+      startDate: '2026-08-01',
+      endDate: '2026-08-08',
+    };
+    const done: ScheduleWorkItem = {
+      ...workDone,
+      id: '1.4.1',
+      name: 'Мастер-план',
+      status: 'Completed',
+      baselineStart: '2026-08-15',
+      baselineEnd: '2026-08-22',
+      startDate: '2026-08-15',
+      endDate: '2026-08-22',
+    };
+    const row = treeRow({
+      key: 'work:1.3.1',
+      kind: 'work',
+      id: '1.3.1',
+      name: waiting.name,
+      progressPct: 0,
+      item: waiting,
+    });
+    const delayedRow = treeRow({
+      key: 'work:1.5.1',
+      kind: 'work',
+      id: '1.5.1',
+      name: delayed.name,
+      progressPct: 100,
+      item: delayed,
+    });
+    const doneRow = treeRow({
+      key: 'work:1.4.1',
+      kind: 'work',
+      id: '1.4.1',
+      name: done.name,
+      progressPct: 100,
+      item: done,
+    });
+    const orphanMs = treeRow({
+      key: 'milestone:MS-ORPHAN',
+      kind: 'milestone',
+      id: 'MS-ORPHAN',
+      name: 'Без item',
+      item: null,
+    });
+    const [task, dTask, cTask, orphan] = toGanttPresentation(
+      [],
+      [],
+      [row, delayedRow, doneRow, orphanMs],
+    ).data;
+    expect(task.text).toBe('Briefing package');
+    expect(task.kindLabel).toBe('Работа');
+    expect(task.statusLabel).toBe('Ожидание');
+    expect(task.baselineCaption).toContain('2026-08-01');
+    expect(task.css).toContain('ppc-work-waiting');
+    expect(workBarTooltip(task)).toContain('Briefing package');
+    expect(workBarTooltip(task)).toContain('Ожидание');
+    expect(dTask.statusLabel).toBe('С задержкой');
+    expect(dTask.css).toContain('ppc-work-delayed');
+    expect(workBarTooltip(dTask)).toContain('С задержкой');
+    expect(workBarTooltip(dTask)).toContain('Прогресс 100%');
+    expect(cTask.statusLabel).toBe('Завершено');
+    expect(cTask.css).toContain('ppc-work-completed');
+    expect(orphan.css).toContain('ppc-ms-green');
+    expect(orphan.css).not.toContain('ppc-ms-red');
   });
 
   it('готовность 50% занимает половину полосы и подписывается числом', () => {
@@ -602,6 +759,10 @@ describe('toGanttPresentation: иерархия и прогресс', () => {
       [],
       [rowMilestone, rowGreen, rowEquipment],
     );
+    expect(data[0].kindLabel).toBe('Контрольная точка');
+    expect(data[0].statusLabel).toMatch(/КТ/);
+    expect(data[2].kindLabel).toBe('Поставка');
+    expect(data[2].statusLabel).toMatch(/Поставка/);
     expect(data[0]).toMatchObject({
       id: 'milestone:MS-PS',
       type: 'milestone',

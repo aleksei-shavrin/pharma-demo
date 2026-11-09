@@ -571,7 +571,7 @@ export function buildTimelineTextSummary(data: DashboardOverview): string {
     `Запуск производства: базовый план ${formatDateRu(band.baselineDate)}, прогноз ${formatDateRu(band.forecastDate)}, ${band.deltaLabel}`,
     ...points.map(
       (m) =>
-        `${m.shortLabel} (${m.id}): прогноз ${formatDateRu(m.forecastDate)}, ${m.rag === 'Green' ? 'зелёная' : 'красная'}`,
+        `${m.shortLabel} (${m.id}): прогноз ${formatDateRu(m.forecastDate)}, ${m.rag === 'Green' ? 'Веха в норме' : 'Веха критична'}`,
     ),
   ];
   return lines.join('. ');

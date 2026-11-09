@@ -8,7 +8,7 @@
 
 - [x] Build tree from import; remap collisions; reparent EQ/MS
 - [x] KT as controlpoint milestones (145); C-anchor 2027-03-01; no hash dates
-- [x] A–S overlays; integrity all 19; linkAudit + seams + alias edges
+- [x] 01–19 overlays; integrity all 19; linkAudit + seams + alias edges
 - [x] Keep 4 link types demo + analyst FS/cross coverage
 
 ## 3. Programs / WS absorb

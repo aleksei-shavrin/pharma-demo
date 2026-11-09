@@ -1,14 +1,12 @@
 'use client';
 
-import { formatDateRu } from '@/lib/format/ru';
-import { EXECUTION_PHASE_START } from '@/lib/dashboard/executive-timeline';
 import {
   timelineProgramLabel,
-  TIMELINE_PROGRAM_ORDER,
+  timelineProgramVisualTopDownIds,
 } from '@/lib/dashboard/timeline-program-labels';
 import type { TimelineUniverseScope } from '@/lib/dashboard/timeline-universe-scope';
 
-type Props = {
+type ToolbarProps = {
   totalCount: number;
   shownCount: number;
   scope: TimelineUniverseScope;
@@ -18,7 +16,13 @@ type Props = {
   onProgramFilterChange: (programId: string) => void;
 };
 
-export function ExecutiveTimelineUniverseChrome({
+const SCOPE_OPTIONS: { value: TimelineUniverseScope; label: string }[] = [
+  { value: 'all', label: 'Все 189 вех' },
+  { value: 'overview', label: 'Фильтр: обзор ключевых (12)' },
+];
+
+/** Compact header controls: counter + scope/program selects (no visible field labels). */
+export function ExecutiveTimelineUniverseToolbar({
   totalCount,
   shownCount,
   scope,
@@ -26,73 +30,65 @@ export function ExecutiveTimelineUniverseChrome({
   programIds,
   onScopeChange,
   onProgramFilterChange,
-}: Props) {
-  const orderedPrograms = TIMELINE_PROGRAM_ORDER.filter((id) =>
-    programIds.includes(id),
-  );
+}: ToolbarProps) {
+  const orderedPrograms = timelineProgramVisualTopDownIds(programIds);
+  const scopeLabel =
+    SCOPE_OPTIONS.find((o) => o.value === scope)?.label ?? scope;
+  const programLabel =
+    programFilter === 'all'
+      ? 'Все программы'
+      : timelineProgramLabel(programFilter);
 
   return (
-    <div data-timeline-universe-chrome="true">
-      <p
-        className="mt-2 text-sm text-[var(--text-secondary)]"
-        data-timeline-phase-context="true"
+    <div
+      className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-x-1.5 gap-y-1 text-xs"
+      data-timeline-universe-toolbar="true"
+    >
+      <span
+        className="shrink-0 text-[var(--text-muted)]"
+        data-timeline-shown-count
       >
-        Предпроект: до {formatDateRu(EXECUTION_PHASE_START)}. Основное
-        исполнение: с {formatDateRu(EXECUTION_PHASE_START)}. Всего{' '}
+        Показано{' '}
         <span className="font-semibold tabular-nums text-[var(--text)]">
-          {totalCount}
+          {shownCount}
         </span>{' '}
-        вех
-        {scope === 'overview' ? (
-          <span className="text-[var(--text-muted)]">
-            {' '}
-            (фильтр «Обзор ключевых»: {shownCount})
-          </span>
-        ) : null}
-        .
-      </p>
-
+        / {totalCount}
+      </span>
       <div
-        className="mt-2 flex flex-wrap items-center gap-2 text-xs"
-        data-timeline-universe-toolbar="true"
+        className="flex shrink-0 items-center gap-1.5"
+        data-timeline-select-pair="true"
       >
-        <span className="text-[var(--text-muted)]">
-          Показано{' '}
-          <span className="font-semibold tabular-nums text-[var(--text)]">
-            {shownCount}
-          </span>{' '}
-          / {totalCount}
-        </span>
-        <label className="flex items-center gap-1">
-          <span className="text-[var(--text-muted)]">Объём</span>
-          <select
-            className="h-7 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-1.5"
-            value={scope}
-            onChange={(e) =>
-              onScopeChange(e.target.value as TimelineUniverseScope)
-            }
-            data-timeline-scope-filter="true"
-          >
-            <option value="all">Все 189 вех</option>
-            <option value="overview">Фильтр: обзор ключевых (12)</option>
-          </select>
-        </label>
-        <label className="flex items-center gap-1">
-          <span className="text-[var(--text-muted)]">Программа</span>
-          <select
-            className="h-7 max-w-[16rem] rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-1.5"
-            value={programFilter}
-            onChange={(e) => onProgramFilterChange(e.target.value)}
-            data-timeline-program-filter="true"
-          >
-            <option value="all">Все программы</option>
-            {orderedPrograms.map((p) => (
-              <option key={p} value={p}>
-                {timelineProgramLabel(p)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <select
+          className="h-7 w-[8rem] max-w-[8rem] truncate rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-1.5"
+          value={scope}
+          title={scopeLabel}
+          aria-label="Объём"
+          onChange={(e) =>
+            onScopeChange(e.target.value as TimelineUniverseScope)
+          }
+          data-timeline-scope-filter="true"
+        >
+          {SCOPE_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        <select
+          className="h-7 w-[8rem] max-w-[8rem] truncate rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface)] px-1.5"
+          value={programFilter}
+          title={programLabel}
+          aria-label="Программа"
+          onChange={(e) => onProgramFilterChange(e.target.value)}
+          data-timeline-program-filter="true"
+        >
+          <option value="all">Все программы</option>
+          {orderedPrograms.map((p) => (
+            <option key={p} value={p}>
+              {timelineProgramLabel(p)}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

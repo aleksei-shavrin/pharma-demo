@@ -1,4 +1,4 @@
-import { SNAPSHOT_A, SNAPSHOT_B, SNAPSHOT_C } from './fixtures';
+import { SNAPSHOT_01, SNAPSHOT_02, SNAPSHOT_03 } from './fixtures';
 import type { SnapshotFixture } from './fixtures/types';
 import {
   computeProjectStatus,
@@ -7,16 +7,16 @@ import {
 } from './project-status';
 
 function cloneA(): SnapshotFixture {
-  return structuredClone(SNAPSHOT_A);
+  return structuredClone(SNAPSHOT_01);
 }
 
 describe('workstreamStatus', () => {
   it('returns Red when any Risk in WS is Red', () => {
-    expect(workstreamStatus(SNAPSHOT_C, 'WS-HVAC')).toBe('Red');
+    expect(workstreamStatus(SNAPSHOT_03, 'WS-HVAC')).toBe('Red');
   });
 
   it('returns Yellow from Delayed critical Equipment without Red Risk', () => {
-    expect(workstreamStatus(SNAPSHOT_B, 'WS-PKG')).toBe('Yellow');
+    expect(workstreamStatus(SNAPSHOT_02, 'WS-PKG')).toBe('Yellow');
   });
 
   it('returns Yellow from Open or Mitigating Issue without Red Risk', () => {
@@ -66,24 +66,24 @@ describe('workstreamStatus', () => {
   });
 
   it('returns Green otherwise', () => {
-    expect(workstreamStatus(SNAPSHOT_A, 'WS-HVAC')).toBe('Green');
-    expect(workstreamStatus(SNAPSHOT_A, 'WS-PKG')).toBe('Green');
-    expect(workstreamStatus(SNAPSHOT_B, 'WS-HVAC')).toBe('Green');
+    expect(workstreamStatus(SNAPSHOT_01, 'WS-HVAC')).toBe('Green');
+    expect(workstreamStatus(SNAPSHOT_01, 'WS-PKG')).toBe('Green');
+    expect(workstreamStatus(SNAPSHOT_02, 'WS-HVAC')).toBe('Green');
   });
 });
 
 describe('computeProjectStatus', () => {
-  it('is Green for calm Snapshot A', () => {
-    expect(computeProjectStatus(SNAPSHOT_A)).toBe('Green');
+  it('is Green for calm Snapshot 01', () => {
+    expect(computeProjectStatus(SNAPSHOT_01)).toBe('Green');
   });
 
-  it('is Yellow for Snapshot B local attention without HVAC/PS shift', () => {
-    expect(computeProjectStatus(SNAPSHOT_B)).toBe('Yellow');
-    expect(SNAPSHOT_B.project.forecastProductionStart).toBe('2027-09-15');
+  it('is Yellow for Snapshot 02 local attention without HVAC/PS shift', () => {
+    expect(computeProjectStatus(SNAPSHOT_02)).toBe('Yellow');
+    expect(SNAPSHOT_02.project.forecastProductionStart).toBe('2027-09-15');
   });
 
-  it('is Red when RISK-001 is Red (Snapshot C)', () => {
-    expect(computeProjectStatus(SNAPSHOT_C)).toBe('Red');
+  it('is Red when RISK-001 is Red (Snapshot 03)', () => {
+    expect(computeProjectStatus(SNAPSHOT_03)).toBe('Red');
   });
 
   it('is Red when MS-PS is Red', () => {
@@ -107,7 +107,7 @@ describe('computeProjectStatus', () => {
 
 describe('computeWorkstreamRollups', () => {
   it('returns all eight workstreams', () => {
-    const rollups = computeWorkstreamRollups(SNAPSHOT_A);
+    const rollups = computeWorkstreamRollups(SNAPSHOT_01);
     expect(rollups).toHaveLength(8);
     expect(rollups.map((r) => r.workstream)).toContain('WS-AUT');
   });

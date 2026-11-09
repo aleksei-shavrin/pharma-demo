@@ -39,7 +39,7 @@ export class WorkstreamListDto {
   @ApiProperty()
   scenarioAsOfDate!: string;
 
-  @ApiProperty({ example: 'PRJ-01' })
+  @ApiProperty({ example: 'PRT-01' })
   projectId!: string;
 
   @ApiProperty({ type: [WorkstreamListItemDto] })
@@ -141,7 +141,7 @@ export class WorkstreamDetailDto {
   @ApiProperty()
   scenarioAsOfDate!: string;
 
-  @ApiProperty({ example: 'PRJ-01' })
+  @ApiProperty({ example: 'PRT-01' })
   projectId!: string;
 
   @ApiProperty({ type: WorkstreamCatalogItemDto })

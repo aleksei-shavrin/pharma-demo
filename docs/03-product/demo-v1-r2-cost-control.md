@@ -1,6 +1,6 @@
 ---
 id: DOC-PROD-026
-title: 'Demo v1 R2 — контроль стоимости, CAPEX и денежная история A–S'
+title: 'Demo v1 R2 — контроль стоимости, CAPEX и денежная история 01–19'
 type: product
 status: draft
 version: 0.1.1
@@ -14,7 +14,7 @@ related:
   - DOC-BA-018
   - DOC-UX-022
 ---
-# Demo v1 R2 — cost control, CAPEX research, and A–S money story
+# Demo v1 R2 — cost control, CAPEX research, and 01–19 money story
 
 > **certainty:** hypothesis
 >
@@ -159,7 +159,7 @@ Optional on significant purchased EQ: `approvedCostRub?`, `committedCostRub?`, `
 
 Contingency is **project reserve inside BAC**, shown as its own row on `/costs`, not WS-09.
 
-## 5. A–S cost story (project level, integer RUB)
+## 5. 01–19 cost story (project level, integer RUB)
 
 > **certainty:** assumption
 >
@@ -169,37 +169,37 @@ Contingency is **project reserve inside BAC**, shown as its own row on `/costs`,
 >
 > `Project.eacRub = Σ WS.eacRub + projectLevelForecastRub`
 >
-> where Demo `projectLevelForecastRub = min(contingencyRemainingRub, etcRub)` — unused contingency still expected in Project EAC mid-lifecycle (so unused ≠ automatic +VAC), and `0` at closeout when `ETC = 0` (leftover `contingencyRemaining` sits **outside** EAC). Therefore **`Σ WS.eacRub` SHALL NOT be forced equal to `Project.eacRub`**. On Snapshot A: Σ WS EAC = 5.85B (Σ WS BAC), projectLevelForecast = 350M, Project EAC = 6.2B. WS Actual/Committed still sum to Project Actual/Committed; WS ETC sums to `Project.etc − projectLevelForecast`.
+> where Demo `projectLevelForecastRub = min(contingencyRemainingRub, etcRub)` — unused contingency still expected in Project EAC mid-lifecycle (so unused ≠ automatic +VAC), and `0` at closeout when `ETC = 0` (leftover `contingencyRemaining` sits **outside** EAC). Therefore **`Σ WS.eacRub` SHALL NOT be forced equal to `Project.eacRub`**. On Snapshot 01: Σ WS EAC = 5.85B (Σ WS BAC), projectLevelForecast = 350M, Project EAC = 6.2B. WS Actual/Committed still sum to Project Actual/Committed; WS ETC sums to `Project.etc − projectLevelForecast`.
 
 | ID | Actual | Committed | ETC | EAC | VAC | Cont. consumed | Cont. rem. | Note |
 |----|-------:|----------:|----:|----:|----:|---------------:|-----------:|------|
-| A | 120_000_000 | 980_000_000 | 6_080_000_000 | 6_200_000_000 | 0 | 0 | 350_000_000 | Baseline; unused contingency ≠ saving |
-| B | 180_000_000 | 1_050_000_000 | 6_030_000_000 | 6_210_000_000 | −10_000_000 | 0 | 350_000_000 | Local attention; slight EAC up |
-| C | 210_000_000 | 1_120_000_000 | 6_060_000_000 | 6_270_000_000 | −70_000_000 | 40_000_000 | 310_000_000 | HVAC shock |
-| D | 280_000_000 | 1_280_000_000 | 6_040_000_000 | 6_320_000_000 | −120_000_000 | 60_000_000 | 290_000_000 | Cascade |
-| E | 360_000_000 | 1_520_000_000 | 6_020_000_000 | 6_380_000_000 | −180_000_000 | 90_000_000 | 260_000_000 | Parallel pressure |
-| F | 390_000_000 | 1_560_000_000 | 5_990_000_000 | 6_380_000_000 | −180_000_000 | 90_000_000 | 260_000_000 | Decisions; **EAC unchanged vs E** |
-| G | 520_000_000 | 1_780_000_000 | 5_880_000_000 | 6_400_000_000 | −200_000_000 | 120_000_000 | 230_000_000 | Recovery spend starts |
-| H | 610_000_000 | 1_920_000_000 | 5_800_000_000 | 6_410_000_000 | −210_000_000 | 140_000_000 | 210_000_000 | Residual honesty |
-| I | 780_000_000 | 2_180_000_000 | 5_620_000_000 | 6_400_000_000 | −200_000_000 | 160_000_000 | 190_000_000 | UTL/AUT |
-| J | 980_000_000 | 2_520_000_000 | 5_430_000_000 | 6_410_000_000 | −210_000_000 | 180_000_000 | 170_000_000 | PRD install commitments |
-| K | 1_180_000_000 | 2_760_000_000 | 5_230_000_000 | 6_410_000_000 | −210_000_000 | 190_000_000 | 160_000_000 | PKG residual closed |
-| L | 1_360_000_000 | 2_980_000_000 | 5_050_000_000 | 6_410_000_000 | −210_000_000 | 210_000_000 | 140_000_000 | AUT exposure |
-| M | 1_520_000_000 | 3_120_000_000 | 4_900_000_000 | 6_420_000_000 | −220_000_000 | 230_000_000 | 120_000_000 | Commissioning **peak EAC** |
-| N | 1_580_000_000 | 3_160_000_000 | 4_840_000_000 | 6_420_000_000 | −220_000_000 | 230_000_000 | 120_000_000 | Decisions; EAC flat vs M |
-| O | 1_820_000_000 | 3_380_000_000 | 4_560_000_000 | 6_380_000_000 | −180_000_000 | 250_000_000 | 100_000_000 | Schedule +7; cost not magically healed |
-| P | 2_180_000_000 | 3_620_000_000 | 4_180_000_000 | 6_360_000_000 | −160_000_000 | 270_000_000 | 80_000_000 | Uncertainty down |
-| Q | 2_360_000_000 | 3_700_000_000 | 3_980_000_000 | 6_340_000_000 | −140_000_000 | 280_000_000 | 70_000_000 | Baseline date miss |
-| R | 2_520_000_000 | 3_760_000_000 | 3_800_000_000 | 6_320_000_000 | −120_000_000 | 290_000_000 | 60_000_000 | Go/No-Go |
-| S | 6_280_000_000 | 6_280_000_000 | 0 | 6_280_000_000 | −80_000_000 | 320_000_000 | 30_000_000 | Final; Actual=EAC; ~1.3% overrun |
+| 01 | 120_000_000 | 980_000_000 | 6_080_000_000 | 6_200_000_000 | 0 | 0 | 350_000_000 | Baseline; unused contingency ≠ saving |
+| 02 | 180_000_000 | 1_050_000_000 | 6_030_000_000 | 6_210_000_000 | −10_000_000 | 0 | 350_000_000 | Local attention; slight EAC up |
+| 03 | 210_000_000 | 1_120_000_000 | 6_060_000_000 | 6_270_000_000 | −70_000_000 | 40_000_000 | 310_000_000 | HVAC shock |
+| 04 | 280_000_000 | 1_280_000_000 | 6_040_000_000 | 6_320_000_000 | −120_000_000 | 60_000_000 | 290_000_000 | Cascade |
+| 05 | 360_000_000 | 1_520_000_000 | 6_020_000_000 | 6_380_000_000 | −180_000_000 | 90_000_000 | 260_000_000 | Parallel pressure |
+| 06 | 390_000_000 | 1_560_000_000 | 5_990_000_000 | 6_380_000_000 | −180_000_000 | 90_000_000 | 260_000_000 | Decisions; **EAC unchanged vs E** |
+| 07 | 520_000_000 | 1_780_000_000 | 5_880_000_000 | 6_400_000_000 | −200_000_000 | 120_000_000 | 230_000_000 | Recovery spend starts |
+| 08 | 610_000_000 | 1_920_000_000 | 5_800_000_000 | 6_410_000_000 | −210_000_000 | 140_000_000 | 210_000_000 | Residual honesty |
+| 09 | 780_000_000 | 2_180_000_000 | 5_620_000_000 | 6_400_000_000 | −200_000_000 | 160_000_000 | 190_000_000 | UTL/AUT |
+| 10 | 980_000_000 | 2_520_000_000 | 5_430_000_000 | 6_410_000_000 | −210_000_000 | 180_000_000 | 170_000_000 | PRD install commitments |
+| 11 | 1_180_000_000 | 2_760_000_000 | 5_230_000_000 | 6_410_000_000 | −210_000_000 | 190_000_000 | 160_000_000 | PKG residual closed |
+| 12 | 1_360_000_000 | 2_980_000_000 | 5_050_000_000 | 6_410_000_000 | −210_000_000 | 210_000_000 | 140_000_000 | AUT exposure |
+| 13 | 1_520_000_000 | 3_120_000_000 | 4_900_000_000 | 6_420_000_000 | −220_000_000 | 230_000_000 | 120_000_000 | Commissioning **peak EAC** |
+| 14 | 1_580_000_000 | 3_160_000_000 | 4_840_000_000 | 6_420_000_000 | −220_000_000 | 230_000_000 | 120_000_000 | Decisions; EAC flat vs M |
+| 15 | 1_820_000_000 | 3_380_000_000 | 4_560_000_000 | 6_380_000_000 | −180_000_000 | 250_000_000 | 100_000_000 | Schedule +7; cost not magically healed |
+| 16 | 2_180_000_000 | 3_620_000_000 | 4_180_000_000 | 6_360_000_000 | −160_000_000 | 270_000_000 | 80_000_000 | Uncertainty down |
+| 17 | 2_360_000_000 | 3_700_000_000 | 3_980_000_000 | 6_340_000_000 | −140_000_000 | 280_000_000 | 70_000_000 | Baseline date miss |
+| 18 | 2_520_000_000 | 3_760_000_000 | 3_800_000_000 | 6_320_000_000 | −120_000_000 | 290_000_000 | 60_000_000 | Go/No-Go |
+| 19 | 6_280_000_000 | 6_280_000_000 | 0 | 6_280_000_000 | −80_000_000 | 320_000_000 | 30_000_000 | Final; Actual=EAC; ~1.3% overrun |
 
 **Close:** schedule **+7d**; cost slight overrun (**VAC −80M**); better than peak EAC at M (**−220M**). EAC need not be monotonic; each move has narrative above.
 
 ## 6. Workstream cost narratives (summary)
 
-- **HVAC:** recovery spend G–O links schedule residual improvement to Actual/Committed rise; EAC peak around commissioning.
-- **UTL / PRD / AUT:** mid-late commitment waves (I–L).
-- **PKG:** early B–G residual; K closes residual cost exposure.
+- **HVAC:** recovery spend 07–15 links schedule residual improvement to Actual/Committed rise; EAC peak around commissioning.
+- **UTL / PRD / AUT:** mid-late commitment waves (09–12).
+- **PKG:** early 02–07 residual; 11 closes residual cost exposure.
 - **BLD/CLN:** front-loaded Actual early; quiet late.
 - **QC:** smaller absolute; instrument commitments mid.
 
@@ -207,4 +207,4 @@ No automatic causal engine: fixture state authoritative.
 
 ## 7. UI implications
 
-Dashboard above-fold: BAC · EAC · VAC · contingency health. `/costs`: project controls view (DOC-UX-022). No accounting UI.
+Dashboard above-fold: BAC · EAC · VAC · contingency health. Abbreviation labels (EAC/VAC/BAC/Резерв) expose a **visible** RU tip on hover and keyboard focus (EN may supplement; not `title`-only). `/costs`: project controls view (DOC-UX-022). No accounting UI.

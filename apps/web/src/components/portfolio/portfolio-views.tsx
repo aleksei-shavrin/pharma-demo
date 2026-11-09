@@ -21,6 +21,7 @@ import {
   presentMilestoneName,
   projectStatusLabel,
 } from '@/lib/ui-labels';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 import {
   previewSlice,
   WORKSTREAM_SECTION_PREVIEW_LIMIT,
@@ -420,7 +421,9 @@ export function ProgramDashboardView({ data }: { data: ProgramDetail }) {
   return (
     <PageFrame className="p-6" data-page="program-detail">
       <PageHeader>
-        <p className="text-xs text-[var(--text-muted)]">Снимок {data.snapshotId}</p>
+        <p className="text-xs text-[var(--text-muted)]">
+          Снимок {snapshotDisplayLabel(data.snapshotId)}
+        </p>
         <div className="mt-1 flex flex-wrap items-center gap-3">
           <h1 className="text-lg font-semibold text-[var(--text)]">{data.name}</h1>
           <span data-program-status={data.status}>
@@ -450,7 +453,7 @@ export function ProgramDashboardView({ data }: { data: ProgramDetail }) {
               </span>
             </li>
             <li>
-              <span className="text-[var(--text-muted)]">Красные риски</span>{' '}
+              <span className="text-[var(--text-muted)]">Критичные риски</span>{' '}
               <span className="font-medium tabular-nums">{att.redRiskCount}</span>
             </li>
             <li>
@@ -985,7 +988,7 @@ export function ProjectCardView({ data }: { data: AnalystProjectCard }) {
             {data.programName}
           </Link>
           {' · '}
-          снимок {data.snapshotId}
+          снимок {snapshotDisplayLabel(data.snapshotId)}
         </p>
         <h1 className="text-lg font-semibold text-[var(--text)]">
           {data.id} · {data.name}
@@ -1037,7 +1040,7 @@ export function ProjectCardView({ data }: { data: AnalystProjectCard }) {
               </span>
             </li>
             <li>
-              <span className="text-[var(--text-muted)]">Красные риски</span>{' '}
+              <span className="text-[var(--text-muted)]">Критичные риски</span>{' '}
               <span className="font-medium tabular-nums">{att.redRiskCount}</span>
             </li>
             <li>

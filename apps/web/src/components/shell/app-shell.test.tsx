@@ -31,15 +31,15 @@ beforeEach(() => {
       dashboardOverviewFixture(snapshot),
   );
   fetchNotifications.mockResolvedValue({
-    snapshotId: 'A',
+    snapshotId: '01',
     scenarioAsOfDate: '2027-02-15',
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     items: [],
   });
   fetchProjectCosts.mockResolvedValue({
-    snapshotId: 'A',
+    snapshotId: '01',
     scenarioAsOfDate: '2027-02-15',
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     project: {
       approvedBudgetRub: 6_200_000_000,
       actualCostRub: 0,

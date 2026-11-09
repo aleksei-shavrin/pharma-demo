@@ -18,7 +18,7 @@ function dashboard(
   const delayed = forecast !== '2027-09-15';
   return dashboardOverviewFixture(snapshotId, {
     project: {
-      id: 'PRJ-01',
+      id: 'PRT-01',
       name: 'Строительство фармацевтической фабрики (Greenfield)',
       baselineProductionStart: '2027-09-15',
       forecastProductionStart: forecast,
@@ -71,6 +71,19 @@ function dashboard(
     decisions: [],
     decisionPanelState: 'absent',
     decisionHonesty: null,
+    peopleFocus: {
+      previousSnapshotId: null,
+      summary: {
+        peopleWithQuestions: 0,
+        criticalQuestionCount: 0,
+        newCriticalQuestionCount: null,
+        removedCriticalSignalCount: null,
+        otherActiveIssueCount: 0,
+      },
+      people: [],
+      unassignedDelayedCriticalEquipmentIds: [],
+      totalPeopleInFocus: 0,
+    },
   });
 }
 
@@ -87,7 +100,7 @@ function projectFrom(d: DashboardOverview): ProjectStub {
 
 describe('snapshotReducer (atomic switch + dashboard)', () => {
   it('starts with active A and no dashboard', () => {
-    expect(initialSnapshotState.active).toBe('A');
+    expect(initialSnapshotState.active).toBe('01');
     expect(initialSnapshotState.dashboard).toBeNull();
   });
 
@@ -95,54 +108,54 @@ describe('snapshotReducer (atomic switch + dashboard)', () => {
     const next = snapshotReducer(
       {
         ...initialSnapshotState,
-        active: 'A',
-        project: projectFrom(dashboard('A', '2027-09-15')),
-        dashboard: dashboard('A', '2027-09-15'),
+        active: '01',
+        project: projectFrom(dashboard('01', '2027-09-15')),
+        dashboard: dashboard('01', '2027-09-15'),
       },
-      { type: 'request', snapshot: 'B', seq: 1 },
+      { type: 'request', snapshot: '02', seq: 1 },
     );
-    expect(next.active).toBe('A');
-    expect(next.dashboard?.snapshotId).toBe('A');
-    expect(next.requested).toBe('B');
+    expect(next.active).toBe('01');
+    expect(next.dashboard?.snapshotId).toBe('01');
+    expect(next.requested).toBe('02');
     expect(next.status).toBe('loading');
   });
 
   it('success B commits dashboard + project together', () => {
     let state = snapshotReducer(initialSnapshotState, {
       type: 'request',
-      snapshot: 'B',
+      snapshot: '02',
       seq: 1,
     });
-    const dash = dashboard('B', '2027-10-06');
+    const dash = dashboard('02', '2027-10-06');
     state = snapshotReducer(state, {
       type: 'success',
-      snapshot: 'B',
+      snapshot: '02',
       project: projectFrom(dash),
       dashboard: dash,
       seq: 1,
     });
-    expect(state.active).toBe('B');
-    expect(state.dashboard?.snapshotId).toBe('B');
+    expect(state.active).toBe('02');
+    expect(state.dashboard?.snapshotId).toBe('02');
     expect(state.project?.forecastProductionStart).toBe('2027-10-06');
   });
 
   it('failure keeps previous dashboard; stale success ignored', () => {
     let state = snapshotReducer(initialSnapshotState, {
       type: 'request',
-      snapshot: 'B',
+      snapshot: '02',
       seq: 1,
     });
-    const dashB = dashboard('B', '2027-10-06');
+    const dashB = dashboard('02', '2027-10-06');
     state = snapshotReducer(state, {
       type: 'success',
-      snapshot: 'B',
+      snapshot: '02',
       project: projectFrom(dashB),
       dashboard: dashB,
       seq: 1,
     });
     state = snapshotReducer(state, {
       type: 'request',
-      snapshot: 'C',
+      snapshot: '03',
       seq: 2,
     });
     state = snapshotReducer(state, {
@@ -150,24 +163,24 @@ describe('snapshotReducer (atomic switch + dashboard)', () => {
       error: 'network',
       seq: 2,
     });
-    expect(state.active).toBe('B');
-    expect(state.dashboard?.snapshotId).toBe('B');
+    expect(state.active).toBe('02');
+    expect(state.dashboard?.snapshotId).toBe('02');
     expect(state.status).toBe('error');
 
     state = snapshotReducer(state, {
       type: 'request',
-      snapshot: 'C',
+      snapshot: '03',
       seq: 3,
     });
     state = snapshotReducer(state, {
       type: 'success',
-      snapshot: 'B',
+      snapshot: '02',
       project: projectFrom(dashB),
       dashboard: dashB,
       seq: 1,
     });
-    expect(state.active).toBe('B');
-    expect(state.requested).toBe('C');
+    expect(state.active).toBe('02');
+    expect(state.requested).toBe('03');
     expect(state.status).toBe('loading');
   });
 });
@@ -191,8 +204,8 @@ describe('createMonotonicSeq + runSnapshotLoad (dashboard atomic)', () => {
     });
 
     const loadB = runSnapshotLoad({
-      snapshot: 'B',
-      projectId: 'PRJ-01',
+      snapshot: '02',
+      projectId: 'PRT-01',
       allocateSeq,
       dispatch,
       fetchDashboard: async () => fetchB,
@@ -202,8 +215,8 @@ describe('createMonotonicSeq + runSnapshotLoad (dashboard atomic)', () => {
       },
     });
     const loadC = runSnapshotLoad({
-      snapshot: 'C',
-      projectId: 'PRJ-01',
+      snapshot: '03',
+      projectId: 'PRT-01',
       allocateSeq,
       dispatch,
       fetchDashboard: async () => fetchC,
@@ -214,18 +227,18 @@ describe('createMonotonicSeq + runSnapshotLoad (dashboard atomic)', () => {
     });
 
     expect(state.requestSeq).toBe(2);
-    expect(state.requested).toBe('C');
+    expect(state.requested).toBe('03');
 
-    resolveB(dashboard('B', '2027-10-06'));
+    resolveB(dashboard('02', '2027-10-06'));
     await loadB;
-    expect(state.active).toBe('A');
+    expect(state.active).toBe('01');
     expect(state.dashboard).toBeNull();
     expect(committed).toEqual([]);
 
-    resolveC(dashboard('C', '2027-10-06'));
+    resolveC(dashboard('03', '2027-10-06'));
     await loadC;
-    expect(state.active).toBe('C');
-    expect(state.dashboard?.snapshotId).toBe('C');
-    expect(committed).toEqual(['C']);
+    expect(state.active).toBe('03');
+    expect(state.dashboard?.snapshotId).toBe('03');
+    expect(committed).toEqual(['03']);
   });
 });

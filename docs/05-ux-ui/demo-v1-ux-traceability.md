@@ -60,7 +60,7 @@ related:
 | D11 Schedule = Milestone + Equipment Delivery only; **без** Activity, WBS, CPM, dependencies (FS/SS и т.п.), scheduling engine | P2 scope | DOC-BA-015; PROC-001; BA-A-003 | Только control-point rows MS + EQ delivery; no Activity/WBS/CPM/deps/engine | `approved UX decision` (+ `approved requirement` no Activity entity) |
 | D12 Gantt library | Schedule Timeline (I7) | ADR-0004 | — | **RESOLVED** |
 | Layout shell + Page Surface | App Shell | — | — | `approved UX decision` |
-| Snapshot A/B/C switcher | App Bar | OpenSpec reproducibility; DOC-PROD-012 | Snapshots A/B/C | `approved UX decision` (control); data = mock / `approved requirement` |
+| Snapshot 01/02/03 switcher | App Bar | OpenSpec reproducibility; DOC-PROD-012 | Snapshots 01/02/03 | `approved UX decision` (control); data = mock / `approved requirement` |
 | Light/Dark theme | App Bar + shell | — | Theme tokens | `approved UX decision` |
 | shadcn / TanStack / Recharts | Components | — | — | `approved UX decision` |
 | Links = direct Domain only | Entity Detail Links | DOC-BA-015 | Existing direct FKs | `approved UX decision` |
@@ -76,7 +76,7 @@ related:
 | Design token roles + surface depth (principles) | Shell / components | DOC-UX-011 | Theme CSS vars | `approved Visual Direction baseline` (principles) |
 | Concrete HEX Light/Dark + calculated contrast | Theme / badges | DOC-UX-015 | shadcn CSS vars | `approved UI Design decision` (UI Foundations) |
 | Component inventory + StatusIndicator models | Shell / registers / detail | DOC-UX-016 | shadcn + TanStack + Recharts | `approved UI Design decision` (UI Components) |
-| Snapshot A/B/C visual story + Links≠Impact viz | Dashboard / detail / charts | DOC-UX-018 | DOC-PROD-012 fixtures | `approved UI Design decision` (UI Data viz) |
+| Snapshot 01/02/03 visual story + Links≠Impact viz | Dashboard / detail / charts | DOC-UX-018 | DOC-PROD-012 fixtures | `approved UI Design decision` (UI Data viz) |
 | Snapshot/theme/table/detail interaction rules | Shell / registers / detail | DOC-UX-019 | — | `approved UI Design decision` (UI Interactions) |
 | Eight-surface screen compositions | Shell + P1–P5 + Detail + M-DEC | DOC-UX-017 | DOC-PROD-012 | `approved UI Design decision` (UI Screens); M-DEC Must = read-only |
 | UI Design quality criteria (docs vs impl) | Pack DOC-UX-014…020 | DOC-UX-020 | — | `approved UI Design decision`; pack APPROVED; impl NOT STARTED |

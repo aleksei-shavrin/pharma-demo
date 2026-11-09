@@ -5,7 +5,7 @@ import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { useSnapshotResource } from './use-snapshot-resource';
 
 const snapState = vi.hoisted(() => ({
-  active: 'C' as SnapshotId,
+  active: '03' as SnapshotId,
   status: 'ready' as 'loading' | 'ready' | 'error',
 }));
 
@@ -18,7 +18,7 @@ vi.mock('@/lib/snapshot/snapshot-context', () => ({
 
 describe('useSnapshotResource', () => {
   beforeEach(() => {
-    snapState.active = 'C';
+    snapState.active = '03';
     snapState.status = 'ready';
   });
 
@@ -26,7 +26,7 @@ describe('useSnapshotResource', () => {
     let resolveC: (v: { id: string }) => void = () => undefined;
     let resolveA: (v: { id: string }) => void = () => undefined;
     const fetchFn = vi.fn((projectId: string, snap: SnapshotId) => {
-      if (snap === 'C') {
+      if (snap === '03') {
         return new Promise<{ id: string }>((r) => {
           resolveC = r;
         });
@@ -37,7 +37,7 @@ describe('useSnapshotResource', () => {
     });
 
     const { result, rerender } = renderHook(() =>
-      useSnapshotResource(fetchFn, 'PRJ-01'),
+      useSnapshotResource(fetchFn, 'PRT-01'),
     );
 
     expect(result.current.status).toBe('loading');
@@ -50,7 +50,7 @@ describe('useSnapshotResource', () => {
     expect(result.current.data).toEqual({ id: 'from-C' });
 
     await act(async () => {
-      snapState.active = 'A';
+      snapState.active = '01';
       rerender();
     });
     expect(result.current.status).toBe('loading');
@@ -72,17 +72,17 @@ describe('useSnapshotResource', () => {
     });
 
     const { result, rerender } = renderHook(() =>
-      useSnapshotResource(fetchFn, 'PRJ-01'),
+      useSnapshotResource(fetchFn, 'PRT-01'),
     );
 
     await act(async () => {
-      snapState.active = 'A';
+      snapState.active = '01';
       rerender();
     });
 
     await act(async () => {
-      resolvers.C?.({ id: 'late-C' });
-      resolvers.A?.({ id: 'ok-A' });
+      resolvers['03']?.({ id: 'late-C' });
+      resolvers['01']?.({ id: 'ok-A' });
     });
 
     await waitFor(() => expect(result.current.status).toBe('ready'));
@@ -104,7 +104,7 @@ describe('useSnapshotResource', () => {
         }),
     );
     const { result } = renderHook(() =>
-      useSnapshotResource(fetchFn, 'PRJ-01'),
+      useSnapshotResource(fetchFn, 'PRT-01'),
     );
     await waitFor(() => expect(result.current.status).toBe('ready'));
     expect(result.current.data).toEqual({ id: 'v1' });

@@ -10,7 +10,7 @@ import {
   RegisterError,
   RegisterFilteredEmpty,
   RegisterLoading,
-  RegisterMutedIds,
+  RegisterIdLinks,
   RegisterRow,
   RegisterShell,
   RegisterTable,
@@ -183,10 +183,16 @@ function EquipmentPage() {
                     )}
                   </RegisterCell>
                   <RegisterCell>
-                    <RegisterMutedIds
-                      ids={[
-                        ...item.relatedActiveIssueIds,
-                        ...item.relatedRedRiskIds,
+                    <RegisterIdLinks
+                      refs={[
+                        ...item.relatedActiveIssueIds.map((id) => ({
+                          type: 'issue' as const,
+                          id,
+                        })),
+                        ...item.relatedRedRiskIds.map((id) => ({
+                          type: 'risk' as const,
+                          id,
+                        })),
                       ]}
                     />
                   </RegisterCell>

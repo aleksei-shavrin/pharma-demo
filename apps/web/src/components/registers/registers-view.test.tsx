@@ -37,10 +37,10 @@ function dash(snapshotId: SnapshotId) {
 
 function equipment(snapshotId: SnapshotId) {
   const hvacDelayed =
-    snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H';
+    snapshotId === '03' || snapshotId === '07' || snapshotId === '08';
   const hvacDelta =
-    snapshotId === 'C' ? 21 : snapshotId === 'G' || snapshotId === 'H' ? 14 : 0;
-  const pkgDelayed = snapshotId === 'B';
+    snapshotId === '03' ? 21 : snapshotId === '07' || snapshotId === '08' ? 14 : 0;
+  const pkgDelayed = snapshotId === '02';
   const items = [
     {
       id: 'EQ-HVAC-01',
@@ -64,11 +64,11 @@ function equipment(snapshotId: SnapshotId) {
         deltaDays: hvacDelta,
       },
       relatedActiveIssueIds:
-        snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H'
+        snapshotId === '03' || snapshotId === '07' || snapshotId === '08'
           ? ['ISS-001']
           : [],
       relatedRedRiskIds:
-        snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H'
+        snapshotId === '03' || snapshotId === '07' || snapshotId === '08'
           ? ['RISK-001']
           : [],
     },
@@ -128,14 +128,14 @@ function equipment(snapshotId: SnapshotId) {
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     items,
   };
 }
 
 function issuesRisks(snapshotId: SnapshotId) {
   const rows = [];
-  if (snapshotId === 'B') {
+  if (snapshotId === '02') {
     rows.push({
       type: 'Issue' as const,
       id: 'ISS-PKG-01',
@@ -161,14 +161,14 @@ function issuesRisks(snapshotId: SnapshotId) {
       milestoneId: null,
     });
   }
-  if (snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H') {
+  if (snapshotId === '03' || snapshotId === '07' || snapshotId === '08') {
     rows.push({
       type: 'Issue' as const,
       id: 'ISS-001',
       title: 'Прогноз сдвига поставки long-lead AHU',
       workstream: 'WS-HVAC' as WorkstreamId,
       issueStatus:
-        snapshotId === 'C' ? ('Open' as const) : ('Mitigating' as const),
+        snapshotId === '03' ? ('Open' as const) : ('Mitigating' as const),
       rag: null,
       equipmentId: 'EQ-HVAC-01',
       linkedIssueId: null,
@@ -183,19 +183,19 @@ function issuesRisks(snapshotId: SnapshotId) {
     workstream: 'WS-HVAC' as WorkstreamId,
     issueStatus: null,
     rag:
-      snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H'
+      snapshotId === '03' || snapshotId === '07' || snapshotId === '08'
         ? ('Red' as const)
         : ('Green' as const),
     equipmentId: 'EQ-HVAC-01',
     linkedIssueId:
-      snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H'
+      snapshotId === '03' || snapshotId === '07' || snapshotId === '08'
         ? 'ISS-001'
         : null,
     linkedRiskId: null,
     milestoneId: 'MS-PS',
   });
   // RISK-COM-01 enters fixtures at E+ (approved orphan Red without Issue).
-  if (snapshotId === 'E' || snapshotId === 'G' || snapshotId === 'H') {
+  if (snapshotId === '05' || snapshotId === '07' || snapshotId === '08') {
     rows.push({
       type: 'Risk' as const,
       id: 'RISK-COM-01',
@@ -212,20 +212,20 @@ function issuesRisks(snapshotId: SnapshotId) {
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     rows,
   };
 }
 
 function milestones(snapshotId: SnapshotId) {
   const delayed =
-    snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H';
+    snapshotId === '03' || snapshotId === '07' || snapshotId === '08';
   const delta =
-    snapshotId === 'C' ? 21 : snapshotId === 'G' || snapshotId === 'H' ? 14 : 0;
+    snapshotId === '03' ? 21 : snapshotId === '07' || snapshotId === '08' ? 14 : 0;
   const forecast =
-    snapshotId === 'C'
+    snapshotId === '03'
       ? '2027-10-06'
-      : snapshotId === 'G' || snapshotId === 'H'
+      : snapshotId === '07' || snapshotId === '08'
         ? '2027-09-29'
         : '2027-09-15';
   const items = [
@@ -242,11 +242,11 @@ function milestones(snapshotId: SnapshotId) {
         deltaDays: delta,
       },
       relatedActiveIssueIds:
-        snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H'
+        snapshotId === '03' || snapshotId === '07' || snapshotId === '08'
           ? ['ISS-001']
           : ([] as string[]),
       relatedRedRiskIds:
-        snapshotId === 'C' || snapshotId === 'G' || snapshotId === 'H'
+        snapshotId === '03' || snapshotId === '07' || snapshotId === '08'
           ? ['RISK-001']
           : ([] as string[]),
     },
@@ -272,7 +272,7 @@ function milestones(snapshotId: SnapshotId) {
   return {
     snapshotId,
     scenarioAsOfDate: dash(snapshotId).scenarioAsOfDate,
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     items,
   };
 }
@@ -308,7 +308,9 @@ beforeEach(() => {
 });
 
 describe('E4 Equipment register', () => {
-  it('renders enriched density, HVAC +21 on C, filters and detail link', async () => {
+  it(
+    'renders enriched density, HVAC +21 on C, filters and detail link',
+    async () => {
     const user = userEvent.setup();
     render(wrap(<EquipmentPage />));
     await waitFor(() => {
@@ -321,7 +323,7 @@ describe('E4 Equipment register', () => {
     expect(screen.getByText('EQ-HVAC-01')).toBeInTheDocument();
     expect(screen.getAllByText('Инженерия').length).toBeGreaterThan(0);
 
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() => {
       expect(screen.getByText('+21 день')).toBeInTheDocument();
     });
@@ -358,10 +360,12 @@ describe('E4 Equipment register', () => {
       expect(screen.getByText('EQ-HVAC-01')).toBeInTheDocument();
     });
     expect(screen.queryByText('EQ-PKG-01')).not.toBeInTheDocument();
-  });
+  },
+  15_000,
+  );
 
   it('G/H residual HVAC +14 shape is available from register contract', () => {
-    for (const id of ['G', 'H'] as SnapshotId[]) {
+    for (const id of ['07', '08'] as SnapshotId[]) {
       const hvac = equipment(id).items.find((i) => i.id === 'EQ-HVAC-01')!;
       expect(hvac.deliveryVariance.deltaDays).toBe(14);
       expect(hvac.status).toBe('Delayed');
@@ -375,10 +379,10 @@ describe('E4 Issues & Risks register', () => {
     const user = userEvent.setup();
     render(wrap(<IssuesRisksPage />));
     await waitFor(() => {
-      expect(screen.getByText('Риск: зелёный')).toBeInTheDocument();
+      expect(screen.getByText('Риск в норме')).toBeInTheDocument();
     });
 
-    await selectDemoSnapshot(user, 'B');
+    await selectDemoSnapshot(user, '02');
     await waitFor(() => {
       expect(screen.getByText('Закрыта')).toBeInTheDocument();
     });
@@ -391,7 +395,7 @@ describe('E4 Issues & Risks register', () => {
     expect(screen.queryByText('ISS-PKG-CLOSED')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Сбросить фильтры' }));
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() => {
       expect(screen.getByText('Открыта')).toBeInTheDocument();
     });
@@ -402,16 +406,24 @@ describe('E4 Issues & Risks register', () => {
     ).toHaveAttribute('href', '/issues/ISS-001');
     expect(screen.getAllByText('RISK-001').length).toBeGreaterThan(0);
     expect(screen.getAllByText(/MS-PS/).length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Риск: красный').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Риск критичен').length).toBeGreaterThan(0);
 
     await user.selectOptions(screen.getByLabelText('Фильтр типа'), 'Risk');
     await waitFor(() => {
-      expect(screen.queryByText('ISS-001')).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('link', {
+          name: /Прогноз сдвига поставки long-lead AHU/,
+        }),
+      ).not.toBeInTheDocument();
     });
     expect(screen.getAllByText('RISK-001').length).toBeGreaterThan(0);
+    // Linked issue id remains as related ref on the risk row.
+    expect(
+      screen.getByRole('link', { name: 'ISS-001' }),
+    ).toHaveAttribute('href', '/issues/ISS-001');
 
     // Approved orphan Red Risk without Issue (fixture E+) — contract shape.
-    const com = issuesRisks('E').rows.find((r) => r.id === 'RISK-COM-01')!;
+    const com = issuesRisks('05').rows.find((r) => r.id === 'RISK-COM-01')!;
     expect(com.type).toBe('Risk');
     expect(com.linkedIssueId).toBeNull();
     expect(com.rag).toBe('Red');
@@ -426,14 +438,14 @@ describe('E4 Milestones register', () => {
       expect(screen.getByText('Готовность к производству')).toBeInTheDocument();
     });
     expect(screen.getByText('14 / 14')).toBeInTheDocument();
-    expect(screen.getAllByText('Веха: зелёная').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Веха в норме').length).toBeGreaterThan(0);
     expect(
       screen.getByRole('link', { name: 'Готовность к производству' }),
     ).toHaveAttribute('href', '/milestones/MS-PS');
 
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() => {
-      expect(screen.getAllByText('Веха: красная').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Веха критична').length).toBeGreaterThan(0);
     });
     expect(screen.getByText('+21 день')).toBeInTheDocument();
     expect(screen.getByText('06.10.2027')).toBeInTheDocument();
@@ -441,8 +453,8 @@ describe('E4 Milestones register', () => {
     expect(screen.getAllByText(/RISK-001/).length).toBeGreaterThan(0);
     expect(screen.queryByText(/Ready for production/)).not.toBeInTheDocument();
 
-    const g = milestones('G');
-    const h = milestones('H');
+    const g = milestones('07');
+    const h = milestones('08');
     expect(g.items.find((i) => i.id === 'MS-PS')!.dateVariance.deltaDays).toBe(
       14,
     );

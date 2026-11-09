@@ -50,7 +50,7 @@ export class MockDemoDataSource extends DemoDataSource {
     return Object.keys(SNAPSHOTS) as (keyof typeof SNAPSHOTS)[];
   }
 
-  /** I1 default context — Snapshot A only (full A/B/C switch is I2). */
+  /** Default context — Snapshot 01 (full 01–19 switching is live). */
   getDefaultSnapshot(): SnapshotFixture {
     return this.getSnapshot(DEFAULT_SNAPSHOT_ID);
   }

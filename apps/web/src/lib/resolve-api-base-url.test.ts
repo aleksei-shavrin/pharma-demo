@@ -24,8 +24,8 @@ describe('joinApiUrl', () => {
   });
 
   it('сохраняет query в path', () => {
-    expect(joinApiUrl('/backend', '/v1/projects/PRJ-01/dashboard?snapshot=A')).toBe(
-      '/backend/v1/projects/PRJ-01/dashboard?snapshot=A',
+    expect(joinApiUrl('/backend', '/v1/projects/PRT-01/dashboard?snapshot=A')).toBe(
+      '/backend/v1/projects/PRT-01/dashboard?snapshot=A',
     );
   });
 

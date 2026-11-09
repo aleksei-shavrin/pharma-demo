@@ -30,7 +30,7 @@ export type SnapshotAction =
   | { type: 'failure'; error: string; seq: number };
 
 export const initialSnapshotState: SnapshotState = {
-  active: 'A',
+  active: '01',
   requested: null,
   status: 'idle',
   error: null,

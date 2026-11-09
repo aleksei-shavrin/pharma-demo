@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { DashboardOverview } from '@/lib/api-client';
@@ -11,7 +10,7 @@ import {
   programIdsPresent,
   type TimelineUniverseScope,
 } from '@/lib/dashboard/timeline-universe-scope';
-import { ExecutiveTimelineUniverseChrome } from './executive-timeline-universe-chrome';
+import { ExecutiveTimelineUniverseToolbar } from './executive-timeline-universe-chrome';
 import { ModuleSurface } from './module-surface';
 
 const ExecutiveTimelineEcharts = dynamic(
@@ -78,19 +77,7 @@ export function ExecutiveTimelineExperimentHost({
     [filtered.milestones],
   );
   const heading = programId ? 'Вехи программы' : 'Вехи портфеля';
-
-  const chrome =
-    emptyProgram || programId ? null : (
-      <ExecutiveTimelineUniverseChrome
-        totalCount={totalCount}
-        shownCount={shownCount}
-        scope={scope}
-        programFilter={programFilter}
-        programIds={programIdsPresent(programScoped)}
-        onScopeChange={setScope}
-        onProgramFilterChange={setProgramFilter}
-      />
-    );
+  const showUniverseControls = !emptyProgram && !programId;
 
   if (emptyProgram) {
     return (
@@ -99,12 +86,6 @@ export function ExecutiveTimelineExperimentHost({
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
             {heading}
           </h2>
-          <Link
-            href="/schedule"
-            className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-          >
-            Календарный план
-          </Link>
         </div>
         <p
           className="mt-3 text-sm text-[var(--text-secondary)]"
@@ -118,27 +99,36 @@ export function ExecutiveTimelineExperimentHost({
 
   return (
     <ModuleSurface data-dashboard-block="executive-timeline">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
+      <div
+        className="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2"
+        data-timeline-card-header="true"
+      >
         <h2
           id="executive-timeline-heading"
-          className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
+          className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
         >
           {heading}
         </h2>
-        <Link
-          href="/schedule"
-          className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-        >
-          Календарный план
-        </Link>
+        {showUniverseControls ? (
+          <ExecutiveTimelineUniverseToolbar
+            totalCount={totalCount}
+            shownCount={shownCount}
+            scope={scope}
+            programFilter={programFilter}
+            programIds={programIdsPresent(programScoped)}
+            onScopeChange={setScope}
+            onProgramFilterChange={setProgramFilter}
+          />
+        ) : null}
       </div>
-      {chrome}
+
       <p className="sr-only">{model?.textSummary}</p>
-      <div className="mt-3 min-w-0" data-timeline-body="echarts">
+      <div className="mt-1.5 min-w-0" data-timeline-body="echarts">
         {model ? (
           <ExecutiveTimelineEcharts
             model={model}
             milestoneMeta={milestoneMeta}
+            highlightPortfolioLane={programFilter === 'all' && !programId}
           />
         ) : null}
       </div>

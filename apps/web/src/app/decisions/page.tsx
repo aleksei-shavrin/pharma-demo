@@ -27,6 +27,7 @@ import {
   decisionDueFilterLabel,
   type DecisionDueState,
 } from '@/lib/decisions/decision-due-labels';
+import { decisionExecutionLabel } from '@/lib/decisions/decision-execution-labels';
 import { entityDetailHref } from '@/lib/entity-routes';
 import { formatDateRu } from '@/lib/format/ru';
 import { PROGRAM_FILTER_OPTIONS } from '@/lib/registers/program-filter';
@@ -43,6 +44,7 @@ import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 import {
   presentDecisionNote,
   presentDecisionType,
+  presentDecisionTypeCompact,
   presentMilestoneName,
 } from '@/lib/ui-labels';
 
@@ -152,8 +154,9 @@ function DecisionsPage() {
             className="mb-1 text-xs text-[var(--text-muted)]"
             data-decisions-honesty="true"
           >
-            Данные об исполнении не указаны. Прошедший срок не подтверждает
-            неисполнение.
+            Исполнение и состояние срока — разные измерения. Прошедший срок не
+            подтверждает неисполнение. Запись решения сама не устраняет
+            отклонение прогноза.
           </p>
           <div className="mb-2 flex flex-wrap items-end gap-2">
             <RegisterToolbar
@@ -203,18 +206,24 @@ function DecisionsPage() {
               /* ≥lg: fit main column; &lt;lg (incl. 768): inner h-scroll only. */
               tableClassName="w-full table-fixed max-lg:min-w-[64rem] max-lg:table-auto"
               columnClassNames={[
-                'w-[6.25rem]',
-                'w-[9.5rem]',
-                'w-auto',
-                'w-[9.5rem]',
-                'w-[9.5rem]',
+                'w-[5.5rem]',
                 'w-[10.5rem]',
-                'w-[10rem]',
+                'w-auto',
+                'w-[9rem]',
+                'w-[7.5rem]',
+                'w-[9rem]',
+                'w-[9.5rem]',
+                'w-[9.5rem]',
               ]}
               columns={[
                 'ID',
                 'Тип',
                 'Суть',
+                {
+                  label: 'Статус',
+                  title:
+                    'Исполнение (демо-наблюдение) и состояние срока — отдельно; Срок = только дата',
+                },
                 'Срок',
                 'Владелец',
                 'Веха',
@@ -227,29 +236,64 @@ function DecisionsPage() {
                   item.dueDate,
                   data.scenarioAsOfDate,
                 );
+                const execStatus = item.executionStatus ?? 'unknown';
+                const execLabel = decisionExecutionLabel(execStatus);
+                const dueLabel = decisionDueBadgeLabel(dueKind);
                 const prog = programName(item.programId);
                 return (
                   <RegisterRow key={item.id}>
                     <RegisterCell className="whitespace-nowrap font-mono text-xs tabular-nums">
                       {item.id}
                     </RegisterCell>
-                    <RegisterCell className="whitespace-normal break-words">
-                      {presentDecisionType(item.type)}
+                    <RegisterCell className="min-w-0 whitespace-normal break-normal">
+                      <span
+                        className="block max-w-full"
+                        title={presentDecisionType(item.type)}
+                        aria-label={presentDecisionType(item.type)}
+                      >
+                        {presentDecisionTypeCompact(item.type)}
+                      </span>
                     </RegisterCell>
                     <RegisterCell className="whitespace-normal break-words">
                       {presentDecisionNote(item.id, item.note)}
                     </RegisterCell>
-                    <RegisterCell className="align-top tabular-nums">
-                      <div className="whitespace-nowrap">
-                        {item.dueDate ? formatDateRu(item.dueDate) : 'не задан'}
+                    <RegisterCell
+                      className="align-top"
+                      data-decision-status-cell="true"
+                    >
+                      <div className="flex flex-col gap-1.5">
+                        <div
+                          className="flex min-w-0 flex-wrap items-center gap-1"
+                          data-decision-execution-state={execStatus}
+                        >
+                          <span className="text-[10px] text-[var(--text-muted)]">
+                            Исполнение:
+                          </span>
+                          <StatusPill
+                            family="decisionExecution"
+                            value={execStatus}
+                            label={execLabel}
+                          />
+                        </div>
+                        <div
+                          className="flex min-w-0 flex-wrap items-center gap-1"
+                          data-decision-due-state={item.dueState}
+                          title="Состояние срока"
+                          aria-label={`Состояние срока: ${dueLabel}`}
+                        >
+                          <span className="text-[10px] text-[var(--text-muted)]">
+                            Срок:
+                          </span>
+                          <StatusPill
+                            family="decisionDue"
+                            value={dueKind}
+                            label={dueLabel}
+                          />
+                        </div>
                       </div>
-                      <div className="mt-1" data-decision-due-state={item.dueState}>
-                        <StatusPill
-                          family="decisionDue"
-                          value={dueKind}
-                          label={decisionDueBadgeLabel(dueKind)}
-                        />
-                      </div>
+                    </RegisterCell>
+                    <RegisterCell className="align-top whitespace-nowrap tabular-nums">
+                      {item.dueDate ? formatDateRu(item.dueDate) : '—'}
                     </RegisterCell>
                     <RegisterCell className="whitespace-normal break-words">
                       <Link

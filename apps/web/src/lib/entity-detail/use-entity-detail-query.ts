@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO_PORTFOLIO_ID } from '@/lib/demo-portfolio-id';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { isNotFoundError } from '@/lib/api-client';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
@@ -14,7 +16,6 @@ export type EntityDetailQueryState<T extends DetailPayload> = {
   retry: () => void;
 };
 
-const DEMO_PROJECT_ID = 'PRJ-01';
 
 /**
  * Loads entity detail for the committed active snapshot.
@@ -45,7 +46,7 @@ export function useEntityDetailQuery<T extends DetailPayload>(
       setError(null);
       setData((prev) => (prev && prev.snapshotId === snapshot ? prev : null));
       try {
-        const payload = await fetchRef.current(DEMO_PROJECT_ID, id, snapshot);
+        const payload = await fetchRef.current(DEMO_PORTFOLIO_ID, id, snapshot);
         if (seq !== seqRef.current) return;
         if (payload.snapshotId !== snapshot) {
           throw new Error(

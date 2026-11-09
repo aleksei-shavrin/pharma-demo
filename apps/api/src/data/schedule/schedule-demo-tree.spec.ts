@@ -64,13 +64,13 @@ describe('schedule-demo-tree', () => {
 
   it('mergeDemoTree nests WK and applies C overlay percents', () => {
     const merged = mergeDemoTree(
-      getScheduleWorkFixture('C'),
+      getScheduleWorkFixture('03'),
       [
         { id: 'MS-CLN-PANEL', workstream: 'WS-CLN' },
         { id: 'MS-UTL-PWR', workstream: 'WS-UTL' },
       ],
       '2027-03-01',
-      'C',
+      '03',
     );
     expect(merged.groups?.length).toBe(170); // 25 projects + 145 stages
     const wk01 = merged.works.find((w) => w.id === 'WK-01');
@@ -86,18 +86,18 @@ describe('schedule-demo-tree', () => {
     ).toMatchObject({ wbs: '8.2.3', siblingOrder: 2 });
   });
 
-  it('A vs C work progress differs (not one frozen C alias)', () => {
+  it('01 vs C work progress differs (not one frozen C alias)', () => {
     const a = mergeDemoTree(
-      getScheduleWorkFixture('A'),
+      getScheduleWorkFixture('01'),
       [{ id: 'MS-CLN-PANEL', workstream: 'WS-CLN' }],
       '2027-02-15',
-      'A',
+      '01',
     );
     const c = mergeDemoTree(
-      getScheduleWorkFixture('C'),
+      getScheduleWorkFixture('03'),
       [{ id: 'MS-CLN-PANEL', workstream: 'WS-CLN' }],
       '2027-03-01',
-      'C',
+      '03',
     );
     expect(a.works.find((w) => w.id === 'WK-01')?.progressPct).toBe(0);
     expect(c.works.find((w) => w.id === 'WK-01')?.progressPct).toBe(100);

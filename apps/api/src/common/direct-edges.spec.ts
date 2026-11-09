@@ -1,4 +1,4 @@
-import { SNAPSHOT_B, SNAPSHOT_C } from '../data/fixtures';
+import { SNAPSHOT_02, SNAPSHOT_03 } from '../data/fixtures';
 import {
   snapshotWithAcceptDateSlip,
   snapshotWithDec001,
@@ -10,7 +10,7 @@ import { computeDerivedImpact } from './derived-impact';
 
 describe('buildDirectEdges', () => {
   it('allows Issue→Milestone and forbids Equipment→Milestone', () => {
-    const edges = buildDirectEdges(SNAPSHOT_C);
+    const edges = buildDirectEdges(SNAPSHOT_03);
     expect(
       edges.some(
         (e) =>
@@ -49,7 +49,7 @@ describe('buildDirectEdges', () => {
   });
 
   it('production Snapshot C has no Decision edges', () => {
-    const edges = buildDirectEdges(SNAPSHOT_C);
+    const edges = buildDirectEdges(SNAPSHOT_03);
     expect(edges.some((e) => e.fromType === 'decision')).toBe(false);
   });
 });
@@ -57,7 +57,7 @@ describe('buildDirectEdges', () => {
 describe('Decision fixture contract (test-local DEC-001)', () => {
   it('requires projectId and optional milestoneId without EQ/ISS/RISK ids', () => {
     const d = snapshotWithDec001().decisions[0];
-    expect(d.projectId).toBe('PRJ-01');
+    expect(d.projectId).toBe('PRT-01');
     expect(d.milestoneId).toBe('MS-PS');
     expect(d).not.toHaveProperty('equipmentId');
     expect(d).not.toHaveProperty('issueId');
@@ -67,7 +67,7 @@ describe('Decision fixture contract (test-local DEC-001)', () => {
   it('AcceptDateSlip may omit milestoneId', () => {
     const d = snapshotWithAcceptDateSlip().decisions[0];
     expect(d.type).toBe('AcceptDateSlip');
-    expect(d.projectId).toBe('PRJ-01');
+    expect(d.projectId).toBe('PRT-01');
     expect(d.milestoneId).toBeNull();
   });
 
@@ -83,14 +83,14 @@ describe('Decision fixture contract (test-local DEC-001)', () => {
 
 describe('linksForEntity', () => {
   it('exposes Issue→Milestone reciprocal on MS-PS (Snapshot C)', () => {
-    const links = linksForEntity(SNAPSHOT_C, 'milestone', 'MS-PS');
+    const links = linksForEntity(SNAPSHOT_03, 'milestone', 'MS-PS');
     expect(
       links.some((l) => l.targetType === 'issue' && l.targetId === 'ISS-001'),
     ).toBe(true);
   });
 
   it('Snapshot B has no ISS-001 links on MS-PS', () => {
-    const links = linksForEntity(SNAPSHOT_B, 'milestone', 'MS-PS');
+    const links = linksForEntity(SNAPSHOT_02, 'milestone', 'MS-PS');
     expect(links.some((l) => l.targetType === 'issue')).toBe(false);
   });
 });

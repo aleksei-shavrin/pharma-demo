@@ -49,7 +49,7 @@ related:
 
 > **certainty:** fact
 >
-> - Demo v1 functional freeze (**BA-OQ-001**, 2026-10-31): Must **C-01…C-05**, narrative **SCN-001→SCN-007**, mock Snapshots A/B/C (+21 дн. critical equipment). Детали: [demo-v1-functional-scope](./demo-v1-functional-scope.md), [ba-registers](../02-business-analysis/ba-registers.md). Решение о демо ≠ enterprise-process confirmation.
+> - Demo v1 functional freeze (**BA-OQ-001**, 2026-10-31): Must **C-01…C-05**, narrative **SCN-001→SCN-007**, mock Snapshots 01/02/03 (+21 дн. critical equipment). Детали: [demo-v1-functional-scope](./demo-v1-functional-scope.md), [ba-registers](../02-business-analysis/ba-registers.md). Решение о демо ≠ enterprise-process confirmation.
 
 > **certainty:** hypothesis
 >

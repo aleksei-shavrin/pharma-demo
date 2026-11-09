@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-08",
-  "count": 219,
+  "generatedAt": "2026-11-09",
+  "count": 245,
   "entries": {
     "DOC-PORTAL-004": {
       "href": "/docs/portal/DOC-PORTAL-004",
@@ -622,10 +622,25 @@
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-dashboard-pages-consistency.md"
     },
+    "DOC-HO-2026-11-08-DASHBOARD-ECHARTS-REFINE": {
+      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-08-DASHBOARD-ECHARTS-REFINE",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-dashboard-summary-echarts-refinements.md"
+    },
     "DOC-HANDOFF-2026-11-08-DECISIONS-DASHBOARD": {
       "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-DECISIONS-DASHBOARD",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-decisions-dashboard.md"
+    },
+    "DOC-HANDOFF-2026-11-08-GANTT-CLARITY": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-GANTT-CLARITY",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-gantt-clarity.md"
+    },
+    "DOC-HO-2026-11-08-PHARMA-COMMIT-ALL": {
+      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-08-PHARMA-COMMIT-ALL",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-pharma-demo-commit-all.md"
     },
     "DOC-HANDOFF-2026-11-08-PROJECTS-PROGRAMS-SEMANTIC-PROGRESS": {
       "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-PROJECTS-PROGRAMS-SEMANTIC-PROGRESS",
@@ -661,6 +676,101 @@
       "href": "/docs/delivery/handoffs/DOC-HO-2026-11-08-TIMELINE-ONLY-ECHARTS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-timeline-only-echarts.md"
+    },
+    "DOC-HANDOFF-2026-11-08-UI-SEMANTICS-LINKS-SNAPSHOTS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-UI-SEMANTICS-LINKS-SNAPSHOTS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-08-ui-semantics-links-snapshots.md"
+    },
+    "DOC-HANDOFF-2026-11-09-DASH-CARD-COMPOSITION": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-CARD-COMPOSITION",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-card-composition.md"
+    },
+    "DOC-HANDOFF-2026-11-09-DASH-MGMT-IMPL": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-MGMT-IMPL",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-management-cards-impl.md"
+    },
+    "DOC-HANDOFF-2026-11-09-DASH-MGMT-CARDS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-MGMT-CARDS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-management-cards-proposal.md"
+    },
+    "DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS-VISUAL": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS-VISUAL",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-people-focus-visual.md"
+    },
+    "DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-people-focus.md"
+    },
+    "DOC-HANDOFF-2026-11-09-PROGRAM-PEOPLE-LAYOUT": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-PROGRAM-PEOPLE-LAYOUT",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-program-people-layout.md"
+    },
+    "DOC-HO-2026-11-09-TOOLTIP-PORTFOLIO-PRT": {
+      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-09-TOOLTIP-PORTFOLIO-PRT",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-tooltip-portfolio-prt.md"
+    },
+    "DOC-HANDOFF-2026-11-09-DASH-TWO-COLUMNS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-TWO-COLUMNS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-two-columns.md"
+    },
+    "DOC-HO-2026-11-09-DOCS-DOCUSAURUS-VOLUME": {
+      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-09-DOCS-DOCUSAURUS-VOLUME",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-docs-docusaurus-volume-isolation.md"
+    },
+    "DOC-HO-2026-11-09-GUIDE-DOCS-SYNC": {
+      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-09-GUIDE-DOCS-SYNC",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-guide-docs-sync.md"
+    },
+    "DOC-HANDOFF-2026-11-09-GANTT-CONTROLS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-CONTROLS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-pharma-gantt-controls.md"
+    },
+    "DOC-HANDOFF-2026-11-09-GANTT-REGRESSIONS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-REGRESSIONS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-pharma-gantt-regressions.md"
+    },
+    "DOC-HANDOFF-2026-11-09-GANTT-STRAY-MARKS": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-STRAY-MARKS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-pharma-gantt-stray-marks.md"
+    },
+    "DOC-HANDOFF-2026-11-09-PROGRAM-BADGE-COMPACT": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-PROGRAM-BADGE-COMPACT",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-program-badge-compact.md"
+    },
+    "DOC-DEL-H-SNAP-NUM-2026-11-09": {
+      "href": "/docs/delivery/handoffs/DOC-DEL-H-SNAP-NUM-2026-11-09",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-snapshot-ids-numeric.md"
+    },
+    "DOC-HANDOFF-2026-11-09-TL-COMPACT": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-TL-COMPACT",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-timeline-card-compact.md"
+    },
+    "DOC-HANDOFF-2026-11-09-TIMELINE-PORTFOLIO-LANE": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-TIMELINE-PORTFOLIO-LANE",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-timeline-portfolio-lane.md"
+    },
+    "DOC-HANDOFF-2026-11-09-TL-TRIM": {
+      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-TL-TRIM",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-timeline-trim-loading.md"
     },
     "DOC-HANDOFF-README-001": {
       "href": "/docs/delivery/handoffs/",
@@ -846,6 +956,26 @@
       "href": "/docs/delivery/reports/DOC-RPT-2026-11-08-TIMELINE-ONLY-ECHARTS",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-08-timeline-only-echarts.md"
+    },
+    "DOC-DEL-RPT-2026-11-09-GUIDE-DOCS-SYNC": {
+      "href": "/docs/delivery/reports/DOC-DEL-RPT-2026-11-09-GUIDE-DOCS-SYNC",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-09-guide-docs-sync-audit.md"
+    },
+    "DOC-DEL-R-SNAP-NUM-2026-11-09": {
+      "href": "/docs/delivery/reports/DOC-DEL-R-SNAP-NUM-2026-11-09",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-09-snapshot-ids-numeric.md"
+    },
+    "DOC-DEL-R-TL-COMPACT-2026-11-09": {
+      "href": "/docs/delivery/reports/DOC-DEL-R-TL-COMPACT-2026-11-09",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-09-timeline-card-compact.md"
+    },
+    "DOC-DEL-R-TL-TRIM-2026-11-09": {
+      "href": "/docs/delivery/reports/DOC-DEL-R-TL-TRIM-2026-11-09",
+      "kind": "doc",
+      "source": "docs/07-delivery/reports/2026-11-09-timeline-trim-loading.md"
     },
     "DOC-QA-003": {
       "href": "/docs/quality/DOC-QA-003",

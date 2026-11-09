@@ -39,7 +39,7 @@ function ntfList(snapshotId: SnapshotId, count: number): NotificationList {
   return {
     snapshotId,
     scenarioAsOfDate: '2027-03-01',
-    projectId: 'PRJ-01',
+    projectId: 'PRT-01',
     items: Array.from({ length: count }, (_, i) => ({
       id: `NTF-${snapshotId}-${String(i + 1).padStart(3, '0')}`,
       snapshotId,
@@ -47,12 +47,12 @@ function ntfList(snapshotId: SnapshotId, count: number): NotificationList {
       taxonomy: i === 0 ? ('critical_risk' as const) : ('issue' as const),
       titleRu: `Уведомление ${snapshotId}-${i + 1}`,
       bodyRu:
-        i === 1 && snapshotId === 'F'
+        i === 1 && snapshotId === '06'
           ? 'Решение зарегистрировано; это не означает автоматическое устранение задержки.'
           : `Текст ${i + 1}`,
-      href: i === 1 && snapshotId === 'F' ? null : `/issues/ISS-001`,
+      href: i === 1 && snapshotId === '06' ? null : `/issues/ISS-001`,
       entityRefs:
-        i === 1 && snapshotId === 'F'
+        i === 1 && snapshotId === '06'
           ? [{ type: 'decision' as const, id: 'DEC-001' }]
           : [{ type: 'issue' as const, id: 'ISS-001' }],
     })),
@@ -119,7 +119,7 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
       ).toBe('0'),
     );
     expect(sessionStorage.getItem(NOTIFICATION_READ_SESSION_KEY)).toContain(
-      'NTF-A-001',
+      'NTF-01-001',
     );
   });
 
@@ -138,7 +138,7 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
     const user = userEvent.setup();
     await renderBar();
     expect(document.querySelector('[data-notification-toasts]')).toBeNull();
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() =>
       expect(document.querySelectorAll('[data-notification-toast]').length).toBe(
         1,
@@ -155,7 +155,7 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
       document.querySelector('[data-toast-tone]'),
     ).toBeTruthy();
     // toast does not auto-mark read; full set still available via bell
-    expect(isNotificationRead('NTF-C-001')).toBe(false);
+    expect(isNotificationRead('NTF-03-001')).toBe(false);
     await user.click(document.querySelector('[data-notification-bell]')!);
     await waitFor(() =>
       expect(
@@ -167,7 +167,7 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
   it('dismisses compact toast via Скрыть without marking read', async () => {
     const user = userEvent.setup();
     await renderBar();
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() =>
       expect(document.querySelector('[data-notification-toast]')).toBeTruthy(),
     );
@@ -175,16 +175,16 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
     await waitFor(() =>
       expect(document.querySelector('[data-notification-toast]')).toBeNull(),
     );
-    expect(isNotificationRead('NTF-C-001')).toBe(false);
+    expect(isNotificationRead('NTF-03-001')).toBe(false);
   });
 
   it('no toast when popup preference is off', async () => {
     const user = userEvent.setup();
     localStorage.setItem(NOTIFICATION_POPUP_PREF_KEY, 'false');
     await renderBar();
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() =>
-      expect(fetchNotifications).toHaveBeenCalledWith('PRJ-01', 'C'),
+      expect(fetchNotifications).toHaveBeenCalledWith('PRT-01', '03'),
     );
     expect(document.querySelector('[data-notification-toasts]')).toBeNull();
   });
@@ -195,14 +195,14 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
     fetchDashboardOverview.mockImplementationOnce(async () => {
       throw new Error('network');
     });
-    await selectDemoSnapshot(user, 'C');
+    await selectDemoSnapshot(user, '03');
     await waitFor(() =>
       expect(
-        screen.getByRole('button', { name: /Снимок A.*активный/ }),
+        screen.getByRole('button', { name: /Снимок 01.*активный/ }),
       ).toBeInTheDocument(),
     );
     expect(
-      document.querySelector('[data-notification-toast="NTF-C-001"]'),
+      document.querySelector('[data-notification-toast="NTF-03-001"]'),
     ).toBeNull();
   });
 
@@ -212,13 +212,13 @@ describe('Notification bell / popover / toast (R2-N1)', () => {
       async (_id: string, snapshot: SnapshotId) => ntfList(snapshot, 2),
     );
     await renderBar();
-    await selectDemoSnapshot(user, 'F');
+    await selectDemoSnapshot(user, '06');
     await waitFor(() =>
-      expect(fetchNotifications).toHaveBeenCalledWith('PRJ-01', 'F'),
+      expect(fetchNotifications).toHaveBeenCalledWith('PRT-01', '06'),
     );
     fireEvent.click(screen.getByRole('button', { name: /Уведомления/ }));
     const decisionRow = document.querySelector(
-      '[data-notification-id="NTF-F-002"]',
+      '[data-notification-id="NTF-06-002"]',
     );
     expect(decisionRow).toBeTruthy();
     expect(decisionRow?.querySelector('a')).toBeNull();

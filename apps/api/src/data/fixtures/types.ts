@@ -5,7 +5,7 @@ import type {
 } from '../../snapshot/snapshot-id';
 import type { WorkstreamId } from '../workstream-ids';
 
-/** Re-export API snapshot ids — R2-L1 populates full A–S. */
+/** Re-export API snapshot ids — R2-L1 populates full 01–19. */
 export type { SnapshotId, PopulatedSnapshotId };
 export type { WorkstreamId };
 

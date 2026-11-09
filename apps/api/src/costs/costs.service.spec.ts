@@ -10,9 +10,9 @@ describe('CostsService (R2-M1)', () => {
   const service = new CostsService(new MockDemoDataSource());
 
   it('returns project/workstream/equipment cost overview for Snapshot A', () => {
-    const overview = service.getOverview('PRJ-01', 'A');
-    expect(overview.snapshotId).toBe('A');
-    expect(overview.projectId).toBe('PRJ-01');
+    const overview = service.getOverview('PRT-01', '01');
+    expect(overview.snapshotId).toBe('01');
+    expect(overview.projectId).toBe('PRT-01');
     expect(overview.project.approvedBudgetRub).toBe(DEMO_PROJECT_BAC_RUB);
     expect(overview.project.eacRub).toBe(DEMO_PROJECT_BAC_RUB);
     expect(overview.project.vacRub).toBe(0);
@@ -35,7 +35,7 @@ describe('CostsService (R2-M1)', () => {
   });
 
   it('is snapshot-aware for late lifecycle S', () => {
-    const s = service.getOverview('PRJ-01', 'S');
+    const s = service.getOverview('PRT-01', '19');
     expect(s.scenarioAsOfDate).toBe('2027-09-22');
     expect(s.project.actualCostRub).toBe(6_280_000_000);
     expect(s.project.etcRub).toBe(0);
@@ -43,7 +43,7 @@ describe('CostsService (R2-M1)', () => {
   });
 
   it('404s unknown project', () => {
-    expect(() => service.getOverview('PRJ-UNKNOWN', 'A')).toThrow(
+    expect(() => service.getOverview('PRJ-UNKNOWN', '01')).toThrow(
       NotFoundException,
     );
   });

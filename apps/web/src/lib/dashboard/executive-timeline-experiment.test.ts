@@ -5,7 +5,7 @@ import { resolveExecutiveTimelineExperimentModel } from './executive-timeline-ex
 describe('resolveExecutiveTimelineExperimentModel', () => {
   it('builds shared model with ordinary points excluding MS-PS', () => {
     const model = resolveExecutiveTimelineExperimentModel(
-      dashboardOverviewFixture('A'),
+      dashboardOverviewFixture('01'),
     );
     expect(model.points.some((p) => p.id === 'MS-PS')).toBe(true);
     expect(model.ordinaryPoints.some((p) => p.id === 'MS-PS')).toBe(false);

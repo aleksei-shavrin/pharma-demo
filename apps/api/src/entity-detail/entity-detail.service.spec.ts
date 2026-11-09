@@ -27,7 +27,7 @@ describe('EntityDetailService', () => {
 
   describe('Equipment EQ-HVAC-01', () => {
     it('A: OnTrack, variance 0, Links Risks (no Milestone)', () => {
-      const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'A');
+      const d = service.getEquipment('PRT-01', 'EQ-HVAC-01', '01');
       expect(d.entity.status).toBe('OnTrack');
       expect(d.entity.deliveryVariance.deltaDays).toBe(0);
       expect(linkIds(d.links, 'risk')).toEqual(
@@ -39,7 +39,7 @@ describe('EntityDetailService', () => {
     });
 
     it('B: still OnTrack (local attention is PKG, not HVAC)', () => {
-      const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'B');
+      const d = service.getEquipment('PRT-01', 'EQ-HVAC-01', '02');
       expect(d.entity.status).toBe('OnTrack');
       expect(d.entity.deliveryVariance.deltaDays).toBe(0);
       expect(linkIds(d.links, 'issue')).toEqual([]);
@@ -48,7 +48,7 @@ describe('EntityDetailService', () => {
     });
 
     it('C: Delayed +21; Links Issue+Risks; no Milestone; needed; no recovery', () => {
-      const d = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'C');
+      const d = service.getEquipment('PRT-01', 'EQ-HVAC-01', '03');
       expect(d.entity.name).toMatch(/AHU/);
       expect(d.entity.workstream).toBe('WS-HVAC');
       expect(d.entity.status).toBe('Delayed');
@@ -68,19 +68,19 @@ describe('EntityDetailService', () => {
 
   describe('Issue ISS-001', () => {
     it('A: absent → 404', () => {
-      expect(() => service.getIssue('PRJ-01', 'ISS-001', 'A')).toThrow(
+      expect(() => service.getIssue('PRT-01', 'ISS-001', '01')).toThrow(
         NotFoundException,
       );
     });
 
     it('B: absent → 404', () => {
-      expect(() => service.getIssue('PRJ-01', 'ISS-001', 'B')).toThrow(
+      expect(() => service.getIssue('PRT-01', 'ISS-001', '02')).toThrow(
         NotFoundException,
       );
     });
 
     it('C: Open; Links Equipment+Risk+Milestone; no Decision', () => {
-      const d = service.getIssue('PRJ-01', 'ISS-001', 'C');
+      const d = service.getIssue('PRT-01', 'ISS-001', '03');
       expect(d.entity.status).toBe('Open');
       expect(d.entity.workstream).toBe('WS-HVAC');
       expect(d.entity.ownerPersonId).toBe('PER-02');
@@ -100,8 +100,8 @@ describe('EntityDetailService', () => {
 
   describe('Risk RISK-001', () => {
     it('A/B: Green; Links Equipment+Milestone; no Issue', () => {
-      for (const snap of ['A', 'B'] as const) {
-        const d = service.getRisk('PRJ-01', 'RISK-001', snap);
+      for (const snap of ['01', '02'] as const) {
+        const d = service.getRisk('PRT-01', 'RISK-001', snap);
         expect(d.entity.rag).toBe('Green');
         expect(linkIds(d.links, 'equipment')).toEqual(['EQ-HVAC-01']);
         expect(linkIds(d.links, 'milestone')).toEqual(['MS-PS']);
@@ -110,7 +110,7 @@ describe('EntityDetailService', () => {
     });
 
     it('C: Red; Links Equipment+Issue+Milestone', () => {
-      const d = service.getRisk('PRJ-01', 'RISK-001', 'C');
+      const d = service.getRisk('PRT-01', 'RISK-001', '03');
       expect(d.entity.title.length).toBeGreaterThan(0);
       expect(d.entity.workstream).toBe('WS-HVAC');
       expect(d.entity.rag).toBe('Red');
@@ -122,8 +122,8 @@ describe('EntityDetailService', () => {
 
   describe('Milestone MS-PS', () => {
     it('A/B: Green; Links Risk only; no Equipment', () => {
-      for (const snap of ['A', 'B'] as const) {
-        const d = service.getMilestone('PRJ-01', 'MS-PS', snap);
+      for (const snap of ['01', '02'] as const) {
+        const d = service.getMilestone('PRT-01', 'MS-PS', snap);
         expect(d.entity.rag).toBe('Green');
         expect(d.entity.workstream).toBeNull();
         expect(d.entity.dateVariance.deltaDays).toBe(0);
@@ -134,7 +134,7 @@ describe('EntityDetailService', () => {
     });
 
     it('C: Red +21; Links Issue+Risk; no Equipment', () => {
-      const d = service.getMilestone('PRJ-01', 'MS-PS', 'C');
+      const d = service.getMilestone('PRT-01', 'MS-PS', '03');
       expect(d.entity.rag).toBe('Red');
       expect(d.entity.dateVariance.deltaDays).toBe(21);
       expect(linkIds(d.links, 'issue')).toEqual(['ISS-001']);
@@ -143,17 +143,17 @@ describe('EntityDetailService', () => {
     });
 
     it('G: residual +14; H residual honesty', () => {
-      const g = service.getMilestone('PRJ-01', 'MS-PS', 'G');
+      const g = service.getMilestone('PRT-01', 'MS-PS', '07');
       expect(g.entity.dateVariance.deltaDays).toBe(14);
       expect(g.entity.forecastDate).toBe('2027-09-29');
-      const h = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'H');
+      const h = service.getEquipment('PRT-01', 'EQ-HVAC-01', '08');
       expect(h.entity.deliveryVariance.deltaDays).toBe(14);
       expect(h.impact.riskRag).toBe('Red');
     });
   });
 
   it('imported KT-* resolves via schedule lifecycle (not catalog)', () => {
-    const d = service.getMilestone('PRJ-01', 'KT-1.1.3', 'C');
+    const d = service.getMilestone('PRT-01', 'KT-1.1.3', '03');
     expect(d.entity.id).toBe('KT-1.1.3');
     expect(d.entity.baselineDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(d.entity.forecastDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
@@ -161,21 +161,21 @@ describe('EntityDetailService', () => {
   });
 
   it('unknown ids → 404; unknown project → 404', () => {
-    expect(() => service.getEquipment('PRJ-01', 'EQ-UNKNOWN', 'A')).toThrow(
+    expect(() => service.getEquipment('PRT-01', 'EQ-UNKNOWN', '01')).toThrow(
       NotFoundException,
     );
-    expect(() => service.getIssue('PRJ-01', 'ISS-999', 'C')).toThrow(
+    expect(() => service.getIssue('PRT-01', 'ISS-999', '03')).toThrow(
       NotFoundException,
     );
-    expect(() => service.getEquipment('PRJ-99', 'EQ-HVAC-01', 'A')).toThrow(
+    expect(() => service.getEquipment('PRJ-99', 'EQ-HVAC-01', '01')).toThrow(
       NotFoundException,
     );
   });
 
   it('forbids Decision as Issue/Equipment/Risk link target', () => {
-    const issue = service.getIssue('PRJ-01', 'ISS-001', 'C');
-    const eq = service.getEquipment('PRJ-01', 'EQ-HVAC-01', 'C');
-    const risk = service.getRisk('PRJ-01', 'RISK-001', 'C');
+    const issue = service.getIssue('PRT-01', 'ISS-001', '03');
+    const eq = service.getEquipment('PRT-01', 'EQ-HVAC-01', '03');
+    const risk = service.getRisk('PRT-01', 'RISK-001', '03');
     for (const d of [issue, eq, risk]) {
       expect(d.links.some((l) => (l.targetType as string) === 'decision')).toBe(
         false,

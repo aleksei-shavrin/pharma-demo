@@ -10,7 +10,7 @@
 
 ## Milestone universe 189
 
-`147 KT (source) + 42 catalog-only MS` (catalog 44 − 2 aliases into KT). Stable membership and baseline-date order A–S. Dashboard shows full set via lanes/scroll/program filter; overview density optional, count always visible. Snapshot change updates dates/status only.
+`147 KT (source) + 42 catalog-only MS` (catalog 44 − 2 aliases into KT). Stable membership and baseline-date order 01–19. Dashboard shows full set via lanes/scroll/program filter; overview density optional, count always visible. Snapshot change updates dates/status only.
 
 ## Deep-link filters
 

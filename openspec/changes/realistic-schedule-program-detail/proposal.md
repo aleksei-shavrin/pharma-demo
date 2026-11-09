@@ -2,7 +2,7 @@
 
 ## Why
 
-Analyst import used `supplementaryDatesFor` offsets from C asOf → все работы A сжаты в Feb–Mar. Program detail потерял budget/registers после redirect WS→PRG. List tables показывали plain status text; responsibles на /programs — не clickable.
+Analyst import used `supplementaryDatesFor` offsets from 03 asOf → все работы 01 сжаты в Feb–Mar. Program detail потерял budget/registers после redirect WS→PRG. List tables показывали plain status text; responsibles на /programs — не clickable.
 
 ## What changes
 

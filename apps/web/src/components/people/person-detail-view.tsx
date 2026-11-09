@@ -12,6 +12,7 @@ import { formatDateRu } from '@/lib/format/ru';
 import { programLabelForWorkstream } from '@/lib/registers/program-filter';
 import { hrefForWorkstreamTag } from '@/lib/registers/ws-redirect';
 import { presentRoleTitleRu } from '@/lib/people/present-role-title';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 
 const PREVIEW = 5;
 
@@ -68,7 +69,7 @@ export function PersonDetailView({ data }: { data: PersonDetail }) {
     <PageFrame className="p-6" data-page="person-detail">
       <PageHeader>
         <p className="text-xs text-[var(--text-muted)]">
-          {p.id} · снимок {data.snapshotId} · на{' '}
+          {p.id} · снимок {snapshotDisplayLabel(data.snapshotId)} · на{' '}
           {formatDateRu(data.scenarioAsOfDate)}
         </p>
         <h1 className="mt-1 text-xl font-semibold tracking-tight text-[var(--text)]">

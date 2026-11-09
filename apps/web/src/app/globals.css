@@ -149,10 +149,42 @@ body {
     0 0 0 1px var(--login-accent-ring);
 }
 
+/* Persistent schedule selection (table + chart). Wins over sticky lead surface. */
+.ppc-schedule-row-selected,
+.ppc-schedule-row-selected [data-schedule-row-left='true'],
+.ppc-gantt-host .gantt_task_row[data-schedule-row-selected='true'],
+.ppc-gantt-host .gantt_task_row.ppc-schedule-row-selected {
+  background: var(--selected) !important;
+}
+
 /* DOM-driven schedule hover (no React setState on mousemove). */
-.ppc-schedule-row-hovered {
+.ppc-schedule-row-hovered:not(.ppc-schedule-row-selected) {
   background: var(--schedule-row-hover) !important;
 }
-.ppc-schedule-row-hovered [data-schedule-row-left='true'] {
+.ppc-schedule-row-hovered:not(.ppc-schedule-row-selected)
+  [data-schedule-row-left='true'] {
   background: var(--schedule-row-hover) !important;
+}
+.ppc-schedule-row-hovered.ppc-schedule-row-selected,
+.ppc-schedule-row-hovered.ppc-schedule-row-selected
+  [data-schedule-row-left='true'],
+.ppc-gantt-host
+  .gantt_task_row.ppc-schedule-row-selected[data-schedule-row-hover='true'] {
+  background: var(--selected) !important;
+}
+
+/*
+ * Sticky month-scale H mirror must sync scrollLeft with bottom .gantt_hor_scroll
+ * but must not show a second native scrollbar under the scale.
+ */
+.ppc-schedule-chart-header-hscroll,
+[data-schedule-chart-header-hscroll='true'] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.ppc-schedule-chart-header-hscroll::-webkit-scrollbar,
+[data-schedule-chart-header-hscroll='true']::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }

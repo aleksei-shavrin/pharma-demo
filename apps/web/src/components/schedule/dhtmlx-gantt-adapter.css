@@ -289,6 +289,9 @@
 .ppc-gantt-host .gantt_grid_head_cell {
   color: var(--text-muted);
   font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   border-color: var(--border-subtle);
 }
 
@@ -296,6 +299,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ppc-gantt-host .ppc-scale-label {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .ppc-gantt-host .gantt_scale_line,
@@ -525,56 +534,121 @@
 }
 
 /*
- * Group summary. Darker than pastel work fills in light; in dark a sunken
- * fill plus a text-colored border, still not the vendor project green.
+ * Group summary bracket (project/stage). Thin top rail + dropped end ticks —
+ * not a filled work-like rectangle. Height stays 10px; left/width come from
+ * adapter promote (task start/end). Vendor timedProjectBar children are hidden
+ * below; do not touch leaf progress / diamonds / links / baseline ghosts.
  */
 .ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary {
   height: 10px !important;
   min-height: 10px;
   margin-top: -1px;
   box-sizing: border-box;
-}
-
-.ppc-gantt-host .gantt_task_line.ppc-summary {
-  /* Reference: near-black summary bracket. */
-  background: #1a1a1a;
-  border: 1px solid #1a1a1a;
-  border-radius: 1px;
+  position: absolute;
+  overflow: visible;
+  /* ~3–4px top rail + 10px dropped ends inside 10px envelope (32px row).
+   * Body stays empty — not a filled work rectangle. Content lives in hidden
+   * vendor planned child, so rail is painted on the outer bar. */
+  background: linear-gradient(
+      var(--ppc-summary-bracket),
+      var(--ppc-summary-bracket)
+    )
+    top / 100% 3px no-repeat !important;
+  border: none !important;
+  border-radius: 0;
   box-shadow: none;
   color: transparent;
-  --dhx-gantt-task-background: #1a1a1a;
-  --dhx-gantt-project-background: #1a1a1a;
+  --ppc-summary-bracket: #1a1a1a;
+  --dhx-gantt-task-background: var(--ppc-summary-bracket);
+  --dhx-gantt-project-background: var(--ppc-summary-bracket);
+  --dhx-gantt-scheduled-summary-bracket-size: 10px;
 }
 
-[data-theme='dark'] .ppc-gantt-host .gantt_task_line.ppc-summary {
-  background: #e8eef2;
-  border-color: #e8eef2;
-  color: transparent;
-  --dhx-gantt-task-background: #e8eef2;
-  --dhx-gantt-project-background: #e8eef2;
+.ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary::before,
+.ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.ppc-gantt-host .gantt_task_line.ppc-summary .gantt_task_content {
-  position: static;
-  width: auto;
-  height: 100%;
-  border: none;
-  background: transparent;
+/* Left drop: mirror of vendor .gantt_task_line_planned:before */
+.ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary::before {
+  left: 0;
+  border-width: var(--dhx-gantt-scheduled-summary-bracket-size)
+    var(--dhx-gantt-scheduled-summary-bracket-size) 0 0;
+  border-right-color: var(--ppc-summary-bracket);
+  transform: rotate(180deg);
+}
+
+/* Right drop: mirror of vendor .gantt_task_line_planned:after */
+.ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary::after {
+  right: 0;
+  border-width: 0 var(--dhx-gantt-scheduled-summary-bracket-size)
+    var(--dhx-gantt-scheduled-summary-bracket-size) 0;
+  border-right-color: var(--ppc-summary-bracket);
+}
+
+/* Content node (if present) must not re-fill the bracket body. */
+.ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary .gantt_task_content {
+  background: transparent !important;
+  border: none !important;
   color: transparent;
   font-size: 0;
   line-height: 0;
-  transform: none;
-  overflow: hidden;
 }
 
-/* Typed dependency links — thin neutral grey orthogonal shafts + short arrows. */
+[data-theme='dark'] .ppc-gantt-host .gantt_task_line.gantt_project.ppc-summary {
+  --ppc-summary-bracket: #e8eef2;
+}
+
+/*
+ * Vendor timedProjectBar (DHTMLX project type) injects planned/actual children.
+ * Actual uses degenerate $auto_* (1-day error-pink stub); planned duplicates the
+ * summary span. Product chrome is the outer `.ppc-summary` bracket above.
+ */
+.ppc-gantt-host
+  .gantt_task_line.ppc-summary.gantt_project
+  > .gantt_task_line_planned,
+.ppc-gantt-host
+  .gantt_task_line.ppc-summary.gantt_project
+  > .gantt_task_line_actual {
+  display: none !important;
+}
+
+/* Typed dependency links — thin neutral grey; chain = stronger, not neon. */
+.ppc-gantt-host .gantt_task_link.ppc-link-idle {
+  opacity: 0.72;
+}
+
+.ppc-gantt-host .gantt_task_link.ppc-link-secondary {
+  opacity: 0.32;
+}
+
+.ppc-gantt-host .gantt_task_link.ppc-link-chain {
+  opacity: 1;
+}
+
 .ppc-gantt-host .gantt_task_link .gantt_line_wrapper div {
   background-color: #8a93a0 !important;
+}
+
+.ppc-gantt-host .gantt_task_link.ppc-link-chain .gantt_line_wrapper div {
+  background-color: #5b6572 !important;
 }
 
 .ppc-gantt-host .gantt_task_link .gantt_link_corner {
   border-color: #8a93a0 !important;
   border-radius: 2px;
+}
+
+.ppc-gantt-host .gantt_task_link.ppc-link-chain .gantt_link_corner {
+  border-color: #5b6572 !important;
 }
 
 .ppc-gantt-host .gantt_task_link .gantt_link_arrow {
@@ -583,6 +657,18 @@
 
 .ppc-gantt-host .gantt_task_link .gantt_link_arrow::before {
   color: #8a93a0 !important;
+}
+
+.ppc-gantt-host .gantt_task_link.ppc-link-chain .gantt_link_arrow,
+.ppc-gantt-host .gantt_task_link.ppc-link-chain .gantt_link_arrow::before {
+  color: #5b6572 !important;
+}
+
+/* Readonly: hide unused link-drag handles (often pink/magenta vendor dots). */
+.ppc-gantt-host .gantt_link_control,
+.ppc-gantt-host .gantt_link_point,
+.ppc-gantt-host .gantt_task_link_control {
+  display: none !important;
 }
 
 .ppc-gantt-host .gantt_task_link:hover,

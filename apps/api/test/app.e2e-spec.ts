@@ -36,11 +36,11 @@ describe('I2 API snapshot (e2e)', () => {
 
   it('omitted snapshot defaults to A', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01')
+      .get('/v1/projects/PRT-01')
       .expect(200)
       .expect((res) => {
         const body = res.body as ProjectBody;
-        expect(body.snapshotId).toBe('A');
+        expect(body.snapshotId).toBe('01');
         expect(body.forecastProductionStart).toBe('2027-09-15');
         expect(body.scenarioAsOfDate).toBe('2027-02-15');
       });
@@ -48,22 +48,22 @@ describe('I2 API snapshot (e2e)', () => {
 
   it('explicit snapshot=A', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01?snapshot=A')
+      .get('/v1/projects/PRT-01?snapshot=A')
       .expect(200)
       .expect((res) => {
         const body = res.body as ProjectBody;
-        expect(body.snapshotId).toBe('A');
+        expect(body.snapshotId).toBe('01');
         expect(body.forecastProductionStart).toBe('2027-09-15');
       });
   });
 
   it('snapshot=B keeps baseline PS (local attention only)', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01?snapshot=B')
+      .get('/v1/projects/PRT-01?snapshot=B')
       .expect(200)
       .expect((res) => {
         const body = res.body as ProjectBody;
-        expect(body.snapshotId).toBe('B');
+        expect(body.snapshotId).toBe('02');
         expect(body.forecastProductionStart).toBe('2027-09-15');
         expect(body.scenarioAsOfDate).toBe('2027-02-28');
         expect(body.baselineProductionStart).toBe('2027-09-15');
@@ -72,11 +72,11 @@ describe('I2 API snapshot (e2e)', () => {
 
   it('snapshot=C shifts PS +21 with C asOf', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01?snapshot=C')
+      .get('/v1/projects/PRT-01?snapshot=C')
       .expect(200)
       .expect((res) => {
         const body = res.body as ProjectBody;
-        expect(body.snapshotId).toBe('C');
+        expect(body.snapshotId).toBe('03');
         expect(body.forecastProductionStart).toBe('2027-10-06');
         expect(body.scenarioAsOfDate).toBe('2027-03-01');
       });
@@ -84,20 +84,20 @@ describe('I2 API snapshot (e2e)', () => {
 
   it('unknown machine snapshot letter → 400 (no silent fallback)', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01?snapshot=Z')
+      .get('/v1/projects/PRT-01?snapshot=Z')
       .expect(400);
   });
 
   it('populated snapshots D–H return 200; Z remains 400', () => {
     const server = app.getHttpServer();
     return Promise.all(
-      (['D', 'E', 'F', 'G', 'H'] as const).map((id) =>
-        request(server).get(`/v1/projects/PRJ-01?snapshot=${id}`).expect(200),
+      (['04', '05', '06', '07', '08'] as const).map((id) =>
+        request(server).get(`/v1/projects/PRT-01?snapshot=${id}`).expect(200),
       ),
     )
       .then(() =>
         request(server)
-          .get('/v1/projects/PRJ-01/dashboard?snapshot=F')
+          .get('/v1/projects/PRT-01/dashboard?snapshot=F')
           .expect(200)
           .expect((res) => {
             const body = res.body as {
@@ -109,12 +109,15 @@ describe('I2 API snapshot (e2e)', () => {
             expect(body.decisions.some((d) => d.id === 'DEC-001')).toBe(true);
             expect(body.project.forecastProductionStart).toBe('2027-10-06');
             expect(body.projectStatus).toBe('Red');
-            expect(body.decisionHonesty).toEqual({ recoveryExecuted: false });
+            expect(body.decisionHonesty).toEqual({
+              recoveryExecuted: false,
+              forecastDeviation: 'deviation_persists',
+            });
           }),
       )
       .then(() =>
         request(server)
-          .get('/v1/projects/PRJ-01/dashboard?snapshot=G')
+          .get('/v1/projects/PRT-01/dashboard?snapshot=G')
           .expect(200)
           .expect((res) => {
             const body = res.body as {
@@ -137,13 +140,13 @@ describe('I2 API snapshot (e2e)', () => {
           }),
       )
       .then(() =>
-        request(server).get('/v1/projects/PRJ-01?snapshot=Z').expect(400),
+        request(server).get('/v1/projects/PRT-01?snapshot=Z').expect(400),
       );
   });
 
-  it('GET dashboard A: on-track, no decision', () => {
+  it('GET dashboard 01: on-track, no decision', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/dashboard')
+      .get('/v1/projects/PRT-01/dashboard')
       .expect(200)
       .expect((res) => {
         const body = res.body as {
@@ -160,7 +163,7 @@ describe('I2 API snapshot (e2e)', () => {
             unchangedCritical: string[];
           };
         };
-        expect(body.snapshotId).toBe('A');
+        expect(body.snapshotId).toBe('01');
         expect(body.projectStatus).toBe('Green');
         expect(body.decisionPanelState).toBe('absent');
         const hvac = body.equipment.find((e) => e.id === 'EQ-HVAC-01')!;
@@ -176,9 +179,9 @@ describe('I2 API snapshot (e2e)', () => {
       });
   });
 
-  it('GET dashboard B: Yellow local PKG; HVAC/PS calm; no DEC', () => {
+  it('GET dashboard 02: Yellow local PKG; HVAC/PS calm; no DEC', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/dashboard?snapshot=B')
+      .get('/v1/projects/PRT-01/dashboard?snapshot=B')
       .expect(200)
       .expect((res) => {
         const body = res.body as {
@@ -219,9 +222,9 @@ describe('I2 API snapshot (e2e)', () => {
       });
   });
 
-  it('GET dashboard C: Red HVAC +21; ISS Open; DEC absent; needed', () => {
+  it('GET dashboard 03: Red HVAC +21; ISS Open; DEC absent; needed', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/dashboard?snapshot=C')
+      .get('/v1/projects/PRT-01/dashboard?snapshot=C')
       .expect(200)
       .expect((res) => {
         const body = res.body as {
@@ -265,13 +268,13 @@ describe('I2 API snapshot (e2e)', () => {
 
   it('invalid dashboard snapshot → 400', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/dashboard?snapshot=Z')
+      .get('/v1/projects/PRT-01/dashboard?snapshot=Z')
       .expect(400);
   });
 
   it('GET equipment A/B + invalid snapshot', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/equipment')
+      .get('/v1/projects/PRT-01/equipment')
       .expect(200)
       .expect((res) => {
         const body = res.body as {
@@ -282,7 +285,7 @@ describe('I2 API snapshot (e2e)', () => {
             deliveryVariance: { deltaDays: number };
           }[];
         };
-        expect(body.snapshotId).toBe('A');
+        expect(body.snapshotId).toBe('01');
         expect(body.items.length).toBeGreaterThanOrEqual(2);
         const hvac = body.items.find((i) => i.id === 'EQ-HVAC-01')!;
         expect(hvac.status).toBe('OnTrack');
@@ -290,7 +293,7 @@ describe('I2 API snapshot (e2e)', () => {
       })
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/equipment?snapshot=B')
+          .get('/v1/projects/PRT-01/equipment?snapshot=B')
           .expect(200)
           .expect((res) => {
             const body = res.body as {
@@ -310,7 +313,7 @@ describe('I2 API snapshot (e2e)', () => {
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/equipment?snapshot=C')
+          .get('/v1/projects/PRT-01/equipment?snapshot=C')
           .expect(200)
           .expect((res) => {
             const body = res.body as {
@@ -329,14 +332,14 @@ describe('I2 API snapshot (e2e)', () => {
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/equipment?snapshot=Z')
+          .get('/v1/projects/PRT-01/equipment?snapshot=Z')
           .expect(400),
       );
   });
 
   it('GET issues-risks A/B/C', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/issues-risks?snapshot=A')
+      .get('/v1/projects/PRT-01/issues-risks?snapshot=A')
       .expect(200)
       .expect((res) => {
         const body = res.body as {
@@ -352,7 +355,7 @@ describe('I2 API snapshot (e2e)', () => {
       })
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/issues-risks?snapshot=B')
+          .get('/v1/projects/PRT-01/issues-risks?snapshot=B')
           .expect(200)
           .expect((res) => {
             const body = res.body as {
@@ -375,7 +378,7 @@ describe('I2 API snapshot (e2e)', () => {
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/issues-risks?snapshot=C')
+          .get('/v1/projects/PRT-01/issues-risks?snapshot=C')
           .expect(200)
           .expect((res) => {
             const body = res.body as {
@@ -395,7 +398,7 @@ describe('I2 API snapshot (e2e)', () => {
 
   it('GET milestones A/C', () => {
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/milestones')
+      .get('/v1/projects/PRT-01/milestones')
       .expect(200)
       .expect((res) => {
         const body = res.body as {
@@ -412,7 +415,7 @@ describe('I2 API snapshot (e2e)', () => {
       })
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/milestones?snapshot=C')
+          .get('/v1/projects/PRT-01/milestones?snapshot=C')
           .expect(200)
           .expect((res) => {
             const body = res.body as {
@@ -444,11 +447,11 @@ describe('I2 API snapshot (e2e)', () => {
     };
 
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/equipment/EQ-HVAC-01')
+      .get('/v1/projects/PRT-01/equipment/EQ-HVAC-01')
       .expect(200)
       .expect((res) => {
         const body = res.body as DetailBody;
-        expect(body.snapshotId).toBe('A');
+        expect(body.snapshotId).toBe('01');
         expect(body.entity.status).toBe('OnTrack');
         expect(body.links.filter((l) => l.targetType === 'risk').length).toBe(
           2,
@@ -464,17 +467,17 @@ describe('I2 API snapshot (e2e)', () => {
       })
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/issues/ISS-001?snapshot=A')
+          .get('/v1/projects/PRT-01/issues/ISS-001?snapshot=A')
           .expect(404),
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/issues/ISS-001?snapshot=B')
+          .get('/v1/projects/PRT-01/issues/ISS-001?snapshot=B')
           .expect(404),
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/issues/ISS-001?snapshot=C')
+          .get('/v1/projects/PRT-01/issues/ISS-001?snapshot=C')
           .expect(200)
           .expect((res) => {
             const body = res.body as DetailBody;
@@ -491,7 +494,7 @@ describe('I2 API snapshot (e2e)', () => {
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/milestones/MS-PS?snapshot=C')
+          .get('/v1/projects/PRT-01/milestones/MS-PS?snapshot=C')
           .expect(200)
           .expect((res) => {
             const body = res.body as DetailBody;
@@ -502,12 +505,12 @@ describe('I2 API snapshot (e2e)', () => {
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/equipment/EQ-HVAC-01?snapshot=Z')
+          .get('/v1/projects/PRT-01/equipment/EQ-HVAC-01?snapshot=Z')
           .expect(400),
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/equipment/EQ-UNKNOWN?snapshot=A')
+          .get('/v1/projects/PRT-01/equipment/EQ-UNKNOWN?snapshot=A')
           .expect(404),
       );
   });
@@ -526,11 +529,11 @@ describe('I2 API snapshot (e2e)', () => {
     };
 
     return request(app.getHttpServer())
-      .get('/v1/projects/PRJ-01/schedule')
+      .get('/v1/projects/PRT-01/schedule')
       .expect(200)
       .expect((res) => {
         const body = res.body as ScheduleBody;
-        expect(body.snapshotId).toBe('A');
+        expect(body.snapshotId).toBe('01');
         expect(body.items.length).toBeGreaterThanOrEqual(2);
         expect(
           body.items.every(
@@ -543,7 +546,7 @@ describe('I2 API snapshot (e2e)', () => {
       })
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/schedule?snapshot=B')
+          .get('/v1/projects/PRT-01/schedule?snapshot=B')
           .expect(200)
           .expect((res) => {
             const body = res.body as ScheduleBody;
@@ -556,7 +559,7 @@ describe('I2 API snapshot (e2e)', () => {
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/schedule?snapshot=C')
+          .get('/v1/projects/PRT-01/schedule?snapshot=C')
           .expect(200)
           .expect((res) => {
             const body = res.body as ScheduleBody;
@@ -571,7 +574,7 @@ describe('I2 API snapshot (e2e)', () => {
       )
       .then(() =>
         request(app.getHttpServer())
-          .get('/v1/projects/PRJ-01/schedule?snapshot=Z')
+          .get('/v1/projects/PRT-01/schedule?snapshot=Z')
           .expect(400),
       );
   });

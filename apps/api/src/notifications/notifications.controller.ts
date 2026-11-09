@@ -27,7 +27,7 @@ export class NotificationsController {
     enum: SNAPSHOT_IDS,
     description:
       'Discrete Demo snapshot context. Omitted defaults to A. Invalid → 400.',
-    schema: { default: 'A' },
+    schema: { default: '01' },
   })
   @ApiOkResponse({ type: NotificationListDto })
   @ApiNotFoundResponse({ description: 'Project not found in that snapshot' })

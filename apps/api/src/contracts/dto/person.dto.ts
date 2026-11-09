@@ -33,7 +33,7 @@ export class PersonListDto {
   @ApiProperty()
   scenarioAsOfDate!: string;
 
-  @ApiProperty({ example: 'PRJ-01' })
+  @ApiProperty({ example: 'PRT-01' })
   projectId!: string;
 
   @ApiProperty({ type: [PersonDto] })
@@ -48,7 +48,7 @@ export class PersonDetailDto {
   @ApiProperty()
   scenarioAsOfDate!: string;
 
-  @ApiProperty({ example: 'PRJ-01' })
+  @ApiProperty({ example: 'PRT-01' })
   projectId!: string;
 
   @ApiProperty({ type: PersonDto })

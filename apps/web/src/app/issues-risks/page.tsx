@@ -10,7 +10,7 @@ import {
   RegisterError,
   RegisterFilteredEmpty,
   RegisterLoading,
-  RegisterMutedIds,
+  RegisterIdLinks,
   RegisterRow,
   RegisterShell,
   RegisterTable,
@@ -229,16 +229,31 @@ function IssuesRisksPage() {
                     ) : null}
                   </RegisterCell>
                   <RegisterCell>
-                    <RegisterMutedIds
-                      ids={row.equipmentId ? [row.equipmentId] : []}
+                    <RegisterIdLinks
+                      refs={
+                        row.equipmentId
+                          ? [{ type: 'equipment', id: row.equipmentId }]
+                          : []
+                      }
                     />
                   </RegisterCell>
                   <RegisterCell>
-                    <RegisterMutedIds
-                      ids={[
-                        ...(row.linkedIssueId ? [row.linkedIssueId] : []),
-                        ...(row.linkedRiskId ? [row.linkedRiskId] : []),
-                        ...(row.milestoneId ? [row.milestoneId] : []),
+                    <RegisterIdLinks
+                      refs={[
+                        ...(row.linkedIssueId
+                          ? [{ type: 'issue' as const, id: row.linkedIssueId }]
+                          : []),
+                        ...(row.linkedRiskId
+                          ? [{ type: 'risk' as const, id: row.linkedRiskId }]
+                          : []),
+                        ...(row.milestoneId
+                          ? [
+                              {
+                                type: 'milestone' as const,
+                                id: row.milestoneId,
+                              },
+                            ]
+                          : []),
                       ]}
                     />
                   </RegisterCell>

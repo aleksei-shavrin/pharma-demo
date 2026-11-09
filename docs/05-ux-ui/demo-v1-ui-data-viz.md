@@ -29,7 +29,7 @@ related:
 | In scope | Out of scope |
 |----------|--------------|
 | Status/RAG encoding in viz | Component anatomy (DOC-UX-016) |
-| Snapshot A/B/C visual story | Screen grids (DOC-UX-017) |
+| Snapshot 01/02/03 visual story | Screen grids (DOC-UX-017) |
 | Links vs Impact presentation | Interaction flows detail (DOC-UX-019) |
 | Baseline / forecast / Δ labeling | Invented metrics or series |
 | Chart allow/deny (Recharts) | npm / CSS / library install |
@@ -56,13 +56,13 @@ Inherit tokens/geometry from DOC-UX-015 §3.3/§6 and StatusIndicator rules from
 
 **Not Must UI:** Amber; Issue Closed chrome.
 
-**BR-006 viz rule:** After PrioritizeRecovery (Snapshot C), do not show green wash, RAG upgrade, progress-to-recovered, or “schedule restored” metaphors. Mitigating means decision recorded, not recovery executed.
+**BR-006 viz rule:** After PrioritizeRecovery (Snapshot 03), do not show green wash, RAG upgrade, progress-to-recovered, or “schedule restored” metaphors. Mitigating means decision recorded, not recovery executed.
 
-## 3. Snapshot A / B / C — visual story (`approved UI Design decision`)
+## 3. Snapshot 01 / 02 / 03 — visual story (`approved UI Design decision`)
 
-Global SnapshotSelector switches the **entire** data context (DOC-UX-002). All surfaces must show one coherent snapshot — never mixed A/B/C fields.
+Global SnapshotSelector switches the **entire** data context (DOC-UX-002). All surfaces must show one coherent snapshot — never mixed 01/02/03 fields.
 
-### 3.1 Snapshot A — baseline (asOf 2027-02-15)
+### 3.1 Snapshot 01 — baseline (asOf 2027-02-15)
 
 | Signal | Value (DOC-PROD-012) | Visual expectation |
 |--------|----------------------|--------------------|
@@ -72,9 +72,9 @@ Global SnapshotSelector switches the **entire** data context (DOC-UX-002). All s
 | Issue delay chain | none | No Open delay Issue; no Delayed EQ narrative |
 | Decision | none | DecisionPanel neutral empty (DOC-UX-016) |
 
-**Causal viz (Dashboard):** show **direct** Domain edges present in A — including RISK—EQ and RISK—MS when present in fixture. Do **not** invent Issue-driven delay chain. Do **not** draw EQ—MS. Do not present storytelling order as edge list.
+**Causal viz (Dashboard):** show **direct** Domain edges present in 01 — including RISK—EQ and RISK—MS when present in fixture. Do **not** invent Issue-driven delay chain. Do **not** draw EQ—MS. Do not present storytelling order as edge list.
 
-### 3.2 Snapshot B — problem visible (asOf 2027-03-01)
+### 3.2 Snapshot 02 — problem visible (asOf 2027-03-01)
 
 | Signal | Value | Visual expectation |
 |--------|-------|--------------------|
@@ -91,7 +91,7 @@ Global SnapshotSelector switches the **entire** data context (DOC-UX-002). All s
 3. Production Start forecast moved to 2027-10-06 (aligned with BR-004 math in fixtures) — shown as PS/MS forecast change, **not** as an EQ—MS edge.
 4. Risk/MS RAG → Red.
 
-### 3.3 Snapshot C — decision recorded (asOf 2027-03-02)
+### 3.3 Snapshot 03 — decision recorded (asOf 2027-03-02)
 
 | Signal | Value | Visual expectation |
 |--------|-------|--------------------|
@@ -133,7 +133,7 @@ Verify against Domain model; UX does not add edges:
 | Equipment — Decision | **no** |
 | Project ownership edges | overview/context, not detail RelationshipList chips |
 
-**Snapshot-specific:** A has no ISS-001 → no Issue links involving ISS-001. B/C include Issue links. Empty Links → EmptyState (valid).
+**Snapshot-specific:** 01 has no ISS-001 → no Issue links involving ISS-001. 02/03 include Issue links. Empty Links → EmptyState (valid).
 
 **Causal Dashboard viz:** same edge allowlist as Links; nodes may include PS as **label/aggregate** of MS/Project forecast, not as a Domain edge from EQ.
 
@@ -154,15 +154,15 @@ Verify against Domain model; UX does not add edges:
 
 Source allowlist: DOC-UX-007.
 
-### 6.1 Snapshot A/B/C — discrete comparison (not a time series)
+### 6.1 Snapshot 01/02/03 — discrete comparison (not a time series)
 
-A/B/C are **three discrete snapshots**, not a continuous timeline and not output of a running forecast engine (DOC-PROD-012 fixtures).
+01/02/03 are **three discrete snapshots**, not a continuous timeline and not output of a running forecast engine (DOC-PROD-012 fixtures).
 
 | Rule | Detail (`approved UI Design decision`) |
 |------|---------------------|
-| Preferred | Compact **table** or discrete comparison of three independent PS forecast values (A / B / C), each labeled with snapshot letter + asOf date |
-| If a chart is used | Show **unconnected** points/markers only — **no** connecting line, step bridge, interpolation, or smoothing between A→B→C |
-| Labels | Explicit «Snapshot A/B/C» + corresponding asOf (2027-02-15 / 2027-03-01 / 2027-03-02) |
+| Preferred | Compact **table** or discrete comparison of three independent PS forecast values (01 / 02 / 03), each labeled with snapshot number + asOf date |
+| If a chart is used | Show **unconnected** points/markers only — **no** connecting line, step bridge, interpolation, or smoothing between 01→02→03 |
+| Labels | Explicit «Snapshot 01/02/03» + corresponding asOf (2027-02-15 / 2027-03-01 / 2027-03-02) |
 | Forbidden impression | Continuous dynamics, auto-forecast trajectory, or invented intermediate states |
 
 Do not add fixture values beyond DOC-PROD-012.
@@ -190,7 +190,7 @@ Equipment **delivery** dates remain a separate subject (separate table/markers/�
 - Dense register comparison (Equipment, Issues&Risks, Milestones, Schedule control points).
 - Exact baseline/forecast/Δ scan.
 - Status allowlist filtering.
-- Snapshot A/B/C PS comparison (§6.1) and Baseline/Forecast/Δ (§6.2).
+- Snapshot 01/02/03 PS comparison (§6.1) and Baseline/Forecast/Δ (§6.2).
 
 ### 6.5 Presentation rules
 
@@ -204,7 +204,7 @@ Equipment **delivery** dates remain a separate subject (separate table/markers/�
 ### 6.6 Disallowed
 
 - Burn-down, EVM, org heatmaps without data.
-- Connected A/B/C lines/steps implying continuous forecast dynamics.
+- Connected 01/02/03 lines/steps implying continuous forecast dynamics.
 - Ordinary magnitude bars for calendar dates.
 - Charts implying CPM, % complete recovery, or auto-reforecast.
 - Decorative gauges / sparkline spam.

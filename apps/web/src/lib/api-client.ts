@@ -36,6 +36,22 @@ export type DirectEdgeDto = {
 };
 
 export type DecisionPanelState = 'absent' | 'needed' | 'recorded';
+
+export type DecisionExecutionStatus =
+  | 'unknown'
+  | 'not_started'
+  | 'in_progress'
+  | 'completed';
+
+export type DecisionExecutionDetail = {
+  status: Exclude<DecisionExecutionStatus, 'unknown'>;
+  evidenceNote: string;
+  source: { kind: 'demo'; label: string };
+  updatedAt: string;
+  observationId: string;
+  asOfDate: string;
+};
+
 export type WorkstreamId =
   | 'WS-BLD'
   | 'WS-CLN'
@@ -114,10 +130,20 @@ export type DashboardOverview = {
     dueDate: string | null;
     note: string;
     dueState?: 'none' | 'upcoming' | 'passed';
+    executionStatus?: DecisionExecutionStatus;
+    execution?: DecisionExecutionDetail | null;
     approvedCostImpactRub?: number;
   }[];
   workstreamRollups: { workstream: WorkstreamId; status: ProjectStatus }[];
-  programs?: { id: string; name: string; status: ProjectStatus }[];
+  programs?: {
+    id: string;
+    name: string;
+    status: ProjectStatus;
+    progressPct?: number | null;
+    leafCompleted?: number;
+    leafTotal?: number;
+    progressFillTone?: ProgressFillTone;
+  }[];
   /** FE-only: program scale may omit MS-PS and may be empty. */
   timelineScope?: 'portfolio' | 'program';
   topExceptions: {
@@ -142,7 +168,44 @@ export type DashboardOverview = {
     productionStartDeltaDays: number;
     kind: 'none' | 'aligned_slip';
   };
-  decisionHonesty: { recoveryExecuted: false } | null;
+  decisionHonesty: {
+    /** @deprecated BR-006 legacy always false — not execution status */
+    recoveryExecuted: false;
+    forecastDeviation?: 'within_baseline' | 'deviation_persists';
+  } | null;
+  /** Owners of open critical delivery questions — not HR scores. */
+  peopleFocus: {
+    previousSnapshotId: SnapshotId | null;
+    summary: {
+      peopleWithQuestions: number;
+      criticalQuestionCount: number;
+      /** null on first snapshot (A). New critical incidents only — not all issues. */
+      newCriticalQuestionCount: number | null;
+      /** Critical keys dropped vs previous (same predicate); null on A. */
+      removedCriticalSignalCount: number | null;
+      otherActiveIssueCount: number;
+    };
+    people: {
+      personId: PersonId;
+      fullNameRu: string;
+      roleTitleRu: string;
+      primaryWorkstreamId: string | null;
+      criticalIncidentCount: number;
+      otherActiveIssueCount: number;
+      hasNewCritical: boolean;
+      incidentGrowth: number;
+      criticalSignalsRemoved: number;
+      reasons: {
+        text: string;
+        links: { type: 'issue' | 'equipment'; id: string }[];
+      }[];
+      criticalIncidentKeys: string[];
+      activeIssueIds: string[];
+      delayedCriticalEquipmentIds: string[];
+    }[];
+    unassignedDelayedCriticalEquipmentIds: string[];
+    totalPeopleInFocus: number;
+  };
 };
 
 export class ApiClientError extends Error {
@@ -598,6 +661,8 @@ export type DecisionsRegister = {
     dueDate: string | null;
     note: string;
     dueState: 'none' | 'upcoming' | 'passed';
+    executionStatus: DecisionExecutionStatus;
+    execution: DecisionExecutionDetail | null;
     programId: string | null;
     analystProjectId: string | null;
     analystProjectName: string | null;

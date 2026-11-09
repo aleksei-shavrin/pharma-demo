@@ -605,16 +605,16 @@ describe('ScheduleBoard', () => {
     const objectHeader = header?.querySelector('[data-schedule-col="object"]');
     expect(nameHeader).toBeTruthy();
     expect(objectHeader).toBeTruthy();
+    // name/object flex-grow from shared min; header and body must match.
     expect(nameHeader).toHaveStyle({
-      width: `${SCHEDULE_COL_NAME_PX}px`,
       minWidth: `${SCHEDULE_COL_NAME_PX}px`,
-      maxWidth: `${SCHEDULE_COL_NAME_PX}px`,
+      flex: `1 1 ${SCHEDULE_COL_NAME_PX}px`,
     });
     expect(objectHeader).toHaveStyle({
-      width: `${SCHEDULE_COL_OBJECT_PX}px`,
       minWidth: `${SCHEDULE_COL_OBJECT_PX}px`,
-      maxWidth: `${SCHEDULE_COL_OBJECT_PX}px`,
+      flex: `1 1 ${SCHEDULE_COL_OBJECT_PX}px`,
     });
+    expect(SCHEDULE_COL_NAME_PX).toBe(240);
     expect(nameHeader?.className).toMatch(/truncate|overflow-hidden/);
     expect(nameHeader?.className).not.toMatch(/min-w-0/);
 
@@ -624,14 +624,12 @@ describe('ScheduleBoard', () => {
     const nameBody = bodyLeft?.querySelector('[data-schedule-col="name"]');
     const objectBody = bodyLeft?.querySelector('[data-schedule-col="object"]');
     expect(nameBody).toHaveStyle({
-      width: `${SCHEDULE_COL_NAME_PX}px`,
       minWidth: `${SCHEDULE_COL_NAME_PX}px`,
-      maxWidth: `${SCHEDULE_COL_NAME_PX}px`,
+      flex: `1 1 ${SCHEDULE_COL_NAME_PX}px`,
     });
     expect(objectBody).toHaveStyle({
-      width: `${SCHEDULE_COL_OBJECT_PX}px`,
       minWidth: `${SCHEDULE_COL_OBJECT_PX}px`,
-      maxWidth: `${SCHEDULE_COL_OBJECT_PX}px`,
+      flex: `1 1 ${SCHEDULE_COL_OBJECT_PX}px`,
     });
   });
 

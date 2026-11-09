@@ -15,6 +15,7 @@ import {
 } from '@/lib/entity-routes';
 import { formatDateRu } from '@/lib/format/ru';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 import { entityTypeLabel } from '@/lib/ui-labels';
 import {
   PageContent,
@@ -158,7 +159,7 @@ export function EntityDetailShell({
         <div className="flex flex-wrap items-center gap-3 text-sm">
           {statusSlot}
           <span className="text-[var(--text-muted)]">
-            Снимок {snapshot} · на {formatDateRu(asOf)}
+            Снимок {snapshotDisplayLabel(snapshot)} · на {formatDateRu(asOf)}
           </span>
         </div>
         <div

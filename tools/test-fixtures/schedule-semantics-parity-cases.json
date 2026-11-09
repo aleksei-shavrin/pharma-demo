@@ -31,7 +31,7 @@
       "expectTone": "lag"
     },
     {
-      "id": "lag-weeks-zero",
+      "id": "historical-weeks-not-lag",
       "item": {
         "kind": "work",
         "id": "W-0",
@@ -43,7 +43,22 @@
         "endDate": "2027-02-24"
       },
       "descendants": [],
-      "expectTone": "lag"
+      "expectTone": "none"
+    },
+    {
+      "id": "completed-with-historical-weeks",
+      "item": {
+        "kind": "work",
+        "id": "1.2.2",
+        "status": "Completed",
+        "sourceWeeks": 2,
+        "baselineStart": "2026-08-08",
+        "baselineEnd": "2026-08-15",
+        "startDate": "2026-08-08",
+        "endDate": "2026-08-15"
+      },
+      "descendants": [],
+      "expectTone": "none"
     },
     {
       "id": "no-warning-aligned",
@@ -67,7 +82,7 @@
         {
           "kind": "work",
           "id": "W-LAG",
-          "status": "OnSchedule",
+          "status": "Delayed",
           "sourceWeeks": 3,
           "baselineStart": "2027-01-01",
           "baselineEnd": "2027-01-02",

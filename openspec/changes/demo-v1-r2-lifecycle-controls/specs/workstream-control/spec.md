@@ -15,5 +15,5 @@
 
 #### Scenario: HVAC workstream shows RAG and lead
 
-- **WHEN** активен Snapshot C и запрошен `WS-HVAC`
+- **WHEN** активен Snapshot 03 и запрошен `WS-HVAC`
 - **THEN** RAG = Red и detail включает EQ-HVAC-01 / ISS-001 / RISK-001 projections без Equipment→Milestone links

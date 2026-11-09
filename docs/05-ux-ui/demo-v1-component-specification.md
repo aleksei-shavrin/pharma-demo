@@ -115,7 +115,7 @@ related:
 
 | Field | Spec |
 |-------|------|
-| Purpose | Global chrome: breadcrumbs, Snapshot A/B/C, theme, project context. |
+| Purpose | Global chrome: breadcrumbs, Snapshot 01/02/03, theme, project context. |
 | Anatomy | `breadcrumbs` · `spacer` · `snapshotSelector` · `themeToggle` · `projectChip` (PRJ id/name). |
 | Variants | With/without deep breadcrumb trail. |
 | Sizes | Height 52px. |
@@ -124,7 +124,7 @@ related:
 | Interaction / keyboard | Tab order left→right; no modal by default. |
 | Responsive | Snapshot remains reachable; may wrap meta. |
 | Accessibility | Group labels for Snapshot and Theme. |
-| Data / semantic | Current snapshot id A\|B\|C; theme light\|dark. |
+| Data / semantic | Current snapshot id 01/02/03; theme light\|dark. |
 | Sources | DOC-UX-002. |
 
 ### 4.4 Breadcrumbs
@@ -163,15 +163,15 @@ related:
 
 | Field | Spec |
 |-------|------|
-| Purpose | Global switch Snapshot A / B / C; updates all widgets consistently. |
+| Purpose | Global switch Snapshot 01 / 02 / 03; updates all widgets consistently. |
 | Anatomy | Segmented control or toggle group: A · B · C (+ optional short hint). |
 | Variants | Compact (App Bar); echo read-only on Dashboard header. |
 | Sizes | `control-h-md`. |
 | States | selected · hover · focus-visible · disabled (if loading). |
-| Content rules | Labels A/B/C; do not invent snapshot names. |
+| Content rules | Labels 01/02/03; do not invent snapshot names. Visible loading line under the trigger is **not** shown (avoids TopAppBar shift); status may be `sr-only` + `aria-live` / `aria-busy` on the trigger. Error + retry stay visible. |
 | Interaction / keyboard | Arrow keys within group; selection updates data scope. |
 | Responsive | Always visible in App Bar on target desktop. |
-| Accessibility | `role="radiogroup"` / segmented; announce selected. |
+| Accessibility | Trigger `aria-busy` while loading; polite live status may be screen-reader-only; announce selected. |
 | Data / semantic | Must load coherent fixture set; no partial mixed snapshots. |
 | Sources | DOC-UX-002; DOC-PROD-012 (read-only). |
 
@@ -370,7 +370,7 @@ Shared pattern for summary blocks/rows: identity · StatusIndicator(family) · k
 | Purpose | PRJ identity + PS baseline/forecast orientation. |
 | Anatomy | Name/id · asOf · optional PS dates / Δ. |
 | Variants | Dashboard header; compact chip in App Bar. |
-| Content rules | Single demo project context (PRJ-01). |
+| Content rules | Single demo project context (PRT-01). |
 | Data / semantic | Project fields; PS alignment BR-004. |
 | Sources | DOC-UX-004. |
 
@@ -403,7 +403,7 @@ Shared pattern for summary blocks/rows: identity · StatusIndicator(family) · k
 | Purpose | Risk RAG posture. |
 | Anatomy | Id/title · `StatusIndicator(family=risk)` · rag Green/Red. |
 | Variants | Table row; preview; detail. |
-| Content rules | No Amber. On B/C with Open/Mitigating Issue expect Red (BR-002 integrity). |
+| Content rules | No Amber. On 02/03 with Open/Mitigating Issue expect Red (BR-002 integrity). |
 | Data / semantic | Risk.rag; Decision does not change rag (BR-006) — honesty in Impact. |
 | Sources | Domain Risk; BR-002/006. |
 
@@ -495,12 +495,12 @@ Shared pattern for summary blocks/rows: identity · StatusIndicator(family) · k
 |-------|------|
 | Purpose | Dashboard/Detail surface for Decision context / recorded Decision + honesty. |
 | Anatomy | Panel (`surface-raised`) · DecisionSummary (when present) · ImpactCallout honesty · optional owner/due. |
-| Variants by Snapshot | **A:** no Decision recorded — neutral empty state (decision absent). **B:** Decision not yet recorded — show problem context and that a management decision is needed (**not** a Domain Decision status “Pending”). **C:** `PrioritizeRecovery` recorded (fixture/read-only). |
+| Variants by Snapshot | **01:** no Decision recorded — neutral empty state (decision absent). **02:** Decision not yet recorded — show problem context and that a management decision is needed (**not** a Domain Decision status “Pending”). **03:** `PrioritizeRecovery` recorded (fixture/read-only). |
 | Content rules | BR-006: recorded PrioritizeRecovery ≠ recovery execution; Issue → Mitigating; Risk and Milestone remain Red; forecast unchanged — no green wash / RAG upgrade. Mitigating ≠ “resolved”. |
 | Interaction / keyboard | **Must path = read-only.** User cannot perform/record a management action in Demo v1 Must UI. |
 | Responsive | Rail column on Dashboard xl. |
 | Accessibility | Heading “Decision”; honesty / empty / needed-context text not color-only. |
-| Data / semantic | No new Decision business status. Snapshot C: type=PrioritizeRecovery + Issue Mitigating + Red RAG + unchanged forecast. |
+| Data / semantic | No new Decision business status. Snapshot 03: type=PrioritizeRecovery + Issue Mitigating + Red RAG + unchanged forecast. |
 | Sources | DOC-UX-004 D6; BR-006. |
 
 ---

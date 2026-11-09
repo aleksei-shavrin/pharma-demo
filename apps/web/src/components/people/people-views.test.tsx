@@ -7,9 +7,9 @@ import { PersonDetailView } from './person-detail-view';
 import { NAV_ITEMS } from '@/lib/navigation';
 
 const list: PersonList = {
-  snapshotId: 'C',
+  snapshotId: '03',
   scenarioAsOfDate: '2027-03-02',
-  projectId: 'PRJ-01',
+  projectId: 'PRT-01',
   items: [
     {
       id: 'PER-03',
@@ -44,9 +44,9 @@ const list: PersonList = {
 
 /** Snapshot C HVAC lead: no Issues yet (ISS-HVAC-02 @ D); not BLD leftovers. */
 const detail: PersonDetail = {
-  snapshotId: 'C',
+  snapshotId: '03',
   scenarioAsOfDate: '2027-03-02',
-  projectId: 'PRJ-01',
+  projectId: 'PRT-01',
   person: list.items.find((p) => p.id === 'PER-08')!,
   issueIds: [],
   decisionIds: [],

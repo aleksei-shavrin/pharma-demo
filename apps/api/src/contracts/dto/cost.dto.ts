@@ -117,7 +117,7 @@ export class ProjectCostsOverviewDto {
   @ApiProperty()
   scenarioAsOfDate!: string;
 
-  @ApiProperty({ example: 'PRJ-01' })
+  @ApiProperty({ example: 'PRT-01' })
   projectId!: string;
 
   @ApiProperty({ type: ProjectCostDto })

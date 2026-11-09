@@ -2,6 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { calendarDaysDelta } from '../common/calendar-days-delta';
 import { decisionDueState } from '../contracts/decision-due-state';
 import { milestoneMembership, projectById } from '../data/analyst-portfolio';
+import { resolveDecisionExecution } from '../data/decision-execution';
 import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
 import type { SnapshotFixture } from '../data/fixtures/types';
 import type { SnapshotId } from '../snapshot/snapshot-id';
@@ -151,6 +152,7 @@ export class RegistersService {
           ? (snapshot.milestones.find((m) => m.id === d.milestoneId) ?? null)
           : null;
         const analyst = member.projectId ? projectById(member.projectId) : null;
+        const exec = resolveDecisionExecution(d.id, snapshot);
         return {
           id: d.id,
           projectId: d.projectId,
@@ -162,6 +164,8 @@ export class RegistersService {
           dueDate: d.dueDate,
           note: d.note,
           dueState: decisionDueState(d.dueDate, snapshot.scenarioAsOfDate),
+          executionStatus: exec.status,
+          execution: exec.execution,
           programId: member.programId,
           analystProjectId: member.projectId,
           analystProjectName: analyst?.name ?? null,

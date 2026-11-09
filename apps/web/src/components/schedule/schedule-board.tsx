@@ -118,7 +118,7 @@ function ScheduleCol({
   'aria-label'?: string;
   children?: ReactNode;
 }) {
-  const style: CSSProperties = scheduleColBoxStyle(widthPx);
+  const style: CSSProperties = scheduleColBoxStyle(widthPx, id);
   return (
     <span
       data-schedule-col={id}
@@ -554,7 +554,11 @@ function ModeItemCells({
         >
           {deltaCell}
         </ScheduleCol>
-        <ScheduleCol id="status" widthPx={SCHEDULE_COL_STATUS_PX}>
+        <ScheduleCol
+          id="status"
+          widthPx={SCHEDULE_COL_STATUS_PX}
+          className="flex items-center overflow-hidden whitespace-nowrap"
+        >
           {statusCell(item)}
         </ScheduleCol>
         <ScheduleCol
@@ -687,6 +691,9 @@ type Props = {
    * and keep full logical height via top/bottom spacers.
    */
   rowWindow?: import('@/lib/schedule/schedule-virtual-window').ScheduleVirtualWindow | null;
+  /** Shared selection with chart (immediate pred/succ link chain). */
+  selectedKeyId?: string | null;
+  onSelectRow?: (keyId: string | null) => void;
 };
 
 /**
@@ -705,6 +712,8 @@ export function ScheduleBoard({
   hoveredRowKey = null,
   onHoverRow,
   rowWindow = null,
+  selectedKeyId = null,
+  onSelectRow,
 }: Props) {
   const horizon = buildScheduleHorizon(items, comparison);
   const monthSpans = monthLabelSpans(horizon.months);
@@ -813,8 +822,15 @@ export function ScheduleBoard({
 
   const headerInner = (
     <div
-      className="flex border-b border-[var(--border)] bg-[var(--surface-sunken)] text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]"
-      style={{ height: SCHEDULE_HEADER_HEIGHT_PX, minWidth: boardMinWidth }}
+      className={[
+        'flex border-b border-[var(--border)] bg-[var(--surface-sunken)] text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]',
+        showWideTable ? 'w-full' : '',
+      ].join(' ')}
+      style={{
+        height: SCHEDULE_HEADER_HEIGHT_PX,
+        minWidth: boardMinWidth,
+        width: showWideTable ? '100%' : undefined,
+      }}
       data-schedule-header="true"
     >
       <div
@@ -865,10 +881,43 @@ export function ScheduleBoard({
                 key={row.keyId}
                 role="row"
                 data-schedule-row={row.keyId}
+                data-schedule-row-selected={
+                  selectedKeyId === row.keyId ? 'true' : undefined
+                }
+                aria-selected={
+                  onSelectRow
+                    ? selectedKeyId === row.keyId
+                      ? true
+                      : false
+                    : undefined
+                }
                 data-row-height={rowHeight}
                 data-emphasis={emphasis ? 'true' : undefined}
                 data-schedule-row-hover={
                   hoveredRowKey === row.keyId ? 'true' : undefined
+                }
+                tabIndex={onSelectRow ? 0 : undefined}
+                onClick={
+                  onSelectRow
+                    ? (event) => {
+                        const t = event.target as HTMLElement;
+                        if (t.closest('a,button,[data-schedule-toggle]')) return;
+                        onSelectRow(
+                          selectedKeyId === row.keyId ? null : row.keyId,
+                        );
+                      }
+                    : undefined
+                }
+                onKeyDown={
+                  onSelectRow
+                    ? (event) => {
+                        if (event.key !== 'Enter' && event.key !== ' ') return;
+                        event.preventDefault();
+                        onSelectRow(
+                          selectedKeyId === row.keyId ? null : row.keyId,
+                        );
+                      }
+                    : undefined
                 }
                 onMouseEnter={() => onHoverRow?.(row.keyId)}
                 onMouseLeave={() => onHoverRow?.(null)}
@@ -878,8 +927,14 @@ export function ScheduleBoard({
                   hoveredRowKey === row.keyId
                     ? 'ppc-schedule-row-hovered'
                     : '',
+                  selectedKeyId === row.keyId ? 'ppc-schedule-row-selected' : '',
+                  onSelectRow ? 'cursor-pointer' : '',
                 ].join(' ')}
-                style={{ height: rowHeight }}
+                style={{
+                  height: rowHeight,
+                  minWidth: boardMinWidth,
+                  width: showWideTable ? '100%' : undefined,
+                }}
               >
                 <div
                   className={[

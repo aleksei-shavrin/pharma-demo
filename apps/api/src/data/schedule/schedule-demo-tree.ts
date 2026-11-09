@@ -18,6 +18,7 @@ import type { SnapshotId } from '../../snapshot/snapshot-id';
 import { applyWorkStates, reconcileWorkFacts } from './schedule-work-states';
 import {
   applyMasterLifecycleToWorks,
+  runtimeRagFromLifecycle,
   getRegisteredLifecycleGraph,
 } from '../fixtures/analyst/schedule-master-simulation';
 
@@ -428,6 +429,8 @@ export function mergeDemoTree(
         progressPct: lived[i].progressPct ?? 0,
         actualStart: lived[i].actualStart ?? null,
         actualEnd: lived[i].actualEnd ?? null,
+        // Runtime tone: historical missed/delayed emoji must not paint Completed Red.
+        rag: runtimeRagFromLifecycle(lived[i].status),
       }));
     };
     if (importedCheckpoints) importedCheckpoints = mapKt(importedCheckpoints);

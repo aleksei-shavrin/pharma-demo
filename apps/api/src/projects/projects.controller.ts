@@ -20,7 +20,7 @@ export class ProjectsController {
   @Get(':id')
   @ApiOperation({
     summary:
-      'Project stub for request-scoped snapshot (default A; discrete A–S)',
+      'Project stub for request-scoped snapshot (default A; discrete 01–19)',
   })
   @ApiQuery({
     name: 'snapshot',
@@ -28,7 +28,7 @@ export class ProjectsController {
     enum: SNAPSHOT_IDS,
     description:
       'Discrete Demo snapshot context. Omitted defaults to A. Invalid → 400.',
-    schema: { default: 'A' },
+    schema: { default: '01' },
   })
   @ApiOkResponse({
     type: ProjectStubDto,

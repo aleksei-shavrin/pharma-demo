@@ -6,12 +6,12 @@ import {
 } from './snapshot-id';
 
 /**
- * Request-scoped snapshot query: omitted → A; invalid → 400 (no silent fallback).
- * Accepts A–S (R2); fixture population remains A–H until R2-L1.
+ * Request-scoped snapshot query: omitted → 01; invalid → 400 (no silent fallback).
+ * Letters and non-canonical numerics are rejected (no dual identity).
  */
 export function parseSnapshotQuery(raw: string | undefined | null): SnapshotId {
   if (raw === undefined || raw === null || raw === '') {
-    return 'A';
+    return '01';
   }
   if (typeof raw !== 'string' || !isSnapshotId(raw)) {
     throw new BadRequestException(

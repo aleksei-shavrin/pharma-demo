@@ -23,7 +23,7 @@ related:
 ## 0. Shared shell
 
 ```text
-┌ Sidebar │ App Bar: Breadcrumbs · Snapshot A/B/C · Theme · PRJ ─┐
+┌ Sidebar │ App Bar: Breadcrumbs · Snapshot 01/02/03 · Theme · PRJ ─┐
 │ nav×5   ├ Page Surface (elevated) ────────────────────────────┤
 │         │  page header                                         │
 │         │  main content                                        │
@@ -54,7 +54,7 @@ related:
 │ │ Exceptions preview (typed)       │ │ Compact schedule   │ │
 │ └──────────────────────────────────┘ └────────────────────┘ │
 │ KPI group (≥4 justified) OR omit                            │
-│ Optional A/B/C forecast chart (Recharts) — subordinate      │
+│ Optional 01/02/03 forecast chart (Recharts) — subordinate      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -69,9 +69,9 @@ related:
 
 **States:**
 
-- **Snapshot A:** calm PS/EQ OnTrack; MS/Risk rag Green (fixtures). Causal viz **не** пустая: показывать прямые Domain links RISK-001—EQ-HVAC-01 и RISK-001—MS-PS, если они есть в snapshot. **Нет** Issue-driven delay chain (нет Open delay Issue / нет Delayed EQ narrative). Не рисовать EQ—MS; не выдавать storytelling sequence за набор прямых рёбер.
-- **Snapshot B:** elevated Delayed/Red; Issue Open links participate in causal (Domain edges only).
-- **Snapshot C:** Decision visible + Mitigating + **unchanged** Red/forecast (no green wash) — BR-006.
+- **Snapshot 01:** calm PS/EQ OnTrack; MS/Risk rag Green (fixtures). Causal viz **не** пустая: показывать прямые Domain links RISK-001—EQ-HVAC-01 и RISK-001—MS-PS, если они есть в snapshot. **Нет** Issue-driven delay chain (нет Open delay Issue / нет Delayed EQ narrative). Не рисовать EQ—MS; не выдавать storytelling sequence за набор прямых рёбер.
+- **Snapshot 02:** elevated Delayed/Red; Issue Open links participate in causal (Domain edges only).
+- **Snapshot 03:** Decision visible + Mitigating + **unchanged** Red/forecast (no green wash) — BR-006.
 
 **Anti:** KPI card grid as hero; decorative gauges; fake recovery progress.
 

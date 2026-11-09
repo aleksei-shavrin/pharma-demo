@@ -83,31 +83,54 @@ describe('resolveScheduleWarning', () => {
     ).toEqual({ tone: 'lag', label: 'Отстаёт' });
   });
 
-  it('пишет недели, если sourceWeeks — число, даже при статусе не Delayed', () => {
+  it('sourceWeeks alone is historical audit — no lag when not Delayed', () => {
     expect(
       resolveScheduleWarning(
         work({ id: 'WK-W', status: 'OnSchedule', sourceWeeks: 3 }),
       ),
-    ).toEqual({ tone: 'lag', label: 'Отставание, 3 нед.' });
-  });
-
-  it('ноль недель остаётся числом в подписи', () => {
+    ).toEqual({ tone: 'none', label: '' });
     expect(
-      resolveScheduleWarning(work({ id: 'WK-0', sourceWeeks: 0 })).label,
-    ).toBe('Отставание, 0 нед.');
+      resolveScheduleWarning(
+        work({
+          id: '1.2.2',
+          status: 'Completed',
+          sourceWeeks: 2,
+          startDate: '2026-08-08',
+          endDate: '2026-08-15',
+          baselineStart: '2026-08-08',
+          baselineEnd: '2026-08-15',
+        }),
+      ),
+    ).toEqual({ tone: 'none', label: '' });
   });
 
-  it('группа со своими неделями предупреждает без детей', () => {
+  it('Delayed + sourceWeeks keeps weeks in lag label', () => {
+    expect(
+      resolveScheduleWarning(
+        work({
+          id: 'WK-0',
+          status: 'Delayed',
+          sourceWeeks: 0,
+          baselineStart: '2027-02-20',
+          baselineEnd: '2027-02-24',
+          startDate: '2027-02-20',
+          endDate: '2027-02-24',
+        }),
+      ),
+    ).toEqual({ tone: 'lag', label: 'Отставание, 0 нед.' });
+  });
+
+  it('группа только с historical sourceWeeks без Delayed детей — none', () => {
     expect(
       resolveScheduleWarning({
         kind: 'stage_group',
         id: '8.2',
         sourceWeeks: 3,
       }),
-    ).toEqual({ tone: 'lag', label: 'Отставание, 3 нед.' });
+    ).toEqual({ tone: 'none', label: '' });
   });
 
-  it('свои недели группы не подменяются сдвигом потомка', () => {
+  it('группа с historical weeks сворачивает сдвиг потомка (не own lag)', () => {
     const stage = {
       kind: 'stage_group',
       id: '8.2',
@@ -119,8 +142,8 @@ describe('resolveScheduleWarning', () => {
       baselineEnd: '2027-03-08',
     });
     expect(resolveScheduleWarning(stage, [shifted])).toEqual({
-      tone: 'lag',
-      label: 'Отставание, 3 нед.',
+      tone: 'shift',
+      label: SCHEDULE_SHIFT_WARNING_LABEL,
     });
   });
 

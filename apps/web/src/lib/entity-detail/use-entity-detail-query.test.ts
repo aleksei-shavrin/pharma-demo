@@ -10,7 +10,7 @@ import { useEntityDetailQuery } from './use-entity-detail-query';
 
 const fetchDashboardOverview = vi.fn(async (...args: [string, SnapshotId]) => {
   void args;
-  return dashboardOverviewFixture('A');
+  return dashboardOverviewFixture('01');
 });
 
 vi.mock('@/lib/api-client', async () => {
@@ -79,6 +79,6 @@ describe('useEntityDetailQuery', () => {
     await waitFor(() => {
       expect(result.current.status).toBe('idle');
     });
-    expect(result.current.data?.snapshotId).toBe('A');
+    expect(result.current.data?.snapshotId).toBe('01');
   });
 });

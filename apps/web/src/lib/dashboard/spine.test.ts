@@ -11,11 +11,11 @@ import {
 
 describe('dashboard spine (no silent substitution)', () => {
   it('spineDecision is DEC-001 or null — never another Decision', () => {
-    const other = dashboardOverviewFixture('A', {
+    const other = dashboardOverviewFixture('01', {
       decisions: [
         {
           id: 'DEC-OTHER',
-          projectId: 'PRJ-01',
+          projectId: 'PRT-01',
           milestoneId: null,
           type: 'AcceptDateSlip',
           ownerPersonId: 'PER-01' as const,
@@ -27,11 +27,11 @@ describe('dashboard spine (no silent substitution)', () => {
     });
     expect(spineDecision(other)).toBeNull();
 
-    const withDec = dashboardOverviewFixture('C', {
+    const withDec = dashboardOverviewFixture('03', {
       decisions: [
         {
           id: 'DEC-OTHER',
-          projectId: 'PRJ-01',
+          projectId: 'PRT-01',
           milestoneId: null,
           type: 'AcceptDateSlip',
           ownerPersonId: 'PER-01' as const,
@@ -41,7 +41,7 @@ describe('dashboard spine (no silent substitution)', () => {
         },
         {
           id: 'DEC-001',
-          projectId: 'PRJ-01',
+          projectId: 'PRT-01',
           milestoneId: 'MS-PS',
           type: 'PrioritizeRecovery',
           ownerPersonId: 'PER-01' as const,
@@ -55,13 +55,13 @@ describe('dashboard spine (no silent substitution)', () => {
   });
 
   it('missing ISS-001 / DEC-001 → null', () => {
-    const a = dashboardOverviewFixture('A');
+    const a = dashboardOverviewFixture('01');
     expect(spineIssue(a)).toBeNull();
     expect(spineDecision(a)).toBeNull();
   });
 
   it('unrelated first array entries do not replace canonical EQ/Risk/MS', () => {
-    const data = dashboardOverviewFixture('A', {
+    const data = dashboardOverviewFixture('01', {
       equipment: [
         {
           id: 'EQ-OTHER',
@@ -78,7 +78,7 @@ describe('dashboard spine (no silent substitution)', () => {
             deltaDays: 1,
           },
         },
-        ...dashboardOverviewFixture('A').equipment,
+        ...dashboardOverviewFixture('01').equipment,
       ],
       risks: [
         {
@@ -90,7 +90,7 @@ describe('dashboard spine (no silent substitution)', () => {
           milestoneId: 'MS-PS',
           issueId: null,
         },
-        ...dashboardOverviewFixture('A').risks,
+        ...dashboardOverviewFixture('01').risks,
       ],
       milestones: [
         {
@@ -101,7 +101,7 @@ describe('dashboard spine (no silent substitution)', () => {
           baselineDate: '2027-01-01',
           forecastDate: '2027-01-01',
         },
-        ...dashboardOverviewFixture('A').milestones,
+        ...dashboardOverviewFixture('01').milestones,
       ],
     });
     expect(spineEquipment(data).id).toBe('EQ-HVAC-01');
@@ -110,7 +110,7 @@ describe('dashboard spine (no silent substitution)', () => {
   });
 
   it('missing canonical EQ-HVAC-01 throws', () => {
-    const data = dashboardOverviewFixture('A', {
+    const data = dashboardOverviewFixture('01', {
       equipment: [
         {
           id: 'EQ-OTHER',

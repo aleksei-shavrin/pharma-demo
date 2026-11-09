@@ -50,7 +50,7 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 |------|-----|------------|
 | [demo-v1-ux-concept.md](./demo-v1-ux-concept.md) | DOC-UX-001 | Summary, D1–D12 statuses, constraints, open Q |
 | [demo-v1-shell-navigation.md](./demo-v1-shell-navigation.md) | DOC-UX-002 | Shell, 5 nav, theme, Snapshot, breadcrumbs |
-| [demo-v1-screens-and-flows.md](./demo-v1-screens-and-flows.md) | DOC-UX-003 | Inventory + A→B→C (+ PM paths) |
+| [demo-v1-screens-and-flows.md](./demo-v1-screens-and-flows.md) | DOC-UX-003 | Inventory + 01→02→03 (+ PM paths) |
 | [demo-v1-dashboard.md](./demo-v1-dashboard.md) | DOC-UX-004 | Director Dashboard (D8); BA-OQ-006 closed |
 | [demo-v1-schedule-workspace.md](./demo-v1-schedule-workspace.md) | DOC-UX-005 | Table/Gantt control points (D10–D12) |
 | [demo-v1-entity-detail.md](./demo-v1-entity-detail.md) | DOC-UX-006 | Full Page + Tabs + Links vs Impact |
@@ -62,7 +62,7 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 
 | Файл | ID | Назначение |
 |------|-----|------------|
-| [demo-v1-visual-direction.md](./demo-v1-visual-direction.md) | DOC-UX-010 | VD-A baseline; VD-B/C not selected; principles |
+| [demo-v1-visual-direction.md](./demo-v1-visual-direction.md) | DOC-UX-010 | VD-A baseline; VD-02/03 not selected; principles |
 | [demo-v1-design-tokens.md](./demo-v1-design-tokens.md) | DOC-UX-011 | Roles / principles under VD-A; HEX illustrative → UI Design |
 | [demo-v1-screen-compositions.md](./demo-v1-screen-compositions.md) | DOC-UX-012 | Shell + key screens composition under VD-A |
 | [demo-v1-visual-references.md](./demo-v1-visual-references.md) | DOC-UX-013 | Reference honesty log |
@@ -75,7 +75,7 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 | [demo-v1-ui-foundations.md](./demo-v1-ui-foundations.md) | DOC-UX-015 | Foundations: HEX Light/Dark, contrast, type, density, shadcn map (`approved UI Design decision`) |
 | [demo-v1-component-specification.md](./demo-v1-component-specification.md) | DOC-UX-016 | Components: shell, data display, entity summaries, detail, viz boundaries (`approved UI Design decision`) |
 | [demo-v1-ui-screens.md](./demo-v1-ui-screens.md) | DOC-UX-017 | Screens: eight surfaces composition (`approved UI Design decision`) |
-| [demo-v1-ui-data-viz.md](./demo-v1-ui-data-viz.md) | DOC-UX-018 | Data viz: Snapshot A/B/C, Links vs Impact, charts, Gantt semantics (`approved UI Design decision`) |
+| [demo-v1-ui-data-viz.md](./demo-v1-ui-data-viz.md) | DOC-UX-018 | Data viz: Snapshot 01/02/03, Links vs Impact, charts, Gantt semantics (`approved UI Design decision`) |
 | [demo-v1-ui-interactions.md](./demo-v1-ui-interactions.md) | DOC-UX-019 | Interactions: Snapshot/theme/nav/table/detail/keyboard (`approved UI Design decision`) |
 | [demo-v1-ui-quality.md](./demo-v1-ui-quality.md) | DOC-UX-020 | Quality criteria: docs vs impl checks (`approved UI Design decision`) |
 
@@ -83,13 +83,13 @@ UX + Visual Direction + UI Design documentation для **Demo v1**. Frontmatter 
 
 | Файл | ID | Назначение |
 |------|-----|------------|
-| [demo-v1-enrichment-ux-delta.md](./demo-v1-enrichment-ux-delta.md) | DOC-UX-021 | Dashboard hierarchy, rollups, compact A–H selector, registers/schedule at scale |
+| [demo-v1-enrichment-ux-delta.md](./demo-v1-enrichment-ux-delta.md) | DOC-UX-021 | Dashboard hierarchy, rollups, compact 01–08 selector, registers/schedule at scale |
 
 ## Demo v1 R2 UX delta (design — R2-D0)
 
 | Файл | ID | Назначение |
 |------|-----|------------|
-| [demo-v1-r2-ux-delta.md](./demo-v1-r2-ux-delta.md) | DOC-UX-022 | A–S selector, Workstream/People/Costs pages, notifications, Dashboard cost signal |
+| [demo-v1-r2-ux-delta.md](./demo-v1-r2-ux-delta.md) | DOC-UX-022 | 01–19 selector, Workstream/People/Costs pages, notifications, Dashboard cost signal |
 
 ## Связанное
 

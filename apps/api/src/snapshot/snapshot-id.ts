@@ -1,56 +1,35 @@
 /**
- * Discrete Demo v1 snapshot machine ids (R2: A–S).
- * Fixtures currently populate A–H only (R2-L1 adds I–S overlays).
+ * Discrete Demo v1 snapshot machine ids (canonical numeric strings 01–19).
  */
 export const SNAPSHOT_IDS = [
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'I',
-  'J',
-  'K',
-  'L',
-  'M',
-  'N',
-  'O',
-  'P',
-  'Q',
-  'R',
-  'S',
+  '01',
+  '02',
+  '03',
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+  '15',
+  '16',
+  '17',
+  '18',
+  '19',
 ] as const;
 export type SnapshotId = (typeof SNAPSHOT_IDS)[number];
 
-/** Snapshots loaded in Nest fixtures (R2-L1: full A–S). */
-export const POPULATED_SNAPSHOT_IDS = [
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'I',
-  'J',
-  'K',
-  'L',
-  'M',
-  'N',
-  'O',
-  'P',
-  'Q',
-  'R',
-  'S',
-] as const;
-export type PopulatedSnapshotId = (typeof POPULATED_SNAPSHOT_IDS)[number];
+/** Snapshots loaded in Nest fixtures (full 01–19). */
+export const POPULATED_SNAPSHOT_IDS = SNAPSHOT_IDS;
+export type PopulatedSnapshotId = SnapshotId;
 
 export const SNAPSHOT_IDS_ALLOWED_MESSAGE =
-  'A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S';
+  '01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19';
 
 export function isSnapshotId(value: string): value is SnapshotId {
   return (SNAPSHOT_IDS as readonly string[]).includes(value);

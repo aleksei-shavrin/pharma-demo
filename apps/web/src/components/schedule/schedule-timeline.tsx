@@ -41,6 +41,8 @@ type Props = {
   ownedScrollTop?: number;
   hoveredRowKey?: string | null;
   onHoverRow?: (key: string | null) => void;
+  zoomLevelIndex?: number;
+  onZoomLevelChange?: (index: number) => void;
 };
 
 export function ScheduleTimeline({
@@ -56,6 +58,8 @@ export function ScheduleTimeline({
   ownedScrollTop = 0,
   hoveredRowKey = null,
   onHoverRow,
+  zoomLevelIndex,
+  onZoomLevelChange,
 }: Props) {
   const { theme } = useTheme();
   const chartRootRef = useRef<HTMLDivElement>(null);
@@ -97,6 +101,8 @@ export function ScheduleTimeline({
           ownedScrollTop={ownedScrollTop}
           hoveredRowKey={hoveredRowKey}
           onHoverRow={onHoverRow}
+          zoomLevelIndex={zoomLevelIndex}
+          onZoomLevelChange={onZoomLevelChange}
         />
       </div>
     </div>

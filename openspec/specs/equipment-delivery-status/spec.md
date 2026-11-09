@@ -15,13 +15,13 @@
 - **WHEN** запрашивается critical equipment Demo v1
 - **THEN** EQ-HVAC-01 имеет isCritical true и доступные baselineDelivery, forecastDelivery и status
 
-### Requirement: Snapshot A equipment on track
+### Requirement: Snapshot 01 equipment on track
 
-В Snapshot A система SHALL иметь EQ-HVAC-01 status OnTrack и forecastDelivery = baselineDelivery = 2027-05-15 (REQ-EQPT-001; DOC-PROD-012).
+В Snapshot 01 система SHALL иметь EQ-HVAC-01 status OnTrack и forecastDelivery = baselineDelivery = 2027-05-15 (REQ-EQPT-001; DOC-PROD-012).
 
-#### Scenario: Snapshot A on track
+#### Scenario: Snapshot 01 on track
 
-- **WHEN** активен Snapshot A
+- **WHEN** активен Snapshot 01
 - **THEN** status равен OnTrack и forecastDelivery равен baselineDelivery 2027-05-15
 
 ### Requirement: Equipment as contributing impact driver
@@ -39,7 +39,7 @@
 
 #### Scenario: Inventory includes spine and excludes pure construction shell
 
-- **WHEN** запрашивается список equipment PRJ-01
+- **WHEN** запрашивается список equipment PRT-01
 - **THEN** список содержит EQ-HVAC-01 и EQ-BLD-02 как procured package
 - **AND** не содержит former EQ-BLD-01 каркас/ограждения as Equipment
 - **AND** каждый item имеет непустое presentation name
@@ -48,26 +48,26 @@
 
 Система SHALL допускать одновременно OnTrack и Delayed equipment в одном snapshot.
 
-#### Scenario: Snapshot E has Delayed and OnTrack equipment
+#### Scenario: Snapshot 05 has Delayed and OnTrack equipment
 
-- **WHEN** активен Snapshot E
+- **WHEN** активен Snapshot 05
 - **THEN** существует Delayed critical equipment помимо EQ-HVAC-01
 - **AND** существует OnTrack equipment в том же snapshot
 
-### Requirement: Snapshot C delayed delivery plus twenty-one days
+### Requirement: Snapshot 03 delayed delivery plus twenty-one days
 
-В Snapshot C система SHALL иметь EQ-HVAC-01 status Delayed и forecastDelivery = baseline + 21 календарный день (2027-06-05 при baseline 2027-05-15). Delivery dates SHALL NOT трактоваться как production-start dates.
+В Snapshot 03 система SHALL иметь EQ-HVAC-01 status Delayed и forecastDelivery = baseline + 21 календарный день (2027-06-05 при baseline 2027-05-15). Delivery dates SHALL NOT трактоваться как production-start dates.
 
-#### Scenario: Snapshot C HVAC delayed by twenty-one days
+#### Scenario: Snapshot 03 HVAC delayed by twenty-one days
 
-- **WHEN** активен Snapshot C
+- **WHEN** активен Snapshot 03
 - **THEN** EQ-HVAC-01 status равен Delayed и forecastDelivery равен 2027-06-05
 
-### Requirement: Reproducible approved equipment snapshots A through H
+### Requirement: Reproducible approved equipment snapshots 01 through 08
 
-Система SHALL воспроизводить equipment-состояния A–H из DOC-PROD-021.
+Система SHALL воспроизводить equipment-состояния 01–08 из DOC-PROD-021.
 
-#### Scenario: Approved equipment states A through H are reproducible
+#### Scenario: Approved equipment states A through 08 are reproducible
 
-- **WHEN** выбирается Snapshot A…H
+- **WHEN** выбирается Snapshot 01…08
 - **THEN** equipment fields соответствуют DOC-PROD-021

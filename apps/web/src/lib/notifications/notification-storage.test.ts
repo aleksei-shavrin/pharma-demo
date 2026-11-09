@@ -24,18 +24,18 @@ afterEach(() => {
 
 describe('notification storage (R2-N1)', () => {
   it('keeps read state in sessionStorage by notification id', () => {
-    expect(isNotificationRead('NTF-C-001')).toBe(false);
-    markNotificationRead('NTF-C-001');
-    expect(isNotificationRead('NTF-C-001')).toBe(true);
-    expect(isNotificationRead('NTF-G-001')).toBe(false);
+    expect(isNotificationRead('NTF-03-001')).toBe(false);
+    markNotificationRead('NTF-03-001');
+    expect(isNotificationRead('NTF-03-001')).toBe(true);
+    expect(isNotificationRead('NTF-07-001')).toBe(false);
     expect(sessionStorage.getItem(NOTIFICATION_READ_SESSION_KEY)).toContain(
-      'NTF-C-001',
+      'NTF-03-001',
     );
   });
 
   it('mark-all only affects provided ids', () => {
-    markNotificationsRead(['NTF-C-001', 'NTF-C-002']);
-    expect(countUnread(['NTF-C-001', 'NTF-C-002', 'NTF-C-003'])).toBe(1);
+    markNotificationsRead(['NTF-03-001', 'NTF-03-002']);
+    expect(countUnread(['NTF-03-001', 'NTF-03-002', 'NTF-03-003'])).toBe(1);
   });
 
   it('popup preference defaults true and persists in localStorage', () => {
@@ -54,8 +54,8 @@ describe('notification storage (R2-N1)', () => {
     delete globalThis.sessionStorage;
     // @ts-expect-error test isolation
     delete globalThis.localStorage;
-    expect(isNotificationRead('NTF-C-001')).toBe(false);
-    expect(() => markNotificationRead('NTF-C-001')).not.toThrow();
+    expect(isNotificationRead('NTF-03-001')).toBe(false);
+    expect(() => markNotificationRead('NTF-03-001')).not.toThrow();
     expect(readPopupPreference()).toBe(NOTIFICATION_POPUP_PREF_DEFAULT);
     expect(() => writePopupPreference(false)).not.toThrow();
     globalThis.sessionStorage = ss;

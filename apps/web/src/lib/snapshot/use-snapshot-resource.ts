@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { DEMO_PORTFOLIO_ID } from '@/lib/demo-portfolio-id';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
 
@@ -12,7 +13,7 @@ export type ResourceStatus = 'loading' | 'ready' | 'error';
  */
 export function useSnapshotResource<T>(
   fetchFn: (projectId: string, snapshotId: SnapshotId) => Promise<T>,
-  projectId = 'PRJ-01',
+  projectId = DEMO_PORTFOLIO_ID,
 ): {
   data: T | null;
   status: ResourceStatus;

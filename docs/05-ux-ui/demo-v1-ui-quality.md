@@ -54,7 +54,7 @@ related:
 | Q-SEM-02 | Marker geometry locked | Grep diamond/outline/half-filled/disc | Delayed=diamond; Open=outline; Mitigating=half-filled; RAG=disc (+ Red rail) | blocker | docs |
 | Q-SEM-03 | Delivery Δ ≠ Milestone/PS Δ | DOC-UX-017 Schedule + Dashboard; DOC-UX-018 | Separate captions/fields; no shared ambiguous «Δ» alone | blocker | docs |
 | Q-SEM-04 | Links ≠ Impact | DOC-UX-006/016/017/018 | Links = DOC-BA-015 only; Impact = derived; no EQ—MS | blocker | docs |
-| Q-SEM-05 | Snapshot A/B/C semantics | DOC-UX-018 §3 + screen matrix | Fixture values; A calm; B problem; C decision without heal | blocker | docs |
+| Q-SEM-05 | Snapshot 01/02/03 semantics | DOC-UX-018 §3 + screen matrix | Fixture values; 01 calm; 02 problem; 03 decision without heal | blocker | docs |
 | Q-SEM-06 | No invented Domain edges/statuses | Grep Amber/Closed Must / EQ—MS / Issue—Decision link | Absent from Must UI | blocker | docs |
 
 ### 2.3 Interaction consistency
@@ -83,7 +83,7 @@ related:
 
 | ID | Checks | How | Expected | Severity | Phase |
 |----|--------|-----|----------|----------|-------|
-| Q-VIZ-01 | A/B/C discrete, not time series | DOC-UX-018 §6.1 | No connecting line/interpolation | blocker | docs |
+| Q-VIZ-01 | 01/02/03 discrete, not time series | DOC-UX-018 §6.1 | No connecting line/interpolation | blocker | docs |
 | Q-VIZ-02 | Dates not magnitude bars | DOC-UX-018 §6.2 | Table or time-axis markers | blocker | docs |
 | Q-VIZ-03 | Gantt read-only control points | DOC-UX-017/018 | MS+EQ only; no deps/drag; table primary | blocker | docs |
 | Q-VIZ-04 | Marker mapping = DOC-UX-018 | Cross-doc | Locked shapes | blocker | docs |
@@ -93,8 +93,8 @@ related:
 
 | ID | Checks | How | Expected | Severity | Phase |
 |----|--------|-----|----------|----------|-------|
-| Q-DAT-01 | A/B/C match DOC-PROD-012 | Compare dates/statuses | asOf and forecasts as fixtures | blocker | docs |
-| Q-DAT-02 | BR-006 honesty on C | DOC-UX-017/018 Decision | Mitigating; Red unchanged; forecast unchanged; no recovery progress | blocker | docs |
+| Q-DAT-01 | 01/02/03 match DOC-PROD-012 | Compare dates/statuses | asOf and forecasts as fixtures | blocker | docs |
+| Q-DAT-02 | BR-006 honesty on 03 | DOC-UX-017/018 Decision | Mitigating; Red unchanged; forecast unchanged; no recovery progress | blocker | docs |
 | Q-DAT-03 | No false GMP/CSV claims | Grep pack | Absent | blocker | docs |
 | Q-DAT-04 | Issues&Risks V1 shared columns | DOC-UX-017 §4.5 | No Owner column; Type/ID/Title/Status-RAG | blocker | docs |
 | Q-DAT-05 | Mock/API data in apps | Integration tests | Same integrity matrix | blocker | **impl** |

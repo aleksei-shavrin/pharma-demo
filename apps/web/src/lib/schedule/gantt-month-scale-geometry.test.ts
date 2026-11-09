@@ -24,10 +24,11 @@ describe('extractGanttMonthScaleGeometry', () => {
     expect(geo!.rangeStartIso).toBe('2027-05-01');
     expect(geo!.rangeEndIso).toBe('2027-08-01');
     expect(geo!.totalWidthPx).toBe(gantt.posFromDate(end) - gantt.posFromDate(start));
+    // Short scale labels are uppercase RU (formatMonthScaleShort).
     expect(geo!.months.map((m) => m.label)).toEqual([
-      'май 27',
-      'июн 27',
-      'июл 27',
+      'МАЙ 27',
+      'ИЮН 27',
+      'ИЮЛ 27',
     ]);
     // May cell starts at 0; June at posFromDate(Jun 1).
     expect(geo!.months[0].leftPx).toBe(0);
@@ -42,7 +43,7 @@ describe('extractGanttMonthScaleGeometry', () => {
     const gantt = mockGantt(start, end, 3);
     const geo = extractGanttMonthScaleGeometry(gantt)!;
     expect(geo.months[0].leftPx).toBe(0);
-    expect(geo.months[0].label).toBe('май 27');
+    expect(geo.months[0].label).toBe('МАЙ 27');
     // First cell width = May 15 → Jun 1
     expect(geo.months[0].widthPx).toBe(
       gantt.posFromDate(new Date(2027, 5, 1)) - gantt.posFromDate(start),
@@ -86,7 +87,11 @@ describe('extractGanttMonthScaleGeometry', () => {
       ['2027-06-01', 110, 140],
       ['2027-07-01', 250, 90],
     ]);
-    expect(geo!.months.map((m) => m.label)).toEqual(['май 27', 'июн 27', 'июл 27']);
+    expect(geo!.months.map((m) => m.label)).toEqual([
+      'МАЙ 27',
+      'ИЮН 27',
+      'ИЮЛ 27',
+    ]);
   });
 
   it('derives left from cumulative width when left[] is absent', () => {

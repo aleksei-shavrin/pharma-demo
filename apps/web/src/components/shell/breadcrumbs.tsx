@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { crumbForPath, entityIdFromPath } from '@/lib/navigation';
 
-/** Visible root of the portfolio trail. PRJ-01 stays the API container id. */
+/** Visible root of the portfolio trail. PRT-01 stays the API container id. */
 const PORTFOLIO_NAV_LABEL = 'Портфель 01';
 
 export function Breadcrumbs() {

@@ -1,4 +1,4 @@
-import { SNAPSHOT_A } from './fixtures';
+import { SNAPSHOT_01 } from './fixtures';
 import { snapshotWithDec001 } from './fixtures/decision-test-fixture';
 import type { SnapshotFixture } from './fixtures/types';
 import {
@@ -9,7 +9,7 @@ import {
 } from './snapshot-access';
 
 function cloneA(): SnapshotFixture {
-  return structuredClone(SNAPSHOT_A);
+  return structuredClone(SNAPSHOT_01);
 }
 
 describe('canonical spine access (no silent substitution)', () => {
@@ -18,7 +18,7 @@ describe('canonical spine access (no silent substitution)', () => {
     otherOnly.decisions = [
       {
         id: 'DEC-OTHER',
-        projectId: 'PRJ-01',
+        projectId: 'PRT-01',
         milestoneId: null,
         type: 'AcceptDateSlip',
         ownerPersonId: 'PER-01',
@@ -35,7 +35,7 @@ describe('canonical spine access (no silent substitution)', () => {
       decisions: [
         {
           id: 'DEC-OTHER',
-          projectId: 'PRJ-01',
+          projectId: 'PRT-01',
           milestoneId: null,
           type: 'AcceptDateSlip',
           ownerPersonId: 'PER-01',
@@ -67,7 +67,7 @@ describe('canonical spine access (no silent substitution)', () => {
     snap.equipment = [
       {
         id: 'EQ-OTHER',
-        projectId: 'PRJ-01',
+        projectId: 'PRT-01',
         name: 'Other',
         critical: true,
         baselineDelivery: '2027-01-01',

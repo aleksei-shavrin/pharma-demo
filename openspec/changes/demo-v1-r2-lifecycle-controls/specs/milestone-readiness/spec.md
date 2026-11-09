@@ -6,7 +6,7 @@
 
 #### Scenario: Schedule returns full catalogue
 
-- **WHEN** запрошен schedule Snapshot S
+- **WHEN** запрошен schedule Snapshot 19
 - **THEN** milestone control points включают полный catalogue, а не только executive subset
 
 ### Requirement: No Equipment to Milestone edge
@@ -15,5 +15,5 @@
 
 #### Scenario: Direct edges exclude equipment to milestone
 
-- **WHEN** строятся direct edges для любого snapshot A–S
+- **WHEN** строятся direct edges для любого snapshot 01–19
 - **THEN** отсутствует edge type Equipment→Milestone

@@ -1,5 +1,9 @@
+import { assertDecisionExecutionCatalogOrThrow } from '../decision-execution';
 import { buildAllSnapshots } from './build-snapshot';
 import type { PopulatedSnapshotId, SnapshotFixture, SnapshotId } from './types';
+
+/** Fail-closed at fixture bootstrap — demo execution catalog must be valid. */
+assertDecisionExecutionCatalogOrThrow();
 
 export * from './types';
 export {
@@ -38,29 +42,29 @@ export {
 } from './cost-equipment';
 
 /**
- * Populated Demo snapshots A–S (R2-L1 lifecycle fixtures).
+ * Populated Demo snapshots 01–19 (R2-L1 lifecycle fixtures).
  */
 export const SNAPSHOTS: Record<PopulatedSnapshotId, SnapshotFixture> =
   buildAllSnapshots();
 
-export const SNAPSHOT_A = SNAPSHOTS.A;
-export const SNAPSHOT_B = SNAPSHOTS.B;
-export const SNAPSHOT_C = SNAPSHOTS.C;
-export const SNAPSHOT_D = SNAPSHOTS.D;
-export const SNAPSHOT_E = SNAPSHOTS.E;
-export const SNAPSHOT_F = SNAPSHOTS.F;
-export const SNAPSHOT_G = SNAPSHOTS.G;
-export const SNAPSHOT_H = SNAPSHOTS.H;
-export const SNAPSHOT_I = SNAPSHOTS.I;
-export const SNAPSHOT_J = SNAPSHOTS.J;
-export const SNAPSHOT_K = SNAPSHOTS.K;
-export const SNAPSHOT_L = SNAPSHOTS.L;
-export const SNAPSHOT_M = SNAPSHOTS.M;
-export const SNAPSHOT_N = SNAPSHOTS.N;
-export const SNAPSHOT_O = SNAPSHOTS.O;
-export const SNAPSHOT_P = SNAPSHOTS.P;
-export const SNAPSHOT_Q = SNAPSHOTS.Q;
-export const SNAPSHOT_R = SNAPSHOTS.R;
-export const SNAPSHOT_S = SNAPSHOTS.S;
+export const SNAPSHOT_01 = SNAPSHOTS['01'];
+export const SNAPSHOT_02 = SNAPSHOTS['02'];
+export const SNAPSHOT_03 = SNAPSHOTS['03'];
+export const SNAPSHOT_04 = SNAPSHOTS['04'];
+export const SNAPSHOT_05 = SNAPSHOTS['05'];
+export const SNAPSHOT_06 = SNAPSHOTS['06'];
+export const SNAPSHOT_07 = SNAPSHOTS['07'];
+export const SNAPSHOT_08 = SNAPSHOTS['08'];
+export const SNAPSHOT_09 = SNAPSHOTS['09'];
+export const SNAPSHOT_10 = SNAPSHOTS['10'];
+export const SNAPSHOT_11 = SNAPSHOTS['11'];
+export const SNAPSHOT_12 = SNAPSHOTS['12'];
+export const SNAPSHOT_13 = SNAPSHOTS['13'];
+export const SNAPSHOT_14 = SNAPSHOTS['14'];
+export const SNAPSHOT_15 = SNAPSHOTS['15'];
+export const SNAPSHOT_16 = SNAPSHOTS['16'];
+export const SNAPSHOT_17 = SNAPSHOTS['17'];
+export const SNAPSHOT_18 = SNAPSHOTS['18'];
+export const SNAPSHOT_19 = SNAPSHOTS['19'];
 
-export const DEFAULT_SNAPSHOT_ID: SnapshotId = 'A';
+export const DEFAULT_SNAPSHOT_ID: SnapshotId = '01';

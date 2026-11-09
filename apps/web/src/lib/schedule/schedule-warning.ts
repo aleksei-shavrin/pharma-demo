@@ -36,6 +36,9 @@ function hasBound(value: string | null | undefined): value is string {
 /**
  * Собственный сигнал строки, без потомков.
  * Сдвиг работы важнее отставания: иначе неделя на строке спрячет разъезд интервалов.
+ *
+ * `sourceWeeks` — historical source audit mark (⚠️Nн), NOT a current warning by itself.
+ * Lag warning only for active runtime Delayed; weeks enrich the lag label when present.
  */
 function ownScheduleWarning(item: ScheduleWarningItem): ScheduleWarning {
   if (
@@ -49,8 +52,7 @@ function ownScheduleWarning(item: ScheduleWarningItem): ScheduleWarning {
 
   const sourceWeeks =
     typeof item.sourceWeeks === 'number' ? item.sourceWeeks : null;
-  const delayed = item.kind === 'work' && item.status === 'Delayed';
-  if (delayed || sourceWeeks !== null) {
+  if (item.kind === 'work' && item.status === 'Delayed') {
     return { tone: 'lag', label: scheduleLagWarningLabel(sourceWeeks) };
   }
 
@@ -60,10 +62,9 @@ function ownScheduleWarning(item: ScheduleWarningItem): ScheduleWarning {
 /**
  * Предупреждение строки.
  * `descendants` — все потомки, не только дети: смотрим их собственный сигнал,
- * а не свёрнутое предупреждение промежуточной группы (у `8.2` свои недели
- * скрыли бы сдвиг `8.2.2` от предка).
- * Свои недели или Delayed возвращаются раньше свёртки, поэтому группа с
- * `sourceWeeks` не подменяется сдвигом ребёнка.
+ * а не свёрнутое предупреждение промежуточной группы.
+ * Historical `sourceWeeks` on groups/works does not create own lag — fold from
+ * active child Delayed/shift only.
  */
 export function resolveScheduleWarning(
   item: ScheduleWarningItem,

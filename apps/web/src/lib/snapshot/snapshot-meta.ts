@@ -1,55 +1,55 @@
 import type { SnapshotId } from './snapshot-id';
-import { SNAPSHOT_IDS } from './snapshot-id';
+import { SNAPSHOT_IDS, snapshotDisplayLabel } from './snapshot-id';
 import { formatDateRu } from '@/lib/format/ru';
 
 /**
- * Demo narrative as-of dates (DOC-PROD-024 / lifecycle matrix A–S).
+ * Demo narrative as-of dates (DOC-PROD-024 / lifecycle matrix 01–19).
  * Not a substitute for committed API `scenarioAsOfDate` on the active trigger.
  * Locked by contract test against the approved calendar.
  */
 export const SNAPSHOT_AS_OF: Record<SnapshotId, string> = {
-  A: '2027-02-15',
-  B: '2027-02-28',
-  C: '2027-03-01',
-  D: '2027-03-20',
-  E: '2027-04-10',
-  F: '2027-04-20',
-  G: '2027-05-15',
-  H: '2027-06-01',
-  I: '2027-06-20',
-  J: '2027-07-05',
-  K: '2027-07-20',
-  L: '2027-08-01',
-  M: '2027-08-12',
-  N: '2027-08-22',
-  O: '2027-09-01',
-  P: '2027-09-10',
-  Q: '2027-09-15',
-  R: '2027-09-18',
-  S: '2027-09-22',
+  '01': '2027-02-15',
+  '02': '2027-02-28',
+  '03': '2027-03-01',
+  '04': '2027-03-20',
+  '05': '2027-04-10',
+  '06': '2027-04-20',
+  '07': '2027-05-15',
+  '08': '2027-06-01',
+  '09': '2027-06-20',
+  '10': '2027-07-05',
+  '11': '2027-07-20',
+  '12': '2027-08-01',
+  '13': '2027-08-12',
+  '14': '2027-08-22',
+  '15': '2027-09-01',
+  '16': '2027-09-10',
+  '17': '2027-09-15',
+  '18': '2027-09-18',
+  '19': '2027-09-22',
 };
 
 /** Short RU context for selector disclosure (presentation only). */
 export const SNAPSHOT_CONTEXT_RU: Record<SnapshotId, string> = {
-  A: 'Базовый план',
-  B: 'Локальные отклонения',
-  C: 'Срыв HVAC / Production Start',
-  D: 'Каскад готовности',
-  E: 'Параллельное давление',
-  F: 'Управленческие решения',
-  G: 'Частичное восстановление',
-  H: 'Остаточный риск',
-  I: 'Восстановление инженерных систем / автоматизация',
-  J: 'Волна монтажа производства',
-  K: 'Прогресс; Production Start ещё +14',
-  L: 'Интеграция BMS/EMS',
-  M: 'Готовность к демо-гейту IQ',
-  N: 'Решения пусконаладки',
-  O: 'Явное восстановление сценария +7',
-  P: 'PQ / финальная готовность',
-  Q: 'Базовая дата без фактического старта',
-  R: 'Go / No-Go',
-  S: 'Production Start достигнут',
+  '01': 'Базовый план',
+  '02': 'Локальные отклонения',
+  '03': 'Срыв HVAC / Production Start',
+  '04': 'Каскад готовности',
+  '05': 'Параллельное давление',
+  '06': 'Управленческие решения',
+  '07': 'Частичное восстановление',
+  '08': 'Остаточный риск',
+  '09': 'Восстановление инженерных систем / автоматизация',
+  '10': 'Волна монтажа производства',
+  '11': 'Прогресс; Production Start ещё +14',
+  '12': 'Интеграция BMS/EMS',
+  '13': 'Готовность к демо-гейту IQ',
+  '14': 'Решения пусконаладки',
+  '15': 'Явное восстановление сценария +7',
+  '16': 'PQ / финальная готовность',
+  '17': 'Базовая дата без фактического старта',
+  '18': 'Go / No-Go',
+  '19': 'Production Start достигнут',
 };
 
 export function snapshotAsOfRu(id: SnapshotId): string {
@@ -57,7 +57,7 @@ export function snapshotAsOfRu(id: SnapshotId): string {
 }
 
 export function snapshotOptionLabel(id: SnapshotId): string {
-  return `${id} — ${snapshotAsOfRu(id)} — ${SNAPSHOT_CONTEXT_RU[id]}`;
+  return `${snapshotDisplayLabel(id)} — ${snapshotAsOfRu(id)} — ${SNAPSHOT_CONTEXT_RU[id]}`;
 }
 
 /** Every SnapshotId must have as-of + RU context (compile-time completeness). */

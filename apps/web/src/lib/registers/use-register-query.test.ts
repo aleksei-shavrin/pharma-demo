@@ -32,11 +32,11 @@ afterEach(() => {
 describe('useRegisterQuery', () => {
   it('does not expose payload when snapshotId mismatches active', async () => {
     sessionStorage.clear();
-    fetchDashboardOverview.mockResolvedValue(dash('A'));
+    fetchDashboardOverview.mockResolvedValue(dash('01'));
     fetchRegister.mockResolvedValue({
-      snapshotId: 'B',
+      snapshotId: '02',
       scenarioAsOfDate: '2027-03-01',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: [],
     });
 
@@ -54,11 +54,11 @@ describe('useRegisterQuery', () => {
   });
 
   it('commits coherent payload for active snapshot', async () => {
-    fetchDashboardOverview.mockResolvedValue(dash('A'));
+    fetchDashboardOverview.mockResolvedValue(dash('01'));
     fetchRegister.mockResolvedValue({
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: [{ id: 'EQ-HVAC-01' }],
     });
 
@@ -67,7 +67,7 @@ describe('useRegisterQuery', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.data?.snapshotId).toBe('A');
+      expect(result.current.data?.snapshotId).toBe('01');
     });
     expect(result.current.status).toBe('idle');
   });

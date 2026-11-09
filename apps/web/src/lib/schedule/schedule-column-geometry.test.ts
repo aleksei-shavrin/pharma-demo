@@ -27,7 +27,9 @@ describe('schedule-column-geometry', () => {
     const pad = SCHEDULE_COL_PAD_X_PX * 2;
     const expected = widths.reduce((a, b) => a + b, 0) + gaps + pad;
     expect(wideTableMinWidthPx('forecast')).toBe(expected);
-    expect(wideTableMinWidthPx('forecast')).toBe(1264);
+    // Prior 1300 with name=160; name 160→240 adds +80 → 1380
+    expect(SCHEDULE_COL_NAME_PX).toBe(240);
+    expect(wideTableMinWidthPx('forecast')).toBe(1380);
   });
 
   it('actual добавляет 4×120 + gaps к формуле', () => {
@@ -37,18 +39,30 @@ describe('schedule-column-geometry', () => {
     const extra =
       extraCols * SCHEDULE_COL_FACT_PX + extraCols * SCHEDULE_COL_GAP_PX;
     expect(actual).toBe(forecast + extra);
-    expect(actual).toBe(1792);
+    expect(actual).toBe(1908);
     expect(wideTableColumnWidths('actual').filter((w) => w === SCHEDULE_COL_FACT_PX)).toHaveLength(
       4,
     );
   });
 
-  it('scheduleColBoxStyle фиксирует width/min/max без flex-grow', () => {
+  it('scheduleColBoxStyle фиксирует width/min/max для жёстких колонок', () => {
     expect(scheduleColBoxStyle(160)).toEqual({
       width: 160,
       minWidth: 160,
       maxWidth: 160,
       flex: '0 0 auto',
     });
+  });
+
+  it('name/object columns flex-grow from min width', () => {
+    expect(scheduleColBoxStyle(SCHEDULE_COL_NAME_PX, 'name')).toEqual({
+      width: undefined,
+      minWidth: SCHEDULE_COL_NAME_PX,
+      maxWidth: undefined,
+      flex: `1 1 ${SCHEDULE_COL_NAME_PX}px`,
+    });
+    expect(scheduleColBoxStyle(SCHEDULE_COL_OBJECT_PX, 'object').flex).toMatch(
+      /^1 1 /,
+    );
   });
 });

@@ -2,7 +2,7 @@
 
 ### Requirement: Deeper issue risk decision catalogues
 
-Система SHALL поддерживать union catalogues порядка ~30 Issues, ~30 Risks, ~18 Decisions across A–S, с per-snapshot presence overlays. Issue lifecycle SHALL remain Open | Mitigating | Closed. Decision types SHALL remain PrioritizeRecovery | AcceptDateSlip without auto-reforecast of schedule or EAC.
+Система SHALL поддерживать union catalogues порядка ~30 Issues, ~30 Risks, ~18 Decisions across 01–19, с per-snapshot presence overlays. Issue lifecycle SHALL remain Open | Mitigating | Closed. Decision types SHALL remain PrioritizeRecovery | AcceptDateSlip without auto-reforecast of schedule or EAC.
 
 #### Scenario: Closed issue does not auto-green risk
 
@@ -15,5 +15,5 @@ Risk MAY включать `costExposureRub` / `mitigationCostRub`. Issue MAY в�
 
 #### Scenario: Decision cost impact recorded without EAC change
 
-- **WHEN** Decision с approvedCostImpactRub появляется на Snapshot N
+- **WHEN** Decision с approvedCostImpactRub появляется на Snapshot 14
 - **THEN** project EAC остаётся на prior authoritative value until later fixture post-state

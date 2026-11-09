@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO_PORTFOLIO_ID } from '@/lib/demo-portfolio-id';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { useSnapshot } from '@/lib/snapshot/snapshot-context';
@@ -14,7 +16,6 @@ export type RegisterQueryState<T extends RegisterPayload> = {
   retry: () => void;
 };
 
-const DEMO_PROJECT_ID = 'PRJ-01';
 
 /**
  * Loads a register for the committed active snapshot.
@@ -40,7 +41,7 @@ export function useRegisterQuery<T extends RegisterPayload>(
       // Drop previous payload immediately so it cannot be shown under new active.
       setData((prev) => (prev && prev.snapshotId === snapshot ? prev : null));
       try {
-        const payload = await fetchRef.current(DEMO_PROJECT_ID, snapshot);
+        const payload = await fetchRef.current(DEMO_PORTFOLIO_ID, snapshot);
         if (seq !== seqRef.current) return;
         if (payload.snapshotId !== snapshot) {
           throw new Error(

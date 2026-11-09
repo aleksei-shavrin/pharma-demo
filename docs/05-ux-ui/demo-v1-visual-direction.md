@@ -25,7 +25,7 @@ related:
 
 ## 2. Constraints inherited (`approved UX decision`)
 
-- Shell: Left Sidebar + Top Application Bar + breadcrumbs + Page Surface; Light/Dark; Snapshot A/B/C.
+- Shell: Left Sidebar + Top Application Bar + breadcrumbs + Page Surface; Light/Dark; Snapshot 01/02/03.
 - D1–D11; D12 = **RESOLVED** (ADR-0004).
 - KPI group ≥4 or omit; Links = direct Domain only; Schedule = Milestone + Equipment Delivery only.
 - BR-006: PrioritizeRecovery без ложного улучшения forecast/RAG.
@@ -62,7 +62,7 @@ Tokens и compositions ведутся под VD-A ([design-tokens](./demo-v1-des
 2. **Surface depth with purpose** — background → Page Surface → panels → tiles → table → nested; elevation 0–2; без multi-layer shadow stacks.
 3. **Status is multi-channel** — label + color + marker/shape + placement; не только цвет.
 4. **Dense but scannable** — tabular figures для дат/Δ; clear row rhythm; whitespace как структура, не «воздух ради воздуха».
-5. **Honesty** — Snapshot C не «зеленеет» после PrioritizeRecovery (BR-006).
+5. **Honesty** — Snapshot 03 не «зеленеет» после PrioritizeRecovery (BR-006).
 6. **shadcn-native** — визуальный язык как theme tokens поверх shadcn, не отдельный widget kit.
 
 ## 5. Mapping to D1–D11

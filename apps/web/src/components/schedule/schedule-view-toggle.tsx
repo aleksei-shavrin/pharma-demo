@@ -19,14 +19,14 @@ type Props = {
   onChange: (mode: ScheduleViewMode) => void;
 };
 
-/** Table | Split | Timeline — all enabled after I7 / D12. */
+/** Shared group chrome; icons only (active blue / inactive grey), no button pill. */
 export function ScheduleViewToggle({ mode, onChange }: Props) {
   return (
     <div
       role="group"
       aria-label="Режим представления календарного плана"
       data-schedule-view-toggle="true"
-      className="inline-flex h-8 items-stretch gap-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-sunken)] p-1"
+      className="inline-flex h-8 items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-sunken)] p-1"
     >
       {MODES.map((m) => {
         const selected = mode === m.id;
@@ -41,11 +41,11 @@ export function ScheduleViewToggle({ mode, onChange }: Props) {
             onClick={() => onChange(m.id)}
             className={[
               'inline-flex h-6 w-6 shrink-0 items-center justify-center outline-none transition-colors',
-              'rounded-[var(--radius-sm)]',
+              'rounded-[var(--radius-sm)] bg-transparent',
               'focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-sunken)]',
               selected
-                ? 'bg-[var(--surface-raised)] text-[var(--text)] shadow-[var(--elevation-1)] ring-1 ring-inset ring-[var(--border)]'
-                : 'text-[var(--text-secondary)] hover:bg-[var(--interactive)] hover:text-[var(--text)]',
+                ? 'text-[var(--status-info-border)] hover:text-[var(--status-info-border)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]',
             ].join(' ')}
           >
             <Icon className="size-[18px]" aria-hidden />

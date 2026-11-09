@@ -24,7 +24,7 @@ related:
 | | Сейчас (DOC-PROD-012) | Hypothesis для плотности UI |
 |--|----------------------|------------------------------|
 | Scale | Narrative-minimal (~1 EQ, 1 MS, 1 Issue, 1 Risk, 1 Decision) | См. таблицу §2 |
-| Purpose | A→B→C integrity | Ambient realism вокруг той же narrative spine |
+| Purpose | 01→02→03 integrity | Ambient realism вокруг той же narrative spine |
 
 ## 2. Volume hypothesis
 
@@ -43,7 +43,7 @@ related:
 
 ## 3. Integrity rules (при будущем расширении)
 
-1. Одна популяция A/B/C; стабильные идентификаторы.
+1. Одна популяция 01/02/03; стабильные идентификаторы.
 2. Связи только по Domain Model cardinality (DOC-BA-015); **нет** прямой Equipment—Milestone; без новых FK ради UI.
 3. Dashboard counters = реестры.
 4. baseline/forecast/variance математически согласованы; BR-004 на narrative driver.
@@ -56,6 +56,6 @@ related:
 |-----------|----------------------------------------|
 | Equipment: OnTrack, Delayed | — |
 | Issue: Open, Mitigating | **Closed** (Domain value exists; Must transitions / AcceptDateSlip — OQ) |
-| Risk/MS rag: Green (A fixture), Red (B/C) | **Amber** (вне Must path) |
+| Risk/MS rag: Green (01 fixture), Red (02/03) | **Amber** (вне Must path) |
 
 AcceptDateSlip post-state — BA-OQ-004/005; не проектировать Must screens C'.

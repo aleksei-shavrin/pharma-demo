@@ -41,10 +41,14 @@ export type DerivedImpact = {
   recoveryExecuted: false | null;
 };
 
+/**
+ * PS-driver panel only: DEC-001 presence = recorded.
+ * Other Decision records MUST NOT mask a missing DEC-001.
+ */
 export function decisionPanelState(
   snapshot: SnapshotFixture,
 ): DecisionPanelState {
-  if (snapshot.decisions.length > 0) {
+  if (primaryDecision(snapshot)) {
     return 'recorded';
   }
   const issue = productionStartIssue(snapshot);
@@ -57,6 +61,17 @@ export function decisionPanelState(
     return 'needed';
   }
   return 'absent';
+}
+
+/** Forecast deviation axis — independent from decision execution status. */
+export function forecastDeviationOf(
+  snapshot: SnapshotFixture,
+): 'within_baseline' | 'deviation_persists' {
+  const psDelta = calendarDaysDelta(
+    snapshot.project.baselineProductionStart,
+    snapshot.project.forecastProductionStart,
+  );
+  return psDelta === 0 ? 'within_baseline' : 'deviation_persists';
 }
 
 export function computeDerivedImpact(snapshot: SnapshotFixture): DerivedImpact {

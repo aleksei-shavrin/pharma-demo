@@ -26,7 +26,7 @@ related:
 
 ## Acceptance criteria
 
-- [ ] Для PRJ-01 доступны id, name, baselineProductionStart, forecastProductionStart.
+- [ ] Для PRT-01 доступны id, name, baselineProductionStart, forecastProductionStart.
 - [ ] Snapshot A: forecastProductionStart = baselineProductionStart = 2027-09-15.
 - [ ] Snapshot B и C: forecastProductionStart = 2027-10-06 (= baseline + 21d per BR-004).
 - [ ] Snapshot C: forecastProductionStart не меняется относительно Snapshot B после PrioritizeRecovery (BR-006).

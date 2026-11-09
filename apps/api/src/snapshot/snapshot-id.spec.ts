@@ -5,40 +5,40 @@ import {
   isSnapshotId,
 } from './snapshot-id';
 
-describe('SnapshotId contract A–S (R2-C1)', () => {
-  it('accepts A–S and rejects T / lowercase / multi-char', () => {
+describe('SnapshotId contract 01–19 (R2-C1)', () => {
+  it('accepts 01–19 and rejects T / lowercase / multi-char', () => {
     expect(SNAPSHOT_IDS).toEqual([
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F',
-      'G',
-      'H',
-      'I',
-      'J',
-      'K',
-      'L',
-      'M',
-      'N',
-      'O',
-      'P',
-      'Q',
-      'R',
-      'S',
+      '01',
+      '02',
+      '03',
+      '04',
+      '05',
+      '06',
+      '07',
+      '08',
+      '09',
+      '10',
+      '11',
+      '12',
+      '13',
+      '14',
+      '15',
+      '16',
+      '17',
+      '18',
+      '19',
     ]);
-    expect(isSnapshotId('S')).toBe(true);
-    expect(isSnapshotId('I')).toBe(true);
-    expect(isSnapshotId('T')).toBe(false);
+    expect(isSnapshotId('19')).toBe(true);
+    expect(isSnapshotId('09')).toBe(true);
+    expect(isSnapshotId('20')).toBe(false);
     expect(isSnapshotId('a')).toBe(false);
     expect(isSnapshotId('AB')).toBe(false);
   });
 
-  it('populated fixtures cover full A–S after R2-L1', () => {
+  it('populated fixtures cover full 01–19 after R2-L1', () => {
     expect([...POPULATED_SNAPSHOT_IDS]).toEqual([...SNAPSHOT_IDS]);
-    expect(isPopulatedSnapshotId('H')).toBe(true);
-    expect(isPopulatedSnapshotId('S')).toBe(true);
-    expect(isPopulatedSnapshotId('T')).toBe(false);
+    expect(isPopulatedSnapshotId('08')).toBe(true);
+    expect(isPopulatedSnapshotId('19')).toBe(true);
+    expect(isPopulatedSnapshotId('20')).toBe(false);
   });
 });

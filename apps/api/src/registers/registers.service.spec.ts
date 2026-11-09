@@ -1,12 +1,12 @@
 import { NotFoundException } from '@nestjs/common';
 import { DemoDataSource } from '../data/demo-data-source';
 import {
-  SNAPSHOT_A,
-  SNAPSHOT_B,
-  SNAPSHOT_C,
-  SNAPSHOT_E,
-  SNAPSHOT_F,
-  SNAPSHOT_S,
+  SNAPSHOT_01,
+  SNAPSHOT_02,
+  SNAPSHOT_03,
+  SNAPSHOT_05,
+  SNAPSHOT_06,
+  SNAPSHOT_19,
 } from '../data/fixtures';
 import { personFullNameRu } from '../data/fixtures/person-catalog';
 import type { ProjectFixture, SnapshotFixture } from '../data/fixtures/types';
@@ -37,7 +37,7 @@ class FakeDataSource extends DemoDataSource {
   }
 
   getDefaultSnapshot(): SnapshotFixture {
-    return this.snapshots.A!;
+    return this.snapshots['01']!;
   }
 
   getCosts(): never {
@@ -71,12 +71,16 @@ class FakeDataSource extends DemoDataSource {
 
 describe('RegistersService', () => {
   const service = new RegistersService(
-    new FakeDataSource({ A: SNAPSHOT_A, B: SNAPSHOT_B, C: SNAPSHOT_C }),
+    new FakeDataSource({
+      '01': SNAPSHOT_01,
+      '02': SNAPSHOT_02,
+      '03': SNAPSHOT_03,
+    }),
   );
 
   describe('equipment', () => {
     it('A: multi-item OnTrack', () => {
-      const r = service.listEquipment('PRJ-01', 'A');
+      const r = service.listEquipment('PRT-01', '01');
       expect(r.items.length).toBeGreaterThanOrEqual(2);
       expect(r.items.every((i) => i.status === 'OnTrack')).toBe(true);
       expect(r.items[0].name).toBeTruthy();
@@ -84,7 +88,7 @@ describe('RegistersService', () => {
     });
 
     it('B: HVAC OnTrack; PKG Delayed +10', () => {
-      const r = service.listEquipment('PRJ-01', 'B');
+      const r = service.listEquipment('PRT-01', '02');
       const hvac = r.items.find((i) => i.id === 'EQ-HVAC-01');
       const pkg = r.items.find((i) => i.id === 'EQ-PKG-01');
       expect(r.items).toHaveLength(52);
@@ -94,7 +98,7 @@ describe('RegistersService', () => {
     });
 
     it('C: HVAC Delayed +21 with related active Issue/Risk', () => {
-      const r = service.listEquipment('PRJ-01', 'C');
+      const r = service.listEquipment('PRT-01', '03');
       const hvac = r.items.find((i) => i.id === 'EQ-HVAC-01');
       expect(hvac?.status).toBe('Delayed');
       expect(hvac?.deliveryVariance.deltaDays).toBe(21);
@@ -105,7 +109,7 @@ describe('RegistersService', () => {
 
   describe('issues-risks', () => {
     it('A: Risk only; RISK-COM-01 may omit Issue', () => {
-      const r = service.listIssuesRisks('PRJ-01', 'A');
+      const r = service.listIssuesRisks('PRT-01', '01');
       expect(r.rows.filter((x) => x.type === 'Issue')).toHaveLength(0);
       const risk001 = r.rows.find(
         (x) => x.type === 'Risk' && x.id === 'RISK-001',
@@ -115,7 +119,7 @@ describe('RegistersService', () => {
     });
 
     it('B: Open PKG/BLD issues; no ISS-001; RISK Green', () => {
-      const r = service.listIssuesRisks('PRJ-01', 'B');
+      const r = service.listIssuesRisks('PRT-01', '02');
       expect(r.rows.some((x) => x.id === 'ISS-001')).toBe(false);
       expect(
         r.rows.some(
@@ -133,7 +137,7 @@ describe('RegistersService', () => {
     });
 
     it('C: Issue Open + Risk Red with BA-015 links', () => {
-      const r = service.listIssuesRisks('PRJ-01', 'C');
+      const r = service.listIssuesRisks('PRT-01', '03');
       const iss = r.rows.find((x) => x.type === 'Issue' && x.id === 'ISS-001');
       expect(iss?.issueStatus).toBe('Open');
       expect(iss?.equipmentId).toBe('EQ-HVAC-01');
@@ -149,13 +153,13 @@ describe('RegistersService', () => {
     it('E: RISK-COM-01 Red without Issue is allowed', () => {
       const svc = new RegistersService(
         new FakeDataSource({
-          A: SNAPSHOT_A,
-          B: SNAPSHOT_B,
-          C: SNAPSHOT_C,
-          E: SNAPSHOT_E,
+          '01': SNAPSHOT_01,
+          '02': SNAPSHOT_02,
+          '03': SNAPSHOT_03,
+          '05': SNAPSHOT_05,
         }),
       );
-      const r = svc.listIssuesRisks('PRJ-01', 'E');
+      const r = svc.listIssuesRisks('PRT-01', '05');
       const com = r.rows.find((x) => x.id === 'RISK-COM-01');
       expect(com?.type).toBe('Risk');
       expect(com?.rag).toBe('Red');
@@ -165,7 +169,7 @@ describe('RegistersService', () => {
 
   describe('milestones', () => {
     it('A: Green MS-PS; workstream null', () => {
-      const r = service.listMilestones('PRJ-01', 'A');
+      const r = service.listMilestones('PRT-01', '01');
       const ms = r.items.find((i) => i.id === 'MS-PS');
       expect(ms?.rag).toBe('Green');
       expect(ms?.dateVariance.deltaDays).toBe(0);
@@ -174,14 +178,14 @@ describe('RegistersService', () => {
     });
 
     it('B: MS-PS still Green', () => {
-      const r = service.listMilestones('PRJ-01', 'B');
+      const r = service.listMilestones('PRT-01', '02');
       const ms = r.items.find((i) => i.id === 'MS-PS');
       expect(ms?.rag).toBe('Green');
       expect(ms?.dateVariance.deltaDays).toBe(0);
     });
 
     it('C: Red +21 on MS-PS with related RISK-001', () => {
-      const r = service.listMilestones('PRJ-01', 'C');
+      const r = service.listMilestones('PRT-01', '03');
       const ms = r.items.find((i) => i.id === 'MS-PS');
       expect(ms?.rag).toBe('Red');
       expect(ms?.dateVariance.deltaDays).toBe(21);
@@ -192,20 +196,20 @@ describe('RegistersService', () => {
 
   describe('decisions', () => {
     it('A: empty decisions register', () => {
-      const r = service.listDecisions('PRJ-01', 'A');
+      const r = service.listDecisions('PRT-01', '01');
       expect(r.items).toEqual([]);
-      expect(r.snapshotId).toBe('A');
-      expect(r.projectId).toBe('PRJ-01');
+      expect(r.snapshotId).toBe('01');
+      expect(r.projectId).toBe('PRT-01');
     });
 
     it('F: lists DEC-001 with owner name, dueState, MS-PS without fake AN', () => {
       const svc = new RegistersService(
         new FakeDataSource({
-          A: SNAPSHOT_A,
-          F: SNAPSHOT_F,
+          '01': SNAPSHOT_01,
+          '06': SNAPSHOT_06,
         }),
       );
-      const r = svc.listDecisions('PRJ-01', 'F');
+      const r = svc.listDecisions('PRT-01', '06');
       expect(r.items.some((d) => d.id === 'DEC-001')).toBe(true);
       const dec = r.items.find((d) => d.id === 'DEC-001')!;
       expect(dec.type).toBe('PrioritizeRecovery');
@@ -218,19 +222,22 @@ describe('RegistersService', () => {
       expect(dec.analystProjectName).toBeNull();
       expect(dec.milestoneName).toBeTruthy();
       expect(dec.milestoneName).not.toBe(dec.milestoneId);
-      expect(dec).not.toHaveProperty('status');
+      expect(dec.executionStatus).toBe('not_started');
+      expect(dec.execution?.source.kind).toBe('demo');
+      expect(dec.execution?.evidenceNote).toBe('Действия не начаты');
     });
 
     it('S: DEC-001 dueState passed vs later asOf; still no fake MS-PS membership', () => {
       const svc = new RegistersService(
         new FakeDataSource({
-          A: SNAPSHOT_A,
-          S: SNAPSHOT_S,
+          '01': SNAPSHOT_01,
+          '19': SNAPSHOT_19,
         }),
       );
-      const r = svc.listDecisions('PRJ-01', 'S');
+      const r = svc.listDecisions('PRT-01', '19');
       const dec = r.items.find((d) => d.id === 'DEC-001')!;
       expect(dec.dueState).toBe('passed');
+      expect(dec.executionStatus).toBe('completed');
       expect(dec.programId).toBeNull();
       expect(dec.analystProjectId).toBeNull();
       expect(dec.milestoneName?.length).toBeGreaterThan(0);
@@ -242,16 +249,16 @@ describe('RegistersService', () => {
   });
 
   it('404 unknown project for equipment, issues-risks, milestones, decisions', () => {
-    expect(() => service.listEquipment('PRJ-99', 'A')).toThrow(
+    expect(() => service.listEquipment('PRJ-99', '01')).toThrow(
       NotFoundException,
     );
-    expect(() => service.listIssuesRisks('PRJ-99', 'A')).toThrow(
+    expect(() => service.listIssuesRisks('PRJ-99', '01')).toThrow(
       NotFoundException,
     );
-    expect(() => service.listMilestones('PRJ-99', 'A')).toThrow(
+    expect(() => service.listMilestones('PRJ-99', '01')).toThrow(
       NotFoundException,
     );
-    expect(() => service.listDecisions('PRJ-99', 'A')).toThrow(
+    expect(() => service.listDecisions('PRJ-99', '01')).toThrow(
       NotFoundException,
     );
   });

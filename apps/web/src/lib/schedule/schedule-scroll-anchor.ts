@@ -9,6 +9,11 @@ export type ScheduleScrollAnchor = {
   tableScrollLeft: number;
   chartDateIso: string | null;
   verticalScrollTop: number;
+  /**
+   * One-shot focus deep-link: center `chartDateIso` in the chart viewport.
+   * Ordinary restore keeps left-edge (`posFromDate`). Cleared after apply.
+   */
+  centerChartDateOnce?: boolean;
 };
 
 export function emptyScheduleScrollAnchor(): ScheduleScrollAnchor {
@@ -18,6 +23,7 @@ export function emptyScheduleScrollAnchor(): ScheduleScrollAnchor {
     tableScrollLeft: 0,
     chartDateIso: null,
     verticalScrollTop: 0,
+    centerChartDateOnce: false,
   };
 }
 
@@ -26,6 +32,46 @@ export function clampScroll(value: number, max: number): number {
   if (!Number.isFinite(value) || value <= 0) return 0;
   const limit = Number.isFinite(max) && max > 0 ? max : 0;
   return Math.min(value, limit);
+}
+
+/**
+ * Horizontal scroll so `datePosPx` sits at the viewport midpoint when bounds allow.
+ */
+export function centeredChartScrollX(
+  datePosPx: number,
+  viewportWidthPx: number,
+  maxScrollX: number,
+): number {
+  if (!Number.isFinite(datePosPx) || !Number.isFinite(viewportWidthPx)) return 0;
+  const half = Math.max(0, viewportWidthPx) / 2;
+  return clampScroll(datePosPx - half, maxScrollX);
+}
+
+/**
+ * Vertical scroll so row midpoint sits at the owner viewport midpoint when bounds allow.
+ * `stickyInsetPx` accounts for sticky chrome (month scale) that shrinks the visible clip.
+ */
+export function centeredOwnedScrollTop(
+  rowIndex: number,
+  rowHeightPx: number,
+  viewportHeightPx: number,
+  maxScrollTop: number,
+  stickyInsetPx = 0,
+): number {
+  if (
+    !Number.isFinite(rowIndex) ||
+    rowIndex < 0 ||
+    !Number.isFinite(rowHeightPx) ||
+    rowHeightPx <= 0
+  ) {
+    return 0;
+  }
+  const sticky = Math.max(0, stickyInsetPx);
+  const target =
+    rowIndex * rowHeightPx +
+    rowHeightPx / 2 -
+    (Math.max(0, viewportHeightPx) + sticky) / 2;
+  return clampScroll(target, maxScrollTop);
 }
 
 /** Local calendar day. Gantt positions use local dates, not UTC midnight. */

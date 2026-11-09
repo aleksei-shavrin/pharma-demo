@@ -58,7 +58,7 @@ Sources: DOC-UX-003 inventory; plan Iteration 4; Must Decision behavior from DOC
 ```text
 ┌─ canvas ──────────────────────────────────────────────────┐
 │ ┌ Sidebar ┐ ┌─ TopAppBar ───────────────────────────────┐ │
-│ │ Brand   │ │ Breadcrumbs │ Snapshot A/B/C │ Theme │PRJ│ │
+│ │ Brand   │ │ Breadcrumbs │ Snapshot 01/02/03 │ Theme │PRJ│ │
 │ │ Nav×5   │ ├─ PageSurface (surface) ───────────────────┤ │
 │ │         │ │ PageHeader                                 │ │
 │ │         │ │ Main content (per screen)                  │ │
@@ -93,8 +93,8 @@ Template fields below are filled for each surface.
 | Layout regions | Sidebar \| TopAppBar \| PageSurface as §3. |
 | Grid / proportions (`approved UI Design decision`) | Sidebar 240px; TopBar 52px; content flex; gutters 24 (≥1280) / 16 (1024–1279). Not measured production values. |
 | Components | AppShell, SidebarNavItem, TopAppBar, Breadcrumbs, SnapshotSelector, ThemeToggle, PageSurface, PageHeader. |
-| Data mapping | Snapshot id; theme; route; PRJ-01 identity. |
-| Snapshot A/B/C | Selector always; content refresh per DOC-UX-019. |
+| Data mapping | Snapshot id; theme; route; PRT-01 identity. |
+| Snapshot 01/02/03 | Selector always; content refresh per DOC-UX-019. |
 | Visual states | Default; sidebar collapsed; loading/error inside PageSurface only. |
 | Light / Dark | Full shell themed (DOC-UX-015). |
 | Responsive | Icon rail 1024–1279; drawer best-effort &lt;1024. |
@@ -112,10 +112,10 @@ Template fields below are filled for each surface.
 | Layout regions | See wireframe. |
 | Grid (`approved UI Design decision`) | ≥1280: story column ~62% + rail ~38%; stack below 1280 (story then rail). Proportions illustrative. |
 | Components | PageHeader, AsOfMeta/SnapshotEcho, VarianceDelta, MetricTile/KpiGroup (conditional), ImpactCallout, RelationshipList/causal nodes via EntityLink, DecisionPanel, EquipmentDeliverySummary / IssueSummary / RiskSummary / MilestoneSummary (preview), ChartContainer (optional), Empty/Loading/Error. **Compact schedule peek** = composition of compact DataTable and/or GanttSurface (DOC-UX-016 variants) — not a separate component. |
-| Data mapping | PRJ baseline/forecast PS; EQ-HVAC-01 delivery; MS-PS; RISK-001; ISS-001 (B/C); DEC-001 (C); Δ derived BR-004. Fixtures DOC-PROD-012. |
-| Snapshot | **A:** calm OnTrack/Green; causal shows RISK—EQ & RISK—MS; no Issue delay chain; Decision empty. **B:** Delayed/+21d delivery Δ; Open Issue; Red; PS forecast 2027-10-06; Decision = needed context. **C:** PrioritizeRecovery read-only; Mitigating; Red + forecast **unchanged** (BR-006). |
-| Visual states | Loading skeleton in surface; empty Decision on A; error inline. |
-| Light / Dark | Status tokens both themes; no green wash on C. |
+| Data mapping | PRJ baseline/forecast PS; EQ-HVAC-01 delivery; MS-PS; RISK-001; ISS-001 (02/03); DEC-001 (03); Δ derived BR-004. Fixtures DOC-PROD-012. |
+| Snapshot | **01:** calm OnTrack/Green; causal shows RISK—EQ & RISK—MS; no Issue delay chain; Decision empty. **02:** Delayed/+21d delivery Δ; Open Issue; Red; PS forecast 2027-10-06; Decision = needed context. **03:** PrioritizeRecovery read-only; Mitigating; Red + forecast **unchanged** (BR-006). |
+| Visual states | Loading skeleton in surface; empty Decision on 01; error inline. |
+| Light / Dark | Status tokens both themes; no green wash on 03. |
 | Responsive | Stack columns; keep Δ strip full width first. |
 | Navigation / interactions | DOC-UX-019 §10; Snapshot §4. |
 | Traceability | DOC-UX-004/012/018; REQ-IMPCT; BR-004/006; C-01/C-05. |
@@ -129,11 +129,11 @@ Template fields below are filled for each surface.
 │ │ Exceptions preview (typed)   │ │ Schedule peek (compos.)│ │
 │ └──────────────────────────────┘ └────────────────────────┘ │
 │ KPI group (≥4 justified) OR omit                            │
-│ Optional discrete A/B/C PS comparison OR omit               │
+│ Optional discrete 01/02/03 PS comparison OR omit               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Anti:** KPI gallery as hero; EQ—MS edge; connected A/B/C forecast line; recovery progress on C.
+**Anti:** KPI gallery as hero; EQ—MS edge; connected 01/02/03 forecast line; recovery progress on 03.
 
 ### 4.3 P2 — Schedule
 
@@ -147,7 +147,7 @@ Template fields below are filled for each surface.
 | Grid (`approved UI Design decision`) | Table 100% default; Split ~55% table / ~45% timeline; Gantt full pane. |
 | Components | PageHeader, TableToolbar, FilterControl, DataTable, GanttSurface, StatusIndicator, VarianceDelta, EntityLink, Empty/Loading/Error. |
 | Data mapping | **Milestone rows:** `baselineDate`, `forecastDate`, rag; **Milestone Δ** = forecastDate − baselineDate (derived). **Equipment rows:** `baselineDelivery`, `forecastDelivery`, status, isCritical; **Delivery Δ** = forecastDelivery − baselineDelivery (derived). Optional Decision.dueDate only if separately decided — default **omit**. Never present delivery dates as Milestone/PS dates. |
-| Snapshot | A: EQ OnTrack / Delivery Δ 0; MS Green / Milestone Δ 0. B/C: EQ Delayed / Delivery Δ +21d; MS Red / Milestone forecast 2027-10-06 (PS-aligned); C same date fields as B. |
+| Snapshot | 01: EQ OnTrack / Delivery Δ 0; MS Green / Milestone Δ 0. 02/03: EQ Delayed / Delivery Δ +21d; MS Red / Milestone forecast 2027-10-06 (PS-aligned); 03 same date fields as B. |
 | Visual states | Empty if no rows; loading; error; Gantt never sole access path. |
 | Light / Dark | Table sunken; markers per DOC-UX-018. |
 | Responsive | Horizontal scroll; hide Gantt before table on narrow; keep Type + status/RAG + typed date/Δ columns. |
@@ -188,7 +188,7 @@ Selection/pagination **off** by default (DOC-UX-016). D12 **RESOLVED** (ADR-0004
 | Grid (`approved UI Design decision`) | Full-width table; sticky header. |
 | Components | PageHeader, TableToolbar, FilterControl, DataTable, StatusIndicator(`equipment`), VarianceDelta (delivery), EntityLink, Empty/Loading/Error. |
 | Data mapping | id, name, isCritical, baselineDelivery, forecastDelivery, status OnTrack\|Delayed; projectId context. |
-| Snapshot | A OnTrack Δ0; B/C Delayed +21d diamond marker. |
+| Snapshot | 01 OnTrack Δ0; 02/03 Delayed +21d diamond marker. |
 | Column priority (`approved UI Design decision`) | Status · Delivery Δ · Delivery Forecast · Delivery Baseline · Name · ID · Critical. |
 | Visual states | Empty/loading/error; no Closed. |
 | Light / Dark | Per foundations. |
@@ -208,7 +208,7 @@ Selection/pagination **off** by default (DOC-UX-016). D12 **RESOLVED** (ADR-0004
 | Grid (`approved UI Design decision`) | Full-width table. |
 | Components | Same table stack; StatusIndicator(`issue`\|`risk`); Type column. |
 | Data mapping | **Shared columns only** (`assumption` V1): Type (Issue\|Risk), ID, Title, Status/RAG. Optional shared link-id display only if the same column meaning applies to both types without Issue-only or Risk-only placeholders. **Owner is not a shared column** — show on Issue Detail Overview when present in sources. Do **not** force-unify Issue-only / Risk-only fields. |
-| Snapshot | A: may show Risk Green without Open delay Issue; B: ISS Open + RISK Red; C: ISS Mitigating + RISK Red. |
+| Snapshot | 01: may show Risk Green without Open delay Issue; 02: ISS Open + RISK Red; 03: ISS Mitigating + RISK Red. |
 | Visual states | Empty/loading/error. |
 | Light / Dark | Per foundations. |
 | Responsive | H-scroll; keep Type + Status/RAG + Title. |
@@ -233,7 +233,7 @@ Selection/pagination **off** by default (DOC-UX-016). D12 **RESOLVED** (ADR-0004
 | Layout regions | Header → Toolbar → Table. |
 | Components | DataTable stack; StatusIndicator(`milestone`); VarianceDelta (PS/MS dates — **not** delivery caption). |
 | Data mapping | id, name, baselineDate, forecastDate, rag Green\|Red. No Domain `critical` field — MS-PS visual emphasis only. |
-| Snapshot | A Green Δ0; B/C Red, forecast 2027-10-06. |
+| Snapshot | 01 Green Δ0; 02/03 Red, forecast 2027-10-06. |
 | Column priority (`approved UI Design decision`) | RAG · Milestone Δ · Milestone Forecast · Milestone Baseline · Name · ID. |
 | Visual states | Empty/loading/error. |
 | Responsive | Keep RAG / Milestone Δ / Milestone Forecast. |
@@ -248,9 +248,9 @@ Selection/pagination **off** by default (DOC-UX-016). D12 **RESOLVED** (ADR-0004
 | Field | Spec |
 |-------|------|
 | Purpose | Список Decision records снимка (read-only). |
-| Entry | Sidebar «Управленческие решения» `/decisions`; ссылка с Dashboard Decision panel. |
+| Entry | Sidebar «Решения» `/decisions`; ссылка с Dashboard «Прогноз и решение». |
 | Columns | ID · Тип · Суть · Владелец · Срок · Веха · Проект |
-| Data | Existing Decision fields only; empty on A; rows on F. No invented status/edit. |
+| Data | Existing Decision fields only; empty on 01; rows on 06. No invented status/edit. |
 | Links | Owner → `/people/:id`; milestone → existing milestone detail when id present. |
 
 ### 4.7 D-\* — Entity Detail (shared pattern)
@@ -265,7 +265,7 @@ Selection/pagination **off** by default (DOC-UX-016). D12 **RESOLVED** (ADR-0004
 | Grid (`approved UI Design decision`) | Single column; tabs full width; Links quieter than Impact callouts (VD-A). |
 | Components | Breadcrumbs, EntityDetailHeader, StatusIndicator(family), KpiGroup?, DetailTabs, RelationshipList, ImpactCallout, DecisionSummary/Panel (Issue Impact / C), EntityLink, Empty/Loading/Error. |
 | Data mapping | Per entity Overview fields from Domain/REQ/mock; Links = DOC-BA-015 only; Impact = BR-004/006 derived. **No** EQ—MS, Issue—Decision, Risk—Decision, Equipment—Decision links. |
-| Snapshot | Entity missing after switch → EmptyState on same route + register CTA (DOC-UX-019). A/B/C field values from fixtures. |
+| Snapshot | Entity missing after switch → EmptyState on same route + register CTA (DOC-UX-019). 01/02/03 field values from fixtures. |
 | Visual states | Tab empty Links valid; loading; error. |
 | Light / Dark | Impact stronger tonal callout; Links quieter. |
 | Responsive | Tabs scroll; stack header. |
@@ -283,7 +283,7 @@ Breadcrumb: Section / EntityId
 └────────────────────────────────────────────────────────────┘
 ```
 
-**Family notes:** D-EQ delivery StatusIndicator; D-ISS Open/Mitigating; D-RSK/D-MS RAG; Issue Impact may embed DecisionPanel read-only on C.
+**Family notes:** D-EQ delivery StatusIndicator; D-ISS Open/Mitigating; D-RSK/D-MS RAG; Issue Impact may embed DecisionPanel read-only on 03.
 
 ### 4.8 M-DEC — Decision surface
 
@@ -291,13 +291,13 @@ Breadcrumb: Section / EntityId
 |-------|------|
 | Purpose | Present management Decision context / recorded PrioritizeRecovery **without** implying recovery execution (D6 intent; BR-006). |
 | Primary user | Director primary. |
-| Entry points | Dashboard Decision rail; Issue Impact on C. |
+| Entry points | Dashboard Decision rail; Issue Impact on 03. |
 | Information hierarchy | 1) Honesty / outcome 2) Decision type + meta 3) Related Issue Mitigating cue. |
 | Layout regions | **Must Demo v1:** DecisionPanel region (Dashboard rail and/or Issue Impact) — **not** a separate interactive write modal. |
 | Grid (`approved UI Design decision`) | Raised panel in Dashboard rail (~full rail width); on Detail, callout under Impact. |
-| Components | DecisionPanel, DecisionSummary, ImpactCallout (honesty), StatusIndicator(issue=Mitigating on C). Dialog **not** used to write Decision in Must (DOC-UX-016/019). |
-| Data mapping | A: none. B: no Decision record — problem context copy. C: DEC-001 type PrioritizeRecovery; owner SH-006; due 2027-03-20; note per fixture; Issue Mitigating; forecasts/RAG unchanged. |
-| Snapshot | A empty; B needed-context; C recorded read-only. |
+| Components | DecisionPanel, DecisionSummary, ImpactCallout (honesty), StatusIndicator(issue=Mitigating on 03). Dialog **not** used to write Decision in Must (DOC-UX-016/019). |
+| Data mapping | 01: none. 02: no Decision record — problem context copy. 03: DEC-001 type PrioritizeRecovery; owner SH-006; due 2027-03-20; note per fixture; Issue Mitigating; forecasts/RAG unchanged. |
+| Snapshot | 01 empty; 02 needed-context; 03 recorded read-only. |
 | Visual states | Empty / context / recorded; never success-green recovery. |
 | Light / Dark | Honesty strip high contrast text. |
 | Responsive | Rail stacks under story on narrow. |
@@ -306,7 +306,7 @@ Breadcrumb: Section / EntityId
 
 > **certainty:** open_question
 >
-> DOC-UX-003 / DOC-UX-012 describe **M-DEC modal to record** PrioritizeRecovery. DOC-UX-016/019 Must path locks **read-only** DecisionPanel + fixture DEC-001 on C (no interactive write). This screen spec follows the **Must UI Design** path. Interactive recording remains outside Must UI Design until separately decided — do not treat as Domain change.
+> DOC-UX-003 / DOC-UX-012 describe **M-DEC modal to record** PrioritizeRecovery. DOC-UX-016/019 Must path locks **read-only** DecisionPanel + fixture DEC-001 on 03 (no interactive write). This screen spec follows the **Must UI Design** path. Interactive recording remains outside Must UI Design until separately decided — do not treat as Domain change.
 
 ```text
 ┌ DecisionPanel (surface-raised) ────────────────────────────┐
@@ -321,7 +321,7 @@ Breadcrumb: Section / EntityId
 
 ## 5. Cross-screen consistency rules (`approved UI Design decision`)
 
-1. One global Snapshot; never mix A/B/C fields (DOC-UX-018/019).
+1. One global Snapshot; never mix 01/02/03 fields (DOC-UX-018/019).
 2. Status geometry locked: Delayed diamond; Open outline; Mitigating half-filled; RAG filled disc (+ Red rail) (DOC-UX-018).
 3. Delivery Δ ≠ Production Start Δ captions.
 4. Links = direct DOC-BA-015 only; Impact = derived.
@@ -344,11 +344,11 @@ Breadcrumb: Section / EntityId
 
 Min content width **target** ≥720px when full shell shown (DOC-UX-015) — not a device guarantee.
 
-## 7. Snapshot A/B/C screen matrix
+## 7. Snapshot 01/02/03 screen matrix
 
 | Surface | A (2027-02-15) | B (2027-03-01) | C (2027-03-02) |
 |---------|----------------|----------------|----------------|
-| Shell | Snapshot=A | Snapshot=B | Snapshot=C |
+| Shell | Snapshot=01 | Snapshot=02 | Snapshot=03 |
 | Dashboard | Calm; RISK links; Decision empty | Delayed/Open/Red; PS 2027-10-06; Decision needed | Decision recorded; Mitigating; Red/forecast same as B |
 | Schedule | EQ OnTrack / Delivery Δ0; MS Green / Milestone Δ0 | EQ Delayed / Delivery Δ+21d; MS Red / Milestone forecast 2027-10-06 | Same typed dates as B |
 | Equipment | OnTrack | Delayed diamond | Delayed |
@@ -391,7 +391,7 @@ Min content width **target** ≥720px when full shell shown (DOC-UX-015) — not
 |------|--------|
 | BA-OQ-006 layout | **closed**; single table+Type = Demo v1 decision (DOC-BA-010) |
 | D12 Gantt lib | **RESOLVED** (ADR-0004, I7) |
-| Interactive M-DEC / PrioritizeRecovery recording outside Must | **open_question** (Must path = read-only DecisionPanel + fixture DEC-001 on C — decided for Demo v1 Must; DOC-UX-003 modal journey remains outside Must) |
+| Interactive M-DEC / PrioritizeRecovery recording outside Must | **open_question** (Must path = read-only DecisionPanel + fixture DEC-001 on 03 — decided for Demo v1 Must; DOC-UX-003 modal journey remains outside Must) |
 | Shell DOM Sidebar vs TopBar order | **open_question** (DOC-UX-019) |
 | Filter persistence | MVP non-restore `assumption` |
 | Closed / Amber / AcceptDateSlip Must UI | not in scope |

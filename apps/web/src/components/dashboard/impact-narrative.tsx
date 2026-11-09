@@ -12,6 +12,7 @@ import {
   presentDecisionType,
   presentIssueTitle,
   presentMilestoneName,
+  ragLabel,
 } from '@/lib/ui-labels';
 
 /**
@@ -50,17 +51,18 @@ export function ImpactNarrative({ data }: { data: DashboardOverview }) {
           </li>
           <li>
             Риск{' '}
-            <span className="font-medium text-[var(--text)]">{risk.id}</span>{' '}
-            — зелёный.
+            <span className="font-medium text-[var(--text)]">{risk.id}</span>
+            {' — '}
+            {ragLabel('risk', 'Green')}.
           </li>
           <li>
             Веха{' '}
             <span className="font-medium text-[var(--text)]">
               {milestone.id}
             </span>{' '}
-            ({presentMilestoneName(milestone.id, milestone.name)}) — зелёная;
-            запуск производства без отклонения (
-            {formatDateRu(data.project.forecastProductionStart)}).
+            ({presentMilestoneName(milestone.id, milestone.name)}) —{' '}
+            {ragLabel('milestone', 'Green')}; запуск производства без отклонения
+            ({formatDateRu(data.project.forecastProductionStart)}).
           </li>
         </ol>
       </section>
@@ -84,17 +86,11 @@ export function ImpactNarrative({ data }: { data: DashboardOverview }) {
     steps.push(`Проблема ${issue.id} ${issueVerb}: «${issueTitle}».`);
   }
 
-  steps.push(
-    risk.rag === 'Red'
-      ? `Риск ${risk.id} — красный.`
-      : `Риск ${risk.id} — зелёный.`,
-  );
+  steps.push(`Риск ${risk.id} — ${ragLabel('risk', risk.rag)}.`);
 
   const milestoneName = presentMilestoneName(milestone.id, milestone.name);
   steps.push(
-    milestone.rag === 'Red'
-      ? `${milestoneName} (${milestone.id}) — красная.`
-      : `${milestoneName} (${milestone.id}) — зелёная.`,
+    `${milestoneName} (${milestone.id}) — ${ragLabel('milestone', milestone.rag)}.`,
   );
 
   steps.push(

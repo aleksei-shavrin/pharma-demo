@@ -1,12 +1,12 @@
 ## ADDED Requirements
 
-### Requirement: Exceptions and trend across A–S
+### Requirement: Exceptions and trend across 01–19
 
-Top exceptions и trend (`better` / `worse` / `unchangedCritical`) SHALL оставаться fixture-authored read-model shapes for snapshots A–S. FE SHALL NOT infer exception priority as Domain field.
+Top exceptions и trend (`better` / `worse` / `unchangedCritical`) SHALL оставаться fixture-authored read-model shapes for snapshots 01–19. FE SHALL NOT infer exception priority as Domain field.
 
-#### Scenario: Snapshot Q baseline date honesty exception
+#### Scenario: Snapshot 17 baseline date honesty exception
 
-- **WHEN** активен Snapshot Q (asOf = baseline PS date without start)
+- **WHEN** активен Snapshot 17 (asOf = baseline PS date without start)
 - **THEN** exceptions/trend отражают calendar honesty without claiming Production Start achieved
 
 ### Requirement: Notifications do not replace exceptions

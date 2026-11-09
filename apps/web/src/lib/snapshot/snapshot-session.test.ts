@@ -15,37 +15,42 @@ afterEach(() => {
   sessionStorage.clear();
 });
 
-describe('snapshot-session A–S (R2-U1)', () => {
-  it('empty storage → read null; resolve A', () => {
+describe('snapshot-session 01–19', () => {
+  it('empty storage → read null; resolve 01', () => {
     expect(readSessionSnapshot()).toBeNull();
-    expect(resolveBootstrapSnapshot()).toBe('A');
+    expect(resolveBootstrapSnapshot()).toBe('01');
   });
 
-  it('writes and reads A/B/C/G/H/I/O/S', () => {
-    writeSessionSnapshot('B');
-    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('B');
-    expect(readSessionSnapshot()).toBe('B');
-    expect(resolveBootstrapSnapshot()).toBe('B');
+  it('writes and reads numeric ids', () => {
+    writeSessionSnapshot('02');
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBe('02');
+    expect(readSessionSnapshot()).toBe('02');
+    expect(resolveBootstrapSnapshot()).toBe('02');
 
-    writeSessionSnapshot('G');
-    expect(readSessionSnapshot()).toBe('G');
+    writeSessionSnapshot('07');
+    expect(readSessionSnapshot()).toBe('07');
 
-    writeSessionSnapshot('S');
-    expect(readSessionSnapshot()).toBe('S');
-    expect(resolveBootstrapSnapshot()).toBe('S');
+    writeSessionSnapshot('19');
+    expect(readSessionSnapshot()).toBe('19');
+    expect(resolveBootstrapSnapshot()).toBe('19');
   });
 
-  it('invalid / malformed → null / A', () => {
+  it('legacy letters and malformed → clear + bootstrap 01', () => {
+    sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'C');
+    expect(readSessionSnapshot()).toBeNull();
+    expect(sessionStorage.getItem(SNAPSHOT_SESSION_KEY)).toBeNull();
+    expect(resolveBootstrapSnapshot()).toBe('01');
+
+    sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'A');
+    expect(readSessionSnapshot()).toBeNull();
+    expect(resolveBootstrapSnapshot()).toBe('01');
+
+    sessionStorage.setItem(SNAPSHOT_SESSION_KEY, '1');
+    expect(readSessionSnapshot()).toBeNull();
+    expect(resolveBootstrapSnapshot()).toBe('01');
+
     sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'Z');
     expect(readSessionSnapshot()).toBeNull();
-    expect(resolveBootstrapSnapshot()).toBe('A');
-
-    sessionStorage.setItem(SNAPSHOT_SESSION_KEY, 'ab');
-    expect(readSessionSnapshot()).toBeNull();
-    expect(resolveBootstrapSnapshot()).toBe('A');
-
-    sessionStorage.setItem(SNAPSHOT_SESSION_KEY, '');
-    expect(readSessionSnapshot()).toBeNull();
-    expect(resolveBootstrapSnapshot()).toBe('A');
+    expect(resolveBootstrapSnapshot()).toBe('01');
   });
 });

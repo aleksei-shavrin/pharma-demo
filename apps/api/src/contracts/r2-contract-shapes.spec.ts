@@ -63,9 +63,9 @@ describe('R2-C1 contract shapes', () => {
 
     // List DTO extends catalog with backend-owned RAG (not a catalog field).
     const list: WorkstreamListDto = {
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: catalogItems.map((item) => ({ ...item, rag: 'Green' as const })),
     };
     expect(list.items.every((i) => i.rag === 'Green')).toBe(true);
@@ -73,9 +73,9 @@ describe('R2-C1 contract shapes', () => {
 
   it('Workstream detail contract shape (membership via ids, not causal edges)', () => {
     const detail: WorkstreamDetailDto = {
-      snapshotId: 'C',
+      snapshotId: '03',
       scenarioAsOfDate: '2027-03-01',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       workstream: {
         id: 'WS-HVAC',
         nameRu: WORKSTREAM_NAME_RU['WS-HVAC'],
@@ -115,15 +115,15 @@ describe('R2-C1 contract shapes', () => {
       active: true,
     };
     const list: PersonListDto = {
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: [person],
     };
     const detail: PersonDetailDto = {
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       person,
       issueIds: [],
       decisionIds: [],
@@ -161,9 +161,9 @@ describe('R2-C1 contract shapes', () => {
       approvedCostRub: 120_000_000,
     };
     const overview: ProjectCostsOverviewDto = {
-      snapshotId: 'A',
+      snapshotId: '01',
       scenarioAsOfDate: '2027-02-15',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       project,
       workstreams: [ws],
       equipment: [eq],
@@ -190,8 +190,8 @@ describe('R2-C1 contract shapes', () => {
     );
     expect(NOTIFICATION_SEVERITIES).toEqual(['critical', 'attention', 'info']);
     const item: NotificationDto = {
-      id: 'NTF-C-001',
-      snapshotId: 'C',
+      id: 'NTF-03-001',
+      snapshotId: '03',
       severity: 'critical',
       taxonomy: 'critical_risk',
       titleRu: 'Критический сдвиг Production Start',
@@ -200,12 +200,12 @@ describe('R2-C1 contract shapes', () => {
       entityRefs: [{ type: 'risk', id: 'RISK-001' }],
     };
     const list: NotificationListDto = {
-      snapshotId: 'C',
+      snapshotId: '03',
       scenarioAsOfDate: '2027-03-01',
-      projectId: 'PRJ-01',
+      projectId: 'PRT-01',
       items: [item],
     };
-    expect(list.items[0].snapshotId).toBe('C');
+    expect(list.items[0].snapshotId).toBe('03');
     expect(SNAPSHOT_IDS).toContain(list.snapshotId);
   });
 });

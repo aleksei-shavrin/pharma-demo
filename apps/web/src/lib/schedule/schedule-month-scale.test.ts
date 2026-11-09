@@ -10,22 +10,24 @@ import {
 } from './schedule-month-scale';
 
 describe('schedule-month-scale', () => {
-  it('краткая подпись — RU short + yy, полная — месяц YYYY', () => {
+  it('краткая подпись — UPPERCASE RU short + yy, полная — месяц YYYY', () => {
     const d = new Date(2027, 0, 15);
-    expect(formatMonthScaleShort(d)).toBe('янв 27');
+    expect(formatMonthScaleShort(d)).toBe('ЯНВ 27');
     expect(formatMonthScaleFull(d)).toBe('январь 2027');
   });
 
   it('HTML ячейки несёт title с полным именем и не использует %F %Y', () => {
     const html = formatMonthScaleCellHtml(new Date(2027, 2, 1));
-    expect(html).toContain('мар 27');
+    expect(html).toContain('МАР 27');
     expect(html).toContain('title="март 2027"');
     expect(html).not.toMatch(/%F|%Y/);
   });
 
-  it('HTML — span с title, без сырого %F/%Y', () => {
+  it('HTML — span.ppc-scale-label с title, без сырого %F/%Y', () => {
     const html = formatMonthScaleCellHtml(new Date(2026, 11, 1));
-    expect(html).toBe('<span title="декабрь 2026">дек 26</span>');
+    expect(html).toBe(
+      '<span class="ppc-scale-label" title="декабрь 2026">ДЕК 26</span>',
+    );
     expect(html).not.toMatch(/%F|%Y/);
   });
 
@@ -39,6 +41,6 @@ describe('schedule-month-scale', () => {
     expect(entry.unit).toBe('month');
     expect(entry.step).toBe(1);
     expect(typeof entry.format).toBe('function');
-    expect(entry.format(new Date(2027, 5, 1))).toContain('июн 27');
+    expect(entry.format(new Date(2027, 5, 1))).toContain('ИЮН 27');
   });
 });

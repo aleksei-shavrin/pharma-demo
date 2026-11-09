@@ -21,11 +21,11 @@ describe('entity-detail states', () => {
       <EntityDetailAbsent
         entityType="person"
         entityId="PERSON-NOPE"
-        snapshot="C"
+        snapshot="03"
       />,
     );
     expect(document.querySelector('[data-page-state="absent"]')).toBeTruthy();
-    expect(screen.getByText(/Участник отсутствует в снимке C/)).toBeTruthy();
+    expect(screen.getByText(/Участник отсутствует в снимке 03/)).toBeTruthy();
     expect(screen.getByRole('link', { name: 'К участникам' })).toHaveAttribute(
       'href',
       '/people',

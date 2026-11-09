@@ -23,7 +23,7 @@ related:
 
 ## 1. Executive summary
 
-Pharma Demo **Demo v1** — компактное enterprise-приложение для директора (primary) и PM (secondary). Главный narrative: Snapshots **A → B → C** и Decision **PrioritizeRecovery** без ложного «улучшения» прогноза (BR-006).
+Pharma Demo **Demo v1** — компактное enterprise-приложение для директора (primary) и PM (secondary). Главный narrative: Snapshots **01 → 02 → 03** и Decision **PrioritizeRecovery** без ложного «улучшения» прогноза (BR-006).
 
 **IA (approved UX decision):** Application Shell с пятью разделами Sidebar; Director Impact на **Dashboard**; **Schedule** — визуализация control points (Milestone + Equipment delivery), не Activity/CPM.
 
@@ -38,8 +38,8 @@ Pharma Demo **Demo v1** — компактное enterprise-приложение
 
 ## 3. Goals
 
-1. За 30–60 с на Snapshot B понять угрозу production start и драйвер EQ.
-2. На Snapshot C увидеть PrioritizeRecovery и **что не изменилось** (forecast, Risk/MS Red).
+1. За 30–60 с на Snapshot 02 понять угрозу production start и драйвер EQ.
+2. На Snapshot 03 увидеть PrioritizeRecovery и **что не изменилось** (forecast, Risk/MS Red).
 3. Дать PM рабочие реестры и Schedule Table без выдуманного WBS.
 
 ## 4. Decision register D1–D12
@@ -67,7 +67,7 @@ Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 |------|---------|-----------------|
 | Layout | Left Sidebar + Top Application Bar + breadcrumbs + Page Surface (фон, отделение от shell) | `approved UX decision` |
 | Theme | Light/Dark toggle в Application Bar | `approved UX decision` |
-| Snapshot | Глобальный A/B/C в основном UI | `approved UX decision` (UI control); backend mechanism — deferred impl |
+| Snapshot | Глобальный 01/02/03 в основном UI | `approved UX decision` (UI control); backend mechanism — deferred impl |
 | UI kit | shadcn/ui | `approved UX decision` |
 | Tables | TanStack Table | `approved UX decision` |
 | Charts | Recharts | `approved UX decision` |
@@ -103,7 +103,7 @@ Traceability: [demo-v1-ux-traceability.md](./demo-v1-ux-traceability.md).
 | Документ | Роль |
 |----------|------|
 | [shell-navigation](./demo-v1-shell-navigation.md) | Shell, nav, theme, Snapshot |
-| [screens-and-flows](./demo-v1-screens-and-flows.md) | Inventory + A→B→C |
+| [screens-and-flows](./demo-v1-screens-and-flows.md) | Inventory + 01→02→03 |
 | [dashboard](./demo-v1-dashboard.md) | Director home |
 | [schedule-workspace](./demo-v1-schedule-workspace.md) | Schedule |
 | [entity-detail](./demo-v1-entity-detail.md) | Detail pattern |

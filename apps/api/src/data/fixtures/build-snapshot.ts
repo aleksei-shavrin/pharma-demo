@@ -1,5 +1,5 @@
 /**
- * Builds discrete SnapshotFixture A–S from catalog + snapshot-states overlays.
+ * Builds discrete SnapshotFixture 01–19 from catalog + snapshot-states overlays.
  */
 import {
   SNAPSHOT_IDS,
@@ -33,7 +33,7 @@ import type {
   SnapshotId,
 } from './types';
 
-/** Chronological order for A–S (catalog `first` comparisons). */
+/** Chronological order for 01–19 (catalog `first` comparisons). */
 const SNAPSHOT_ORDER: readonly SnapshotId[] = SNAPSHOT_IDS;
 
 function snapshotIndex(id: SnapshotId): number {

@@ -1,6 +1,6 @@
 ## Why
 
-Demo schedule shows empty ИСР («—»), missing progress, top H-scrollbar, wide split gap, oversized search, and sticky month labels that do not match vendor scale cells. User changed expected demo behavior: fill WBS/progress/hierarchy/links for all snapshots A–S via Nest mock; remove №; chrome polish.
+Demo schedule shows empty ИСР («—»), missing progress, top H-scrollbar, wide split gap, oversized search, and sticky month labels that do not match vendor scale cells. User changed expected demo behavior: fill WBS/progress/hierarchy/links for all snapshots 01–19 via Nest mock; remove №; chrome polish.
 
 ## What Changes
 

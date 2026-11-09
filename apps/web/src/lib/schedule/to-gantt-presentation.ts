@@ -85,6 +85,11 @@ export type GanttPresentationTask = {
    * Progress unknown still omits `progress` (no 0% confusion).
    */
   barCaption?: string;
+  /** Tooltip enrichment — names/status, never raw IDs as the only label. */
+  kindLabel?: string;
+  statusLabel?: string;
+  baselineCaption?: string;
+  forecastCaption?: string;
   /** Row stays in the chart with no task bar (group without both summary bounds). */
   unscheduled?: boolean;
   /**
@@ -391,23 +396,57 @@ function rowLabel(row: GanttTreeRow): string {
   return row.name.trim().length > 0 ? row.name : row.id;
 }
 
-/** Tooltip percent follows the progress class. Vendor parse stores a missing value as 0. */
+/**
+ * Native tooltip for short bars/diamonds — name + status family + optional %.
+ * Progress % must not replace Delayed/OnSchedule meaning in the label.
+ */
 export function workBarTooltip(task: {
   text?: string;
   factCaption?: string;
   progress?: number;
   css?: string;
   type?: string;
+  statusLabel?: string;
+  kindLabel?: string;
+  baselineCaption?: string;
+  forecastCaption?: string;
 }): string {
   const css = task.css ?? '';
+  const statusFromCss = css.includes('ppc-work-delayed')
+    ? 'С задержкой'
+    : css.includes('ppc-work-waiting')
+      ? 'Ожидание'
+      : css.includes('ppc-work-completed')
+        ? 'Завершено'
+        : css.includes('ppc-work-onschedule')
+          ? 'По плану'
+          : css.includes('ppc-ms-red')
+            ? 'КТ · критична'
+            : css.includes('ppc-ms-green')
+              ? 'КТ · в норме'
+              : css.includes('ppc-eq-delayed')
+                ? 'Поставка · задержка'
+                : css.includes('ppc-eq-ontrack')
+                  ? 'Поставка · в срок'
+                  : css.includes('ppc-summary')
+                    ? 'Сводка'
+                    : '';
   const progressKnown =
     css.includes('ppc-progress-known') || css.includes('ppc-progress-zero');
   let percentPart = '';
   if (task.type === 'task' && progressKnown && typeof task.progress === 'number') {
     const pct = Math.round(task.progress * 100);
-    percentPart = Number.isFinite(pct) ? `${pct}%` : '';
+    percentPart = Number.isFinite(pct) ? `Прогресс ${pct}%` : '';
   }
-  return [task.text ?? '', percentPart, task.factCaption ?? '']
+  return [
+    task.kindLabel ?? '',
+    task.text ?? '',
+    task.statusLabel ?? statusFromCss,
+    task.baselineCaption ?? '',
+    task.forecastCaption ?? '',
+    percentPart,
+    task.factCaption ?? '',
+  ]
     .filter((part) => part.length > 0)
     .join(' · ');
 }
@@ -472,11 +511,29 @@ function workTreeTask(
     };
   }
   const task = toPresentationTask(row.item, comparison);
+  const work = row.item;
   return {
     ...task,
     id: rowTaskId(row),
     text: rowLabel(row),
     css: `${task.css} ${progress.cssClass}`,
+    kindLabel: 'Работа',
+    statusLabel:
+      work.status === 'Waiting'
+        ? 'Ожидание'
+        : work.status === 'OnSchedule'
+          ? 'По плану'
+          : work.status === 'Delayed'
+            ? 'С задержкой'
+            : 'Завершено',
+    baselineCaption:
+      work.baselineStart && work.baselineEnd
+        ? `План ${work.baselineStart}–${work.baselineEnd}`
+        : undefined,
+    forecastCaption:
+      work.startDate && work.endDate
+        ? `Прогноз ${work.startDate}–${work.endDate}`
+        : undefined,
     ...progressFields,
   };
 }
@@ -491,10 +548,26 @@ function controlPointTreeTask(
     row.item.kind === row.kind
   ) {
     const task = toPresentationTask(row.item, comparison);
+    const item = row.item;
+    const isEq = item.kind === 'equipment_delivery';
     return {
       ...task,
       id: rowTaskId(row),
       text: rowLabel(row),
+      kindLabel: isEq ? 'Поставка' : 'Контрольная точка',
+      statusLabel: isEq
+        ? item.status === 'Delayed'
+          ? 'Поставка · задержка'
+          : 'Поставка · в срок'
+        : item.rag === 'Red'
+          ? 'КТ · критична'
+          : 'КТ · в норме',
+      baselineCaption: item.baselineDate
+        ? `План ${item.baselineDate}`
+        : undefined,
+      forecastCaption: item.forecastDate
+        ? `Прогноз ${item.forecastDate}`
+        : undefined,
     };
   }
   const equipment = row.kind === 'equipment_delivery';
@@ -504,9 +577,10 @@ function controlPointTreeTask(
     id: rowTaskId(row),
     text: rowLabel(row),
     type: 'milestone',
+    // Missing item fallback: neutral green outline — not eternal Red from absent RAG.
     css: equipment
       ? `ppc-eq ppc-eq-ontrack ${roleCss}`
-      : `ppc-ms ppc-ms-red ppc-ms-outline ${roleCss}`,
+      : `ppc-ms ppc-ms-green ppc-ms-outline ${roleCss}`,
     selectionKey: {
       kind: equipment ? 'equipment_delivery' : 'milestone',
       entityId: row.id,

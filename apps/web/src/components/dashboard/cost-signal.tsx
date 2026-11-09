@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO_PORTFOLIO_ID } from '@/lib/demo-portfolio-id';
+
 import { useEffect, useState } from 'react';
 import {
   fetchProjectCosts,
@@ -8,14 +10,44 @@ import {
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
 import { formatRubCompactRu } from '@/lib/format/ru';
 import { DEMO_PROJECT_BAC_RUB } from '@/lib/api-client';
+import {
+  costMetricTipText,
+  type CostMetricId,
+} from '@/lib/dashboard/cost-metric-labels';
+import { MetricAbbrTip } from './metric-abbr-tip';
 
-const DEMO_PROJECT_ID = 'PRJ-01';
 
 type Props = {
   snapshotId: SnapshotId;
   /** Optional injected cost for tests — skips fetch. */
   projectCost?: ProjectCost | null;
 };
+
+function MetricRow({
+  id,
+  valueClass,
+  value,
+  valueAttrs,
+}: {
+  id: CostMetricId;
+  valueClass: string;
+  value: string;
+  valueAttrs?: Record<string, string | number | undefined>;
+}) {
+  const short = id === 'reserve' ? 'Резерв' : id;
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <dt className="text-[var(--text-muted)]">
+        <MetricAbbrTip abbr={short} tip={costMetricTipText(id)}>
+          {short}
+        </MetricAbbrTip>
+      </dt>
+      <dd className={valueClass} {...valueAttrs}>
+        {value}
+      </dd>
+    </div>
+  );
+}
 
 /**
  * Compact executive cost signal (R2-U1) — not a mini /costs page.
@@ -36,10 +68,9 @@ export function CostSignal({ snapshotId, projectCost }: Props) {
     }
     let cancelled = false;
     const requested = snapshotId;
-    // Invalidate previous snapshot's ready values immediately.
     setCost(null);
     setFailed(false);
-    void fetchProjectCosts(DEMO_PROJECT_ID, requested)
+    void fetchProjectCosts(DEMO_PORTFOLIO_ID, requested)
       .then((overview) => {
         if (cancelled) return;
         if (overview.snapshotId !== requested) return;
@@ -103,33 +134,37 @@ export function CostSignal({ snapshotId, projectCost }: Props) {
         Стоимость
       </p>
       <dl className="mt-2 space-y-1.5 text-sm">
-        <div className="flex items-baseline justify-between gap-3">
-          <dt className="text-[var(--text-muted)]">EAC</dt>
-          <dd className="font-semibold tabular-nums text-[var(--text)]">
-            {formatRubCompactRu(cost.eacRub)}
-          </dd>
-        </div>
-        <div className="flex items-baseline justify-between gap-3">
-          <dt className="text-[var(--text-muted)]">VAC</dt>
-          <dd
-            className={`font-semibold tabular-nums ${
-              vacDanger
-                ? 'text-[var(--status-danger-fg)]'
-                : 'text-[var(--status-ok-fg)]'
-            }`}
-            data-vac-value
-          >
-            {formatRubCompactRu(cost.vacRub)}
-          </dd>
-        </div>
-        <div className="flex items-baseline justify-between gap-3">
-          <dt className="text-[var(--text-muted)]">BAC</dt>
-          <dd className="tabular-nums text-[var(--text-secondary)]">
-            {formatRubCompactRu(cost.approvedBudgetRub || DEMO_PROJECT_BAC_RUB)}
-          </dd>
-        </div>
+        <MetricRow
+          id="EAC"
+          valueClass="font-semibold tabular-nums text-[var(--text)]"
+          value={formatRubCompactRu(cost.eacRub)}
+        />
+        <MetricRow
+          id="VAC"
+          valueClass={`font-semibold tabular-nums ${
+            vacDanger
+              ? 'text-[var(--status-danger-fg)]'
+              : 'text-[var(--status-ok-fg)]'
+          }`}
+          value={formatRubCompactRu(cost.vacRub)}
+          valueAttrs={{ 'data-vac-value': 'true' }}
+        />
+        <MetricRow
+          id="BAC"
+          valueClass="tabular-nums text-[var(--text-secondary)]"
+          value={formatRubCompactRu(
+            cost.approvedBudgetRub || DEMO_PROJECT_BAC_RUB,
+          )}
+        />
         <div className="flex items-baseline justify-between gap-3 pt-0.5">
-          <dt className="text-[var(--text-muted)]">Резерв</dt>
+          <dt className="text-[var(--text-muted)]">
+            <MetricAbbrTip
+              abbr="Резерв"
+              tip={costMetricTipText('reserve')}
+            >
+              Резерв
+            </MetricAbbrTip>
+          </dt>
           <dd
             className={`tabular-nums text-xs ${
               reserveTight

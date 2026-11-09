@@ -5,7 +5,7 @@ type: operations
 status: draft
 version: '0.1.1'
 created: '2026-11-07'
-updated: '2026-11-07'
+updated: '2026-11-09'
 owner: docs-engineering
 related:
   - DOC-ADR-0007
@@ -25,14 +25,16 @@ related:
 - `.env.dev-auth` — `COOKIE_SECURE`, `LOGIN_USERNAME`, `SESSION_SECRET`, `PUBLIC_ORIGIN`
 - `.dev-login-password` — plaintext (chmod 600); report only the path
 - `.dev-login-password-hash` — bcrypt; mounted into api as `LOGIN_PASSWORD_HASH_FILE`
+- Запрошенные локальные demo credentials: **username `admin` / password `admin`** (файлы gitignored; не коммитить). Смена на уже существующей установке — править эти файлы + recreate сервиса `api`, не весь стек.
 
 ### Server (`npm run server:auth:ensure` перед `server:up`)
 
 - `.env.server-auth` — отдельно от DX; `COOKIE_SECURE` = true только если `PUBLIC_ORIGIN` https
 - `.server-login-password` / `.server-login-password-hash` — не переиспользовать DX secrets
 - Web: `API_INTERNAL_URL=http://api:3000` (middleware → Nest)
+- Server credentials **не** автоматически `admin`/`admin` — отдельный bootstrap.
 
-Bootstrap idempotent; существующие файлы не перезаписывает.
+Bootstrap idempotent; существующие файлы не перезаписывает (для смены DX credentials править файлы вручную или удалить и пересоздать).
 
 ## Behaviour
 

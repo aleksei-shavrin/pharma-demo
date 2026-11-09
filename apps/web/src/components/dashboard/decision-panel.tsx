@@ -1,188 +1,284 @@
 import Link from 'next/link';
 import type { DashboardOverview } from '@/lib/api-client';
-import { formatDateRu } from '@/lib/format/ru';
+import { formatDateRu, formatDeltaDays } from '@/lib/format/ru';
+import { decisionExecutionLabel } from '@/lib/decisions/decision-execution-labels';
 import {
-  decisionDueBadgeKind,
-  decisionDueBadgeLabel,
-} from '@/lib/decisions/decision-due-labels';
-import {
-  presentDecisionNote,
+  equipmentStatusLabel,
   presentDecisionType,
-  presentMilestoneName,
+  presentIssueTitle,
+  ragLabel,
 } from '@/lib/ui-labels';
-import {
-  DASHBOARD_PAIR_LIST_SCROLL_CLASS,
-  DASHBOARD_PAIR_SURFACE_CLASS,
-} from '@/lib/dashboard/dashboard-layout';
+import { DASHBOARD_PAIR_SURFACE_CLASS } from '@/lib/dashboard/dashboard-layout';
 import { ModuleSurface } from './module-surface';
+import { StatusPill } from './status-pill';
+import { entityDetailHref } from '@/lib/entity-routes';
 
-/** Context-sensitive Decision / required-action — paired with Exceptions. */
+/**
+ * One management control case — Production Start — with at most one related
+ * DEC-001. Forecast and execution stay independent (BR-006). Not a register.
+ */
 export function DecisionAction({ data }: { data: DashboardOverview }) {
-  const decisions = data.decisions;
-  const milestoneName = (id: string | null) => {
-    if (!id) return null;
-    const ms = data.milestones.find((m) => m.id === id);
-    return presentMilestoneName(id, ms?.name ?? id);
-  };
-  const passedCount = decisions.filter((d) => d.dueState === 'passed').length;
-
-  if (data.decisionPanelState === 'absent' && decisions.length === 0) {
+  if (data.decisionPanelState === 'absent') {
     return null;
   }
 
-  const needed = data.decisionPanelState === 'needed' && decisions.length === 0;
-  const showHonesty =
-    Boolean(data.decisionHonesty) && !data.decisionHonesty?.recoveryExecuted;
+  const psDelta = data.project.productionStartVariance?.deltaDays ?? 0;
+  const baseline = data.project.baselineProductionStart;
+  const forecast = data.project.forecastProductionStart;
+  const primary = data.decisions.find((d) => d.id === 'DEC-001') ?? null;
+  const eq = data.equipment.find((e) => e.id === 'EQ-HVAC-01');
+  const issueRow = data.issues.find((i) => i.id === 'ISS-001') ?? null;
+  const risk = data.risks.find((r) => r.id === 'RISK-001');
+  const needed = data.decisionPanelState === 'needed';
+  const execStatus = primary?.executionStatus ?? 'unknown';
+  const exec = primary?.execution ?? null;
+  const deviation =
+    data.decisionHonesty?.forecastDeviation ??
+    (psDelta === 0 ? 'within_baseline' : 'deviation_persists');
+
+  const eqHuman = eq
+    ? `${eq.name} — ${equipmentStatusLabel(eq.status)}`
+    : 'Критическое оборудование AHU';
+  const riskHuman = risk ? ragLabel('risk', risk.rag) : null;
+  const issueHuman = issueRow
+    ? presentIssueTitle(issueRow.id, issueRow.title)
+    : null;
+
+  const showResidualCaveat =
+    execStatus === 'completed' && deviation === 'deviation_persists';
+  const showNeededCaveat = needed;
 
   return (
     <ModuleSurface
       data-dashboard-block="decisions"
-      /* Tailwind scans this file — keep max-h literal (lib alone is not enough). */
       className={`${DASHBOARD_PAIR_SURFACE_CLASS} max-h-[28rem] overflow-hidden`}
     >
-      {needed ? (
-        <div
-          className="shrink-0 rounded-[var(--radius-sm)] border-2 border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-3.5 py-3"
-          data-decision-callout="needed"
+      <div className="flex shrink-0 flex-wrap items-baseline justify-between gap-2">
+        <h2
+          id="decision-heading"
+          className={
+            needed
+              ? 'text-sm font-semibold tracking-wide text-[var(--status-danger-fg)]'
+              : 'text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]'
+          }
         >
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2
-              id="decision-heading"
-              className="text-sm font-bold uppercase tracking-wide text-[var(--status-danger-fg)]"
-            >
+          Прогноз и решение
+        </h2>
+        <Link
+          href="/decisions"
+          className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+          data-decisions-register-link
+        >
+          Все решения
+        </Link>
+      </div>
+
+      {/* Scrollable body — footer CTAs stay reachable on 768. */}
+      <div
+        className="mt-2 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pr-0.5 [scrollbar-gutter:stable]"
+        data-decision-body="scroll"
+      >
+        <p
+          className="text-xs text-[var(--text-muted)]"
+          data-decision-scope="production-start"
+        >
+          Объект контроля: Запуск производства
+        </p>
+
+        <div data-decision-impact="true">
+          <p
+            className="text-2xl font-semibold tabular-nums tracking-tight text-[var(--text)]"
+            data-decision-ps-delta
+          >
+            {formatDeltaDays(psDelta)}
+          </p>
+          <p className="mt-1 text-xs text-[var(--text-secondary)]">
+            базовый план{' '}
+            <span className="tabular-nums">{formatDateRu(baseline)}</span>
+            <span className="mx-1.5 text-[var(--border)]" aria-hidden>
+              →
+            </span>
+            прогноз{' '}
+            <span className="tabular-nums">{formatDateRu(forecast)}</span>
+            {deviation === 'deviation_persists' ? (
+              <span className="text-[var(--text-muted)]">
+                {' '}
+                · отклонение сохраняется
+              </span>
+            ) : null}
+          </p>
+          <p className="mt-1.5 text-sm leading-snug text-[var(--text-secondary)]">
+            Причина: {eqHuman}
+            {needed && issueHuman ? ` · ${issueHuman}` : ''}
+            {!needed && riskHuman ? ` · ${riskHuman}` : ''}
+          </p>
+          <ul className="mt-1.5 flex flex-wrap gap-x-2.5 gap-y-0.5 text-[11px] text-[var(--text-muted)]">
+            {eq ? (
+              <li>
+                <Link
+                  href={entityDetailHref('equipment', eq.id)}
+                  className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                >
+                  {eq.id}
+                </Link>
+              </li>
+            ) : null}
+            {issueRow ? (
+              <li>
+                <Link
+                  href={entityDetailHref('issue', issueRow.id)}
+                  className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                >
+                  {issueRow.id}
+                </Link>
+              </li>
+            ) : null}
+            {risk ? (
+              <li>
+                <Link
+                  href={entityDetailHref('risk', risk.id)}
+                  className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                >
+                  {risk.id}
+                </Link>
+              </li>
+            ) : null}
+            <li>
+              <Link
+                href={entityDetailHref('milestone', 'MS-PS')}
+                className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+              >
+                MS-PS
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {needed ? (
+          <div
+            className="rounded-[var(--radius-sm)] border border-[var(--status-danger-border)] bg-[var(--status-danger-bg)]/40 px-3 py-2.5"
+            data-decision-callout="needed"
+          >
+            <p className="text-sm font-semibold text-[var(--status-danger-fg)]">
               Требуется решение
-            </h2>
+            </p>
+            <p
+              className="mt-1 text-xs font-medium text-[var(--status-danger-fg)]"
+              data-decision-callout-state="unregistered"
+            >
+              Решение по запуску не зарегистрировано
+            </p>
+            {showNeededCaveat ? (
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
+                Запись решения сама по себе не устраняет отклонение прогноза.
+              </p>
+            ) : null}
+          </div>
+        ) : primary ? (
+          <div
+            className="rounded-[var(--radius-sm)] bg-[var(--surface-sunken)] px-3 py-2.5"
+            data-decision-callout="recorded"
+            data-decision-related="true"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+              Связанное решение
+            </p>
+            <p className="mt-1 text-sm font-semibold leading-snug text-[var(--text)]">
+              {presentDecisionType(primary.type)}
+              <span className="ml-1.5 text-xs font-normal text-[var(--text-muted)]">
+                {primary.id}
+              </span>
+            </p>
+            {primary.note ? (
+              <p className="mt-1 text-xs leading-snug text-[var(--text-secondary)]">
+                {primary.note}
+              </p>
+            ) : null}
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+              <span className="text-[var(--text-muted)]">Исполнение:</span>
+              <StatusPill
+                family="decisionExecution"
+                value={execStatus}
+                label={decisionExecutionLabel(execStatus)}
+              />
+            </div>
+            {exec ? (
+              <p
+                className="mt-1.5 text-xs text-[var(--text-secondary)]"
+                data-decision-execution-source="demo"
+              >
+                {exec.source.label}: {exec.evidenceNote}
+                <span className="text-[var(--text-muted)]">
+                  {' '}
+                  · на {formatDateRu(exec.asOfDate)}
+                </span>
+              </p>
+            ) : (
+              <p className="mt-1.5 text-xs text-[var(--text-muted)]">
+                Нет данных об исполнении (демо-наблюдение отсутствует).
+              </p>
+            )}
+            {showResidualCaveat ? (
+              <p className="mt-1.5 text-xs text-[var(--text-muted)]">
+                Выполнение действия не означает восстановление прогноза.
+              </p>
+            ) : null}
+          </div>
+        ) : (
+          <p
+            className="text-sm text-[var(--status-danger-fg)]"
+            data-decision-callout="recorded-missing"
+          >
+            Решение по запуску отсутствует в снимке при состоянии recorded —
+            проверьте API.
+          </p>
+        )}
+      </div>
+
+      <div
+        className="mt-2 flex shrink-0 flex-wrap gap-x-3 gap-y-1 border-t border-[var(--border-subtle)] pt-2 text-xs"
+        data-decision-footer="cta"
+      >
+        {needed ? (
+          <>
+            {issueRow ? (
+              <Link
+                href={entityDetailHref('issue', issueRow.id)}
+                className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                data-decision-cta="open-issue"
+              >
+                Открыть проблему
+              </Link>
+            ) : null}
             <Link
               href="/decisions"
-              className="text-xs text-[var(--link)] underline-offset-2 hover:underline"
-              data-decisions-register-link
+              className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+              data-decision-cta="open-decisions"
             >
               Все решения
             </Link>
-          </div>
-          <p className="mt-1.5 text-sm leading-snug text-[var(--text-secondary)]">
-            Есть отклонение по поставке и запуску производства. Решение ещё не
-            зарегистрировано. Запись решения не устранит прогноз автоматически.
-          </p>
-        </div>
-      ) : (
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2
-            id="decision-heading"
-            className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]"
-          >
-            Решения
-          </h2>
-          <Link
-            href="/decisions"
-            className="text-xs text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
-            data-decisions-register-link
-          >
-            Все решения
-          </Link>
-        </div>
-      )}
-
-      {decisions.length > 0 ? (
-        <>
-          <p
-            className="mt-1.5 shrink-0 text-[11px] text-[var(--text-muted)]"
-            data-decisions-summary="true"
-          >
-            Записанные решения: {decisions.length}
-            {passedCount > 0 ? ` · срок прошёл: ${passedCount}` : ''}
-            {' · '}
-            исполнение не отслеживается
-            {showHonesty ? (
-              <>
-                . Запись не снимает отклонение автоматически. Прогноз старта
-                портфеля:{' '}
-                <span className="tabular-nums text-[var(--text-secondary)]">
-                  {formatDateRu(data.project.forecastProductionStart)}
-                </span>
-              </>
-            ) : (
-              '.'
-            )}
-          </p>
-          <ul
-            className={DASHBOARD_PAIR_LIST_SCROLL_CLASS}
-            data-decisions="list"
-            data-decisions-scroll="fill"
-          >
-            {decisions.map((decision) => {
-              const dueKind = decisionDueBadgeKind(
-                decision.dueState ?? 'none',
-                decision.dueDate,
-                data.scenarioAsOfDate,
-              );
-              const dueLabel = decisionDueBadgeLabel(dueKind);
-              return (
-                <li
-                  key={decision.id}
-                  className="py-2.5 first:pt-1 last:pb-0 text-sm"
-                  data-decision-id={decision.id}
-                  data-decision-due={decision.dueState ?? 'none'}
-                >
-                  <p className="font-semibold text-[var(--text)]">
-                    {presentDecisionType(decision.type)}
-                  </p>
-                  <p className="mt-0.5 text-[var(--text-secondary)]">
-                    {presentDecisionNote(decision.id, decision.note)}
-                  </p>
-                  <dl className="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5 text-[11px] text-[var(--text-muted)]">
-                    <div>
-                      <dt className="inline">Владелец: </dt>
-                      <dd className="inline text-[var(--text-secondary)]">
-                        <Link
-                          href={`/people/${encodeURIComponent(decision.ownerPersonId)}`}
-                          className="underline-offset-2 hover:underline"
-                        >
-                          {decision.ownerFullNameRu}
-                        </Link>
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="inline">Срок: </dt>
-                      <dd className="inline text-[var(--text-secondary)]">
-                        {decision.dueDate
-                          ? formatDateRu(decision.dueDate)
-                          : 'не задан'}
-                        {dueKind === 'passed' || dueKind === 'today' ? (
-                          <span
-                            className="ml-1 text-[var(--text-muted)]"
-                            data-decision-due-badge={dueKind}
-                          >
-                            · {dueLabel}
-                          </span>
-                        ) : null}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="inline">Веха: </dt>
-                      <dd className="inline text-[var(--text-secondary)]">
-                        {decision.milestoneId ? (
-                          <Link
-                            href={`/milestones/${encodeURIComponent(decision.milestoneId)}`}
-                            className="underline-offset-2 hover:underline"
-                          >
-                            {milestoneName(decision.milestoneId)}
-                          </Link>
-                        ) : (
-                          'не привязана'
-                        )}
-                      </dd>
-                    </div>
-                  </dl>
-                </li>
-              );
-            })}
-          </ul>
-        </>
-      ) : null}
+          </>
+        ) : primary ? (
+          <>
+            <Link
+              href={`/decisions?q=${encodeURIComponent(primary.id)}`}
+              className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+              data-decision-cta="open-decision"
+            >
+              Открыть решение
+            </Link>
+            {issueRow ? (
+              <Link
+                href={entityDetailHref('issue', issueRow.id)}
+                className="text-[var(--link)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]"
+                data-decision-cta="open-issue"
+              >
+                Открыть проблему
+              </Link>
+            ) : null}
+          </>
+        ) : null}
+      </div>
     </ModuleSurface>
   );
 }
-
-/** @deprecated name — use DecisionAction */
-export const DecisionPanel = DecisionAction;

@@ -21,6 +21,8 @@ npm run dev                        # = docker compose --env-file .env.local -f d
 npm run dev:down                   # тома сохраняются (без -v)
 ```
 
+DX Docs: generated `website/.docusaurus` в контейнере — named volume (`ppc_dev_docs_docusaurus`), поэтому host `npm run docs:build` не ломает live `/docs/`. Детали: [local-dev-and-demo](docs/10-operations/local-dev-and-demo.md).
+
 Смена порта: правьте `HOST_PORT`, `WEB_ORIGIN`, `PUBLIC_ORIGIN`, `DOCUSAURUS_URL` в **корневом** `.env.local`.  
 `apps/web/.env.local` — только для native `npm run web:dev` (без Compose).
 

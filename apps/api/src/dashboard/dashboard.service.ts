@@ -3,25 +3,26 @@ import { calendarDaysDelta } from '../common/calendar-days-delta';
 import {
   computeDerivedImpact,
   decisionPanelState,
+  forecastDeviationOf,
 } from '../common/derived-impact';
 import { buildDirectEdges } from '../common/direct-edges';
 import { decisionDueState } from '../contracts/decision-due-state';
 import { DEMO_DATA_SOURCE, DemoDataSource } from '../data/demo-data-source';
-import {
-  milestoneMembership,
-  programSummariesFor,
-  projectById,
-} from '../data/analyst-portfolio';
+import { resolveDecisionExecution } from '../data/decision-execution';
+import { milestoneMembership, projectById } from '../data/analyst-portfolio';
 import { portfolioMilestoneUniverseIds } from '../data/portfolio-milestone-universe';
 import {
   computeProjectStatus,
   computeWorkstreamRollups,
 } from '../data/project-status';
 import { mergeDemoTree } from '../data/schedule/schedule-demo-tree';
+import { PortfolioService } from '../portfolio/portfolio.service';
 import { WORKSTREAM_BRIDGES } from '../data/ws-program-mapping';
 import type { SnapshotId } from '../snapshot/snapshot-id';
 import type { DashboardOverviewDto } from './dto/dashboard-overview.dto';
 import type { WorkstreamId } from '../data/workstream-ids';
+import { buildPeopleFocus, previousSnapshotIdOf } from './people-focus';
+import type { PersonId } from '../contracts/person-id';
 
 function membershipFromCheckpoint(c: {
   wbs: string;
@@ -56,6 +57,7 @@ function membershipFromCheckpoint(c: {
 export class DashboardService {
   constructor(
     @Inject(DEMO_DATA_SOURCE) private readonly dataSource: DemoDataSource,
+    private readonly portfolio: PortfolioService,
   ) {}
 
   getOverview(projectId: string, snapshotId: SnapshotId): DashboardOverviewDto {
@@ -72,6 +74,8 @@ export class DashboardService {
 
     const panelState = decisionPanelState(snapshot);
     const impact = computeDerivedImpact(snapshot);
+    const forecastDeviation = forecastDeviationOf(snapshot);
+    const programRows = this.portfolio.programStatuses(snapshot);
     const milestones = this.buildPortfolioMilestones(snapshotId, {
       milestones: snapshot.milestones,
       scenarioAsOfDate: snapshot.scenarioAsOfDate,
@@ -144,28 +148,31 @@ export class DashboardService {
         issueId: risk.issueId,
       })),
       milestones,
-      programs: programSummariesFor({
-        panelRed:
-          snapshot.milestones.find((ms) => ms.id === 'MS-CLN-PANEL')?.rag ===
-          'Red',
-        powerRed:
-          snapshot.milestones.find((ms) => ms.id === 'MS-UTL-PWR')?.rag ===
-          'Red',
-        hvacDelayed:
-          snapshot.equipment.find((item) => item.id === 'EQ-HVAC-01')
-            ?.status === 'Delayed',
-      }),
-      decisions: snapshot.decisions.map((d) => ({
-        id: d.id,
-        projectId: d.projectId,
-        milestoneId: d.milestoneId,
-        type: d.type,
-        ownerPersonId: d.ownerPersonId,
-        ownerFullNameRu: this.dataSource.personFullNameRu(d.ownerPersonId),
-        dueDate: d.dueDate,
-        note: d.note,
-        dueState: decisionDueState(d.dueDate, snapshot.scenarioAsOfDate),
+      programs: programRows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        status: row.status,
+        progressPct: row.progressPct,
+        leafCompleted: row.leafCompleted,
+        leafTotal: row.leafTotal,
+        progressFillTone: row.progressFillTone,
       })),
+      decisions: snapshot.decisions.map((d) => {
+        const exec = resolveDecisionExecution(d.id, snapshot);
+        return {
+          id: d.id,
+          projectId: d.projectId,
+          milestoneId: d.milestoneId,
+          type: d.type,
+          ownerPersonId: d.ownerPersonId,
+          ownerFullNameRu: this.dataSource.personFullNameRu(d.ownerPersonId),
+          dueDate: d.dueDate,
+          note: d.note,
+          dueState: decisionDueState(d.dueDate, snapshot.scenarioAsOfDate),
+          executionStatus: exec.status,
+          execution: exec.execution,
+        };
+      }),
       workstreamRollups: computeWorkstreamRollups(snapshot),
       topExceptions: [...snapshot.topExceptions]
         .sort((a, b) => a.priority - b.priority)
@@ -190,12 +197,37 @@ export class DashboardService {
         kind: impact.kind,
       },
       decisionHonesty:
-        panelState === 'recorded' ? { recoveryExecuted: false } : null,
+        panelState === 'recorded'
+          ? {
+              recoveryExecuted: false,
+              forecastDeviation,
+            }
+          : null,
+      peopleFocus: this.buildPeopleFocusPanel(snapshotId),
     };
   }
 
+  private buildPeopleFocusPanel(snapshotId: SnapshotId) {
+    const current = this.dataSource.getSnapshot(snapshotId);
+    const prevId = previousSnapshotIdOf(snapshotId);
+    const known = this.dataSource.listSnapshotIds();
+    const previous =
+      prevId && known.includes(prevId)
+        ? this.dataSource.getSnapshot(prevId)
+        : null;
+    return buildPeopleFocus(current, previous, (id: PersonId) => {
+      const p = this.dataSource.getPerson(id);
+      if (!p) return null;
+      return {
+        fullNameRu: p.fullNameRu,
+        roleTitleRu: p.roleTitleRu,
+        primaryWorkstreamId: p.primaryWorkstreamId,
+      };
+    });
+  }
+
   /**
-   * Catalog MS ∪ imported KT (aliases already MS-*). Stable 189-set for A–S.
+   * Catalog MS ∪ imported KT (aliases already MS-*). Stable 189-set for 01–19.
    */
   private buildPortfolioMilestones(
     snapshotId: SnapshotId,

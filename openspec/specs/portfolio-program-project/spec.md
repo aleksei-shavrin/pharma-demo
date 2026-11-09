@@ -4,7 +4,7 @@
 
 ### Requirement: Seven programs and twenty-five analyst projects
 
-Система SHALL сохранять семь программ `PRG-*` и каталог `AN-01`…`AN-25`. SHALL NOT создавать `PRG-GREENFIELD` и SHALL NOT схлопывать 7→1. Имя Greenfield в исходнике — provenance для portfolio `PRJ-01`.
+Система SHALL сохранять семь программ `PRG-*` и каталог `AN-01`…`AN-25`. SHALL NOT создавать `PRG-GREENFIELD` и SHALL NOT схлопывать 7→1. Имя Greenfield в исходнике — provenance для portfolio `PRT-01`.
 
 #### Scenario: Programs list has seven rows
 
@@ -45,3 +45,15 @@ Project detail SHALL публиковать composition counts (этапы/ра�
 - **WHEN** открыт detail `AN-08`
 - **THEN** composition.checkpoints включает source КТ проекта (включая alias MS-CLN-PANEL)
 - **AND** catalogMilestones не дублирует этот alias
+
+### Requirement: Dashboard program row dual-axis (status vs schedule fill)
+
+> **certainty:** assumption — dashboard-program-people-layout 2026-11-09 (code audit; не domain fact)
+
+На dashboard «Состояние по программам» система SHALL показывать health `status` (бейдж `--status-*`) независимо от `progressFillTone` полосы (`--schedule-fill-*`). FE SHALL NOT заливать всю строку цветом status и SHALL NOT форсировать fillTone = status. `status` SHALL совпадать с worst child project status; `progressFillTone` SHALL следовать `fillToneForProgramProjects` (lag→danger, shift→warn).
+
+#### Scenario: Red health with non-danger schedule fill is allowed
+
+- **WHEN** программа имеет child project Red и schedule leaves без lag (только shift или none)
+- **THEN** бейдж остаётся «Критично» / Red
+- **AND** полоса прогресса MAY быть warn или ok

@@ -27,7 +27,7 @@ const projectRow = {
 };
 
 const programDetail: ProgramDetail = {
-  snapshotId: 'C',
+  snapshotId: '03',
   id: 'PRG-CON',
   name: 'Строительство',
   status: 'Red',
@@ -144,6 +144,34 @@ describe('portfolio-views product labels', () => {
     expect(screen.queryByText(/якор|источник|thin|depth/i)).toBeNull();
   });
 
+  it('shared SemanticProgressBar grid keeps full 100% label (non-compact portfolio)', () => {
+    render(
+      <ProgramListView
+        items={[
+          {
+            id: 'PRG-CON',
+            name: 'Строительство',
+            status: 'Red',
+            projectCount: 2,
+            progressPct: 100,
+            leafCompleted: 10,
+            leafTotal: 10,
+            progressFillTone: 'ok',
+          },
+        ]}
+      />,
+    );
+    const meter = document.querySelector('[data-semantic-progress="known"]');
+    expect(meter).toBeTruthy();
+    expect(meter?.getAttribute('data-semantic-progress-compact')).toBeNull();
+    expect(meter?.getAttribute('data-semantic-progress-pct-col')).toMatch(/ch$/);
+    expect(
+      document.querySelector('[data-semantic-progress-pct="true"]')?.textContent,
+    ).toBe('100%');
+    expect(meter?.getAttribute('style') ?? '').toMatch(/minmax\(0,\s*1fr\)/);
+  });
+
+
   it('keeps catalog codes on one line (nowrap + min width)', () => {
     render(<ProjectListView items={[projectRow]} />);
     const code = document.querySelector('[data-portfolio-code="AN-08"]');
@@ -247,7 +275,7 @@ describe('portfolio-views product labels', () => {
     render(
       <ProjectCardView
         data={{
-          snapshotId: 'C',
+          snapshotId: '03',
           id: 'AN-08',
           name: 'Чистые',
           programId: 'PRG-CON',
@@ -323,7 +351,7 @@ describe('portfolio-views product labels', () => {
     render(
       <ProjectCardView
         data={{
-          snapshotId: 'C',
+          snapshotId: '03',
           id: 'AN-22',
           name: 'СМК',
           programId: 'PRG-ORG',
@@ -394,13 +422,13 @@ describe('portfolio-views product labels', () => {
     ) as HTMLSelectElement | null;
     expect(select).toBeTruthy();
     expect(select!.querySelector('option[value="Green"]')?.textContent).toBe(
-      'Зелёный',
+      'В норме',
     );
     expect(select!.querySelector('option[value="Yellow"]')?.textContent).toBe(
-      'Жёлтый',
+      'Требует внимания',
     );
     expect(select!.querySelector('option[value="Red"]')?.textContent).toBe(
-      'Красный',
+      'Критично',
     );
   });
 });

@@ -22,9 +22,9 @@ related:
 > Exact inventory after **R1**. Demo assumptions ≠ реальное предприятие / полная GMP-модель.
 >
 > **Calendar:** DOC-PROD-012 — **2027**; PS baseline **2027-09-15**.  
-> **Spine:** `PRJ-01`, `EQ-HVAC-01`, `MS-PS`, `ISS-001`, `RISK-001`, `DEC-001`.
+> **Spine:** `PRT-01` (historical draft id `PRJ-01`), `EQ-HVAC-01`, `MS-PS`, `ISS-001`, `RISK-001`, `DEC-001`.
 
-**Counts:** Equipment **23** · Milestones 14 · Issues 11 · Risks 12 · Decisions 6 · Owner roles (metadata) 5 · Snapshots A–H.
+**Counts:** Equipment **23** · Milestones 14 · Issues 11 · Risks 12 · Decisions 6 · Owner roles (metadata) 5 · Snapshots 01–08.
 
 ---
 
@@ -117,7 +117,7 @@ Statuses Must: **Open | Mitigating | Closed**. Effects fixture-authored.
 | ISS-AUT-01 | Конфликт точек интеграции BMS / EMS | WS-AUT | EQ-AUT-01 | MS-AUT-BMS | RISK-AUT-01 | Open@E |
 | ISS-BLD-01 | Замечания по комплектности технических дверей оболочки | WS-BLD | EQ-BLD-02 | MS-BLD-ENCL | RISK-BLD-01 | Open@B → **Closed@C** |
 
-Closed ≠ auto Green Risk / MS / forecast. When Closed, BR-002 Red expectation for that Issue stops (PKG Risk may be Green in G via fixture).
+Closed ≠ auto Green Risk / MS / forecast. When Closed, BR-002 Red expectation for that Issue stops (PKG Risk may be Green in 07 via fixture).
 
 ---
 
@@ -146,12 +146,12 @@ Domain rag: Green\|Red. Yellow UX = attention without Red Risk.
 
 | ID | RU title | Type | First | projectId | milestoneId | ownerRole | dueDate | Rationale | Fixture effect note |
 |----|----------|------|-------|-----------|-------------|-----------|---------|-----------|---------------------|
-| DEC-001 | Утвердить ускоренную логистику AHU и резервный монтажный слот | PrioritizeRecovery | F | PRJ-01 | MS-PS | SH-DIR-01 | 2027-05-15 | Восстановить окно монтажа HVAC | **Не** меняет Δ; F остаётся +21 |
-| DEC-UTL-01 | Согласовать параллельный ввод PW и сжатый монтаж WFI | PrioritizeRecovery | F | PRJ-01 | MS-UTL-WFI | SH-ENG-01 | 2027-05-20 | Сократить простой utilities | Partial; residual WFI остаётся |
-| DEC-CLN-01 | Усилить бригаду монтажа чистых зон (две смены) | PrioritizeRecovery | F | PRJ-01 | MS-CLN-RDY | SH-ENG-01 | 2027-04-30 | Ускорить готовность к HVAC | Intent; residual CLN |
-| DEC-PKG-01 | Зафиксировать принятие текущего прогноза SAT с оговорками по сериализации | AcceptDateSlip | G | PRJ-01 | MS-PKG-SAT | SH-PKG-01 | — | Принять управленчески текущий горизонт упаковки | Packaging recovery в G **fixture-authored**, не эффект DEC |
-| DEC-QC-01 | Временно использовать контрактную лабораторию для HPLC | PrioritizeRecovery | G | PRJ-01 | MS-QC-RDY | SH-QC-01 | 2027-06-01 | Снять блокер QC | Intent; EQ may stay Delayed |
-| DEC-AUT-01 | Зафиксировать freeze точек интеграции BMS/EMS | PrioritizeRecovery | H | PRJ-01 | MS-AUT-BMS | SH-ENG-01 | 2027-06-15 | Стабилизировать интеграцию | Governance; attention may remain |
+| DEC-001 | Утвердить ускоренную логистику AHU и резервный монтажный слот | PrioritizeRecovery | 06 | PRT-01 | MS-PS | SH-DIR-01 | 2027-05-15 | Восстановить окно монтажа HVAC | **Не** меняет Δ; F остаётся +21 |
+| DEC-UTL-01 | Согласовать параллельный ввод PW и сжатый монтаж WFI | PrioritizeRecovery | 06 | PRT-01 | MS-UTL-WFI | SH-ENG-01 | 2027-05-20 | Сократить простой utilities | Partial; residual WFI остаётся |
+| DEC-CLN-01 | Усилить бригаду монтажа чистых зон (две смены) | PrioritizeRecovery | 06 | PRT-01 | MS-CLN-RDY | SH-ENG-01 | 2027-04-30 | Ускорить готовность к HVAC | Intent; residual CLN |
+| DEC-PKG-01 | Зафиксировать принятие текущего прогноза SAT с оговорками по сериализации | AcceptDateSlip | 07 | PRT-01 | MS-PKG-SAT | SH-PKG-01 | — | Принять управленчески текущий горизонт упаковки | Packaging recovery в 07 **fixture-authored**, не эффект DEC |
+| DEC-QC-01 | Временно использовать контрактную лабораторию для HPLC | PrioritizeRecovery | 07 | PRT-01 | MS-QC-RDY | SH-QC-01 | 2027-06-01 | Снять блокер QC | Intent; EQ may stay Delayed |
+| DEC-AUT-01 | Зафиксировать freeze точек интеграции BMS/EMS | PrioritizeRecovery | 08 | PRT-01 | MS-AUT-BMS | SH-ENG-01 | 2027-06-15 | Стабилизировать интеграцию | Governance; attention may remain |
 
 **Forbidden:** Decision→Equipment / Issue / Risk.  
 Management intent language only — not backend commands.
@@ -175,8 +175,8 @@ Management intent language only — not backend commands.
 | EQ-BLD-02 | 0 | +5 | 0 | 0 | 0 | 0 | 0 | 0 |
 | others | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
-PS: A–B = 2027-09-15; C–F = **2027-10-06** (+21); G–H = **2027-09-29** (+14).  
-G/H Δ improvement = **fixture-authored progress**, not automatic DEC-001 effect.
+PS: 01–02 = 2027-09-15; 03–06 = **2027-10-06** (+21); 07–08 = **2027-09-29** (+14).  
+07/08 Δ improvement = **fixture-authored progress**, not automatic DEC-001 effect.
 
 ---
 
@@ -199,7 +199,7 @@ G/H Δ improvement = **fixture-authored progress**, not automatic DEC-001 effect
 
 ## 9. Data integrity rules
 
-1. Stable IDs across A–H.  
+1. Stable IDs across 01–08.  
 2. RU titles required.  
 3. No orphan Red Risk without Issue (except RISK-COM-01 narrative).  
 4. Delayed ⇒ forecast ≥ baseline.  
@@ -216,7 +216,7 @@ G/H Δ improvement = **fixture-authored progress**, not automatic DEC-001 effect
 
 | Current | Enriched |
 |---------|----------|
-| Snapshot A | A |
-| Snapshot B (HVAC +21) | **C** |
-| Snapshot C (DEC-001) | **F** |
+| Snapshot 01 | 01 |
+| Snapshot 02 (HVAC +21) | **03** |
+| Snapshot 03 (DEC-001) | **F** |
 | Spine IDs | unchanged |

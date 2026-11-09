@@ -1,7 +1,7 @@
 import type { SnapshotId } from './snapshot-id';
 
 /**
- * Phase groups for A–S selector (DOC-PROD-024). Presentation only.
+ * Phase groups for 01–19 selector (DOC-PROD-024). Presentation only.
  */
 export type SnapshotPhaseGroup = {
   id: string;
@@ -10,23 +10,23 @@ export type SnapshotPhaseGroup = {
 };
 
 export const SNAPSHOT_PHASE_GROUPS: readonly SnapshotPhaseGroup[] = [
-  { id: 'early', titleRu: 'Ранний этап', ids: ['A', 'B'] },
-  { id: 'disruption', titleRu: 'Срыв и давление', ids: ['C', 'D', 'E'] },
+  { id: 'early', titleRu: 'Ранний этап', ids: ['01', '02'] },
+  { id: 'disruption', titleRu: 'Срыв и давление', ids: ['03', '04', '05'] },
   {
     id: 'management',
     titleRu: 'Управленческие меры',
-    ids: ['F', 'G', 'H'],
+    ids: ['06', '07', '08'],
   },
-  { id: 'installation', titleRu: 'Монтаж', ids: ['I', 'J', 'K'] },
+  { id: 'installation', titleRu: 'Монтаж', ids: ['09', '10', '11'] },
   {
     id: 'commissioning',
     titleRu: 'Пусконаладка',
-    ids: ['L', 'M', 'N'],
+    ids: ['12', '13', '14'],
   },
   {
     id: 'closeout',
     titleRu: 'Готовность и старт',
-    ids: ['O', 'P', 'Q', 'R', 'S'],
+    ids: ['15', '16', '17', '18', '19'],
   },
 ] as const;
 

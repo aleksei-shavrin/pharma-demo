@@ -15,7 +15,7 @@ Issue и Decision owner references SHALL использовать `ownerPersonId
 
 #### Scenario: Issue owner is Person
 
-- **WHEN** запрошен detail `ISS-001` на Snapshot C после cutover
+- **WHEN** запрошен detail `ISS-001` на Snapshot 03 после cutover
 - **THEN** owner ссылается на существующий `PER-*` и отображаемое имя берётся из Person catalog
 
 ### Requirement: Person detail projections

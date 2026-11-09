@@ -20,12 +20,12 @@ export function dashboardOverviewFixture(
   snapshotId: SnapshotId,
   overrides: Partial<DashboardOverview> = {},
 ): DashboardOverview {
-  const hvacDelayed = ['C', 'D', 'E', 'F'].includes(snapshotId);
+  const hvacDelayed = ['03', '04', '05', '06'].includes(snapshotId);
   const hvacResidual = (
-    ['G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'] as SnapshotId[]
+    ['07', '08', '09', '10', '11', '12', '13', '14'] as SnapshotId[]
   ).includes(snapshotId);
   const hvacRecovered = (
-    ['O', 'P', 'Q', 'R', 'S'] as SnapshotId[]
+    ['15', '16', '17', '18', '19'] as SnapshotId[]
   ).includes(snapshotId);
   const psDelta = hvacRecovered ? 7 : hvacResidual ? 14 : hvacDelayed ? 21 : 0;
   const psForecast =
@@ -38,20 +38,20 @@ export function dashboardOverviewFixture(
           : '2027-09-15';
 
   const projectStatus: DashboardOverview['projectStatus'] =
-    snapshotId === 'A' || snapshotId === 'S'
+    snapshotId === '01' || snapshotId === '19'
       ? 'Green'
-      : snapshotId === 'B' ||
-          snapshotId === 'Q' ||
-          snapshotId === 'R'
+      : snapshotId === '02' ||
+          snapshotId === '17' ||
+          snapshotId === '18'
         ? 'Yellow'
         : 'Red';
 
   const risk001Green = (
-    ['A', 'B', 'Q', 'R', 'S'] as SnapshotId[]
+    ['01', '02', '17', '18', '19'] as SnapshotId[]
   ).includes(snapshotId);
-  const panelPowerSlip = snapshotId !== 'A' && snapshotId !== 'B';
+  const panelPowerSlip = snapshotId !== '01' && snapshotId !== '02';
 
-  /** Stable curated executive map — same membership A–S. */
+  /** Stable curated executive map — same membership 01–19. */
   const executiveMilestoneIds = [
     'MS-BLD-EXC',
     'MS-CLN-PANEL',
@@ -73,24 +73,72 @@ export function dashboardOverviewFixture(
     projectStatus,
     executiveMilestoneIds,
     programs: [
-      { id: 'PRG-DSN', name: 'Проектирование и разрешения', status: 'Yellow' },
+      {
+        id: 'PRG-DSN',
+        name: 'Проектирование и разрешения',
+        status: 'Yellow',
+        progressPct: 40,
+        leafCompleted: 4,
+        leafTotal: 10,
+        progressFillTone: 'warn' as const,
+      },
       {
         id: 'PRG-CON',
         name: 'Строительство',
         status: panelPowerSlip ? 'Red' : 'Yellow',
+        progressPct: 35,
+        leafCompleted: 7,
+        leafTotal: 20,
+        progressFillTone: panelPowerSlip ? ('danger' as const) : ('warn' as const),
       },
       {
         id: 'PRG-ENG',
         name: 'Инженерия',
         status: panelPowerSlip ? 'Red' : 'Yellow',
+        progressPct: 28,
+        leafCompleted: 5,
+        leafTotal: 18,
+        progressFillTone: panelPowerSlip ? ('danger' as const) : ('warn' as const),
       },
-      { id: 'PRG-EQP', name: 'Оборудование', status: 'Yellow' },
-      { id: 'PRG-DIG', name: 'Цифра', status: 'Yellow' },
-      { id: 'PRG-STA', name: 'Запуск', status: 'Yellow' },
-      { id: 'PRG-ORG', name: 'Организация и люди', status: 'Yellow' },
+      {
+        id: 'PRG-EQP',
+        name: 'Оборудование',
+        status: 'Yellow',
+        progressPct: 22,
+        leafCompleted: 3,
+        leafTotal: 14,
+        progressFillTone: 'warn' as const,
+      },
+      {
+        id: 'PRG-DIG',
+        name: 'Цифра',
+        status: 'Yellow',
+        progressPct: 18,
+        leafCompleted: 2,
+        leafTotal: 11,
+        progressFillTone: 'warn' as const,
+      },
+      {
+        id: 'PRG-STA',
+        name: 'Запуск',
+        status: 'Yellow',
+        progressPct: 10,
+        leafCompleted: 1,
+        leafTotal: 10,
+        progressFillTone: 'warn' as const,
+      },
+      {
+        id: 'PRG-ORG',
+        name: 'Организация и люди',
+        status: 'Yellow',
+        progressPct: 50,
+        leafCompleted: 5,
+        leafTotal: 10,
+        progressFillTone: 'ok' as const,
+      },
     ],
     project: {
-      id: 'PRJ-01',
+      id: 'PRT-01',
       name: 'Строительство фармацевтической фабрики (Greenfield)',
       baselineProductionStart: '2027-09-15',
       forecastProductionStart: psForecast,
@@ -139,30 +187,30 @@ export function dashboardOverviewFixture(
         name: 'Линия первичной упаковки',
         critical: true,
         status:
-          snapshotId === 'B' || snapshotId === 'C' || snapshotId === 'F'
+          snapshotId === '02' || snapshotId === '03' || snapshotId === '06'
             ? 'Delayed'
             : 'OnTrack',
         workstream: 'WS-PKG',
         baselineDelivery: '2027-06-20',
         forecastDelivery:
-          snapshotId === 'B' || snapshotId === 'C'
+          snapshotId === '02' || snapshotId === '03'
             ? '2027-06-30'
-            : snapshotId === 'F'
+            : snapshotId === '06'
               ? '2027-06-27'
               : '2027-06-20',
         deliveryVariance: {
           subject: 'equipment_delivery',
           baselineDate: '2027-06-20',
           forecastDate:
-            snapshotId === 'B' || snapshotId === 'C'
+            snapshotId === '02' || snapshotId === '03'
               ? '2027-06-30'
-              : snapshotId === 'F'
+              : snapshotId === '06'
                 ? '2027-06-27'
                 : '2027-06-20',
           deltaDays:
-            snapshotId === 'B' || snapshotId === 'C'
+            snapshotId === '02' || snapshotId === '03'
               ? 10
-              : snapshotId === 'F'
+              : snapshotId === '06'
                 ? 7
                 : 0,
         },
@@ -172,24 +220,24 @@ export function dashboardOverviewFixture(
         name: 'Сериализация / агрегация',
         critical: true,
         status:
-          snapshotId === 'G' || snapshotId === 'H' || snapshotId === 'F'
+          snapshotId === '07' || snapshotId === '08' || snapshotId === '06'
             ? 'Delayed'
             : 'OnTrack',
         workstream: 'WS-PKG',
         baselineDelivery: '2027-07-05',
         forecastDelivery:
-          snapshotId === 'G' || snapshotId === 'H' || snapshotId === 'F'
+          snapshotId === '07' || snapshotId === '08' || snapshotId === '06'
             ? '2027-07-12'
             : '2027-07-05',
         deliveryVariance: {
           subject: 'equipment_delivery',
           baselineDate: '2027-07-05',
           forecastDate:
-            snapshotId === 'G' || snapshotId === 'H' || snapshotId === 'F'
+            snapshotId === '07' || snapshotId === '08' || snapshotId === '06'
               ? '2027-07-12'
               : '2027-07-05',
           deltaDays:
-            snapshotId === 'G' || snapshotId === 'H' || snapshotId === 'F'
+            snapshotId === '07' || snapshotId === '08' || snapshotId === '06'
               ? 7
               : 0,
         },
@@ -198,22 +246,22 @@ export function dashboardOverviewFixture(
         id: 'EQ-BLD-02',
         name: 'Комплект технических дверей и шлюзов оболочки',
         critical: false,
-        status: snapshotId === 'B' ? 'Delayed' : 'OnTrack',
+        status: snapshotId === '02' ? 'Delayed' : 'OnTrack',
         workstream: 'WS-BLD',
         baselineDelivery: '2027-02-01',
-        forecastDelivery: snapshotId === 'B' ? '2027-02-06' : '2027-02-01',
+        forecastDelivery: snapshotId === '02' ? '2027-02-06' : '2027-02-01',
         deliveryVariance: {
           subject: 'equipment_delivery',
           baselineDate: '2027-02-01',
-          forecastDate: snapshotId === 'B' ? '2027-02-06' : '2027-02-01',
-          deltaDays: snapshotId === 'B' ? 5 : 0,
+          forecastDate: snapshotId === '02' ? '2027-02-06' : '2027-02-01',
+          deltaDays: snapshotId === '02' ? 5 : 0,
         },
       },
     ],
     issues:
-      snapshotId === 'A'
+      snapshotId === '01'
         ? []
-        : snapshotId === 'B'
+        : snapshotId === '02'
           ? [
               {
                 id: 'ISS-PKG-01',
@@ -237,14 +285,14 @@ export function dashboardOverviewFixture(
                 id: 'ISS-001',
                 title: 'Прогноз сдвига поставки long-lead AHU',
                 status:
-                  snapshotId === 'C' || snapshotId === 'D' || snapshotId === 'E'
+                  snapshotId === '03' || snapshotId === '04' || snapshotId === '05'
                     ? 'Open'
                     : 'Mitigating',
                 workstream: 'WS-HVAC',
                 equipmentId: 'EQ-HVAC-01',
                 milestoneId: 'MS-PS',
               },
-              ...(snapshotId === 'G' || snapshotId === 'H'
+              ...(snapshotId === '07' || snapshotId === '08'
                 ? [
                     {
                       id: 'ISS-PKG-01' as const,
@@ -273,7 +321,7 @@ export function dashboardOverviewFixture(
         workstream: 'WS-HVAC',
         equipmentId: 'EQ-HVAC-01',
         milestoneId: 'MS-PS',
-        issueId: snapshotId === 'A' || snapshotId === 'B' ? null : 'ISS-001',
+        issueId: snapshotId === '01' || snapshotId === '02' ? null : 'ISS-001',
       },
     ],
     milestones: [
@@ -380,7 +428,7 @@ export function dashboardOverviewFixture(
         workstream: 'WS-PKG' as const,
         baselineDate: '2027-08-10',
         forecastDate:
-          snapshotId === 'C' || snapshotId === 'D' || snapshotId === 'E'
+          snapshotId === '03' || snapshotId === '04' || snapshotId === '05'
             ? '2027-08-20'
             : '2027-08-10',
       },
@@ -435,7 +483,7 @@ export function dashboardOverviewFixture(
       {
         id: 'MS-COM-PQ',
         name: 'Демо-гейт PQ',
-        rag: snapshotId === 'P' ? ('Red' as const) : ('Green' as const),
+        rag: snapshotId === '16' ? ('Red' as const) : ('Green' as const),
         workstream: 'WS-AUT' as const,
         baselineDate: '2027-09-10',
         forecastDate: '2027-09-10',
@@ -466,11 +514,11 @@ export function dashboardOverviewFixture(
       },
     ],
     decisions:
-      snapshotId === 'F' || snapshotId === 'G' || snapshotId === 'H'
+      snapshotId === '06' || snapshotId === '07' || snapshotId === '08'
         ? [
             {
               id: 'DEC-001',
-              projectId: 'PRJ-01',
+              projectId: 'PRT-01',
               milestoneId: 'MS-PS',
               type: 'PrioritizeRecovery',
               ownerPersonId: 'PER-01' as const,
@@ -480,7 +528,7 @@ export function dashboardOverviewFixture(
             },
             {
               id: 'DEC-UTL-01' as const,
-              projectId: 'PRJ-01',
+              projectId: 'PRT-01',
               milestoneId: 'MS-UTL-WFI',
               type: 'PrioritizeRecovery' as const,
               ownerPersonId: 'PER-09' as const,
@@ -488,11 +536,11 @@ export function dashboardOverviewFixture(
               dueDate: null,
               note: 'Согласовать параллельный ввод PW и сжатый монтаж WFI',
             },
-            ...(snapshotId === 'G' || snapshotId === 'H'
+            ...(snapshotId === '07' || snapshotId === '08'
               ? [
                   {
                     id: 'DEC-PKG-01' as const,
-                    projectId: 'PRJ-01',
+                    projectId: 'PRT-01',
                     milestoneId: 'MS-PKG-SAT',
                     type: 'AcceptDateSlip' as const,
                     ownerPersonId: 'PER-11' as const,
@@ -502,11 +550,11 @@ export function dashboardOverviewFixture(
                   },
                 ]
               : []),
-            ...(snapshotId === 'H'
+            ...(snapshotId === '08'
               ? [
                   {
                     id: 'DEC-AUT-01' as const,
-                    projectId: 'PRJ-01',
+                    projectId: 'PRT-01',
                     milestoneId: 'MS-AUT-BMS',
                     type: 'PrioritizeRecovery' as const,
                     ownerPersonId: 'PER-13' as const,
@@ -519,20 +567,20 @@ export function dashboardOverviewFixture(
           ]
         : [],
     workstreamRollups: allWs(
-      snapshotId === 'B'
+      snapshotId === '02'
         ? { 'WS-PKG': 'Yellow', 'WS-BLD': 'Yellow' }
-        : snapshotId === 'C'
+        : snapshotId === '03'
           ? { 'WS-HVAC': 'Red', 'WS-PKG': 'Yellow' }
-          : snapshotId === 'F'
+          : snapshotId === '06'
             ? { 'WS-HVAC': 'Red', 'WS-PKG': 'Red' }
-            : snapshotId === 'G' || snapshotId === 'H'
+            : snapshotId === '07' || snapshotId === '08'
               ? { 'WS-HVAC': 'Red', 'WS-PKG': 'Yellow' }
               : {},
     ),
     topExceptions:
-      snapshotId === 'A'
+      snapshotId === '01'
         ? []
-        : snapshotId === 'B'
+        : snapshotId === '02'
           ? [
               {
                 id: 'TEX-B-PKG',
@@ -553,10 +601,10 @@ export function dashboardOverviewFixture(
                 priority: 2,
               },
             ]
-          : snapshotId === 'C'
+          : snapshotId === '03'
             ? [
                 {
-                  id: 'TEX-C-HVAC-PS',
+                  id: 'TEX-03-HVAC-PS',
                   title: 'Критический прогноз сдвига AHU',
                   causeImpact:
                     'Задержка long-lead HVAC угрожает старту производства (+21 дн.)',
@@ -569,10 +617,10 @@ export function dashboardOverviewFixture(
                   priority: 1,
                 },
               ]
-            : snapshotId === 'F'
+            : snapshotId === '06'
               ? [
                   {
-                    id: 'TEX-F-HVAC-PS',
+                    id: 'TEX-06-HVAC-PS',
                     title: 'HVAC → PS без изменения прогноза',
                     causeImpact: 'DEC-001 зафиксирован; Δ остаётся +21',
                     links: [
@@ -582,10 +630,10 @@ export function dashboardOverviewFixture(
                     priority: 1,
                   },
                 ]
-              : snapshotId === 'G'
+              : snapshotId === '07'
                 ? [
                     {
-                      id: 'TEX-G-HVAC-PS',
+                      id: 'TEX-07-HVAC-PS',
                       title: 'Остаточный HVAC +14',
                       causeImpact:
                         'Прогресс по сценарию; риск срыва запуска и веха старта остаются в отклонении',
@@ -596,7 +644,7 @@ export function dashboardOverviewFixture(
                       priority: 1,
                     },
                   ]
-                : snapshotId === 'H'
+                : snapshotId === '08'
                   ? [
                       {
                         id: 'TEX-H-HVAC-PS',
@@ -609,9 +657,9 @@ export function dashboardOverviewFixture(
                     ]
                   : [],
     trend:
-      snapshotId === 'A'
+      snapshotId === '01'
         ? { better: [], worse: [], unchangedCritical: [] }
-        : snapshotId === 'B'
+        : snapshotId === '02'
           ? {
               better: [],
               worse: [
@@ -620,13 +668,13 @@ export function dashboardOverviewFixture(
               ],
               unchangedCritical: [],
             }
-          : snapshotId === 'C'
+          : snapshotId === '03'
             ? {
                 better: ['Оболочка: замечания закрыты'],
                 worse: ['HVAC / старт производства: +21'],
                 unchangedCritical: [],
               }
-            : snapshotId === 'F'
+            : snapshotId === '06'
               ? {
                   better: [
                     'Зафиксированы решения (HVAC, WFI, чистые зоны)',
@@ -634,7 +682,7 @@ export function dashboardOverviewFixture(
                   worse: [],
                   unchangedCritical: ['HVAC / PS без изменения прогноза'],
                 }
-              : snapshotId === 'G'
+              : snapshotId === '07'
                 ? {
                     better: [
                       'Упаковка стабилизирована',
@@ -646,7 +694,7 @@ export function dashboardOverviewFixture(
                       'Остаточное отклонение WFI',
                     ],
                   }
-                : snapshotId === 'H'
+                : snapshotId === '08'
                   ? {
                       better: ['Зафиксирована заморозка точек BMS/EMS'],
                       worse: [],
@@ -665,9 +713,28 @@ export function dashboardOverviewFixture(
       kind: psDelta === 0 ? 'none' : 'aligned_slip',
     },
     decisionHonesty:
-      snapshotId === 'F' || snapshotId === 'G' || snapshotId === 'H'
-        ? { recoveryExecuted: false }
+      snapshotId === '06' || snapshotId === '07' || snapshotId === '08'
+        ? {
+            recoveryExecuted: false as const,
+            forecastDeviation:
+              psDelta === 0
+                ? ('within_baseline' as const)
+                : ('deviation_persists' as const),
+          }
         : null,
+    peopleFocus: {
+      previousSnapshotId: null,
+      summary: {
+        peopleWithQuestions: 0,
+        criticalQuestionCount: 0,
+        newCriticalQuestionCount: null,
+        removedCriticalSignalCount: null,
+        otherActiveIssueCount: 0,
+      },
+      people: [],
+      unassignedDelayedCriticalEquipmentIds: [],
+      totalPeopleInFocus: 0,
+    },
   };
 
   const withDue = {
@@ -679,6 +746,30 @@ export function dashboardOverviewFixture(
         : d.dueDate < base.scenarioAsOfDate
           ? ('passed' as const)
           : ('upcoming' as const),
+      executionStatus:
+        d.id === 'DEC-001'
+          ? snapshotId === '06'
+            ? ('not_started' as const)
+            : ('in_progress' as const)
+          : ('unknown' as const),
+      execution:
+        d.id === 'DEC-001'
+          ? {
+              status:
+                snapshotId === '06'
+                  ? ('not_started' as const)
+                  : ('in_progress' as const),
+              evidenceNote:
+                snapshotId === '06' ? 'Действия не начаты' : 'Действия начаты',
+              source: {
+                kind: 'demo' as const,
+                label: 'Демонстрационный отчёт исполнителя',
+              },
+              updatedAt: base.scenarioAsOfDate,
+              observationId: snapshotId === '06' ? 'DEXO-001-F' : 'DEXO-001-G',
+              asOfDate: base.scenarioAsOfDate,
+            }
+          : null,
     })),
   };
 
@@ -688,9 +779,9 @@ export function dashboardOverviewFixture(
 function decisionsState(
   snapshotId: SnapshotId,
 ): DashboardOverview['decisionPanelState'] {
-  if (snapshotId === 'F' || snapshotId === 'G' || snapshotId === 'H') {
+  if (snapshotId === '06' || snapshotId === '07' || snapshotId === '08') {
     return 'recorded';
   }
-  if (['C', 'D', 'E'].includes(snapshotId)) return 'needed';
+  if (['03', '04', '05'].includes(snapshotId)) return 'needed';
   return 'absent';
 }

@@ -8,6 +8,7 @@ import { selectionKeyId } from '@/lib/schedule/selection-key';
 import { presentationIdToSelectionKey } from '@/lib/schedule/to-gantt-presentation';
 
 const HOVER_CLASS = 'ppc-schedule-row-hovered';
+const SELECTED_CLASS = 'ppc-schedule-row-selected';
 
 function ganttRowKey(row: HTMLElement): string | null {
   const taskId =
@@ -15,6 +16,37 @@ function ganttRowKey(row: HTMLElement): string | null {
   if (!taskId) return null;
   const key = presentationIdToSelectionKey(taskId);
   return key ? selectionKeyId(key) : null;
+}
+
+/**
+ * Mirror React `selectedKey` onto chart `.gantt_task_row` (and keep table attrs
+ * in sync if present). Logical id via presentationIdToSelectionKey — comparison
+ * layer suffixes collapse to one key. Does not clear hover.
+ */
+export function applyScheduleRowSelected(
+  roots: Array<HTMLElement | null | undefined>,
+  key: string | null,
+): void {
+  for (const root of roots) {
+    if (!root) continue;
+    for (const el of root.querySelectorAll<HTMLElement>(
+      `.${SELECTED_CLASS}, [data-schedule-row-selected="true"]`,
+    )) {
+      // Table rows own class via React — only strip chart markers here when
+      // the node is a gantt task row (or was DOM-stamped).
+      if (el.classList.contains('gantt_task_row') || el.hasAttribute('task_id')) {
+        el.classList.remove(SELECTED_CLASS);
+        el.removeAttribute('data-schedule-row-selected');
+      }
+    }
+    if (!key) continue;
+    for (const el of root.querySelectorAll<HTMLElement>('.gantt_task_row')) {
+      if (ganttRowKey(el) === key) {
+        el.classList.add(SELECTED_CLASS);
+        el.setAttribute('data-schedule-row-selected', 'true');
+      }
+    }
+  }
 }
 
 export function applyScheduleRowHover(
@@ -56,4 +88,4 @@ export function applyScheduleRowHover(
   }
 }
 
-export { HOVER_CLASS };
+export { HOVER_CLASS, SELECTED_CLASS };

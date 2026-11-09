@@ -146,6 +146,25 @@ export function ScheduleChartStickyScale({ syncRootRef }: Props) {
     let horEl = hor();
     horEl?.addEventListener('scroll', onHorDomScroll, { passive: true });
 
+    // Focus/restore may publish H before this effect mounts (geometry pending).
+    // Seed from vendor DOM / published attr so month labels match the chart window.
+    const seedFromVendor = () => {
+      const published = Number(
+        host()?.getAttribute('data-schedule-chart-scroll-x') || NaN,
+      );
+      const x = Number.isFinite(horEl?.scrollLeft)
+        ? (horEl!.scrollLeft as number)
+        : Number.isFinite(published)
+          ? published
+          : 0;
+      if (Math.abs(header.scrollLeft - x) >= 1) {
+        syncing.current = true;
+        header.scrollLeft = x;
+        syncing.current = false;
+      }
+    };
+    seedFromVendor();
+
     const timer = window.setInterval(() => {
       const next = hor();
       if (next && next !== horEl) {
@@ -153,7 +172,10 @@ export function ScheduleChartStickyScale({ syncRootRef }: Props) {
         horEl = next;
         horEl.setAttribute('data-schedule-chart-hor-scroll', 'true');
         horEl.addEventListener('scroll', onHorDomScroll, { passive: true });
-        header.scrollLeft = horEl.scrollLeft;
+        seedFromVendor();
+      } else if (next) {
+        // Catch late focus scrollTo when the hor node identity did not change.
+        seedFromVendor();
       }
     }, 200);
 
@@ -176,7 +198,7 @@ export function ScheduleChartStickyScale({ syncRootRef }: Props) {
     >
       <div
         ref={headerHRef}
-        className="overflow-x-auto overflow-y-hidden"
+        className="overflow-x-auto overflow-y-hidden ppc-schedule-chart-header-hscroll"
         data-schedule-chart-header-hscroll="true"
         aria-label="Горизонтальная прокрутка шкалы месяцев"
       >
@@ -195,7 +217,7 @@ export function ScheduleChartStickyScale({ syncRootRef }: Props) {
           {(geometry?.months ?? []).map((month) => (
             <div
               key={`${month.iso}-${month.leftPx}`}
-              className="absolute top-0 box-border flex items-center justify-center border-r border-[var(--border-subtle)] px-1 text-center text-xs text-[var(--text-muted)]"
+              className="absolute top-0 box-border flex items-center justify-center border-r border-[var(--border-subtle)] px-1 text-center text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]"
               style={{
                 left: month.leftPx,
                 width: month.widthPx,

@@ -34,4 +34,6 @@ related:
 
 > **certainty:** fact
 >
-> Docs Engineering System (W1–W3) завершён 2026-10-30: портал на `http://docs.localhost`, стандарты и quality gates зелёные. Реализация Next.js/NestJS и enforcement coverage приложений — вне этого этапа (см. [финальный отчёт](./final-report.md)).
+> Docs Engineering System (W1–W3) завершён 2026-10-30 (см. [финальный отчёт](./final-report.md) — **historical** URL `http://docs.localhost` того этапа).
+>
+> **Current DX (2026-11):** same-origin docs на `http://127.0.0.1:3080/docs/` после `npm run dev` ([local-dev-and-demo](../10-operations/local-dev-and-demo.md)). Hostnames `*.localhost` — production-like / legacy, не основной DX.

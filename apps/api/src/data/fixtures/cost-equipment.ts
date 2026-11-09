@@ -82,28 +82,28 @@ export type EqProgress = {
 };
 
 const PROGRESS: Record<PopulatedSnapshotId, EqProgress> = {
-  A: { actualBp: 400, committedBp: 2500, forecastBp: 10_000 },
-  B: { actualBp: 700, committedBp: 2800, forecastBp: 10_000 },
-  C: { actualBp: 900, committedBp: 3200, forecastBp: 10_500 },
-  D: { actualBp: 1200, committedBp: 3800, forecastBp: 10_800 },
-  E: { actualBp: 1600, committedBp: 4500, forecastBp: 11_000 },
-  F: { actualBp: 1800, committedBp: 4700, forecastBp: 11_000 },
-  G: { actualBp: 2400, committedBp: 5400, forecastBp: 11_200 },
-  H: { actualBp: 2800, committedBp: 5800, forecastBp: 11_300 },
-  I: { actualBp: 3400, committedBp: 6400, forecastBp: 11_200 },
-  J: { actualBp: 4200, committedBp: 7200, forecastBp: 11_200 },
-  K: { actualBp: 5000, committedBp: 7800, forecastBp: 11_100 },
-  L: { actualBp: 5600, committedBp: 8200, forecastBp: 11_100 },
-  M: { actualBp: 6200, committedBp: 8600, forecastBp: 11_200 },
-  N: { actualBp: 6500, committedBp: 8700, forecastBp: 11_200 },
-  O: { actualBp: 7200, committedBp: 9000, forecastBp: 11_000 },
-  P: { actualBp: 8000, committedBp: 9300, forecastBp: 10_900 },
-  Q: { actualBp: 8500, committedBp: 9500, forecastBp: 10_800 },
-  R: { actualBp: 9000, committedBp: 9700, forecastBp: 10_700 },
-  S: { actualBp: 10_000, committedBp: 10_000, forecastBp: 10_500 },
+  '01': { actualBp: 400, committedBp: 2500, forecastBp: 10_000 },
+  '02': { actualBp: 700, committedBp: 2800, forecastBp: 10_000 },
+  '03': { actualBp: 900, committedBp: 3200, forecastBp: 10_500 },
+  '04': { actualBp: 1200, committedBp: 3800, forecastBp: 10_800 },
+  '05': { actualBp: 1600, committedBp: 4500, forecastBp: 11_000 },
+  '06': { actualBp: 1800, committedBp: 4700, forecastBp: 11_000 },
+  '07': { actualBp: 2400, committedBp: 5400, forecastBp: 11_200 },
+  '08': { actualBp: 2800, committedBp: 5800, forecastBp: 11_300 },
+  '09': { actualBp: 3400, committedBp: 6400, forecastBp: 11_200 },
+  '10': { actualBp: 4200, committedBp: 7200, forecastBp: 11_200 },
+  '11': { actualBp: 5000, committedBp: 7800, forecastBp: 11_100 },
+  '12': { actualBp: 5600, committedBp: 8200, forecastBp: 11_100 },
+  '13': { actualBp: 6200, committedBp: 8600, forecastBp: 11_200 },
+  '14': { actualBp: 6500, committedBp: 8700, forecastBp: 11_200 },
+  '15': { actualBp: 7200, committedBp: 9000, forecastBp: 11_000 },
+  '16': { actualBp: 8000, committedBp: 9300, forecastBp: 10_900 },
+  '17': { actualBp: 8500, committedBp: 9500, forecastBp: 10_800 },
+  '18': { actualBp: 9000, committedBp: 9700, forecastBp: 10_700 },
+  '19': { actualBp: 10_000, committedBp: 10_000, forecastBp: 10_500 },
 };
 
-/** HVAC spine gets extra forecast pressure C–N (recovery package). */
+/** HVAC spine gets extra forecast pressure 03–14 (recovery package). */
 function forecastBpFor(
   equipmentId: EquipmentId,
   snapshotId: PopulatedSnapshotId,

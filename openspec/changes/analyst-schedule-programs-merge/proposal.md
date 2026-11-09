@@ -11,7 +11,7 @@
 - Program/project details обогащаются данными WS (leaders/costs/counts) без double-count.
 - `/programs` и `/projects` — semantic tables.
 - Default expand **all** group keys; счётчики «Найдено / Свёрнуто»; правый gutter artifact.
-- Anchor C = DEMO_ASSUMPTION для source statuses; dates/progress — supplementary backend assumptions.
+- Anchor 03 = DEMO_ASSUMPTION для source statuses; dates/progress — supplementary backend assumptions.
 
 ## Capabilities
 

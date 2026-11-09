@@ -1,6 +1,6 @@
 /**
  * Fallback / normative executive timeline ids (R2-U1-R4).
- * Stable curated map A–S — same membership as API EXECUTIVE_MILESTONE_SET_STABLE.
+ * Stable curated map 01–19 — same membership as API EXECUTIVE_MILESTONE_SET_STABLE.
  * Prefer authoritative API `executiveMilestoneIds` when present.
  */
 export const EXECUTIVE_TIMELINE_MILESTONE_IDS = [

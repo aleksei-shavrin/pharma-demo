@@ -2,9 +2,10 @@ import { screen, waitFor, within } from '@testing-library/react';
 import type { UserEvent } from '@testing-library/user-event';
 import { expect } from 'vitest';
 import type { SnapshotId } from '@/lib/snapshot/snapshot-id';
+import { snapshotDisplayLabel } from '@/lib/snapshot/snapshot-id';
 import { snapshotOptionLabel } from '@/lib/snapshot/snapshot-meta';
 
-/** Open compact A–S disclosure and choose a snapshot (R2-U1 listbox). */
+/** Open compact 01–19 disclosure and choose a snapshot (R2-U1 listbox). */
 export async function selectDemoSnapshot(
   user: UserEvent,
   id: SnapshotId,
@@ -22,12 +23,13 @@ export async function selectDemoSnapshot(
   });
 }
 
-/** Assert committed/active snapshot on the compact trigger. */
+/** Assert committed/active snapshot on the compact trigger (display ordinal). */
 export async function expectActiveSnapshot(id: SnapshotId): Promise<void> {
+  const ordinal = snapshotDisplayLabel(id);
   await waitFor(() => {
     expect(
       screen.getByRole('button', {
-        name: new RegExp(`Снимок ${id}.*активный`),
+        name: new RegExp(`Снимок ${ordinal}.*активный`),
       }),
     ).toBeInTheDocument();
   });

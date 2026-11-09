@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { DEMO_DATA_SOURCE } from '../data/demo-data-source';
 import { MockDemoDataSource } from '../data/mock-demo-data-source';
 import { EQUIPMENT_CATALOG, MILESTONE_CATALOG } from '../data/fixtures/catalog';
-import type { SnapshotId } from '../snapshot/snapshot-id';
+import { SNAPSHOT_IDS } from '../snapshot/snapshot-id';
 import {
   EQUIPMENT_DELIVERED_ON,
   MILESTONE_COMPLETED_ON,
@@ -10,9 +10,9 @@ import {
 } from '../data/schedule/schedule-control-facts';
 import { ScheduleService } from './schedule.service';
 
-const SNAPS = 'ABCDEFGHIJKLMNOPQRS'.split('') as SnapshotId[];
+const SNAPS = [...SNAPSHOT_IDS];
 
-describe('schedule snapshot integrity A–S', () => {
+describe('schedule snapshot integrity 01–19', () => {
   let service: ScheduleService;
 
   beforeEach(async () => {
@@ -40,7 +40,7 @@ describe('schedule snapshot integrity A–S', () => {
 
   it('every snapshot has unique WBS, leaf progress, group rollup, links, FS coherence', () => {
     for (const snap of SNAPS) {
-      const s = service.getSchedule('PRJ-01', snap);
+      const s = service.getSchedule('PRT-01', snap);
       // 25 projects + 145 stages + analyst leaves + WK showcase + 52 EQ + 44 MS
       expect(s.items.length).toBe(688);
       const wbs = s.items.map((i) => i.wbs);
@@ -141,7 +141,7 @@ describe('schedule snapshot integrity A–S', () => {
       } else {
         expect(go?.progressPct).toBe(100);
       }
-      if (snap === 'S') {
+      if (snap === '19') {
         expect(ps?.progressPct).toBe(100);
       } else {
         expect(ps?.progressPct).toBe(0);
@@ -157,8 +157,8 @@ describe('schedule snapshot integrity A–S', () => {
       void byKey;
     }
 
-    const a = service.getSchedule('PRJ-01', 'A');
-    const c = service.getSchedule('PRJ-01', 'C');
+    const a = service.getSchedule('PRT-01', '01');
+    const c = service.getSchedule('PRT-01', '03');
     expect(a.items.find((i) => i.id === 'WK-01')?.progressPct).toBe(0);
     expect(c.items.find((i) => i.id === 'WK-01')?.progressPct).toBe(100);
     expect(c.items.find((i) => i.id === 'WK-04')?.progressPct).toBe(0);
@@ -170,7 +170,7 @@ describe('schedule snapshot integrity A–S', () => {
   });
 
   it('does not set EQ-HVAC-01 to 100 on C from forecast alone', () => {
-    const c = service.getSchedule('PRJ-01', 'C');
+    const c = service.getSchedule('PRT-01', '03');
     const hvac = c.items.find((i) => i.id === 'EQ-HVAC-01');
     expect(hvac?.progressPct).toBe(0);
   });

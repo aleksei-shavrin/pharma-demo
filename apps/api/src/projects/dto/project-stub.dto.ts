@@ -3,7 +3,7 @@ import { SNAPSHOT_IDS, type SnapshotId } from '../../snapshot/snapshot-id';
 
 /** Project stub response — OpenAPI contract. */
 export class ProjectStubDto {
-  @ApiProperty({ example: 'PRJ-01' })
+  @ApiProperty({ example: 'PRT-01' })
   id!: string;
 
   @ApiProperty({
@@ -17,7 +17,7 @@ export class ProjectStubDto {
   @ApiProperty({ example: '2027-09-15' })
   forecastProductionStart!: string;
 
-  @ApiProperty({ example: 'A', enum: SNAPSHOT_IDS })
+  @ApiProperty({ example: '01', enum: SNAPSHOT_IDS })
   snapshotId!: SnapshotId;
 
   @ApiProperty({ example: '2027-02-15' })

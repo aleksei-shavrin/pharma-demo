@@ -2,8 +2,8 @@ import type { SnapshotId } from '../../snapshot/snapshot-id';
 
 /**
  * Work-bar / link fixtures for the Schedule read model (G07–G11)
- * plus the snapshot C view-model tree (groups, not domain WBS).
- * Dates are already shifted for Snapshot C asOf 2027-03-01; see
+ * plus the snapshot 03 view-model tree (groups, not domain WBS).
+ * Dates are already shifted for Snapshot 03 asOf 2027-03-01; see
  * docs/07-delivery/reports/2026-11-06-g07-g11-schedule-work-fixtures.md.
  *
  * Kept outside SnapshotFixture on purpose: works/links/groups are a
@@ -125,7 +125,7 @@ const UNNESTED_WORK = {
   baselineEnd: null,
 } as const;
 
-const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
+const SNAPSHOT_03_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
   groups: [
     {
       id: 'AN-08',
@@ -189,7 +189,7 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
     },
   ],
   /**
-   * MS-CLN-PANEL is not listed here. Snapshot C only records where the
+   * MS-CLN-PANEL is not listed here. Snapshot 03 only records where the
    * existing catalogue milestone sits in the tree.
    */
   milestoneAttachments: [
@@ -356,7 +356,7 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
       baselineStart: null,
       baselineEnd: null,
     },
-    // Demo installation works for remaining workstreams (topology shared A–S;
+    // Demo installation works for remaining workstreams (topology shared 01–19;
     // progress/status come from schedule-work-states overlays).
     {
       id: '1.1.1',
@@ -636,28 +636,28 @@ const SNAPSHOT_C_SCHEDULE_WORKS: ScheduleWorkSnapshotFixture = {
 /**
  * Shared topology (works/links identity) for every populated snapshot.
  * Per-snapshot progress/status/actuals are applied in mergeDemoTree via
- * schedule-work-states — not by aliasing one frozen C state onto A–S.
+ * schedule-work-states — not by aliasing one frozen 03 state onto 01–19.
  */
 export const POPULATED_SCHEDULE_SNAPSHOTS: readonly SnapshotId[] = [
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'I',
-  'J',
-  'K',
-  'L',
-  'M',
-  'N',
-  'O',
-  'P',
-  'Q',
-  'R',
-  'S',
+  '01',
+  '02',
+  '03',
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+  '15',
+  '16',
+  '17',
+  '18',
+  '19',
 ];
 
 export function getScheduleWorkFixture(
@@ -682,4 +682,4 @@ export function getScheduleWorkFixture(
   };
 }
 
-export { SNAPSHOT_C_SCHEDULE_WORKS, EMPTY_SCHEDULE_WORKS };
+export { SNAPSHOT_03_SCHEDULE_WORKS, EMPTY_SCHEDULE_WORKS };

@@ -39,6 +39,10 @@ function rowKey(item: ScheduleWarningItem): string {
   return `${item.kind}:${item.id}`;
 }
 
+/**
+ * `sourceWeeks` is historical source audit (⚠️Nн), not current warning alone.
+ * Lag only for active runtime Delayed; weeks enrich the lag label.
+ */
 function ownScheduleWarning(item: ScheduleWarningItem): ScheduleWarning {
   if (
     item.kind === 'work' &&
@@ -51,8 +55,7 @@ function ownScheduleWarning(item: ScheduleWarningItem): ScheduleWarning {
 
   const sourceWeeks =
     typeof item.sourceWeeks === 'number' ? item.sourceWeeks : null;
-  const delayed = item.kind === 'work' && item.status === 'Delayed';
-  if (delayed || sourceWeeks !== null) {
+  if (item.kind === 'work' && item.status === 'Delayed') {
     return { tone: 'lag', label: lagLabel(sourceWeeks) };
   }
 

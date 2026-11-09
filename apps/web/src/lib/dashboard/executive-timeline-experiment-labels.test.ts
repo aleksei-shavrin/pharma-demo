@@ -23,7 +23,7 @@ describe('executive-timeline-experiment-labels', () => {
 
   it('на широкой шкале показывает все shortLabel', () => {
     const model = resolveExecutiveTimelineExperimentModel(
-      dashboardOverviewFixture('C'),
+      dashboardOverviewFixture('03'),
     );
     const ids = selectVisibleMilestoneLabelIds(model.ordinaryPoints, {
       narrow: false,
@@ -33,7 +33,7 @@ describe('executive-timeline-experiment-labels', () => {
 
   it('на узкой шкале ограничивает число подписей и сохраняет Red', () => {
     const model = resolveExecutiveTimelineExperimentModel(
-      dashboardOverviewFixture('C'),
+      dashboardOverviewFixture('03'),
     );
     const ids = selectVisibleMilestoneLabelIds(model.ordinaryPoints, {
       narrow: true,
@@ -53,7 +53,7 @@ describe('executive-timeline-experiment-labels', () => {
 
   it('lane-aware selection caps dense same-program pairs', () => {
     const model = resolveExecutiveTimelineExperimentModel(
-      dashboardOverviewFixture('C'),
+      dashboardOverviewFixture('03'),
     );
     const ids = selectLaneAwareMilestoneLabelIds(model.ordinaryPoints, {
       narrow: false,

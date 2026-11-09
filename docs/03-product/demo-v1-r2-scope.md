@@ -23,27 +23,27 @@ related:
 
 > **certainty:** fact
 >
-> R2 продолжает **тот же Demo v1** после E1–E8 / local tags `demo-v1.0.0` и `demo-v1-enrichment-baseline`. Это **не** Demo v2 и **не** I9. Исторические DOC-PROD-019…022 и enrichment остаются baseline narrative A–H.
+> R2 продолжает **тот же Demo v1** после E1–E8 / local tags `demo-v1.0.0` и `demo-v1-enrichment-baseline`. Это **не** Demo v2 и **не** I9. Исторические DOC-PROD-019…022 и enrichment остаются baseline narrative 01–08.
 
 ## 1. Goal
 
 Сделать Demo v1 убедительным крупным проектом строительства / оснащения фармацевтического предприятия для директора:
 
-- полный lifecycle snapshots **A–S** до **Production Start**;
+- полный lifecycle snapshots **01–19** до **Production Start**;
 - глубина Milestones / Equipment / Issues / Risks / Decisions;
 - Workstream как **read-model entity**;
 - People (`PER-*`);
 - Cost Control **только в RUB**;
 - Notifications;
-- scalable Snapshot Selector;
+- scalable Snapshot 19elector;
 - executive Dashboard с cost signal.
 
 ## 2. Frozen product decisions (human, 2026-11-02)
 
 | Decision | Value |
 |----------|-------|
-| Snapshots | **A–S** (19); A–H historical core unchanged without proven blocker |
-| Final | **S = Production Start achieved**; no post-start T |
+| Snapshots | **01–19** (19); 01–08 historical core unchanged without proven blocker |
+| Final | **19 = Production Start achieved**; no post-start T |
 | Baseline PS | `2027-09-15` |
 | Final actual PS | `2027-09-22` (**+7** calendar days) |
 | PS driver | Still sole **EQ-HVAC-01 / RISK-001** path (BR-004); no new driver |
@@ -54,7 +54,7 @@ related:
 | Demo BAC | **6_200_000_000 ₽** frozen (fictional; R2-D0-R1) |
 | Equipment cost | Selective subset; **not** Σ EQ = WS budget |
 | Nav | Top-level **Люди** + **Стоимость**; Workstream via drill-down (not required top-level) |
-| Late RAG | P=Red, Q=Yellow, R=Yellow, S=Green (BR-007 preserved via fixtures) |
+| Late RAG | 16=Red, 17=Yellow, 18=Yellow, 19=Green (BR-007 preserved via fixtures) |
 | Notification prefs | popup → **localStorage**; read/unread → **sessionStorage** |
 | EVM | **Out** (no PV/EV/CPI/SPI without WBS/time-phased prerequisites) |
 
@@ -63,7 +63,7 @@ related:
 - Normative design (this pack) → later implementation stages R2-C1…R2-A1
 - OpenSpec change `demo-v1-r2-lifecycle-controls`
 - Routes (design): `/workstreams/:id`, `/people`, `/people/:id`, `/costs`
-- Dashboard IA delta; A–S selector; AppBar notifications
+- Dashboard IA delta; 01–19 selector; AppBar notifications
 - Integrity rules for lifecycle, BA-015 extensions, cost arithmetic
 
 ## 4. Out of scope
@@ -74,7 +74,7 @@ Demo v2; I9; PostgreSQL; auth; multi-project; Activity/WBS/CPM/dependency engine
 
 | Artifact | Role after R2-D0 |
 |----------|------------------|
-| DOC-PROD-019…022, DOC-UX-021 | Historical enrichment SoT for A–H / pre-R2 scale |
+| DOC-PROD-019…022, DOC-UX-021 | Historical enrichment SoT for 01–08 / pre-R2 scale |
 | `openspec/changes/archive/2026-11-02-demo-v1-enrichment` | Archived enrichment change (synced to living specs) |
 | Living `openspec/specs/*` | Baseline = enrichment contracts; R2 adds new change deltas |
 | Tags `demo-v1.0.0`, `demo-v1-enrichment-baseline` | Git checkpoints only |
@@ -83,7 +83,7 @@ Demo v2; I9; PostgreSQL; auth; multi-project; Activity/WBS/CPM/dependency engine
 
 R2-D0 is **accepted as design** when human review confirms:
 
-1. Lifecycle A–S matrix and BR-004 late-stage clarification.
+1. Lifecycle 01–19 matrix and BR-004 late-stage clarification.
 2. Cost model + **frozen** fictional BAC/CBS 6.2B (research limitations documented; BAC not re-opened).
 3. Workstream / Person / Notification / Selector UX norms; nav People+Costs top-level.
 4. OpenSpec R2 change package complete for later apply.

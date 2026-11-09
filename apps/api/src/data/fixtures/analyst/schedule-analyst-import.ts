@@ -30,8 +30,8 @@ import {
   type LeafDatePlan,
 } from './schedule-master-simulation';
 
-export const ANALYST_STATUS_ANCHOR_SNAPSHOT = 'C' as const;
-/** Canonical snapshot C asOf from snapshot-states (narrative anchor, not date generator). */
+export const ANALYST_STATUS_ANCHOR_SNAPSHOT = '03' as const;
+/** Canonical snapshot 03 asOf from snapshot-states (narrative anchor, not date generator). */
 export const ANALYST_STATUS_ANCHOR_ASOF = '2027-03-01';
 export { MASTER_SIM_ASSUMPTIONS };
 

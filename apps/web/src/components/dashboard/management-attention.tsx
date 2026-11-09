@@ -38,10 +38,10 @@ export function managementAttentionItems(
     },
     {
       id: 'risks',
-      label: 'Красные риски',
+      label: 'Критичные риски',
       count: redRisks,
       href: '/issues-risks?type=Risk&rag=Red',
-      hrefLabel: 'К красным рискам',
+      hrefLabel: 'К рискам с критической оценкой',
     },
     {
       id: 'equipment',
@@ -52,10 +52,10 @@ export function managementAttentionItems(
     },
     {
       id: 'milestones',
-      label: 'Вехи под риском',
+      label: 'Вехи с критической оценкой',
       count: milestonesAtRisk,
       href: '/milestones?rag=Red',
-      hrefLabel: 'К вехам с RAG Red',
+      hrefLabel: 'К вехам с критической оценкой',
     },
   ];
 }
@@ -73,12 +73,13 @@ export function ManagementAttention({ data }: { data: DashboardOverview }) {
       aria-labelledby="attention-heading"
       className="flex h-full min-h-0 min-w-0 flex-col rounded-[var(--radius-md)] bg-[var(--surface-raised)] px-4 py-2.5 shadow-[var(--elevation-1)] ring-1 ring-[var(--border-subtle)]"
       data-dashboard-block="management-attention"
+      data-dashboard-svodka="true"
     >
       <h2
         id="attention-heading"
         className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]"
       >
-        Управленческое внимание
+        Сводка
       </h2>
 
       {active.length === 0 ? (

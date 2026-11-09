@@ -73,10 +73,10 @@ Tabs Overview · Links · Impact — `approved UX decision`.
 |--------|----------|---------------------|----------------------------------|
 | Equipment | delivery dates, status, isCritical, projectId | Issue(s) (1—0..\*); Risk(s) (1—0..\*). **Не** Milestone | вклад в PS Δ (BR-004) — **derived/indirect** через Issue/Risk → MS |
 | Issue | title, status Open/Mitigating, ownerRole | Equipment; Milestone (\*—1); Risk (0..1—0..1). **Не** Decision | Mitigating после PrioritizeRecovery (запись Decision, не execution); Closed transitions не Must journey |
-| Risk | title, rag | Issue (0..1—0..1, если задан); Equipment (via Equipment—Risk, если задан); Milestone (\*—1) | integrity vs BR-002; Red на B/C; Decision не меняет rag (BR-006) — Impact, не Links |
-| Milestone | dates, rag | Issue(s); Risk(s); Decision(s) via `Decision.milestoneId`. Equipment — **только** labeled derived/indirect via Issue/Risk | alignment с PRJ forecast (BR-004); forecast/RAG unchanged on C after Decision (BR-006) — **Impact**, не Links |
+| Risk | title, rag | Issue (0..1—0..1, если задан); Equipment (via Equipment—Risk, если задан); Milestone (\*—1) | integrity vs BR-002; Red на 02/03; Decision не меняет rag (BR-006) — Impact, не Links |
+| Milestone | dates, rag | Issue(s); Risk(s); Decision(s) via `Decision.milestoneId`. Equipment — **только** labeled derived/indirect via Issue/Risk | alignment с PRJ forecast (BR-004); forecast/RAG unchanged on 03 after Decision (BR-006) — **Impact**, не Links |
 
-Empty state, если в snapshot нет прямой связи (например Impact Issue на A).
+Empty state, если в snapshot нет прямой связи (например Impact Issue на 01).
 
 ## 3. Breadcrumbs and return
 

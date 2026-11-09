@@ -5,27 +5,42 @@ import {
   isSelectableSnapshotId,
   isSnapshotId,
   previousScenarioSnapshot,
+  snapshotDisplayLabel,
 } from './snapshot-id';
 
-describe('web SnapshotId contract A–S (R2-C1)', () => {
-  it('accepts A–S; rejects T', () => {
+describe('web SnapshotId contract 01–19', () => {
+  it('accepts 01–19; rejects letters and bare digits', () => {
     expect(SNAPSHOT_IDS).toHaveLength(19);
-    expect(isSnapshotId('S')).toBe(true);
-    expect(isSnapshotId('T')).toBe(false);
+    expect(SNAPSHOT_IDS[0]).toBe('01');
+    expect(SNAPSHOT_IDS[18]).toBe('19');
+    expect(isSnapshotId('19')).toBe(true);
+    expect(isSnapshotId('A')).toBe(false);
+    expect(isSnapshotId('C')).toBe(false);
+    expect(isSnapshotId('1')).toBe(false);
+    expect(isSnapshotId('20')).toBe(false);
   });
 
-  it('selectable UI set is full A–S (R2-U1)', () => {
+  it('selectable UI set is full 01–19', () => {
     expect(SELECTABLE_SNAPSHOT_IDS).toHaveLength(19);
-    expect(isSelectableSnapshotId('H')).toBe(true);
-    expect(isSelectableSnapshotId('S')).toBe(true);
-    expect(isSelectableSnapshotId('T')).toBe(false);
+    expect(isSelectableSnapshotId('08')).toBe(true);
+    expect(isSelectableSnapshotId('19')).toBe(true);
+    expect(isSelectableSnapshotId('A')).toBe(false);
   });
 
-  it('предыдущая буква сценария: у A нет, у C это B, у F это E', () => {
-    expect(previousScenarioSnapshot('A')).toBeNull();
-    expect(previousScenarioSnapshot('B')).toBe('A');
-    expect(previousScenarioSnapshot('C')).toBe('B');
-    expect(previousScenarioSnapshot('F')).toBe('E');
-    expect(previousScenarioSnapshot('S')).toBe('R');
+  it('previous scenario: 01 has none; 03→02; 06→05; 19→18', () => {
+    expect(previousScenarioSnapshot('01')).toBeNull();
+    expect(previousScenarioSnapshot('02')).toBe('01');
+    expect(previousScenarioSnapshot('03')).toBe('02');
+    expect(previousScenarioSnapshot('06')).toBe('05');
+    expect(previousScenarioSnapshot('19')).toBe('18');
+  });
+
+  it('display label is identity (canonical id string)', () => {
+    expect(snapshotDisplayLabel('01')).toBe('01');
+    expect(snapshotDisplayLabel('19')).toBe('19');
+    expect(snapshotDisplayLabel('unknown')).toBe('unknown');
+    for (const id of SNAPSHOT_IDS) {
+      expect(snapshotDisplayLabel(id)).toBe(id);
+    }
   });
 });
