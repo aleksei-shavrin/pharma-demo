@@ -16,8 +16,13 @@ data:
     		reverse_proxy pharma-demo-api:3000
     	}
 
-    	handle_path /portal/* {
-    		reverse_proxy pharma-demo-docs:80
+    	# Do NOT strip /portal: docs image is built with baseUrl=/portal/.
+    	# handle_path caused nginx trailing-slash 301 → /guides/… (Next 404).
+    	handle /portal/* {
+    		reverse_proxy pharma-demo-docs:80 {
+    			header_up X-Forwarded-Proto {http.request.scheme}
+    			header_up X-Forwarded-Host {host}
+    		}
     	}
 
     	handle {

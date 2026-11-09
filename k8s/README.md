@@ -10,7 +10,7 @@ TLS: cert-manager `letsencrypt-prod` → Secret `pharma-demo-tls`
 |------|---------|
 | `/` | `pharma-demo-web` (Next) |
 | `/backend/*` | `pharma-demo-api` (Nest, strip via Caddy) |
-| `/portal/*` | `pharma-demo-docs` (Docusaurus, strip via Caddy) |
+| `/portal/*` | `pharma-demo-docs` (Docusaurus `baseUrl=/portal/`; Caddy **не** strip — иначе nginx 301 на `/guides/…` → Next) |
 
 Публичный Ingress → `pharma-demo-proxy` (Caddy).
 
