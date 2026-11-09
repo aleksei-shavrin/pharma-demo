@@ -26,6 +26,10 @@ spec:
           ports:
             - name: http
               containerPort: 3000
+          env:
+            # Middleware verifies __Host-pharma_session via Nest (compose service is `api`).
+            - name: API_INTERNAL_URL
+              value: http://pharma-demo-api:3000
           readinessProbe:
             httpGet:
               path: /

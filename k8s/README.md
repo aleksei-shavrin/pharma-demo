@@ -33,6 +33,7 @@ API fail-closed без Secret `pharma-demo-api-auth` → `POST /backend/v1/auth/
 |----------|--------|
 | ConfigMap `pharma-demo-api` | `PUBLIC_ORIGIN`, `COOKIE_SECURE=true`, `WEB_ORIGIN`, … |
 | Secret `pharma-demo-api-auth` | `LOGIN_USERNAME`, `LOGIN_PASSWORD_HASH`, `SESSION_SECRET` |
+| Deployment `pharma-demo-web` | `API_INTERNAL_URL=http://pharma-demo-api:3000` (middleware session check; default `http://api:3000` is Compose-only) |
 
 CI deploy вызывает `tools/k8s/apply-api-auth-secret.sh`. Demo default: username/password **`admin` / `admin`**. Override в GitLab CI/CD variables: `PHARMA_LOGIN_USERNAME`, `PHARMA_LOGIN_PASSWORD_HASH`, `PHARMA_SESSION_SECRET`.
 
