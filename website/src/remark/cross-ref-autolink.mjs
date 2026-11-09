@@ -1,6 +1,11 @@
 /**
  * Remark plugin: autolink known portal IDs (BR-/DOC-/ADR-/REQ-/SCN-/PROC-…)
  * using website/src/cross-ref-registry.json. Skips existing links and code.
+ *
+ * Registry hrefs are site paths (no DOCUSAURUS_BASE_URL). We join the
+ * deployment base once here so Docusaurus does not emit `/portal/docs/…`
+ * or skip prepend when a path starts with the same string as baseUrl
+ * (e.g. folder `portal` under base `/portal/`).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,6 +16,15 @@ const registryPath = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   '../cross-ref-registry.json',
 );
+
+/** Mirror scripts/lib/docs-site-href.mjs — keep in sync (remark cannot import repo scripts via TS bundler). */
+function joinDocsBaseUrl(sitePath, baseUrl = '/') {
+  const p = sitePath.startsWith('/') ? sitePath : `/${sitePath}`;
+  const raw = baseUrl == null || baseUrl === '' ? '/' : String(baseUrl);
+  if (raw === '/') return p;
+  const base = raw.endsWith('/') ? raw.slice(0, -1) : raw;
+  return `${base}${p}`;
+}
 
 function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -39,6 +53,14 @@ function isSkipAncestor(ancestors) {
       t === 'html'
     );
   });
+}
+
+function resolveHref(sitePath) {
+  const hashIdx = sitePath.indexOf('#');
+  const pathPart = hashIdx >= 0 ? sitePath.slice(0, hashIdx) : sitePath;
+  const hash = hashIdx >= 0 ? sitePath.slice(hashIdx) : '';
+  const base = process.env.DOCUSAURUS_BASE_URL ?? '/';
+  return `${joinDocsBaseUrl(pathPart, base)}${hash}`;
 }
 
 /**
@@ -73,7 +95,7 @@ export default function crossRefAutolink() {
         }
         parts.push({
           type: 'link',
-          url: entry.href,
+          url: resolveHref(entry.href),
           title: null,
           children: [{ type: 'text', value: id }],
           data: {

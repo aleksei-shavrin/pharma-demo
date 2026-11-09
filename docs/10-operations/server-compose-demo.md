@@ -32,6 +32,12 @@ Production-like запуск Demo v1 на одном публичном origin (
 
 Значения `NEXT_PUBLIC_API_BASE_URL`, `PUBLIC_API_PREFIX` и `DOCUSAURUS_BASE_URL` в `.env` должны оставаться `/backend` и `/docs/` соответственно. Смена на другие пути **не поддерживается** без правки Caddy и пересборки образов.
 
+> **certainty:** assumption — docs-ci-links 2026-11-09
+>
+> **Link contract:** registry хранит **site paths** от `routeBasePath: '/'` (`/requirements/…`, `/portal/DOC-PORTAL-HOME-001`, `/openspec/…`) **без** `DOCUSAURUS_BASE_URL`. При сборке base (`/`, Compose `/docs/`, k3s CI `/portal/`) присоединяется **один раз** (remark + footer). Не писать `/docs/…` в registry — иначе CI `baseUrl=/portal/` даёт broken `/portal/docs/…`. Категория `00-portal` → site path `/portal/…`; при CI base `/portal/` публичный URL `/portal/portal/…` (Caddy `handle_path` снимает первый `/portal`, nginx отдаёт `/portal/DOC-…`).
+>
+> **Out-of-tree repo links:** относительные markdown-ссылки на пути вне `docs/` и `openspec/specs/` (например `apps/…`, `docker-compose*.yml`) **не** являются маршрутами портала. Docs Dockerfile не копирует `apps/`; remark `demote-out-of-tree-links` превращает такие ссылки в inline code. `onBrokenLinks: throw` сохраняется — не suppress и не exclude docs.
+
 ## Legacy `/portal` → `/docs` (308)
 
 Те же правила, что в [local-dev-and-demo](./local-dev-and-demo.md#development).

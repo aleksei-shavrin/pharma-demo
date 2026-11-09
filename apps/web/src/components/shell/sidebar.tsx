@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BookOpen } from 'lucide-react';
 import { NAV_ITEMS } from '@/lib/navigation';
+import { resolveDocsBaseUrl } from '@/lib/resolve-docs-base-url';
 
-const DOCS_HREF = '/docs/';
+/** Compose `/docs/`; k3s bake `NEXT_PUBLIC_DOCS_BASE_URL=/portal/`. */
+const DOCS_HREF = resolveDocsBaseUrl();
 
 const docsLinkClassName = [
   'flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-sm outline-none transition-colors',

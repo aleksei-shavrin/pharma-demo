@@ -218,7 +218,10 @@ describe('меню оболочки ниже 1024px', () => {
       'aria-current',
       'page',
     );
-    expect(within(dialog).getByRole('link', { name: 'Документация' })).toBeInTheDocument();
+    expect(within(dialog).getByRole('link', { name: 'Документация' })).toHaveAttribute(
+      'href',
+      '/docs/',
+    );
     expect(dialog.className).toMatch(/w-\[var\(--sidebar-width\)\]/);
     const aside = dialog.querySelector('aside');
     expect(aside).toBeTruthy();

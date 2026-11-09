@@ -3,6 +3,7 @@ node_modules/
 
 # Builds / generated
 website/build/
+website/build-ci-*/
 website/.docusaurus/
 dist/
 coverage/

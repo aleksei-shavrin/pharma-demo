@@ -1,1189 +1,1200 @@
 {
   "generatedAt": "2026-11-09",
-  "count": 245,
+  "count": 247,
+  "hrefMode": "site-path",
   "entries": {
     "DOC-PORTAL-004": {
-      "href": "/docs/portal/DOC-PORTAL-004",
+      "href": "/portal/DOC-PORTAL-004",
       "kind": "doc",
       "source": "docs/00-portal/access-and-security.md"
     },
     "DOC-PORTAL-FINAL-001": {
-      "href": "/docs/portal/DOC-PORTAL-FINAL-001",
+      "href": "/portal/DOC-PORTAL-FINAL-001",
       "kind": "doc",
       "source": "docs/00-portal/final-report.md"
     },
     "DOC-PORTAL-HOME-001": {
-      "href": "/docs/portal/DOC-PORTAL-HOME-001",
+      "href": "/portal/DOC-PORTAL-HOME-001",
       "kind": "doc",
       "source": "docs/00-portal/home.md"
     },
     "DOC-PORTAL-002": {
-      "href": "/docs/portal/DOC-PORTAL-002",
+      "href": "/portal/DOC-PORTAL-002",
       "kind": "doc",
       "source": "docs/00-portal/how-to-use.md"
     },
     "DOC-PORTAL-README-001": {
-      "href": "/docs/portal/",
+      "href": "/portal/",
       "kind": "doc",
       "source": "docs/00-portal/README.md"
     },
     "DOC-PORTAL-003": {
-      "href": "/docs/portal/DOC-PORTAL-003",
+      "href": "/portal/DOC-PORTAL-003",
       "kind": "doc",
       "source": "docs/00-portal/research-and-decisions.md"
     },
     "DOC-DISC-020": {
-      "href": "/docs/discovery/DOC-DISC-020",
+      "href": "/discovery/DOC-DISC-020",
       "kind": "doc",
       "source": "docs/01-discovery/demo-v1-scope-candidates.md"
     },
     "DOC-DISC-021": {
-      "href": "/docs/discovery/DOC-DISC-021",
+      "href": "/discovery/DOC-DISC-021",
       "kind": "doc",
       "source": "docs/01-discovery/discovery-summary.md"
     },
     "DOC-DISC-014": {
-      "href": "/docs/discovery/DOC-DISC-014",
+      "href": "/discovery/DOC-DISC-014",
       "kind": "doc",
       "source": "docs/01-discovery/domain-glossary.md"
     },
     "DOC-DISC-013": {
-      "href": "/docs/discovery/DOC-DISC-013",
+      "href": "/discovery/DOC-DISC-013",
       "kind": "doc",
       "source": "docs/01-discovery/domain-overview.md"
     },
     "DOC-DISC-011": {
-      "href": "/docs/discovery/DOC-DISC-011",
+      "href": "/discovery/DOC-DISC-011",
       "kind": "doc",
       "source": "docs/01-discovery/human-input-pack.md"
     },
     "DOC-DISC-017": {
-      "href": "/docs/discovery/DOC-DISC-017",
+      "href": "/discovery/DOC-DISC-017",
       "kind": "doc",
       "source": "docs/01-discovery/information-concepts.md"
     },
     "DOC-DISC-018": {
-      "href": "/docs/discovery/DOC-DISC-018",
+      "href": "/discovery/DOC-DISC-018",
       "kind": "doc",
       "source": "docs/01-discovery/management-scenarios.md"
     },
     "DOC-DISC-016": {
-      "href": "/docs/discovery/DOC-DISC-016",
+      "href": "/discovery/DOC-DISC-016",
       "kind": "doc",
       "source": "docs/01-discovery/process-inventory.md"
     },
     "DOC-DISC-019": {
-      "href": "/docs/discovery/DOC-DISC-019",
+      "href": "/discovery/DOC-DISC-019",
       "kind": "doc",
       "source": "docs/01-discovery/product-boundaries.md"
     },
     "DOC-DISC-012": {
-      "href": "/docs/discovery/DOC-DISC-012",
+      "href": "/discovery/DOC-DISC-012",
       "kind": "doc",
       "source": "docs/01-discovery/product-context.md"
     },
     "DOC-DISC-README-001": {
-      "href": "/docs/discovery/",
+      "href": "/discovery/",
       "kind": "doc",
       "source": "docs/01-discovery/README.md"
     },
     "DOC-DISC-010": {
-      "href": "/docs/discovery/DOC-DISC-010",
+      "href": "/discovery/DOC-DISC-010",
       "kind": "doc",
       "source": "docs/01-discovery/registers.md"
     },
     "DOC-DISC-015": {
-      "href": "/docs/discovery/DOC-DISC-015",
+      "href": "/discovery/DOC-DISC-015",
       "kind": "doc",
       "source": "docs/01-discovery/stakeholders.md"
     },
     "DOC-BA-017": {
-      "href": "/docs/business-analysis/DOC-BA-017",
+      "href": "/business-analysis/DOC-BA-017",
       "kind": "doc",
       "source": "docs/02-business-analysis/ba-pd-summary.md"
     },
     "DOC-BA-010": {
-      "href": "/docs/business-analysis/DOC-BA-010",
+      "href": "/business-analysis/DOC-BA-010",
       "kind": "doc",
       "source": "docs/02-business-analysis/ba-registers.md"
     },
     "DOC-BA-011": {
-      "href": "/docs/business-analysis/DOC-BA-011",
+      "href": "/business-analysis/DOC-BA-011",
       "kind": "doc",
       "source": "docs/02-business-analysis/business-context-and-problems.md"
     },
     "DOC-BA-014": {
-      "href": "/docs/business-analysis/DOC-BA-014",
+      "href": "/business-analysis/DOC-BA-014",
       "kind": "doc",
       "source": "docs/02-business-analysis/business-rules-demo-v1.md"
     },
     "DOC-BA-018": {
-      "href": "/docs/business-analysis/DOC-BA-018",
+      "href": "/business-analysis/DOC-BA-018",
       "kind": "doc",
       "source": "docs/02-business-analysis/demo-v1-r2-domain-and-controls.md"
     },
     "DOC-BA-015": {
-      "href": "/docs/business-analysis/DOC-BA-015",
+      "href": "/business-analysis/DOC-BA-015",
       "kind": "doc",
       "source": "docs/02-business-analysis/domain-model-demo-v1.md"
     },
     "DOC-BA-013": {
-      "href": "/docs/business-analysis/DOC-BA-013",
+      "href": "/business-analysis/DOC-BA-013",
       "kind": "doc",
       "source": "docs/02-business-analysis/process-specs-demo-v1.md"
     },
     "DOC-BA-README-001": {
-      "href": "/docs/business-analysis/",
+      "href": "/business-analysis/",
       "kind": "doc",
       "source": "docs/02-business-analysis/README.md"
     },
     "DOC-BA-012": {
-      "href": "/docs/business-analysis/DOC-BA-012",
+      "href": "/business-analysis/DOC-BA-012",
       "kind": "doc",
       "source": "docs/02-business-analysis/stakeholder-needs-demo-v1.md"
     },
     "DOC-BA-016": {
-      "href": "/docs/business-analysis/DOC-BA-016",
+      "href": "/business-analysis/DOC-BA-016",
       "kind": "doc",
       "source": "docs/02-business-analysis/traceability-matrix.md"
     },
     "DOC-PROD-013": {
-      "href": "/docs/product/DOC-PROD-013",
+      "href": "/product/DOC-PROD-013",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-acceptance-walkthrough.md"
     },
     "DOC-PROD-003": {
-      "href": "/docs/product/DOC-PROD-003",
+      "href": "/product/DOC-PROD-003",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-architecture.md"
     },
     "DOC-PROD-010": {
-      "href": "/docs/product/DOC-PROD-010",
+      "href": "/product/DOC-PROD-010",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-capabilities.md"
     },
     "DOC-PROD-019": {
-      "href": "/docs/product/DOC-PROD-019",
+      "href": "/product/DOC-PROD-019",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-enrichment-current-state-audit.md"
     },
     "DOC-PROD-021": {
-      "href": "/docs/product/DOC-PROD-021",
+      "href": "/product/DOC-PROD-021",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-enrichment-fixture-blueprint.md"
     },
     "DOC-PROD-020": {
-      "href": "/docs/product/DOC-PROD-020",
+      "href": "/product/DOC-PROD-020",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-enrichment-scope.md"
     },
     "DOC-PROD-022": {
-      "href": "/docs/product/DOC-PROD-022",
+      "href": "/product/DOC-PROD-022",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-enrichment-snapshot-matrix.md"
     },
     "DOC-PROD-011": {
-      "href": "/docs/product/DOC-PROD-011",
+      "href": "/product/DOC-PROD-011",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-functional-scope.md"
     },
     "DOC-PROD-012": {
-      "href": "/docs/product/DOC-PROD-012",
+      "href": "/product/DOC-PROD-012",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-mock-narrative-data.md"
     },
     "DOC-PROD-026": {
-      "href": "/docs/product/DOC-PROD-026",
+      "href": "/product/DOC-PROD-026",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-r2-cost-control.md"
     },
     "DOC-PROD-025": {
-      "href": "/docs/product/DOC-PROD-025",
+      "href": "/product/DOC-PROD-025",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-r2-data-blueprint.md"
     },
     "DOC-PROD-024": {
-      "href": "/docs/product/DOC-PROD-024",
+      "href": "/product/DOC-PROD-024",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-r2-lifecycle-matrix.md"
     },
     "DOC-PROD-023": {
-      "href": "/docs/product/DOC-PROD-023",
+      "href": "/product/DOC-PROD-023",
       "kind": "doc",
       "source": "docs/03-product/demo-v1-r2-scope.md"
     },
     "DOC-PROD-004": {
-      "href": "/docs/product/DOC-PROD-004",
+      "href": "/product/DOC-PROD-004",
       "kind": "doc",
       "source": "docs/03-product/persistence-transition.md"
     },
     "DOC-PROD-README-001": {
-      "href": "/docs/product/",
+      "href": "/product/",
       "kind": "doc",
       "source": "docs/03-product/README.md"
     },
     "DOC-PROD-002": {
-      "href": "/docs/product/DOC-PROD-002",
+      "href": "/product/DOC-PROD-002",
       "kind": "doc",
       "source": "docs/03-product/target-technology-stack.md"
     },
     "DOC-PROD-001": {
-      "href": "/docs/product/DOC-PROD-001",
+      "href": "/product/DOC-PROD-001",
       "kind": "doc",
       "source": "docs/03-product/vision-and-scope.md"
     },
     "DOC-REQ-README-001": {
-      "href": "/docs/requirements/",
+      "href": "/requirements/",
       "kind": "doc",
       "source": "docs/04-requirements/README.md"
     },
     "REQ-EQPT-001": {
-      "href": "/docs/requirements/REQ-EQPT-001",
+      "href": "/requirements/REQ-EQPT-001",
       "kind": "req",
       "source": "docs/04-requirements/REQ-EQPT-001.md"
     },
     "REQ-IMPCT-001": {
-      "href": "/docs/requirements/REQ-IMPCT-001",
+      "href": "/requirements/REQ-IMPCT-001",
       "kind": "req",
       "source": "docs/04-requirements/REQ-IMPCT-001.md"
     },
     "REQ-IMPCT-002": {
-      "href": "/docs/requirements/REQ-IMPCT-002",
+      "href": "/requirements/REQ-IMPCT-002",
       "kind": "req",
       "source": "docs/04-requirements/REQ-IMPCT-002.md"
     },
     "REQ-MILE-001": {
-      "href": "/docs/requirements/REQ-MILE-001",
+      "href": "/requirements/REQ-MILE-001",
       "kind": "req",
       "source": "docs/04-requirements/REQ-MILE-001.md"
     },
     "REQ-NFR-001": {
-      "href": "/docs/requirements/REQ-NFR-001",
+      "href": "/requirements/REQ-NFR-001",
       "kind": "req",
       "source": "docs/04-requirements/REQ-NFR-001.md"
     },
     "REQ-NFR-002": {
-      "href": "/docs/requirements/REQ-NFR-002",
+      "href": "/requirements/REQ-NFR-002",
       "kind": "req",
       "source": "docs/04-requirements/REQ-NFR-002.md"
     },
     "REQ-PROJ-001": {
-      "href": "/docs/requirements/REQ-PROJ-001",
+      "href": "/requirements/REQ-PROJ-001",
       "kind": "req",
       "source": "docs/04-requirements/REQ-PROJ-001.md"
     },
     "REQ-RISK-001": {
-      "href": "/docs/requirements/REQ-RISK-001",
+      "href": "/requirements/REQ-RISK-001",
       "kind": "req",
       "source": "docs/04-requirements/REQ-RISK-001.md"
     },
     "DOC-UX-016": {
-      "href": "/docs/ux-ui/DOC-UX-016",
+      "href": "/ux-ui/DOC-UX-016",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-component-specification.md"
     },
     "DOC-UX-004": {
-      "href": "/docs/ux-ui/DOC-UX-004",
+      "href": "/ux-ui/DOC-UX-004",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-dashboard.md"
     },
     "DOC-UX-007": {
-      "href": "/docs/ux-ui/DOC-UX-007",
+      "href": "/ux-ui/DOC-UX-007",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-data-viz-and-components.md"
     },
     "DOC-UX-011": {
-      "href": "/docs/ux-ui/DOC-UX-011",
+      "href": "/ux-ui/DOC-UX-011",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-design-tokens.md"
     },
     "DOC-UX-021": {
-      "href": "/docs/ux-ui/DOC-UX-021",
+      "href": "/ux-ui/DOC-UX-021",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-enrichment-ux-delta.md"
     },
     "DOC-UX-006": {
-      "href": "/docs/ux-ui/DOC-UX-006",
+      "href": "/ux-ui/DOC-UX-006",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-entity-detail.md"
     },
     "DOC-UX-008": {
-      "href": "/docs/ux-ui/DOC-UX-008",
+      "href": "/ux-ui/DOC-UX-008",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-mock-ux-requirements.md"
     },
     "DOC-UX-022": {
-      "href": "/docs/ux-ui/DOC-UX-022",
+      "href": "/ux-ui/DOC-UX-022",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-r2-ux-delta.md"
     },
     "DOC-UX-005": {
-      "href": "/docs/ux-ui/DOC-UX-005",
+      "href": "/ux-ui/DOC-UX-005",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-schedule-workspace.md"
     },
     "DOC-UX-012": {
-      "href": "/docs/ux-ui/DOC-UX-012",
+      "href": "/ux-ui/DOC-UX-012",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-screen-compositions.md"
     },
     "DOC-UX-003": {
-      "href": "/docs/ux-ui/DOC-UX-003",
+      "href": "/ux-ui/DOC-UX-003",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-screens-and-flows.md"
     },
     "DOC-UX-002": {
-      "href": "/docs/ux-ui/DOC-UX-002",
+      "href": "/ux-ui/DOC-UX-002",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-shell-navigation.md"
     },
     "DOC-UX-018": {
-      "href": "/docs/ux-ui/DOC-UX-018",
+      "href": "/ux-ui/DOC-UX-018",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-ui-data-viz.md"
     },
     "DOC-UX-014": {
-      "href": "/docs/ux-ui/DOC-UX-014",
+      "href": "/ux-ui/DOC-UX-014",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-ui-design-overview.md"
     },
     "DOC-UX-015": {
-      "href": "/docs/ux-ui/DOC-UX-015",
+      "href": "/ux-ui/DOC-UX-015",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-ui-foundations.md"
     },
     "DOC-UX-019": {
-      "href": "/docs/ux-ui/DOC-UX-019",
+      "href": "/ux-ui/DOC-UX-019",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-ui-interactions.md"
     },
     "DOC-UX-020": {
-      "href": "/docs/ux-ui/DOC-UX-020",
+      "href": "/ux-ui/DOC-UX-020",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-ui-quality.md"
     },
     "DOC-UX-017": {
-      "href": "/docs/ux-ui/DOC-UX-017",
+      "href": "/ux-ui/DOC-UX-017",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-ui-screens.md"
     },
     "DOC-UX-001": {
-      "href": "/docs/ux-ui/DOC-UX-001",
+      "href": "/ux-ui/DOC-UX-001",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-ux-concept.md"
     },
     "DOC-UX-009": {
-      "href": "/docs/ux-ui/DOC-UX-009",
+      "href": "/ux-ui/DOC-UX-009",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-ux-traceability.md"
     },
     "DOC-UX-010": {
-      "href": "/docs/ux-ui/DOC-UX-010",
+      "href": "/ux-ui/DOC-UX-010",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-visual-direction.md"
     },
     "DOC-UX-013": {
-      "href": "/docs/ux-ui/DOC-UX-013",
+      "href": "/ux-ui/DOC-UX-013",
       "kind": "doc",
       "source": "docs/05-ux-ui/demo-v1-visual-references.md"
     },
     "DOC-UX-README-001": {
-      "href": "/docs/ux-ui/",
+      "href": "/ux-ui/",
       "kind": "doc",
       "source": "docs/05-ux-ui/README.md"
     },
     "DOC-ARCH-001": {
-      "href": "/docs/architecture/DOC-ARCH-001",
+      "href": "/architecture/DOC-ARCH-001",
       "kind": "doc",
       "source": "docs/06-architecture/arc42.md"
     },
     "DOC-ADR-0001": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0001",
+      "href": "/architecture/decisions/DOC-ADR-0001",
       "kind": "doc",
       "source": "docs/06-architecture/decisions/0001-documentation-stack.md"
     },
     "ADR-0001": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0001",
+      "href": "/architecture/decisions/DOC-ADR-0001",
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0001-documentation-stack.md"
     },
     "DOC-ADR-0002": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0002",
+      "href": "/architecture/decisions/DOC-ADR-0002",
       "kind": "doc",
       "source": "docs/06-architecture/decisions/0002-target-technology-stack-direction.md"
     },
     "ADR-0002": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0002",
+      "href": "/architecture/decisions/DOC-ADR-0002",
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0002-target-technology-stack-direction.md"
     },
     "DOC-ADR-0003": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0003",
+      "href": "/architecture/decisions/DOC-ADR-0003",
       "kind": "doc",
       "source": "docs/06-architecture/decisions/0003-local-dev-urls-and-proxy.md"
     },
     "ADR-0003": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0003",
+      "href": "/architecture/decisions/DOC-ADR-0003",
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0003-local-dev-urls-and-proxy.md"
     },
     "DOC-ADR-0004": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0004",
+      "href": "/architecture/decisions/DOC-ADR-0004",
       "kind": "doc",
       "source": "docs/06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md"
     },
     "ADR-0004": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0004",
+      "href": "/architecture/decisions/DOC-ADR-0004",
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0004-d12-dhtmlx-gantt-community.md"
     },
     "DOC-ADR-0005": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0005",
+      "href": "/architecture/decisions/DOC-ADR-0005",
       "kind": "doc",
       "source": "docs/06-architecture/decisions/0005-server-single-origin-compose.md"
     },
     "ADR-0005": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0005",
+      "href": "/architecture/decisions/DOC-ADR-0005",
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0005-server-single-origin-compose.md"
     },
     "DOC-ADR-0006": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0006",
+      "href": "/architecture/decisions/DOC-ADR-0006",
       "kind": "doc",
       "source": "docs/06-architecture/decisions/0006-portfolio-program-project-read-model.md"
     },
     "ADR-0006": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0006",
+      "href": "/architecture/decisions/DOC-ADR-0006",
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0006-portfolio-program-project-read-model.md"
     },
     "DOC-ADR-0007": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0007",
+      "href": "/architecture/decisions/DOC-ADR-0007",
       "kind": "doc",
       "source": "docs/06-architecture/decisions/0007-demo-form-login.md"
     },
     "ADR-0007": {
-      "href": "/docs/architecture/decisions/DOC-ADR-0007",
+      "href": "/architecture/decisions/DOC-ADR-0007",
       "kind": "adr",
       "source": "docs/06-architecture/decisions/0007-demo-form-login.md"
     },
     "DOC-ADR-README-001": {
-      "href": "/docs/architecture/decisions/",
+      "href": "/architecture/decisions/",
       "kind": "doc",
       "source": "docs/06-architecture/decisions/README.md"
     },
     "DOC-ARCH-README-001": {
-      "href": "/docs/architecture/",
+      "href": "/architecture/",
       "kind": "doc",
       "source": "docs/06-architecture/README.md"
     },
     "DOC-PHASE-BAPD-001": {
-      "href": "/docs/delivery/DOC-PHASE-BAPD-001",
+      "href": "/delivery/DOC-PHASE-BAPD-001",
       "kind": "doc",
       "source": "docs/07-delivery/ba-pd-phase-plan.md"
     },
     "DOC-DEL-E02-PACK": {
-      "href": "/docs/delivery/DOC-DEL-E02-PACK",
+      "href": "/delivery/DOC-DEL-E02-PACK",
       "kind": "doc",
       "source": "docs/07-delivery/director-rehearsal.md"
     },
     "DOC-PHASE-DISC-001": {
-      "href": "/docs/delivery/DOC-PHASE-DISC-001",
+      "href": "/delivery/DOC-PHASE-DISC-001",
       "kind": "doc",
       "source": "docs/07-delivery/discovery-phase-plan.md"
     },
     "DOC-HANDOFF-BAPD-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-BAPD-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-BAPD-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-10-30-ba-pd.md"
     },
     "DOC-HANDOFF-DISC-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-DISC-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-DISC-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-10-30-discovery.md"
     },
     "DOC-HANDOFF-W1-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-W1-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-W1-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-10-30-w1-docs.md"
     },
     "DOC-HANDOFF-W3-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-W3-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-W3-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-10-30-w3-integrate.md"
     },
     "DOC-HANDOFF-REQOS-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-REQOS-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-REQOS-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-10-31-req-openspec.md"
     },
     "DOC-HANDOFF-UX-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-UX-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-UX-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-10-31-ux-ui.md"
     },
     "DOC-HANDOFF-VD-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-VD-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-VD-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-10-31-visual-direction.md"
     },
     "DOC-HANDOFF-UID-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-UID-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-UID-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-01-ui-design.md"
     },
     "DOC-HANDOFF-R2-U1-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-R2-U1-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-R2-U1-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-02-r2-u1-closed.md"
     },
     "DOC-HANDOFF-SERVER-001": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-SERVER-001",
+      "href": "/delivery/handoffs/DOC-HANDOFF-SERVER-001",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-05-server-compose-gitlab.md"
     },
     "DOC-HANDOFF-C07": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-C07",
+      "href": "/delivery/handoffs/DOC-HANDOFF-C07",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-c07-schedule-work-actual.md"
     },
     "DOC-HANDOFF-2026-11-06-SURFACE": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-SURFACE",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-06-SURFACE",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-page-surface-row-geometry.md"
     },
     "DOC-HANDOFF-2026-11-06-XPROJ": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-XPROJ",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-06-XPROJ",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-schedule-c-cross-project-close.md"
     },
     "DOC-HANDOFF-2026-11-06-SCHED-OWN": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-SCHED-OWN",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-06-SCHED-OWN",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-schedule-file-owners.md"
     },
     "DOC-HANDOFF-2026-11-06-ONE-CAL": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-ONE-CAL",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-06-ONE-CAL",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-schedule-one-calendar.md"
     },
     "DOC-HANDOFF-2026-11-06-SHELL-LABELS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-SHELL-LABELS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-06-SHELL-LABELS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-shell-label-theme-brand.md"
     },
     "DOC-HANDOFF-2026-11-06-SHOW-NOTE": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-SHOW-NOTE",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-06-SHOW-NOTE",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-show-kit-cross-project-note.md"
     },
     "DOC-HANDOFF-2026-11-06-STAGE1": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-06-STAGE1",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-06-STAGE1",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-06-stage1-shell-dashboard-docs.md"
     },
     "DOC-HANDOFF-2026-11-07-CALENDAR-HEADER-RECOVERY": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-CALENDAR-HEADER-RECOVERY",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-07-CALENDAR-HEADER-RECOVERY",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-07-calendar-header-recovery.md"
     },
     "DOC-HANDOFF-2026-11-07-DOCKER-DEV-CLEANUP": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-DOCKER-DEV-CLEANUP",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-07-DOCKER-DEV-CLEANUP",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-07-docker-dev-cleanup.md"
     },
     "DOC-HANDOFF-2026-11-07-PHARMA-CLOSEOUT": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-PHARMA-CLOSEOUT",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-07-PHARMA-CLOSEOUT",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-07-pharma-closeout.md"
     },
     "DOC-HANDOFF-2026-11-07-PHARMA-FORM-LOGIN": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-PHARMA-FORM-LOGIN",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-07-PHARMA-FORM-LOGIN",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-07-pharma-form-login.md"
     },
     "DOC-HANDOFF-2026-11-07-SCHEDULE-DATA-CHROME": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-SCHEDULE-DATA-CHROME",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-07-SCHEDULE-DATA-CHROME",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-07-schedule-data-chrome.md"
     },
     "DOC-HANDOFF-2026-11-07-SCHEDULE-SCROLL-OWNER": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-07-SCHEDULE-SCROLL-OWNER",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-07-SCHEDULE-SCROLL-OWNER",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-07-schedule-scroll-owner-ordinal.md"
     },
     "DOC-HANDOFF-2026-11-08-ANALYST-MERGE": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-ANALYST-MERGE",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-ANALYST-MERGE",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-analyst-schedule-programs.md"
     },
     "DOC-HANDOFF-2026-11-08-DASHBOARD-PAGES": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-DASHBOARD-PAGES",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-DASHBOARD-PAGES",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-dashboard-pages-consistency.md"
     },
     "DOC-HO-2026-11-08-DASHBOARD-ECHARTS-REFINE": {
-      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-08-DASHBOARD-ECHARTS-REFINE",
+      "href": "/delivery/handoffs/DOC-HO-2026-11-08-DASHBOARD-ECHARTS-REFINE",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-dashboard-summary-echarts-refinements.md"
     },
     "DOC-HANDOFF-2026-11-08-DECISIONS-DASHBOARD": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-DECISIONS-DASHBOARD",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-DECISIONS-DASHBOARD",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-decisions-dashboard.md"
     },
     "DOC-HANDOFF-2026-11-08-GANTT-CLARITY": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-GANTT-CLARITY",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-GANTT-CLARITY",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-gantt-clarity.md"
     },
     "DOC-HO-2026-11-08-PHARMA-COMMIT-ALL": {
-      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-08-PHARMA-COMMIT-ALL",
+      "href": "/delivery/handoffs/DOC-HO-2026-11-08-PHARMA-COMMIT-ALL",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-pharma-demo-commit-all.md"
     },
     "DOC-HANDOFF-2026-11-08-PROJECTS-PROGRAMS-SEMANTIC-PROGRESS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-PROJECTS-PROGRAMS-SEMANTIC-PROGRESS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-PROJECTS-PROGRAMS-SEMANTIC-PROGRESS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-projects-programs-semantic-progress.md"
     },
     "DOC-HANDOFF-2026-11-08-REALISTIC-SIM": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-REALISTIC-SIM",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-REALISTIC-SIM",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-realistic-simulation-programs.md"
     },
     "DOC-HANDOFF-2026-11-08-SCHEDULE-AUTHORED-FACTS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-SCHEDULE-AUTHORED-FACTS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-SCHEDULE-AUTHORED-FACTS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-schedule-authored-facts.md"
     },
     "DOC-HANDOFF-2026-11-08-PERF-STYLE": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-PERF-STYLE",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-PERF-STYLE",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-schedule-perf-style.md"
     },
     "DOC-HANDOFF-2026-11-08-SCHEDULE-REFERENCE-FINAL": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-SCHEDULE-REFERENCE-FINAL",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-SCHEDULE-REFERENCE-FINAL",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-schedule-reference-final.md"
     },
     "DOC-HANDOFF-2026-11-08-TIMELINE-ECHARTS-DECISIONS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-TIMELINE-ECHARTS-DECISIONS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-TIMELINE-ECHARTS-DECISIONS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-timeline-echarts-decisions-register.md"
     },
     "DOC-HO-2026-11-08-TIMELINE-ONLY-ECHARTS": {
-      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-08-TIMELINE-ONLY-ECHARTS",
+      "href": "/delivery/handoffs/DOC-HO-2026-11-08-TIMELINE-ONLY-ECHARTS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-timeline-only-echarts.md"
     },
     "DOC-HANDOFF-2026-11-08-UI-SEMANTICS-LINKS-SNAPSHOTS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-08-UI-SEMANTICS-LINKS-SNAPSHOTS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-08-UI-SEMANTICS-LINKS-SNAPSHOTS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-08-ui-semantics-links-snapshots.md"
     },
     "DOC-HANDOFF-2026-11-09-DASH-CARD-COMPOSITION": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-CARD-COMPOSITION",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-CARD-COMPOSITION",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-card-composition.md"
     },
     "DOC-HANDOFF-2026-11-09-DASH-MGMT-IMPL": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-MGMT-IMPL",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-MGMT-IMPL",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-management-cards-impl.md"
     },
     "DOC-HANDOFF-2026-11-09-DASH-MGMT-CARDS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-MGMT-CARDS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-MGMT-CARDS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-management-cards-proposal.md"
     },
     "DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS-VISUAL": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS-VISUAL",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS-VISUAL",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-people-focus-visual.md"
     },
     "DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-PEOPLE-FOCUS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-people-focus.md"
     },
     "DOC-HANDOFF-2026-11-09-PROGRAM-PEOPLE-LAYOUT": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-PROGRAM-PEOPLE-LAYOUT",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-PROGRAM-PEOPLE-LAYOUT",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-program-people-layout.md"
     },
     "DOC-HO-2026-11-09-TOOLTIP-PORTFOLIO-PRT": {
-      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-09-TOOLTIP-PORTFOLIO-PRT",
+      "href": "/delivery/handoffs/DOC-HO-2026-11-09-TOOLTIP-PORTFOLIO-PRT",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-tooltip-portfolio-prt.md"
     },
     "DOC-HANDOFF-2026-11-09-DASH-TWO-COLUMNS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-TWO-COLUMNS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-DASH-TWO-COLUMNS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-dashboard-two-columns.md"
     },
+    "DOC-HANDOFF-2026-11-09-DOCS-CI-PORTAL-LINKS": {
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-DOCS-CI-PORTAL-LINKS",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-docs-ci-portal-links.md"
+    },
     "DOC-HO-2026-11-09-DOCS-DOCUSAURUS-VOLUME": {
-      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-09-DOCS-DOCUSAURUS-VOLUME",
+      "href": "/delivery/handoffs/DOC-HO-2026-11-09-DOCS-DOCUSAURUS-VOLUME",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-docs-docusaurus-volume-isolation.md"
     },
     "DOC-HO-2026-11-09-GUIDE-DOCS-SYNC": {
-      "href": "/docs/delivery/handoffs/DOC-HO-2026-11-09-GUIDE-DOCS-SYNC",
+      "href": "/delivery/handoffs/DOC-HO-2026-11-09-GUIDE-DOCS-SYNC",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-guide-docs-sync.md"
     },
     "DOC-HANDOFF-2026-11-09-GANTT-CONTROLS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-CONTROLS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-CONTROLS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-pharma-gantt-controls.md"
     },
     "DOC-HANDOFF-2026-11-09-GANTT-REGRESSIONS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-REGRESSIONS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-REGRESSIONS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-pharma-gantt-regressions.md"
     },
     "DOC-HANDOFF-2026-11-09-GANTT-STRAY-MARKS": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-STRAY-MARKS",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-GANTT-STRAY-MARKS",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-pharma-gantt-stray-marks.md"
     },
+    "DOC-HANDOFF-2026-11-09-PREDEPLOY-FINAL": {
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-PREDEPLOY-FINAL",
+      "kind": "doc",
+      "source": "docs/07-delivery/handoffs/2026-11-09-predeploy-final.md"
+    },
     "DOC-HANDOFF-2026-11-09-PROGRAM-BADGE-COMPACT": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-PROGRAM-BADGE-COMPACT",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-PROGRAM-BADGE-COMPACT",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-program-badge-compact.md"
     },
     "DOC-DEL-H-SNAP-NUM-2026-11-09": {
-      "href": "/docs/delivery/handoffs/DOC-DEL-H-SNAP-NUM-2026-11-09",
+      "href": "/delivery/handoffs/DOC-DEL-H-SNAP-NUM-2026-11-09",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-snapshot-ids-numeric.md"
     },
     "DOC-HANDOFF-2026-11-09-TL-COMPACT": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-TL-COMPACT",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-TL-COMPACT",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-timeline-card-compact.md"
     },
     "DOC-HANDOFF-2026-11-09-TIMELINE-PORTFOLIO-LANE": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-TIMELINE-PORTFOLIO-LANE",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-TIMELINE-PORTFOLIO-LANE",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-timeline-portfolio-lane.md"
     },
     "DOC-HANDOFF-2026-11-09-TL-TRIM": {
-      "href": "/docs/delivery/handoffs/DOC-HANDOFF-2026-11-09-TL-TRIM",
+      "href": "/delivery/handoffs/DOC-HANDOFF-2026-11-09-TL-TRIM",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/2026-11-09-timeline-trim-loading.md"
     },
     "DOC-HANDOFF-README-001": {
-      "href": "/docs/delivery/handoffs/",
+      "href": "/delivery/handoffs/",
       "kind": "doc",
       "source": "docs/07-delivery/handoffs/README.md"
     },
     "DOC-DEL-PHARMA-CALL-001": {
-      "href": "/docs/delivery/DOC-DEL-PHARMA-CALL-001",
+      "href": "/delivery/DOC-DEL-PHARMA-CALL-001",
       "kind": "doc",
       "source": "docs/07-delivery/pharma-demo-call-work-plan.md"
     },
     "DOC-DEL-001": {
-      "href": "/docs/delivery/DOC-DEL-001",
+      "href": "/delivery/DOC-DEL-001",
       "kind": "doc",
       "source": "docs/07-delivery/quality-gates.md"
     },
     "DOC-DEL-README-001": {
-      "href": "/docs/delivery/",
+      "href": "/delivery/",
       "kind": "doc",
       "source": "docs/07-delivery/README.md"
     },
     "DOC-RPT-BAPD-001": {
-      "href": "/docs/delivery/reports/DOC-RPT-BAPD-001",
+      "href": "/delivery/reports/DOC-RPT-BAPD-001",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-10-30-ba-pd-corrective-pass.md"
     },
     "DOC-RPT-BAPD-003": {
-      "href": "/docs/delivery/reports/DOC-RPT-BAPD-003",
+      "href": "/delivery/reports/DOC-RPT-BAPD-003",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-10-31-ba-pd-final-consistency-pass.md"
     },
     "DOC-RPT-BAPD-002": {
-      "href": "/docs/delivery/reports/DOC-RPT-BAPD-002",
+      "href": "/delivery/reports/DOC-RPT-BAPD-002",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-10-31-ba-pd-narrow-corrective.md"
     },
     "DOC-RPT-REQOS-001": {
-      "href": "/docs/delivery/reports/DOC-RPT-REQOS-001",
+      "href": "/delivery/reports/DOC-RPT-REQOS-001",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-10-31-req-openspec-readiness-audit.md"
     },
     "DOC-RPT-REQOS-003": {
-      "href": "/docs/delivery/reports/DOC-RPT-REQOS-003",
+      "href": "/delivery/reports/DOC-RPT-REQOS-003",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-10-31-req-openspec-stage1-corrective-review.md"
     },
     "DOC-RPT-REQOS-002": {
-      "href": "/docs/delivery/reports/DOC-RPT-REQOS-002",
+      "href": "/delivery/reports/DOC-RPT-REQOS-002",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-10-31-req-openspec-stage1.md"
     },
     "DOC-DEL-A01-A05": {
-      "href": "/docs/delivery/reports/DOC-DEL-A01-A05",
+      "href": "/delivery/reports/DOC-DEL-A01-A05",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-a01-a05-analyst-mapping.md"
     },
     "DOC-DEL-A06-A09": {
-      "href": "/docs/delivery/reports/DOC-DEL-A06-A09",
+      "href": "/delivery/reports/DOC-DEL-A06-A09",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-a06-a09-director-scenario.md"
     },
     "DOC-DEL-BASELINE-LAB": {
-      "href": "/docs/delivery/reports/DOC-DEL-BASELINE-LAB",
+      "href": "/delivery/reports/DOC-DEL-BASELINE-LAB",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-baseline-over-forecast-lab.md"
     },
     "DOC-DEL-C01-C04": {
-      "href": "/docs/delivery/reports/DOC-DEL-C01-C04",
+      "href": "/delivery/reports/DOC-DEL-C01-C04",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-c01-c04-marker-notifications.md"
     },
     "DOC-DEL-C06": {
-      "href": "/docs/delivery/reports/DOC-DEL-C06",
+      "href": "/delivery/reports/DOC-DEL-C06",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-c06-vis-month-grid.md"
     },
     "DOC-DEL-C07-TICK": {
-      "href": "/docs/delivery/reports/DOC-DEL-C07-TICK",
+      "href": "/delivery/reports/DOC-DEL-C07-TICK",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-c07-open-fact-tick-lab.md"
     },
     "DOC-DEL-C07-ACCEPT": {
-      "href": "/docs/delivery/reports/DOC-DEL-C07-ACCEPT",
+      "href": "/delivery/reports/DOC-DEL-C07-ACCEPT",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-c07-product-acceptance.md"
     },
     "DOC-DEL-C08": {
-      "href": "/docs/delivery/reports/DOC-DEL-C08",
+      "href": "/delivery/reports/DOC-DEL-C08",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-c08-gantt-interval-lab.md"
     },
     "DOC-RPT-C09-C11-001": {
-      "href": "/docs/delivery/reports/DOC-RPT-C09-C11-001",
+      "href": "/delivery/reports/DOC-RPT-C09-C11-001",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-c09-c11-timeline-renderer-compare.md"
     },
     "DOC-DEL-H05": {
-      "href": "/docs/delivery/reports/DOC-DEL-H05",
+      "href": "/delivery/reports/DOC-DEL-H05",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-calendar-hierarchy-acceptance.md"
     },
     "DOC-DEL-CAL-SHOW-EP": {
-      "href": "/docs/delivery/reports/DOC-DEL-CAL-SHOW-EP",
+      "href": "/delivery/reports/DOC-DEL-CAL-SHOW-EP",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-calendar-show-episode.md"
     },
     "DOC-DEL-CAL-STAB": {
-      "href": "/docs/delivery/reports/DOC-DEL-CAL-STAB",
+      "href": "/delivery/reports/DOC-DEL-CAL-STAB",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-calendar-stabilization-walk.md"
     },
     "DOC-DEL-CAL-GEOM": {
-      "href": "/docs/delivery/reports/DOC-DEL-CAL-GEOM",
+      "href": "/delivery/reports/DOC-DEL-CAL-GEOM",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-calendar-unified-geometry.md"
     },
     "DOC-DEL-F07-G12": {
-      "href": "/docs/delivery/reports/DOC-DEL-F07-G12",
+      "href": "/delivery/reports/DOC-DEL-F07-G12",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-f07-g12-shell.md"
     },
     "DOC-DEL-G07-Q": {
-      "href": "/docs/delivery/reports/DOC-DEL-G07-Q",
+      "href": "/delivery/reports/DOC-DEL-G07-Q",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-g07-g11-analyst-questions.md"
     },
     "DOC-DEL-G07-INT": {
-      "href": "/docs/delivery/reports/DOC-DEL-G07-INT",
+      "href": "/delivery/reports/DOC-DEL-G07-INT",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-g07-g11-integrator-check.md"
     },
     "DOC-DEL-G07-FIX": {
-      "href": "/docs/delivery/reports/DOC-DEL-G07-FIX",
+      "href": "/delivery/reports/DOC-DEL-G07-FIX",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-g07-g11-schedule-work-fixtures.md"
     },
     "DOC-RPT-MILESTONE-CAND-001": {
-      "href": "/docs/delivery/reports/DOC-RPT-MILESTONE-CAND-001",
+      "href": "/delivery/reports/DOC-RPT-MILESTONE-CAND-001",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-milestone-renderer-candidates.md"
     },
     "DOC-DEL-SCHED-ORDER": {
-      "href": "/docs/delivery/reports/DOC-DEL-SCHED-ORDER",
+      "href": "/delivery/reports/DOC-DEL-SCHED-ORDER",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-schedule-openspec-order.md"
     },
     "DOC-DEL-SHELL-LABELS": {
-      "href": "/docs/delivery/reports/DOC-DEL-SHELL-LABELS",
+      "href": "/delivery/reports/DOC-DEL-SHELL-LABELS",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-shell-labels-theme-brand.md"
     },
     "DOC-DEL-SHOW-LAUNCH": {
-      "href": "/docs/delivery/reports/DOC-DEL-SHOW-LAUNCH",
+      "href": "/delivery/reports/DOC-DEL-SHOW-LAUNCH",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-06-show-readiness-launch.md"
     },
     "DOC-DEL-RECOVERY-FU": {
-      "href": "/docs/delivery/reports/DOC-DEL-RECOVERY-FU",
+      "href": "/delivery/reports/DOC-DEL-RECOVERY-FU",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-07-demo-recovery-followup.md"
     },
     "DOC-RPT-2026-11-07-SCHEDULE-DATA-CHROME": {
-      "href": "/docs/delivery/reports/DOC-RPT-2026-11-07-SCHEDULE-DATA-CHROME",
+      "href": "/delivery/reports/DOC-RPT-2026-11-07-SCHEDULE-DATA-CHROME",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-07-schedule-data-chrome-inventory.md"
     },
     "DOC-RPT-2026-11-08-ANALYST-IMPORT": {
-      "href": "/docs/delivery/reports/DOC-RPT-2026-11-08-ANALYST-IMPORT",
+      "href": "/delivery/reports/DOC-RPT-2026-11-08-ANALYST-IMPORT",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-08-analyst-import-audit.md"
     },
     "DOC-REPORT-2026-11-08-COMPREHENSIVE-AUDIT": {
-      "href": "/docs/delivery/reports/DOC-REPORT-2026-11-08-COMPREHENSIVE-AUDIT",
+      "href": "/delivery/reports/DOC-REPORT-2026-11-08-COMPREHENSIVE-AUDIT",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-08-comprehensive-audit-findings.md"
     },
     "DOC-RPT-2026-11-08-TIMELINE-ECHARTS-DECISIONS": {
-      "href": "/docs/delivery/reports/DOC-RPT-2026-11-08-TIMELINE-ECHARTS-DECISIONS",
+      "href": "/delivery/reports/DOC-RPT-2026-11-08-TIMELINE-ECHARTS-DECISIONS",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-08-timeline-echarts-decisions-execute.md"
     },
     "DOC-RPT-2026-11-08-TIMELINE-ONLY-ECHARTS": {
-      "href": "/docs/delivery/reports/DOC-RPT-2026-11-08-TIMELINE-ONLY-ECHARTS",
+      "href": "/delivery/reports/DOC-RPT-2026-11-08-TIMELINE-ONLY-ECHARTS",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-08-timeline-only-echarts.md"
     },
     "DOC-DEL-RPT-2026-11-09-GUIDE-DOCS-SYNC": {
-      "href": "/docs/delivery/reports/DOC-DEL-RPT-2026-11-09-GUIDE-DOCS-SYNC",
+      "href": "/delivery/reports/DOC-DEL-RPT-2026-11-09-GUIDE-DOCS-SYNC",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-09-guide-docs-sync-audit.md"
     },
     "DOC-DEL-R-SNAP-NUM-2026-11-09": {
-      "href": "/docs/delivery/reports/DOC-DEL-R-SNAP-NUM-2026-11-09",
+      "href": "/delivery/reports/DOC-DEL-R-SNAP-NUM-2026-11-09",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-09-snapshot-ids-numeric.md"
     },
     "DOC-DEL-R-TL-COMPACT-2026-11-09": {
-      "href": "/docs/delivery/reports/DOC-DEL-R-TL-COMPACT-2026-11-09",
+      "href": "/delivery/reports/DOC-DEL-R-TL-COMPACT-2026-11-09",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-09-timeline-card-compact.md"
     },
     "DOC-DEL-R-TL-TRIM-2026-11-09": {
-      "href": "/docs/delivery/reports/DOC-DEL-R-TL-TRIM-2026-11-09",
+      "href": "/delivery/reports/DOC-DEL-R-TL-TRIM-2026-11-09",
       "kind": "doc",
       "source": "docs/07-delivery/reports/2026-11-09-timeline-trim-loading.md"
     },
     "DOC-QA-003": {
-      "href": "/docs/quality/DOC-QA-003",
+      "href": "/quality/DOC-QA-003",
       "kind": "doc",
       "source": "docs/08-quality/architecture-tests.md"
     },
     "DOC-QA-002": {
-      "href": "/docs/quality/DOC-QA-002",
+      "href": "/quality/DOC-QA-002",
       "kind": "doc",
       "source": "docs/08-quality/coverage-policy.md"
     },
     "DOC-QA-README-001": {
-      "href": "/docs/quality/",
+      "href": "/quality/",
       "kind": "doc",
       "source": "docs/08-quality/README.md"
     },
     "DOC-QA-001": {
-      "href": "/docs/quality/DOC-QA-001",
+      "href": "/quality/DOC-QA-001",
       "kind": "doc",
       "source": "docs/08-quality/testing-strategy.md"
     },
     "DOC-REL-README-001": {
-      "href": "/docs/release/",
+      "href": "/release/",
       "kind": "doc",
       "source": "docs/09-release/README.md"
     },
     "DOC-OPS-FORM-LOGIN-001": {
-      "href": "/docs/operations/DOC-OPS-FORM-LOGIN-001",
+      "href": "/operations/DOC-OPS-FORM-LOGIN-001",
       "kind": "doc",
       "source": "docs/10-operations/demo-form-login.md"
     },
     "DOC-OPS-002": {
-      "href": "/docs/operations/DOC-OPS-002",
+      "href": "/operations/DOC-OPS-002",
       "kind": "doc",
       "source": "docs/10-operations/local-dev-and-demo.md"
     },
     "DOC-OPS-README-001": {
-      "href": "/docs/operations/",
+      "href": "/operations/",
       "kind": "doc",
       "source": "docs/10-operations/README.md"
     },
     "DOC-OPS-004": {
-      "href": "/docs/operations/DOC-OPS-004",
+      "href": "/operations/DOC-OPS-004",
       "kind": "doc",
       "source": "docs/10-operations/repository-rename.md"
     },
     "DOC-OPS-003": {
-      "href": "/docs/operations/DOC-OPS-003",
+      "href": "/operations/DOC-OPS-003",
       "kind": "doc",
       "source": "docs/10-operations/server-compose-demo.md"
     },
     "DOC-AI-004": {
-      "href": "/docs/ai-engineering/DOC-AI-004",
+      "href": "/ai-engineering/DOC-AI-004",
       "kind": "doc",
       "source": "docs/11-ai-engineering/cursor-plans-in-git.md"
     },
     "DOC-AI-002": {
-      "href": "/docs/ai-engineering/DOC-AI-002",
+      "href": "/ai-engineering/DOC-AI-002",
       "kind": "doc",
       "source": "docs/11-ai-engineering/documentation-first.md"
     },
     "DOC-AI-001": {
-      "href": "/docs/ai-engineering/DOC-AI-001",
+      "href": "/ai-engineering/DOC-AI-001",
       "kind": "doc",
       "source": "docs/11-ai-engineering/engineering-constitution.md"
     },
     "DOC-AI-README-001": {
-      "href": "/docs/ai-engineering/",
+      "href": "/ai-engineering/",
       "kind": "doc",
       "source": "docs/11-ai-engineering/README.md"
     },
     "DOC-AI-003": {
-      "href": "/docs/ai-engineering/DOC-AI-003",
+      "href": "/ai-engineering/DOC-AI-003",
       "kind": "doc",
       "source": "docs/11-ai-engineering/test-first-bugfix.md"
     },
     "DOC-GUIDE-001": {
-      "href": "/docs/guides/how-to/DOC-GUIDE-001",
+      "href": "/guides/how-to/DOC-GUIDE-001",
       "kind": "doc",
       "source": "docs/guides/how-to/demo-v1-live-presentation.md"
     },
     "DOC-GUIDES-README-001": {
-      "href": "/docs/guides/",
+      "href": "/guides/",
       "kind": "doc",
       "source": "docs/guides/README.md"
     },
     "DOC-PORTAL-001": {
-      "href": "/docs/",
+      "href": "/",
       "kind": "doc",
       "source": "docs/README.md"
     },
     "DOC-STD-001": {
-      "href": "/docs/standards/DOC-STD-001",
+      "href": "/standards/DOC-STD-001",
       "kind": "doc",
       "source": "docs/standards/documentation-standard.md"
     },
     "DOC-STD-README-001": {
-      "href": "/docs/standards/",
+      "href": "/standards/",
       "kind": "doc",
       "source": "docs/standards/README.md"
     },
     "DOC-STD-002": {
-      "href": "/docs/standards/DOC-STD-002",
+      "href": "/standards/DOC-STD-002",
       "kind": "doc",
       "source": "docs/standards/terminology.md"
     },
     "BR-001": {
-      "href": "/docs/business-analysis/DOC-BA-014#br-001",
+      "href": "/business-analysis/DOC-BA-014#br-001",
       "kind": "br",
       "source": "docs/02-business-analysis/business-rules-demo-v1.md"
     },
     "BR-002": {
-      "href": "/docs/business-analysis/DOC-BA-014#br-002",
+      "href": "/business-analysis/DOC-BA-014#br-002",
       "kind": "br",
       "source": "docs/02-business-analysis/business-rules-demo-v1.md"
     },
     "BR-003": {
-      "href": "/docs/business-analysis/DOC-BA-014#br-003",
+      "href": "/business-analysis/DOC-BA-014#br-003",
       "kind": "br",
       "source": "docs/02-business-analysis/business-rules-demo-v1.md"
     },
     "BR-004": {
-      "href": "/docs/business-analysis/DOC-BA-014#br-004",
+      "href": "/business-analysis/DOC-BA-014#br-004",
       "kind": "br",
       "source": "docs/02-business-analysis/business-rules-demo-v1.md"
     },
     "BR-005": {
-      "href": "/docs/business-analysis/DOC-BA-014#br-005",
+      "href": "/business-analysis/DOC-BA-014#br-005",
       "kind": "br",
       "source": "docs/02-business-analysis/business-rules-demo-v1.md"
     },
     "BR-006": {
-      "href": "/docs/business-analysis/DOC-BA-014#br-006",
+      "href": "/business-analysis/DOC-BA-014#br-006",
       "kind": "br",
       "source": "docs/02-business-analysis/business-rules-demo-v1.md"
     },
     "BR-007": {
-      "href": "/docs/business-analysis/DOC-BA-014#br-007",
+      "href": "/business-analysis/DOC-BA-014#br-007",
       "kind": "br",
       "source": "docs/02-business-analysis/business-rules-demo-v1.md"
     },
     "PROC-007": {
-      "href": "/docs/business-analysis/DOC-BA-013#proc-007",
+      "href": "/business-analysis/DOC-BA-013#proc-007",
       "kind": "proc",
       "source": "docs/02-business-analysis/process-specs-demo-v1.md"
     },
     "PROC-001": {
-      "href": "/docs/business-analysis/DOC-BA-013#proc-001",
+      "href": "/business-analysis/DOC-BA-013#proc-001",
       "kind": "proc",
       "source": "docs/02-business-analysis/process-specs-demo-v1.md"
     },
     "PROC-005": {
-      "href": "/docs/business-analysis/DOC-BA-013#proc-005",
+      "href": "/business-analysis/DOC-BA-013#proc-005",
       "kind": "proc",
       "source": "docs/02-business-analysis/process-specs-demo-v1.md"
     },
     "PROC-004": {
-      "href": "/docs/business-analysis/DOC-BA-013#proc-004",
+      "href": "/business-analysis/DOC-BA-013#proc-004",
       "kind": "proc",
       "source": "docs/02-business-analysis/process-specs-demo-v1.md"
     },
     "PROC-010": {
-      "href": "/docs/business-analysis/DOC-BA-013#proc-010",
+      "href": "/business-analysis/DOC-BA-013#proc-010",
       "kind": "proc",
       "source": "docs/02-business-analysis/process-specs-demo-v1.md"
     },
     "PROC-011": {
-      "href": "/docs/business-analysis/DOC-BA-013#proc-011",
+      "href": "/business-analysis/DOC-BA-013#proc-011",
       "kind": "proc",
       "source": "docs/02-business-analysis/process-specs-demo-v1.md"
     },
     "SCN-001": {
-      "href": "/docs/discovery/DOC-DISC-018#scn-001",
+      "href": "/discovery/DOC-DISC-018#scn-001",
       "kind": "scn",
       "source": "docs/01-discovery/management-scenarios.md"
     },
     "SCN-002": {
-      "href": "/docs/discovery/DOC-DISC-018#scn-002",
+      "href": "/discovery/DOC-DISC-018#scn-002",
       "kind": "scn",
       "source": "docs/01-discovery/management-scenarios.md"
     },
     "SCN-003": {
-      "href": "/docs/discovery/DOC-DISC-018#scn-003",
+      "href": "/discovery/DOC-DISC-018#scn-003",
       "kind": "scn",
       "source": "docs/01-discovery/management-scenarios.md"
     },
     "SCN-004": {
-      "href": "/docs/discovery/DOC-DISC-018#scn-004",
+      "href": "/discovery/DOC-DISC-018#scn-004",
       "kind": "scn",
       "source": "docs/01-discovery/management-scenarios.md"
     },
     "SCN-005": {
-      "href": "/docs/discovery/DOC-DISC-018#scn-005",
+      "href": "/discovery/DOC-DISC-018#scn-005",
       "kind": "scn",
       "source": "docs/01-discovery/management-scenarios.md"
     },
     "SCN-006": {
-      "href": "/docs/discovery/DOC-DISC-018#scn-006",
+      "href": "/discovery/DOC-DISC-018#scn-006",
       "kind": "scn",
       "source": "docs/01-discovery/management-scenarios.md"
     },
     "SCN-007": {
-      "href": "/docs/discovery/DOC-DISC-018#scn-007",
+      "href": "/discovery/DOC-DISC-018#scn-007",
       "kind": "scn",
       "source": "docs/01-discovery/management-scenarios.md"
     },
     "SCN-008": {
-      "href": "/docs/discovery/DOC-DISC-018#scn-008",
+      "href": "/discovery/DOC-DISC-018#scn-008",
       "kind": "scn",
       "source": "docs/01-discovery/management-scenarios.md"
     },

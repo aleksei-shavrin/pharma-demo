@@ -3,11 +3,15 @@
  * Build portal cross-reference registry (DOC/BR/ADR/REQ/SCN/PROC → href).
  * Writes website/src/cross-ref-registry.json for the remark autolink plugin
  * and for check-cross-ref-registry.mjs.
+ *
+ * href values are **site paths** (routeBasePath `/`), without DOCUSAURUS_BASE_URL.
+ * Consumers join the deployment base at build time (see docs-site-href.mjs).
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { collectMarkdownFiles, ROOT, rel } from './lib/docs-files.mjs';
+import { sitePathFromDocsFile } from './lib/docs-site-href.mjs';
 
 const OUT = path.join(ROOT, 'website/src/cross-ref-registry.json');
 
@@ -29,31 +33,14 @@ function put(id, entry) {
 }
 
 /**
- * Docusaurus strips numeric folder prefixes (01-discovery → discovery).
- * Frontmatter `id` replaces the file stem in the doc id / permalink.
- * Category README.md → category index URL (`/docs/business-analysis/`), not `.../DOC-*-README`.
- * Root docs/README.md → `/docs/`.
+ * Category README.md → category index URL (`/business-analysis/`), not `.../DOC-*-README`.
+ * Root docs/README.md → `/`.
  */
 function portalHrefFromDocFile(absFile, frontmatterId) {
-  const relative = path.relative(path.join(ROOT, 'docs'), absFile).replaceAll('\\', '/');
-  const baseName = path.basename(relative);
-  const dir = path.dirname(relative);
-  const strippedDir =
-    dir === '.'
-      ? ''
-      : dir
-          .split('/')
-          .map((seg) => seg.replace(/^\d+-/, ''))
-          .join('/');
-
-  if (/^readme\.md$/i.test(baseName)) {
-    if (!strippedDir) return '/docs/';
-    return `/docs/${strippedDir}/`;
-  }
-
-  const idSeg = String(frontmatterId).trim();
-  const base = strippedDir ? `${strippedDir}/${idSeg}` : idSeg;
-  return `/docs/${base}`;
+  const relative = path
+    .relative(path.join(ROOT, 'docs'), absFile)
+    .replaceAll('\\', '/');
+  return sitePathFromDocsFile(relative, frontmatterId);
 }
 
 // --- DOC-* and REQ-* from frontmatter ---
@@ -71,7 +58,11 @@ for (const file of collectMarkdownFiles({ roots: ['docs'] })) {
   if (rel(file).startsWith('docs/_templates/')) continue;
 
   const href = portalHrefFromDocFile(file, id);
-  put(id, { href, kind: id.startsWith('REQ-') ? 'req' : 'doc', source: rel(file) });
+  put(id, {
+    href,
+    kind: id.startsWith('REQ-') ? 'req' : 'doc',
+    source: rel(file),
+  });
 
   // ADR-* aliases for DOC-ADR-NNNN
   const adr = /^DOC-ADR-(\d{4})$/.exec(id);
@@ -106,9 +97,11 @@ function collectAnchors(file, re, kind, hrefBase) {
   }
 }
 
-const ba014 = path.join(ROOT, 'docs/02-business-analysis/business-rules-demo-v1.md');
+const ba014 = path.join(
+  ROOT,
+  'docs/02-business-analysis/business-rules-demo-v1.md',
+);
 const ba014Href = portalHrefFromDocFile(ba014, 'DOC-BA-014');
-// Only H2 canonical BR sections (H3 late-stage keeps its own anchor, not a second BR-004).
 collectAnchors(
   ba014,
   /^##\s+(BR-\d{3})\b[^\n]*\{#([a-z0-9-]+)\}/gm,
@@ -129,7 +122,10 @@ collectAnchors(
 );
 
 const scnFile = path.join(ROOT, 'docs/01-discovery/management-scenarios.md');
-const scnHref = portalHrefFromDocFile(scnFile, matter(fs.readFileSync(scnFile, 'utf8')).data.id);
+const scnHref = portalHrefFromDocFile(
+  scnFile,
+  matter(fs.readFileSync(scnFile, 'utf8')).data.id,
+);
 collectAnchors(
   scnFile,
   /^#{2,3}\s+(SCN-\d{3})\b[^\n]*\{#([a-z0-9-]+)\}/gm,
@@ -146,7 +142,11 @@ for (const name of fs.readdirSync(specsRoot)) {
   const specMd = path.join(dir, 'spec.md');
   if (!fs.existsSync(specMd)) continue;
   const href = `/openspec/${name}/spec`;
-  put(name, { href, kind: 'openspec', source: `openspec/specs/${name}/spec.md` });
+  put(name, {
+    href,
+    kind: 'openspec',
+    source: `openspec/specs/${name}/spec.md`,
+  });
 }
 
 if (errors.length) {
@@ -158,6 +158,8 @@ if (errors.length) {
 const payload = {
   generatedAt: new Date().toISOString().slice(0, 10),
   count: Object.keys(registry).length,
+  /** Site paths only — join DOCUSAURUS_BASE_URL at Docusaurus build time. */
+  hrefMode: 'site-path',
   entries: registry,
 };
 

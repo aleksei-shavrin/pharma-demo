@@ -13,7 +13,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ARG NEXT_PUBLIC_API_BASE_URL=/backend
+ARG NEXT_PUBLIC_DOCS_BASE_URL=/docs/
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_DOCS_BASE_URL=$NEXT_PUBLIC_DOCS_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 # Use default `.next` distDir inside the image (avoid host `.next-build` collision).
 RUN ./node_modules/.bin/next build

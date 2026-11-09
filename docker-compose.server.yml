@@ -35,6 +35,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/backend}
+        NEXT_PUBLIC_DOCS_BASE_URL: ${NEXT_PUBLIC_DOCS_BASE_URL:-/docs/}
     environment:
       # Middleware session verify (Nest internal). Not a browser secret.
       API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:3000}

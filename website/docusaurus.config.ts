@@ -2,6 +2,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import crossRefAutolink from './src/remark/cross-ref-autolink.mjs';
+import demoteOutOfTreeLinks from './src/remark/demote-out-of-tree-links.mjs';
 
 // Publish _templates (default GlobExclude drops underscore directories).
 const docsExclude = [
@@ -10,7 +11,21 @@ const docsExclude = [
   '**/__tests__/**',
 ];
 
-const docsRemarkPlugins = [crossRefAutolink];
+// demote first: repo-file links → code; then ID autolink on remaining text.
+const docsRemarkPlugins = [demoteOutOfTreeLinks, crossRefAutolink];
+
+/**
+ * Join deployment baseUrl once onto a site path (routeBasePath `/`).
+ * Avoids `/portal/` + hardcoded `/portal/DOC-…` skipping prepend, and
+ * avoids baking `/docs/` into links when CI uses baseUrl `/portal/`.
+ */
+function withDocsBase(sitePath: string): string {
+  const base = process.env.DOCUSAURUS_BASE_URL ?? '/';
+  const path = sitePath.startsWith('/') ? sitePath : `/${sitePath}`;
+  if (base === '/') return path;
+  const b = base.endsWith('/') ? base.slice(0, -1) : base;
+  return `${b}${path}`;
+}
 
 const config: Config = {
   title: 'Pharma Demo',
@@ -21,8 +36,8 @@ const config: Config = {
     v4: true,
   },
 
-  // Server Compose: DOCUSAURUS_URL + DOCUSAURUS_BASE_URL=/docs/
-  // Local ADR-0003 defaults: docs.localhost + /
+  // Compose: DOCUSAURUS_BASE_URL=/docs/ ; k3s CI: /portal/ ; local ADR-0003: /
+  // Registry/footer store site paths; join base once (see withDocsBase / remark).
   url: process.env.DOCUSAURUS_URL ?? 'http://docs.localhost',
   baseUrl: process.env.DOCUSAURUS_BASE_URL ?? '/',
 
@@ -148,18 +163,18 @@ const config: Config = {
           title: 'Документация',
           items: [
             {
-              // Root docs/README.md (id DOC-PORTAL-001) is the docs index at `/`,
-              // not a `/DOC-PORTAL-001` slug — registry href is `/docs/` under compose baseUrl.
+              // docs/README.md index at site `/` (joined with baseUrl once).
               label: 'Карта docs',
-              to: '/',
+              to: withDocsBase('/'),
             },
             {
+              // Site path `/portal/DOC-PORTAL-HOME-001` — not deployment prefix.
               label: 'Портал',
-              to: '/portal/DOC-PORTAL-HOME-001',
+              to: withDocsBase('/portal/DOC-PORTAL-HOME-001'),
             },
             {
               label: 'OpenSpec',
-              to: '/openspec/',
+              to: withDocsBase('/openspec/'),
             },
           ],
         },
@@ -168,15 +183,15 @@ const config: Config = {
           items: [
             {
               label: 'Документация',
-              to: '/standards/DOC-STD-001',
+              to: withDocsBase('/standards/DOC-STD-001'),
             },
             {
               label: 'Терминология',
-              to: '/standards/DOC-STD-002',
+              to: withDocsBase('/standards/DOC-STD-002'),
             },
             {
               label: 'Шаблоны',
-              to: '/_templates/',
+              to: withDocsBase('/_templates/'),
             },
           ],
         },
