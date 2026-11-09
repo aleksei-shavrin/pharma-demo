@@ -11,6 +11,7 @@
 | **Development** | `npm run dev` | Hot reload Web + API + Docs, один origin на **:3080** |
 | **Local production-like** | `docker compose --profile app up --build -d` | Образы; host-routing `*.localhost` на :80 |
 | **Server / IP:port** | `docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d` | Один origin: `/`, `/backend`, `/docs` (default **8080**) |
+| **k3s (namespace `pharma`)** | push в `main` → GitLab CI | Host `https://[demo-host]/` — см. [`k8s/README.md`](k8s/README.md) |
 
 ```bash
 cp .env.local.example .env.local   # HOST_PORT=3080 по умолчанию
@@ -20,6 +21,8 @@ npm run dev                        # = docker compose --env-file .env.local -f d
 # → http://localhost:3080/docs/
 npm run dev:down                   # тома сохраняются (без -v)
 ```
+
+Для k3s на ветке `main` CI собирает образы `web` / `api` / `docs` и применяет `k8s/` (нужна CI variable `KUBECONFIG_BASE64`, как в `redmineaddon`).
 
 DX Docs: generated `website/.docusaurus` в контейнере — named volume (`ppc_dev_docs_docusaurus`), поэтому host `npm run docs:build` не ломает live `/docs/`. Детали: [local-dev-and-demo](docs/10-operations/local-dev-and-demo.md).
 

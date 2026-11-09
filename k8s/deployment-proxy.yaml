@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pharma-demo-proxy
+  namespace: pharma
+  labels:
+    app.kubernetes.io/name: pharma-demo-proxy
+    app.kubernetes.io/part-of: pharma-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pharma-demo-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pharma-demo-proxy
+        app.kubernetes.io/part-of: pharma-demo
+    spec:
+      containers:
+        - name: proxy
+          image: caddy:2-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: caddyfile
+              mountPath: /etc/caddy/Caddyfile
+              subPath: Caddyfile
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /backend/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /backend/health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+      volumes:
+        - name: caddyfile
+          configMap:
+            name: pharma-demo-caddy

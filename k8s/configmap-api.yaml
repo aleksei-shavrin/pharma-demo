@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pharma-demo-api
+  namespace: pharma
+data:
+  PORT: "3000"
+  WEB_ORIGIN: "https://[demo-host]"
+  PUBLIC_API_PREFIX: "/backend"

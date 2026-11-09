@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pharma-demo-docs
+  namespace: pharma
+  labels:
+    app.kubernetes.io/name: pharma-demo-docs
+    app.kubernetes.io/part-of: pharma-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pharma-demo-docs
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pharma-demo-docs
+        app.kubernetes.io/part-of: pharma-demo
+    spec:
+      imagePullSecrets:
+        - name: dockerrebel
+      containers:
+        - name: app
+          image: ghcr.io/example/pharma-demo/docs:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
