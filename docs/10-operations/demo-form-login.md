@@ -3,7 +3,7 @@ id: DOC-OPS-FORM-LOGIN-001
 title: Demo form login (DX)
 type: operations
 status: draft
-version: '0.1.1'
+version: '0.1.2'
 created: '2026-11-07'
 updated: '2026-11-09'
 owner: docs-engineering
@@ -32,7 +32,13 @@ related:
 - `.env.server-auth` — отдельно от DX; `COOKIE_SECURE` = true только если `PUBLIC_ORIGIN` https
 - `.server-login-password` / `.server-login-password-hash` — не переиспользовать DX secrets
 - Web: `API_INTERNAL_URL=http://api:3000` (middleware → Nest)
-- Server credentials **не** автоматически `admin`/`admin` — отдельный bootstrap.
+- Server Compose credentials **не** автоматически `admin`/`admin` — отдельный bootstrap.
+
+### k3s (`https://[demo-host]`)
+
+- ConfigMap: `PUBLIC_ORIGIN` + `COOKIE_SECURE=true`
+- Secret `pharma-demo-api-auth` via `tools/k8s/apply-api-auth-secret.sh` (CI deploy)
+- Demo default: **`admin` / `admin`**. Без Secret login всегда JSON `Forbidden` (auth config null), не «неверный пароль».
 
 Bootstrap idempotent; существующие файлы не перезаписывает (для смены DX credentials править файлы вручную или удалить и пересоздать).
 

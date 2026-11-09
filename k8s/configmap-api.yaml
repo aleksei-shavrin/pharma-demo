@@ -6,4 +6,7 @@ metadata:
 data:
   PORT: "3000"
   WEB_ORIGIN: "https://[demo-host]"
+  PUBLIC_ORIGIN: "https://[demo-host]"
   PUBLIC_API_PREFIX: "/backend"
+  # HTTPS ingress — session cookie Secure required (auth-config fail-closed otherwise).
+  COOKIE_SECURE: "true"

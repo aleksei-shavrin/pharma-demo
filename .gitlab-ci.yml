@@ -66,6 +66,9 @@ deploy-k3s:
     - mkdir -p .kube/
     - echo "$KUBECONFIG_BASE64" | base64 --decode > "$KUBECONFIG"
   script:
+    # Namespace first so auth Secret exists before Deployment envFrom secretRef.
+    - kubectl apply -f k8s/namespace.yaml
+    - bash tools/k8s/apply-api-auth-secret.sh
     - kubectl apply -k k8s
     - kubectl -n "$K8S_NAMESPACE" set image deployment/pharma-demo-web app="$IMAGE_WEB:latest"
     - kubectl -n "$K8S_NAMESPACE" set image deployment/pharma-demo-api app="$IMAGE_API:latest"

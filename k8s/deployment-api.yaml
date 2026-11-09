@@ -29,6 +29,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: pharma-demo-api
+            # LOGIN_USERNAME / LOGIN_PASSWORD_HASH / SESSION_SECRET — see tools/k8s/apply-api-auth-secret.sh
+            - secretRef:
+                name: pharma-demo-api-auth
           readinessProbe:
             httpGet:
               path: /health
