@@ -36,7 +36,7 @@ const config: Config = {
     v4: true,
   },
 
-  // Compose: DOCUSAURUS_BASE_URL=/docs/ ; k3s CI: /portal/ ; local ADR-0003: /
+  // Compose: DOCUSAURUS_BASE_URL=/docs/ ; alternate deploy: /portal/ ; local ADR-0003: /
   // Registry/footer store site paths; join base once (see withDocsBase / remark).
   url: process.env.DOCUSAURUS_URL ?? 'http://docs.localhost',
   baseUrl: process.env.DOCUSAURUS_BASE_URL ?? '/',

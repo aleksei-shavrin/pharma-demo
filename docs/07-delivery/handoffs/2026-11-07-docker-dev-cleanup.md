@@ -31,7 +31,7 @@ related:
 - `docker compose -p pharma-demo-show -f docker-compose.dev.yml down` (без `-v`)
 - `docker compose -p docs-portal-server -f docker-compose.server.yml --profile form down` (без `-v`)
 - Тома `pharma-demo-show_*` сохранены; server/файлы/`server:*` сохранены (возможность server-run)
-- `onwebo*`, k8s/внешний deploy, prune, commit/push — не трогались
+- `unrelated stacks`, k8s/внешний deploy, prune, commit/push — не трогались
 
 ### Scripts / docs (эта сессия)
 

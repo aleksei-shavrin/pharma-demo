@@ -6,7 +6,7 @@ import { BookOpen } from 'lucide-react';
 import { NAV_ITEMS } from '@/lib/navigation';
 import { resolveDocsBaseUrl } from '@/lib/resolve-docs-base-url';
 
-/** Compose `/docs/`; k3s bake `NEXT_PUBLIC_DOCS_BASE_URL=/portal/`. */
+/** Compose `/docs/`; deploy bake `NEXT_PUBLIC_DOCS_BASE_URL=/portal/`. */
 const DOCS_HREF = resolveDocsBaseUrl();
 
 const docsLinkClassName = [

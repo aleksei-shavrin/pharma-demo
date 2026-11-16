@@ -26,7 +26,7 @@ related:
 |------|------|
 | [2026-11-06-schedule-c-cross-project-close.md](./2026-11-06-schedule-c-cross-project-close.md) | Межпроектная связь на снимке C — трек Агента №3 закрыт |
 | [2026-11-06-show-kit-cross-project-note.md](./2026-11-06-show-kit-cross-project-note.md) | Заметка для будущего шага комплекта показа; задачей не передана |
-| [2026-11-05-server-compose-gitlab.md](./2026-11-05-server-compose-gitlab.md) | Server Compose Demo (ADR-0005) — локально проверен; загрузка в GitLab |
+| [2026-11-05-server-compose-remote.md](./2026-11-05-server-compose-remote.md) | Server Compose Demo (ADR-0005) — локально проверен; публикация в remote |
 | [2026-10-30-w1-docs.md](./2026-10-30-w1-docs.md) | W1-Docs: фундамент документации |
 | [2026-10-30-w3-integrate.md](./2026-10-30-w3-integrate.md) | W3: интеграция портала |
 | [2026-10-30-discovery.md](./2026-10-30-discovery.md) | Discovery D0–D5 — **completed** → BA & Product Definition |

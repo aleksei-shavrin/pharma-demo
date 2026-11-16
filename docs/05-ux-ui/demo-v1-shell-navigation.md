@@ -154,7 +154,7 @@ Dashboard / Дашборд — стартовая страница (D1). Оди�
 | Расположение | Внизу колонки сайдбара (`mt-auto`), **вне** списка primary IA |
 | Подпись | «Документация» |
 | Иконка | `BookOpen` (lucide), стиль согласован с пунктами nav |
-| Переход | `<a href={NEXT_PUBLIC_DOCS_BASE_URL}>` — **полная** навигация same-origin (Docusaurus за прокси), **не** `next/link`. Compose default `/docs/`; k3s CI `/portal/` |
+| Переход | `<a href={NEXT_PUBLIC_DOCS_BASE_URL}>` — **полная** навигация same-origin (Docusaurus за прокси), **не** `next/link`. Compose default `/docs/`; alternate deploy `/portal/` |
 | `NAV_ITEMS` | Пункт **не** добавляется в primary nav |
 
 Smoke перехода сайдбар → `/docs/` выполняет Integrator **после** F03 (маршрутизация `/docs/` и редиректы с `/portal`).

@@ -1,6 +1,6 @@
 ---
 id: DOC-HANDOFF-SERVER-001
-title: Server Compose Demo + подготовка к GitLab
+title: Server Compose Demo + подготовка к публикации
 type: delivery
 status: draft
 version: 0.4.0
@@ -12,14 +12,14 @@ related:
   - DOC-OPS-003
   - DOC-OPS-002
 ---
-# Handoff: Server Compose Demo + GitLab
+# Handoff: Server Compose Demo
 
 ## Статус
 
 - **Готово к серверному развёртыванию** из Git + Docker Compose (без Node/npm на хосте).
 - Локальный server stack и **clean-tree gate** проверены (см. таблицу ниже).
 - Удалённый production deploy **не** выполнялся (нет доступа к хосту).
-- Push в GitLab **не** выполнен: у репозитория нет `git remote`; ранее сохранённый `[internal-git-host]` давал HTTP 401 — повтор без новой авторизации не делался.
+- Push в remote **не** выполнен на момент handoff: у репозитория не было рабочего `git remote`.
 - Данные демо: **только mock в NestJS** (без PostgreSQL) — **не** система для реальных производственных данных.
 
 ## Проверенный состав (до коммита handoff)
@@ -114,7 +114,7 @@ docker compose -p pharma-demo-server -f docker-compose.server.yml down
 - Откат: `git checkout <sha>` и повторный `docker compose ... up --build -d`.
 - Измерения ресурсов — в DOC-OPS-003.
 
-## Состав отправки в GitLab
+## Состав отправки в remote
 
 **Включать:** продуктовые правки apps/docs/openspec, server compose/Caddy/ADR/ops, хелперы и тесты API/web, cross-ref scripts.
 
@@ -126,6 +126,6 @@ docker compose -p pharma-demo-server -f docker-compose.server.yml down
 
 | Блокер | Статус |
 |--------|--------|
-| GitLab remote URL + рабочая авторизация | **открыт** (нет `git remote`; push не выполнялся) |
+| Remote URL + рабочая авторизация | **открыт** (нет `git remote`; push не выполнялся) |
 | Доступ к Linux-серверу для deploy | **открыт** (deploy не заявляется выполненным) |
 | Код / Compose / docs / tests | **закрыт** — готово к серверному развёртыванию после clone |

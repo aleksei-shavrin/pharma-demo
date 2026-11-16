@@ -5,8 +5,9 @@
 import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const ROOT = '/home/aleksei/pharma-demo/apps/web';
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../apps/web');
 const OUT =
   '/tmp/pharma-demo-artifacts/pharma-dashboard-pages-consistency-1c199ddd';
 const LIST = path.join(OUT, 'r7-fe-filelist.txt');

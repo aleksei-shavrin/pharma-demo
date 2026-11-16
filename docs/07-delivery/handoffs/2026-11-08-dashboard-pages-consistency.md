@@ -90,7 +90,7 @@ Directory: `/tmp/pharma-demo-artifacts/pharma-dashboard-pages-consistency-1c199d
 
 ## Auth for browser (authorized)
 
-Absolute paths only: `/home/aleksei/pharma-demo/.env.dev-auth` (`LOGIN_USERNAME`) + `/home/aleksei/pharma-demo/.dev-login-password`. Values not printed.
+Absolute paths only: `.env.dev-auth` (`LOGIN_USERNAME`) + `.dev-login-password`. Values not printed.
 
 ## r8 comprehensive audit
 

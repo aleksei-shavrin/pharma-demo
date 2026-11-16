@@ -1,11 +1,11 @@
 ## Context
 
-Pharma Demo DX: Next + Nest behind Caddy same-origin `http://localhost:3080` (`/backend` → Nest). Auth отсутствовал. Референс поведения — `docs-portal` form login (T10), но **не** копируем отдельный Next login service / forward_auth.
+Pharma Demo DX: Next + Nest behind Caddy same-origin `http://localhost:3080` (`/backend` → Nest). Auth отсутствовал. Референс — типичный same-origin form login, но **не** копируем отдельный Next login service / forward_auth.
 
 ## Goals / Non-Goals
 
 - Goals: demo single-user form login; HttpOnly cookie; page+API protection; remember 8h session vs 30d; logout POST; DX secrets local.
-- Non-Goals: IAM, roles, multi-tenant, Keycloak, DS package, gating `/docs`, live k3s deploy.
+- Non-Goals: IAM, roles, multi-tenant, Keycloak, DS package, gating `/docs`, live cluster deploy.
 
 ## Decisions
 

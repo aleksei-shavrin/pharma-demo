@@ -1,6 +1,6 @@
 /**
  * Same-origin docs portal path for the shell «Документация» link.
- * NEXT_PUBLIC_DOCS_BASE_URL is build-time (Compose `/docs/`, k3s `/portal/`).
+ * NEXT_PUBLIC_DOCS_BASE_URL is build-time (Compose `/docs/`, cluster `/portal/`).
  */
 
 const DEFAULT_DOCS_BASE = '/docs/';

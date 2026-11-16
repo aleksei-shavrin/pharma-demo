@@ -1,18 +1,16 @@
 /**
- * r6 browser acceptance — absolute auth paths only.
- * Authorization: user explicitly allowed reading
- *   /home/aleksei/pharma-demo/.env.dev-auth
- *   /home/aleksei/pharma-demo/.dev-login-password
- * for local demo login proofs. Do not print secret values.
+ * r6 browser acceptance — reads local gitignored auth files from repo root.
+ * Do not print secret values.
  */
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 
-const ROOT = '/home/aleksei/pharma-demo';
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT =
   '/tmp/pharma-demo-artifacts/pharma-dashboard-pages-consistency-1c199ddd';
 const AUTH_ENV = path.join(ROOT, '.env.dev-auth');

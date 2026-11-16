@@ -8,7 +8,7 @@ describe('resolveDocsBaseUrl', () => {
     expect(resolveDocsBaseUrl('   ')).toBe('/docs/');
   });
 
-  it('нормализует k3s prefix /portal без и с trailing slash', () => {
+  it('нормализует prefix /portal без и с trailing slash', () => {
     expect(resolveDocsBaseUrl('/portal')).toBe('/portal/');
     expect(resolveDocsBaseUrl('/portal/')).toBe('/portal/');
   });

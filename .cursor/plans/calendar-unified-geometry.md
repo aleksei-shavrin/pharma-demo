@@ -31,16 +31,16 @@ isProject: false
 
 ## Референс
 
-Экран ePPM — виджет **Calendar Plan** на Bryntum внутри FormViewer, не отдельный маршрут `app/`. Живой кадр в этой сессии не открывался: в `reference platform/src/app` виджет не смонтирован, dev-сервер не найден.
+Референс — виджет **Calendar Plan** (Bryntum) внутри FormViewer, не отдельный маршрут `app/`. Живой кадр в этой сессии не открывался: в reference platform виджет не смонтирован, dev-сервер не найден.
 
 Подтверждение кодом:
 
-- Оболочка: [CalendarPlanView/index.tsx]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/CalendarPlanView/index.tsx)
-- Колонки, `rowHeight: 32`, `barMargin: 8`, `preserveScroll`: [presentationConfig.ts]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/presentationConfig.ts)
-- Полосы, веха, прогресс, предупреждение, шапка: [styles.module.css]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/styles.module.css)
-- Иконки `LuTable2` и `LuChartGantt`, 18px, кнопки 32×32, зазор группы 4px: [Gantt/index.tsx]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/index.tsx), [ToolbarIconButton.module.css]([reference-platform]/src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/ToolbarIconButton.module.css)
+- Оболочка: `src/appComponents/viewers/FormViewer/components/CalendarPlan/CalendarPlanView/index.tsx`
+- Колонки, `rowHeight: 32`, `barMargin: 8`, `preserveScroll`: `src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/presentationConfig.ts`
+- Полосы, веха, прогресс, предупреждение, шапка: `src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/styles.module.css`
+- Иконки `LuTable2` и `LuChartGantt`, 18px, кнопки 32×32, зазор группы 4px: `src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/index.tsx`, `src/appComponents/viewers/FormViewer/components/CalendarPlan/Gantt/ToolbarIconButton.module.css`
 
-Демо, которое доводим: [schedule/page.tsx](/home/aleksei/pharma-demo/apps/web/src/app/schedule/page.tsx) → `ScheduleView`. UX: [demo-v1-schedule-workspace.md](/home/aleksei/pharma-demo/docs/05-ux-ui/demo-v1-schedule-workspace.md) §1.11.
+Демо, которое доводим: [schedule/page.tsx](apps/web/src/app/schedule/page.tsx) → `ScheduleView`. UX: [demo-v1-schedule-workspace.md](docs/05-ux-ui/demo-v1-schedule-workspace.md) §1.11.
 
 ### Что сверять глазами, потому что в CSS референса этого нет
 
@@ -54,14 +54,14 @@ isProject: false
 Предсказанное смещение на C в «Разделении» (без свежего замера DOM):
 
 - Таблица: шапка 40px (`SCHEDULE_HEADER_HEIGHT_PX`), шаг строки **48px** (`SCHEDULE_ROW_HEIGHT_PX`). Первая строка начинается на 40px.
-- Диаграмма: над канвой легенда «Прогноз / База / Связи» и при SF ещё абзац ([schedule-timeline.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-timeline.tsx) строки 44–74), затем шкала `scale_height = 28`, затем строки **72px** (`SCHEDULE_GANTT_ROW_HEIGHT_PX` в [dhtmlx-gantt-adapter.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx) `applyChartMode`).
+- Диаграмма: над канвой легенда «Прогноз / База / Связи» и при SF ещё абзац ([schedule-timeline.tsx](apps/web/src/components/schedule/schedule-timeline.tsx) строки 44–74), затем шкала `scale_height = 28`, затем строки **72px** (`SCHEDULE_GANTT_ROW_HEIGHT_PX` в [dhtmlx-gantt-adapter.tsx](apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx) `applyChartMode`).
 - На строке `i` добавка `(72 − 48) × i = 24i` px плюс разница шапок. Середина и конец списка расходятся сильнее начала. Выбор, фокус, шеврон и вторая полоса высоту коробки не меняют: база — абсолютный overlay, `bar_height` 26px живёт внутри 72px.
-- Прокрутка — два скроллера (`[data-schedule-viewport]` и `.gantt_ver_scroll`), их связывает [bind-schedule-pane-scroll.ts](/home/aleksei/pharma-demo/apps/web/src/lib/schedule/bind-schedule-pane-scroll.ts). Одинаковый `scrollTop` не совмещает строки при разном шаге.
-- В [schedule-board.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.tsx) строка 464 шаг 72px включается только при `leadOnly`. Экран передаёт `mode="table"`, поэтому доска остаётся на 48px. Это и есть регрессия после «одного календаря» ([handoff](/home/aleksei/pharma-demo/docs/07-delivery/handoffs/2026-11-06-schedule-one-calendar.md)).
+- Прокрутка — два скроллера (`[data-schedule-viewport]` и `.gantt_ver_scroll`), их связывает [bind-schedule-pane-scroll.ts](apps/web/src/lib/schedule/bind-schedule-pane-scroll.ts). Одинаковый `scrollTop` не совмещает строки при разном шаге.
+- В [schedule-board.tsx](apps/web/src/components/schedule/schedule-board.tsx) строка 464 шаг 72px включается только при `leadOnly`. Экран передаёт `mode="table"`, поэтому доска остаётся на 48px. Это и есть регрессия после «одного календаря» ([handoff](docs/07-delivery/handoffs/2026-11-06-schedule-one-calendar.md)).
 
 Сброс прокрутки при смене сравнения и представления:
 
-- Смена «Таблица» / «Временная шкала» **размонтирует** панель (`mode === 'table' ? null` / `mode === 'gantt' ? null` в [schedule-view.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-view.tsx)). Позиция живёт только в DOM.
+- Смена «Таблица» / «Временная шкала» **размонтирует** панель (`mode === 'table' ? null` / `mode === 'gantt' ? null` в [schedule-view.tsx](apps/web/src/components/schedule/schedule-view.tsx)). Позиция живёт только в DOM.
 - Смена сравнения **не** перезапрашивает API (`useRegisterQuery` зависит от снимка). Она вызывает `syncData` → `clearAll` / `parse` / `render` DHTMLX и может сбросить внутренний скролл виджета.
 - Повторной загрузки данных при этих переключениях нет.
 
@@ -96,7 +96,7 @@ isProject: false
 - Подписи на фигурах диаграммы убрать: `task_text` / `barCaption` («40%») и `.ppc-fact-caption`. Имя на полосе из `taskRenderer` референса **не** копировать. Детали остаются в таблице и в `title` полосы.
 - Кнопки представления: текстовые `px-3 py-1.5` → группа 32×32, иконка 18px, зазор 4px, видимое нажатие. Имена: «Таблица», «Разделение», «Временная шкала». Глифы: `LuTable2`, составная иконка таблицы и диаграммы, `LuChartGantt`. Режимы по-прежнему исключающие, не две независимые кнопки референса.
 
-Первый столбец референса — отдельная **ИСР** (`type: 'wbs'`, ширина 67, минимум 72), код не перенумеровывается при раскрытии и фильтре. Наименование — соседняя колонка, только имя, без «работа / веха / этап». В демо сейчас порядковый «№» (`visibleOrdinal`) и вторая строка `treeKindLabel` в [schedule-board.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.tsx). Предложение: колонка ИСР из `row.wbs`, имя с шевроном и отступом глубины, подпись вида убрать. Вложенность и раскрытие остаются.
+Первый столбец референса — отдельная **ИСР** (`type: 'wbs'`, ширина 67, минимум 72), код не перенумеровывается при раскрытии и фильтре. Наименование — соседняя колонка, только имя, без «работа / веха / этап». В демо сейчас порядковый «№» (`visibleOrdinal`) и вторая строка `treeKindLabel` в [schedule-board.tsx](apps/web/src/components/schedule/schedule-board.tsx). Предложение: колонка ИСР из `row.wbs`, имя с шевроном и отступом глубины, подпись вида убрать. Вложенность и раскрытие остаются.
 
 Столбцы «Таблицы» и «Разделения» уже совпадают, потому что оба режима рендерят `ScheduleBoard` с `mode="table"`. Набор сохранить: ИСР, Наименование, предупреждение, Прогресс, Тип, Объект, даты базы/прогноза, при факте четыре колонки прогноза и факта, Δ, Статус, Крит. Длинные значения — одна строка, многоточие, полный текст в подсказке. Если не влезают, горизонтальная прокрутка внутри таблицы. `ScheduleTable` с урезанным набором не возвращать на экран.
 
@@ -112,17 +112,17 @@ isProject: false
 
 ## Волны
 
-Документация раньше кода. Новый change `openspec/changes/schedule-unified-geometry/` (proposal, design, delta `schedule-workspace`, tasks). В [DOC-UX-005](/home/aleksei/pharma-demo/docs/05-ux-ui/demo-v1-schedule-workspace.md) обновить §1.6 и §1.11: шаг 32, общая шапка 40, ИСР, иконка предупреждения, прогресс, компактные полосы, панель, сохранение позиции. `status` не поднимать до approved. Размеры без живого кадра помечать `assumption`. §1.7–§1.9 (интервал, факт, межпроектная линия) не переписывать заново.
+Документация раньше кода. Новый change `openspec/changes/schedule-unified-geometry/` (proposal, design, delta `schedule-workspace`, tasks). В [DOC-UX-005](docs/05-ux-ui/demo-v1-schedule-workspace.md) обновить §1.6 и §1.11: шаг 32, общая шапка 40, ИСР, иконка предупреждения, прогресс, компактные полосы, панель, сохранение позиции. `status` не поднимать до approved. Размеры без живого кадра помечать `assumption`. §1.7–§1.9 (интервал, факт, межпроектная линия) не переписывать заново.
 
 Волна 0, агент документации. Файлы: UX и новый OpenSpec change. Зависимостей нет. Готово, когда контракт строк, шапок, столбца ИСР и выноса легенды записан, а зависимый код ещё не менялся.
 
-Волна 1, владелец `schedule-view` и общего состояния. Файлы: [schedule-geometry.ts](/home/aleksei/pharma-demo/apps/web/src/lib/schedule/schedule-geometry.ts), [schedule-view.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-view.tsx) и его тест, [bind-schedule-pane-scroll.ts](/home/aleksei/pharma-demo/apps/web/src/lib/schedule/bind-schedule-pane-scroll.ts), [schedule-timeline.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-timeline.tsx) только снятие легенды из потока, [schedule-board.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.tsx) только шаг строки и высота шапки, [dhtmlx-gantt-adapter.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx) только `row_height` и `scale_height`. Зависит от волны 0. Готово, когда на C в «Разделении» верх первой строки, середина и низ после прокрутки совпадают у таблицы и диаграммы, а легенда не стоит над канвой.
+Волна 1, владелец `schedule-view` и общего состояния. Файлы: [schedule-geometry.ts](apps/web/src/lib/schedule/schedule-geometry.ts), [schedule-view.tsx](apps/web/src/components/schedule/schedule-view.tsx) и его тест, [bind-schedule-pane-scroll.ts](apps/web/src/lib/schedule/bind-schedule-pane-scroll.ts), [schedule-timeline.tsx](apps/web/src/components/schedule/schedule-timeline.tsx) только снятие легенды из потока, [schedule-board.tsx](apps/web/src/components/schedule/schedule-board.tsx) только шаг строки и высота шапки, [dhtmlx-gantt-adapter.tsx](apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx) только `row_height` и `scale_height`. Зависит от волны 0. Готово, когда на C в «Разделении» верх первой строки, середина и низ после прокрутки совпадают у таблицы и диаграммы, а легенда не стоит над канвой.
 
 Волна 2, параллельно, после передачи файлов волны 1:
 
-- Таблица. Только [schedule-board.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.tsx) и [schedule-board.test.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-board.test.tsx). ИСР, снятие подписи вида, иконка предупреждения, широкий прогресс, минимумы и многоточие. Не трогает адаптер и `schedule-view`.
-- Гант. [dhtmlx-gantt-adapter.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx), [dhtmlx-gantt-adapter.css](/home/aleksei/pharma-demo/apps/web/src/components/schedule/dhtmlx-gantt-adapter.css), [baseline-overlay.ts](/home/aleksei/pharma-demo/apps/web/src/components/schedule/baseline-overlay.ts), [to-gantt-presentation.ts](/home/aleksei/pharma-demo/apps/web/src/lib/schedule/to-gantt-presentation.ts) и их тесты. Полосы, ромб, стрелка, снятие подписей с фигур. CSS адаптера пишет только он.
-- Панель. [schedule-view-toggle.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-view-toggle.tsx) и [schedule-comparison-toggle.tsx](/home/aleksei/pharma-demo/apps/web/src/components/schedule/schedule-comparison-toggle.tsx). В `schedule-view.tsx` их вставляет владелец вида, когда волна 1 закрыта. Пояснение базы и факта — в этой верхней полосе.
+- Таблица. Только [schedule-board.tsx](apps/web/src/components/schedule/schedule-board.tsx) и [schedule-board.test.tsx](apps/web/src/components/schedule/schedule-board.test.tsx). ИСР, снятие подписи вида, иконка предупреждения, широкий прогресс, минимумы и многоточие. Не трогает адаптер и `schedule-view`.
+- Гант. [dhtmlx-gantt-adapter.tsx](apps/web/src/components/schedule/dhtmlx-gantt-adapter.tsx), [dhtmlx-gantt-adapter.css](apps/web/src/components/schedule/dhtmlx-gantt-adapter.css), [baseline-overlay.ts](apps/web/src/components/schedule/baseline-overlay.ts), [to-gantt-presentation.ts](apps/web/src/lib/schedule/to-gantt-presentation.ts) и их тесты. Полосы, ромб, стрелка, снятие подписей с фигур. CSS адаптера пишет только он.
+- Панель. [schedule-view-toggle.tsx](apps/web/src/components/schedule/schedule-view-toggle.tsx) и [schedule-comparison-toggle.tsx](apps/web/src/components/schedule/schedule-comparison-toggle.tsx). В `schedule-view.tsx` их вставляет владелец вида, когда волна 1 закрыта. Пояснение базы и факта — в этой верхней полосе.
 - Тесты геометрии и прокрутки остаются у владельца вида.
 
 Интегратор один: после волны 2 собирает вставку переключателей, прогоняет vitest календаря и сценарий приёмки. Если два агента всё же сойдутся на файле, порядок такой: геометрия → таблица или гант → интегратор. Обратно файлы не переписывать.

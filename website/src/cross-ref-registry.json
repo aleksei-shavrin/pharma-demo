@@ -541,7 +541,7 @@
     "DOC-HANDOFF-SERVER-001": {
       "href": "/delivery/handoffs/DOC-HANDOFF-SERVER-001",
       "kind": "doc",
-      "source": "docs/07-delivery/handoffs/2026-11-05-server-compose-gitlab.md"
+      "source": "docs/07-delivery/handoffs/2026-11-05-server-compose-remote.md"
     },
     "DOC-HANDOFF-C07": {
       "href": "/delivery/handoffs/DOC-HANDOFF-C07",

@@ -34,7 +34,7 @@ Production-like запуск Demo v1 на одном публичном origin (
 
 > **certainty:** assumption — docs-ci-links 2026-11-09
 >
-> **Link contract:** registry хранит **site paths** от `routeBasePath: '/'` (`/requirements/…`, `/portal/DOC-PORTAL-HOME-001`, `/openspec/…`) **без** `DOCUSAURUS_BASE_URL`. При сборке base (`/`, Compose `/docs/`, k3s CI `/portal/`) присоединяется **один раз** (remark + footer). Не писать `/docs/…` в registry — иначе CI `baseUrl=/portal/` даёт broken `/portal/docs/…`. Категория `00-portal` → site path `/portal/…`; при CI base `/portal/` публичный URL `/portal/portal/…`. k3s Caddy **не** strip’ает `/portal` (nginx `alias /portal/` → html); Compose по-прежнему `handle_path /docs/` + nginx root.
+> **Link contract:** registry хранит **site paths** от `routeBasePath: '/'` (`/requirements/…`, `/portal/DOC-PORTAL-HOME-001`, `/openspec/…`) **без** `DOCUSAURUS_BASE_URL`. При сборке base (`/` или Compose `/docs/`) присоединяется **один раз** (remark + footer). Не писать `/docs/…` в registry — иначе при `baseUrl=/docs/` получится broken `/docs/docs/…`. Категория `00-portal` → site path `/portal/…`. Compose: `handle_path /docs/` + nginx root.
 >
 > **Out-of-tree repo links:** относительные markdown-ссылки на пути вне `docs/` и `openspec/specs/` (например `apps/…`, `docker-compose*.yml`) **не** являются маршрутами портала. Docs Dockerfile не копирует `apps/`; remark `demote-out-of-tree-links` превращает такие ссылки в inline code. `onBrokenLinks: throw` сохраняется — не suppress и не exclude docs.
 
@@ -93,7 +93,7 @@ npm run server:auth:ensure
 ## Запуск (основной способ — Docker Compose)
 
 ```bash
-git clone <gitlab-url> pharma-demo && cd pharma-demo
+git clone <repo-url> pharma-demo && cd pharma-demo
 cp .env.example .env
 # Отредактируйте .env:
 #   HOST_PORT=8080
@@ -157,5 +157,5 @@ npm run typecheck          # оба подряд
 ## Ограничения
 
 - Это demo с mock API, not production GMP-система.
-- Push в GitLab ≠ deployment на сервер; для выкладки нужны адрес и доступ к хосту.
+- Push в remote ≠ deployment на сервер; для выкладки нужны адрес и доступ к хосту.
 - Не запускайте server compose на том же `HOST_PORT`, что занимает local `npm run dev` (обычно 3080).

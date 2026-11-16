@@ -1,15 +1,16 @@
 /**
  * r7: click real dashboard attention cards; verify hrefs/counts vs registers.
- * Auth absolute paths authorized for local demo proofs. Do not print secrets.
+ * Reads local gitignored auth files. Do not print secrets.
  */
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 
-const ROOT = '/home/aleksei/pharma-demo';
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT =
   '/tmp/pharma-demo-artifacts/pharma-dashboard-pages-consistency-1c199ddd';
 const AUTH_ENV = path.join(ROOT, '.env.dev-auth');

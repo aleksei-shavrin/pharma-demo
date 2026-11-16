@@ -1,6 +1,6 @@
 ---
 name: minimal-server-deployment
-overview: "Подготовить pharma-demo к push в GitLab и к production-like запуску на Linux через Docker Compose: один публичный origin (UI, /backend, /portal), без api.localhost у посетителя, проверка на отдельном порту без остановки текущего dev на :80."
+overview: "Подготовить pharma-demo к push в remote и к production-like запуску на Linux через Docker Compose: один публичный origin (UI, /backend, /portal), без api.localhost у посетителя, проверка на отдельном порту без остановки текущего dev на :80."
 todos:
   - id: docs-adr-0005
     content: "ADR-0005 + ops guide + README: single-origin /backend /portal vs local ADR-0003"
@@ -20,7 +20,7 @@ todos:
   - id: local-smoke-8080
     content: Smoke on :8080 without touching :80; clean-tree build check
     status: pending
-  - id: gitlab-push-review
+  - id: remote-push-review
     content: "After approve: dirty review, remote, commits, push (no force)"
     status: pending
 isProject: false
@@ -30,7 +30,7 @@ isProject: false
 
 ## Контекст (факт)
 
-- Репозиторий: `/home/aleksei/pharma-demo`, ветка `main`, 54 локальных коммита, **remote отсутствует**.
+- Репозиторий: `.`, ветка `main`, 54 локальных коммита, **remote отсутствует**.
 - Working tree: ~173 modified + ~12 untracked (docs/apps/scripts/website). Это не мусор деплоя — **не отбрасывать**.
 - `apps/web/.env.local` локально (только `NEXT_PUBLIC_API_BASE_URL`), в Git не входит. Быстрый scan tracked history на типичные secret-пути — пусто.
 - Сейчас на `:80` крутится **dev Compose** (`pharma-demo-proxy/web/api/docs`). Не останавливать. Серверную схему проверять на **другом порту** и **другом compose project** (`pharma-demo-server`).
@@ -136,7 +136,7 @@ docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
 6. Restart контейнеров — сервисы живы; dev на `:80` жив.
 7. `npm run test:apps` + новые unit зелёные.
 
-## GitLab (после approve реализации; не сейчас)
+## Remote (после approve реализации; не сейчас)
 
 Сейчас: **не commit / не push**.
 
@@ -149,14 +149,14 @@ docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
 5. Scan секретов в истории перед push.
 6. Сохранить 54 коммита; если remote с initial README — pull --rebase/merge, **без force**.
 7. Осмысленные коммиты (docs ADR/ops, затем feat server compose, затем продуктовые dirty если их включают).
-8. `git push -u origin main` после ok. Если GitLab отвергает password — нужен PAT/token (password auth for Git over HTTPS отключён), без раскрытия секретов.
+8. `git push -u origin main` после ok. Если remote отвергает password — нужен PAT/token (password auth for Git over HTTPS отключён), без раскрытия секретов.
 
 Push ≠ deploy. Для выкладки на Linux позже нужны адрес сервера и способ доступа (SSH и т.п.).
 
 ## Запуск на сервере (целевой текст ops-дока)
 
 ```bash
-git clone <gitlab-url> pharma-demo && cd pharma-demo
+git clone <repo-url> pharma-demo && cd pharma-demo
 cp .env.example .env
 # HOST_PORT и WEB_ORIGIN=http://SERVER_IP:PORT
 docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
@@ -166,7 +166,7 @@ docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
 
 ## Недостающие данные (проектирование не блокируют)
 
-- GitLab URL + Git token/credentials — для push.
+- remote URL + Git token/credentials — для push.
 - IP/SSH сервера — для фактического deploy.
 - Желаемый HOST_PORT на сервере (в примере 8080).
 - Домен — опционально позже через WEB_ORIGIN.
@@ -177,6 +177,6 @@ docker compose -p pharma-demo-server -f docker-compose.server.yml up --build -d
 2. Red tests (base URL, CORS).
 3. Compose/Caddy/Dockerfiles/docusaurus/api-client/CORS.
 4. Smoke :8080 + :80 жив.
-5. Стоп для ревью commit/push состава и GitLab URL.
+5. Стоп для ревью commit/push состава и remote URL.
 
 **Сейчас останавливаемся на ревью плана — без commit/push и без изменения running containers.**
